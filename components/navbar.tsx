@@ -1,4 +1,5 @@
 "use client"
+import { useState, useEffect } from "react";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -9,9 +10,7 @@ import {
   NavbarMenuItem,
 } from "@heroui/navbar";
 import { Button } from "@heroui/button";
-import { Kbd } from "@heroui/kbd";
 import { Link } from "@heroui/link";
-import { Input } from "@heroui/input";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
 import clsx from "clsx";
@@ -25,18 +24,20 @@ import {
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
 import {
-  TwitterIcon,
   GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
 } from "@/components/icons";
 import Logo from "@/components/logo";
 import { Icon } from "@iconify/react";
 
 export const Navbar = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Ensure component is mounted on client side
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const navItems = siteConfig.navItems.filter((item) => item.label !== "Stats" && item.label !== "Home");
-  console.log(navItems);
   return (
     <HeroUINavbar maxWidth="xl" position="sticky" 
     className="bg-transparent backdrop-filter-none"
@@ -58,7 +59,8 @@ export const Navbar = () => {
               <NavbarItem key={item.label} className="relative">
                 <Dropdown>
                   <DropdownTrigger>
-                    <button
+                    <Button
+                      variant="light"
                       className={clsx(
                         linkStyles({ color: "foreground" }),
                         "flex items-center gap-1 data-[active=true]:text-primary data-[active=true]:font-medium"
@@ -66,11 +68,11 @@ export const Navbar = () => {
                     >
                       {item.label}
                       <svg className="ml-1 w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" /></svg>
-                    </button>
+                    </Button>
                   </DropdownTrigger>
                   <DropdownMenu >
                     {item.navItems.map((child) => (
-                      <DropdownItem key={child.href} href={child.href} startContent={child.icon ? <Icon icon={`mdi:${child.icon}`} className="w-4 h-4 mr-2" /> : null}>
+                      <DropdownItem key={child.href} href={child.href} startContent={child.icon && isMounted ? <Icon icon={`mdi:${child.icon}`} className="w-4 h-4 mr-2" /> : null}>
                         {child.label}
                       </DropdownItem>
                     ))}
@@ -108,7 +110,7 @@ export const Navbar = () => {
             as={Link}
             className="text-sm font-normal "
             href={siteConfig.links.sponsor}
-            startContent={<Icon icon="hugeicons:chart-02" width="16" height="16" />}
+            startContent={isMounted ? <Icon icon="hugeicons:chart-02" width="16" height="16" /> : null}
             
           >
             Stats
@@ -122,7 +124,7 @@ export const Navbar = () => {
             as={Link}
             className="text-sm font-normal text-black bg-white"
             href={siteConfig.links.sponsor}
-            endContent={<Icon icon="solar:alt-arrow-right-outline" width="14" height="14" />}
+            endContent={isMounted ? <Icon icon="solar:alt-arrow-right-outline" width="14" height="14" /> : null}
             variant="flat"
           >
             Launch App 

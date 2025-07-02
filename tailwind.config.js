@@ -17,6 +17,9 @@ const config = {
         primary: "#B84794",
         background: "#0A0B1B",
       },
+      animation: {
+        'spin-slow': 'spin 8s linear infinite',
+      },
     },
   },
   darkMode: "class",

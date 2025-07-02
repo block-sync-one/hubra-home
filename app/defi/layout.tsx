@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `DeFi - ${siteConfig.name}`,
     description: siteConfig.description,
-    url: `${typeof window === 'undefined' ? '' : window.location.origin}/defi`,
+    url: "/defi",
     siteName: siteConfig.name,
     images: [
       {

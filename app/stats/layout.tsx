@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `Stats - ${siteConfig.name}`,
     description: siteConfig.description,
-    url: `${typeof window === 'undefined' ? '' : window.location.origin}/stats`,
+    url: "/stats",
     siteName: siteConfig.name,
     images: [
       {

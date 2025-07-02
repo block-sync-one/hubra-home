@@ -1,0 +1,613 @@
+"use client"
+import React from "react";
+import { Card, CardContent } from "./ui/card";
+import { Button } from "@heroui/button"
+import { Input } from "@heroui/input"
+import { MailIcon } from "./ui/MailIcon"
+import { Badge } from "./ui/badge"
+import Image from "next/image"
+import { TVLAnimatedPath } from "./TVLAnimation"
+import { FloatingOrbsAnimation } from "./ui/FloatingOrbAnimation";
+import { DefiCardMotionOverlay } from "./ui/DefiCardMotionOverlay";
+import { motion } from "framer-motion";
+import Solanaglow from "./ui/Solanaglow";
+
+
+// Simple Separator component
+const Separator = ({ className }: { className?: string }) => (
+    <div className={className} />
+);
+
+export const MainContentSection = (): JSX.Element => {
+    // Data for months in chart
+    const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+
+    // Data for token table rows
+    const tokenRows = [
+        {
+            id: 1,
+            name: "Moo Deng",
+            symbol: "MOODENG",
+            price: "€0.22",
+            change: "20%",
+            marketCap: "€207.20M",
+        },
+        {
+            id: 1,
+            name: "Moo Deng",
+            symbol: "MOODENG",
+            price: "€0.22",
+            change: "20%",
+            marketCap: "€207.20M",
+        },
+        {
+            id: 1,
+            name: "Moo Deng",
+            symbol: "MOODENG",
+            price: "€0.22",
+            change: "20%",
+            marketCap: "€207.20M",
+        },
+        {
+            id: 1,
+            name: "Moo Deng",
+            symbol: "MOODENG",
+            price: "€0.22",
+            change: "20%",
+            marketCap: "€207.20M",
+        },
+    ];
+
+    // Data for features section
+    const features = [
+        {
+            title: "Non-Custodial",
+            description: "Your keys, your assets. Always.",
+            icon: "/icons/key.svg",
+        },
+        {
+            title: "Transparent",
+            description: "Fully open-source with clear, straightforward fees.",
+            icon: "/icons/eye.svg",
+        },
+        {
+            title: "Scalable",
+            description:
+                "Automatically updated with new tokens and pools, ensuring you never miss out.",
+            icon: "/icons/rocket.svg",
+        },
+        {
+            title: "Onramp & offramp",
+            description: "Onramp & offramp with creditcard",
+            icon: "/icons/circles.svg",
+        },
+    ];
+
+    return (
+        <section className="flex flex-col w-full items-start gap-[120px] mx-auto max-w-[1016px]">
+            {/* Meet Hubra Section */}
+            <div className="flex flex-col w-full items-start gap-8">
+                <div className="flex flex-col items-center gap-10 w-full">
+                    <div className="flex flex-col w-[580px] items-center justify-center gap-5">
+                        <h2 className=" [font-family:'Geist',Helvetica] font-semibold text-white text-[32px] text-center tracking-[-0.64px] leading-[33.6px]">
+                            Meet Hubra
+                        </h2>
+                    </div>
+
+                    <div className="flex items-start gap-12 w-full">
+                        <Card className="flex-1 h-[398px] bg-[#121323] rounded-2xl" />
+                        <Card className="flex-1 h-[398px] bg-[#121323] rounded-2xl" />
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-12 w-full">
+                    <div className="w-[484px] gap-[21px] flex flex-col items-start">
+                        <div className="w-[334px] gap-4 flex flex-col items-start">
+                            <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-2xl tracking-[0] leading-[33.6px]">
+                                Normies
+                            </h3>
+                            <p className=" [font-family:'Geist',Helvetica] font-normal text-[#787b91] text-base tracking-[0] leading-[22.4px]">
+                                No complicated jargon. Effortless onboarding
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="w-[484px] gap-[21px] flex flex-col items-start">
+                        <div className="w-[334px] gap-4 flex flex-col items-start">
+                            <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-2xl tracking-[0] leading-[33.6px]">
+                                Degens
+                            </h3>
+                            <p className=" [font-family:'Geist',Helvetica] font-normal text-[#787b91] text-base tracking-[0] leading-[22.4px]">
+                                Powerful DeFi tools. Endless possibilities
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <Separator className="w-full h-px bg-[#ffffff14]" />
+
+            {/* Introducing HubSOL Section */}
+            <div className="flex flex-col w-full items-center justify-center gap-10">
+                <div className="flex flex-col w-[580px] items-center justify-center gap-5">
+                    <h2 className=" [font-family:'Geist',Helvetica] font-semibold text-white text-[32px] text-center tracking-[-0.64px] leading-[33.6px]">
+                        Introducing HubSOL
+                    </h2>
+                    <p className="w-fit [font-family:'Geist',Helvetica] font-normal text-[#787b91] text-xl text-center tracking-[0] leading-7 whitespace-nowrap">
+                        Empowering supporters through platform revenue.
+                    </p>
+                </div>
+                <div className="flex items-start gap-6 w-full">
+
+                    {/* Left column: 2 stacked cards */}
+                    <div className="flex flex-col gap-6 w-[370px]">
+                        {/* $13M TVL Card */}
+                        <Card className="relative h-[180px] bg-[#191A2C] rounded-2xl flex flex-col justify-between p-6 overflow-hidden">
+                            {/* Chart line (placeholder) */}
+                            <div className="absolute left-0 bottom-0 w-full h-2/3 flex items-end">
+                                <TVLAnimatedPath />
+                                <Image src="/image/tvl.svg" alt="Solana" width={264} height={80} className="absolute left-0 bottom-0 w-auto h-auto hover:opacity-100" />
+                            </div>
+                            <div className="z-10">
+                                <div className="text-white text-2xl font-semibold">$13M</div>
+                                <div className="text-[#787b91] text-base">TVL</div>
+                            </div>
+                        </Card>
+                        {/* 20+ Integrated platforms Card */}
+                        <Card className="relative h-[180px] bg-[url('/image/hex-group.svg')] bg-cover bg-center rounded-2xl flex flex-col justify-between p-6 overflow-hidden">
+                            <Solanaglow right={96} top={86} />
+                            <div className="flex flex-col items-start justify-start">
+                                <div className="text-white text-2xl font-semibold">20+</div>
+                                <div className="text-[#787b91] text-base">Integrated platforms</div>
+                            </div>
+                        </Card>
+                    </div>
+                    {/* Right column: Large logo card */}
+                    <Card className="relative flex-1 h-[384px] bg-[url('/image/hubsol-sec.png')] bg-cover bg-center rounded-2xl overflow-hidden flex items-center justify-center">
+                        <FloatingOrbsAnimation />
+                    </Card>
+                </div>
+            </div>
+
+            <Separator className="w-full h-px bg-[#ffffff14]" />
+
+            {/* DeFi, Simplified Section */}
+            <div className="flex flex-col items-start justify-center w-full gap-10">
+                <div className="flex flex-col w-full items-center gap-10">
+                    <div className="flex flex-col w-[580px] items-center justify-center gap-5">
+                        <h2 className=" [font-family:'Geist',Helvetica] font-semibold text-white text-[32px] text-center tracking-[-0.64px] leading-[33.6px]">
+                            Defi, Simplified
+                        </h2>
+                        <p className="w-fit [font-family:'Geist',Helvetica] font-normal text-[#787b91] text-xl text-center tracking-[0] leading-7 whitespace-nowrap">
+                            Empowering supporters through platform revenue.
+                        </p>
+                    </div>
+                    <div className="flex items-start gap-12 w-full">
+                        <Card className="flex-1 h-[310px] bg-[url('/image/df-1.png')] bg-cover bg-center rounded-2xl" />
+                        <Card className="flex-1 h-[310px] bg-[url('/image/df-2.png')] bg-cover bg-center rounded-2xl" />
+                    </div>
+                    <div className="flex items-center gap-12 w-full">
+                        <div className="gap-[21px] flex flex-col items-start">
+                            <div className="w-full gap-4 flex flex-col items-start">
+                                <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-[20px] tracking-[0] leading-[33.6px]">
+                                    Eagle Eye
+                                </h3>
+                                <p className=" [font-family:'Geist',Helvetica] font-normal text-[#787b91] text-[16px] tracking-[0] leading-[22.4px] break-words">
+                                    Track, manage, and optimize your entire on-chain protfoio from one dashboard
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="gap-[21px] flex flex-col items-start">
+                            <div className="w-full gap-4 flex flex-col items-start">
+                                <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-[20px] tracking-[0] leading-[33.6px]">
+                                    Explore
+                                </h3>
+                                <p className=" [font-family:'Geist',Helvetica] font-normal text-[#787b91] text-[16px] tracking-[0] leading-[22.4px] break-words">
+                                    Discover emerging trends. Seamlessly convert tokens with minimal fees
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex items-start gap-12 w-full">
+                        <Card className="flex-1 h-[310px] bg-[url('/image/df-3.png')] bg-cover bg-center rounded-2xl" />
+                        <Card className="flex-1 h-[310px] bg-[url('/image/df-4.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                            <DefiCardMotionOverlay />
+                        </Card>
+                    </div>
+                    <div className="flex items-center gap-12 w-full">
+                        <div className="gap-[21px] flex flex-col items-start">
+                            <div className="w-full gap-4 flex flex-col items-start">
+                                <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-[20px] tracking-[0] leading-[20px]">
+                                    Earn
+                                </h3>
+                                <p className=" [font-family:'Geist',Helvetica] font-normal text-[#787b91] text-[16px] tracking-[0] leading-[16px] break-words">
+                                    Effortlessly tap into yield opportunities, all from a single platform
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="gap-[21px] flex flex-col items-start">
+                            <div className="w-full gap-4 flex flex-col items-start">
+                                <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-[20px] tracking-[0] leading-[33.6px] ">
+                                    Cross Platform
+                                </h3>
+                                <p className=" [font-family:'Geist',Helvetica] font-normal text-[#787b91] text-[16px] tracking-[0] leading-[22.4px] break-words">
+                                    One app, One account, All Devices
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* Features Section */}
+                <Card className="flex flex-col w-full items-start bg-[#121323] rounded-2xl">
+                    <CardContent className="p-0 w-full flex flex-col">
+                        {features.map((feature, index) => (
+                            <div
+                                key={index}
+                                className={`h-[90px] flex items-center justify-between w-full ${index > 0 ? "border-t [border-top-style:solid] border-[#ffffff1a]" : ""}`}
+                            >
+                                <div className="inline-flex items-center gap-[9px] pl-6">
+                                    <Image src={feature.icon} alt={feature.title} width={18} height={18} />
+                                    <div className="[font-family:'Inter',Helvetica] font-semibold text-white text-[16px] tracking-[0] leading-[19.4px] whitespace-nowrap">
+                                        {feature.title}
+                                    </div>
+                                </div>
+                                <div className="pr-6 [font-family:'Inter',Helvetica] font-medium text-[#797b92] text-[16px] text-right tracking-[0] leading-[19.4px] whitespace-nowrap">
+                                    {feature.description}
+                                </div>
+                            </div>
+                        ))}
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Partners Section */}
+            <div className="flex flex-col items-center gap-[52px] w-full">
+                <h2 className=" [font-family:'Geist',Helvetica] font-semibold text-white text-[32px] text-center tracking-[-0.64px] leading-[33.6px]">
+                    Hubsol Partners
+                </h2>
+
+                <div className="flex w-full items-center gap-12">
+                    {/* Left column */}
+                    <div className="flex flex-col gap-12">
+                        <div className="flex items-center justify-end gap-4">
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px] hover:opacity-100" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-1.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-2.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-end gap-4">
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+
+                            </div>
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-3.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-4.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-end gap-4">
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-5.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-6.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    {/* center column */}
+                    <div className="flex flex-col gap-12">
+                        <div className="flex items-center justify-center">
+                            <Image
+                                alt="Logo"
+                                src="/image/partner-logo.png"
+                                width={297}
+                                height={275}
+                            />
+                        </div>
+                    </div>
+                    {/* right column */}
+                    <div className="flex flex-col gap-12">
+                        <div className="flex items-center justify-start gap-4">
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-7.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-8.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-start gap-4">
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-9.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-10.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-11.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-start gap-4">
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-12.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                                <Image
+                                    alt="Logo"
+                                    src="/icons/partner-13.svg"
+                                    width={45}
+                                    height={45}
+                                    className="w-auto h-auto hover:opacity-100"
+                                />
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+            {/* Footer */}
+            <footer className="flex flex-col w-full items-start bg-[#151626] rounded-[32px]">
+                <div className="flex flex-col items-center gap-16 px-0 py-12 w-full">
+                    <div className="flex items-start gap-[150px] px-8 py-0 w-full">
+                        <div className="flex-col items-start gap-8 flex relative flex-1 grow">
+                            <div className="flex flex-col h-[62px] items-start gap-2 w-full">
+                                <h3 className=" font-text-xl-semibold text-white">
+                                    Stay Connected
+                                </h3>
+                                <p className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base tracking-[0] leading-6 whitespace-nowrap">
+                                    Sign up to stay up to-date on the latest announcements
+                                </p>
+                            </div>
+
+                            <div className="inline-flex items-start gap-2.5">
+                                <div className="flex flex-col w-[257px] items-start gap-1.5">
+                                    <div className="items-center gap-2 flex relative flex-1 grow">
+                                        <Input
+                                            placeholder="you@example.com"
+                                            endContent={
+                                                <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                                            }
+                                            type="email"
+                                        />
+                                    </div>
+                                </div>
+
+                                <Button radius="full" className="bg-[#B84794]">
+                                    Subscribe
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-8 relative flex-1 grow">
+                            <div className="flex flex-col items-end justify-center gap-4 flex-1 grow">
+                                <h4 className=" [font-family:'Inter',Helvetica] font-medium text-white text-lg text-right leading-5">
+                                    Product
+                                </h4>
+                                <div className="flex flex-col items-end justify-center gap-3  w-full">
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                Download App
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                Web App
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                Learn
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col items-end justify-center gap-4 flex-1 grow">
+                                <h4 className=" [font-family:'Inter',Helvetica] font-medium text-white text-lg text-right leading-5">
+                                    Community
+                                </h4>
+                                <div className="flex flex-col items-end justify-center gap-3  w-full">
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                Discord
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                Telegram
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                Twitter
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col items-end justify-center gap-4 flex-1 grow">
+                                <h4 className=" [font-family:'Inter',Helvetica] font-medium text-white text-lg text-right leading-5">
+                                    Resources
+                                </h4>
+                                <div className="flex flex-col items-end justify-center gap-3  w-full">
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                GitHub
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                Developer
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                Docs
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                Stats
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="inline-flex items-center gap-2">
+                                        <div className="inline-flex items-center justify-center gap-2">
+                                            <div className="w-fit [font-family:'Inter',Helvetica] font-normal text-[#787b91] text-base text-right tracking-[0] leading-6 whitespace-nowrap">
+                                                Privacy
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex flex-col items-center gap-16 pt-0 pb-12 px-0 w-full">
+                    <div className="flex flex-col items-start gap-8 px-8 py-0 w-full">
+                        <div className="flex items-center justify-between w-full">
+                            <div className="inline-flex items-center gap-[8.03px]">
+                                <Image
+                                    alt="hub"
+                                    src="/icons/hub.svg"
+                                    width={24}
+                                    height={24}
+                                />
+                                <h2 className="text-white text-[24px] font-medium"> Hubra </h2>
+                            </div>
+
+                            <div className="inline-flex items-center gap-6">
+                                <Image
+                                    alt="x"
+                                    src="/icons/x.svg"
+                                    width={24}
+                                    height={24}
+                                />
+                                <Image
+                                    alt="github"
+                                    src="/icons/git.svg"
+                                    width={24}
+                                    height={24}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </section>
+    );
+};
