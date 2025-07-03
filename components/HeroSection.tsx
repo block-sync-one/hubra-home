@@ -67,26 +67,31 @@ export const HeroSection = (): JSX.Element => {
       )}
 
       {/* Pink orb effect */}
-      <div className="absolute top-[0%] left-[8%]">
+      <div className="absolute top-[0%] left-[8%] lg:right-[15%] sm:right-[0%]">
         <Image src="/image/pink-orb1.png" alt="Pink Orb" width={425} height={167} quality={100}/>
       </div>
 
 
       {/* Pink gradient effect with bottom-to-top animation */}
-      <div className="absolute w-[487px] h-[507px] top-[30%] right-[15%] flex justify-center items-center">
+      <div className="absolute w-[487px] h-[507px] top-[20%] right-[15%] flex justify-center items-center">
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: -90, opacity: 1 }}
           transition={{ 
             duration: 0.5, 
-            ease: "easeOut",
+            ease: "easeInOut",
             delay: 0.3 // Slight delay for better visual effect
           }}
         >
           <Image src="/image/hero-ball.png" alt="Pink Gradient" width={480} height={507} quality={100}/>
         </motion.div>
-        <div className="absolute top-[20px] left-[22%] w-[370px] h-full rounded-[9999px_9999px_0px_0px] bg-[linear-gradient(180deg,rgba(235,66,181,1)_0%,rgba(235,66,181,0)_85%)] opacity-[0.2]" >
-          <Image className="absolute top-[150px] left-[10px]" src="/image/ball-back.svg" alt="Pink Gradient" width={350} height={507} quality={100}/>
+        <div className="absolute top-[20px] left-[22%] w-[370px] h-full rounded-[9999px_9999px_0px_0px] bg-[linear-gradient(180deg,rgba(235,66,181,1)_0%,rgba(235,66,181,0)_75%)] opacity-[0.2]" >
+          <div className="absolute top-[150px] left-[10px] w-[350px] h-[350px] flex items-start gap-2" >
+            <div className="w-[100px] h-full bg-[linear-gradient(0deg,rgba(255,75,198,0)_0%,rgba(184,71,148,1)_10%,rgba(255,75,198,0)_90%)] "/>
+            <div className="w-[100px] h-full bg-[linear-gradient(0deg,rgba(255,75,198,0)_0%,rgba(184,71,148,1)_10%,rgba(255,75,198,0)_90%)] "/>
+            <div className="w-[100px] h-full bg-[linear-gradient(0deg,rgba(255,75,198,0)_0%,rgba(184,71,148,1)_10%,rgba(255,75,198,0)_90%)] "/>
+            <div className="w-[100px] h-full bg-[linear-gradient(0deg,rgba(255,75,198,0)_0%,rgba(184,71,148,1)_10%,rgba(255,75,198,0)_90%)] "/>
+          </div>
         </div>
       </div>
 

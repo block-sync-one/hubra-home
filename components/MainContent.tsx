@@ -8,9 +8,11 @@ import { Badge } from "./ui/badge"
 import Image from "next/image"
 import { TVLAnimatedPath } from "./TVLAnimation"
 import { FloatingOrbsAnimation } from "./ui/FloatingOrbAnimation";
-import { DefiCardMotionOverlay } from "./ui/DefiCardMotionOverlay";
 import { motion } from "framer-motion";
 import Solanaglow from "./ui/Solanaglow";
+import WalletEnergyFlow from "./ui/WalletEnergyFlow";
+import DefiCardMotionOverlay from "./ui/DefiCardMotionOverlay";
+import { Partner10Icon, Partner11Icon, Partner12Icon, Partner13Icon, Partner1Icon, Partner2Icon, Partner3Icon, Partner4Icon, Partner5Icon, Partner6Icon, Partner9Icon,Partner7Icon, Partner8Icon } from "./icons";
 
 
 // Simple Separator component
@@ -97,7 +99,7 @@ export const MainContentSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="flex flex-col w-full items-start gap-[120px] mx-auto max-w-[1016px]">
+        <section className="flex flex-col w-full items-start gap-[120px] mx-auto max-w-[1016px] mb-60">
             {/* Meet Hubra Section */}
             <div className="flex flex-col w-full items-start gap-8">
                 <div className="flex flex-col items-center gap-10 w-full">
@@ -107,15 +109,19 @@ export const MainContentSection = (): JSX.Element => {
                         </h2>
                     </div>
 
-                    <div className="flex items-start gap-12 w-full">
-                        <Card className="flex-1 h-[398px] bg-[#121323] rounded-2xl" />
-                        <Card className="flex-1 h-[398px] bg-[#121323] rounded-2xl" />
+                    <div className="flex w-full">
+                        <Card className="flex-1 h-[398px] bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                            <WalletEnergyFlow />
+                        </Card>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-12 w-full">
-                    <div className="w-[484px] gap-[21px] flex flex-col items-start">
-                        <div className="w-[334px] gap-4 flex flex-col items-start">
+                    <div className="w-[484px] gap-[21px] flex flex-col items-start relative">
+                        {/* Glowing pink shadowed stick */}
+                        <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-[#FF68CF] to-[#B84794] opacity-80 rounded-full shadow-[0_0_40px_rgba(255,104,207,1),0_0_60px_rgba(255,104,207,0.4)]"></div>
+                        
+                        <div className="w-[334px] gap-4 flex flex-col items-start ml-8">
                             <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-2xl tracking-[0] leading-[33.6px]">
                                 Normies
                             </h3>
@@ -155,7 +161,7 @@ export const MainContentSection = (): JSX.Element => {
                     {/* Left column: 2 stacked cards */}
                     <div className="flex flex-col gap-6 w-[370px]">
                         {/* $13M TVL Card */}
-                        <Card className="relative h-[180px] bg-[#191A2C] rounded-2xl flex flex-col justify-between p-6 overflow-hidden">
+                        <Card className="relative h-[180px] bg-[#121323] rounded-2xl flex flex-col justify-between p-6 overflow-hidden">
                             {/* Chart line (placeholder) */}
                             <div className="absolute left-0 bottom-0 w-full h-2/3 flex items-end">
                                 <TVLAnimatedPath />
@@ -224,7 +230,7 @@ export const MainContentSection = (): JSX.Element => {
                     </div>
                     <div className="flex items-start gap-12 w-full">
                         <Card className="flex-1 h-[310px] bg-[url('/image/df-3.png')] bg-cover bg-center rounded-2xl" />
-                        <Card className="flex-1 h-[310px] bg-[url('/image/df-4.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                        <Card className="flex-1 h-[310px] bg-[url('/image/df-4.png')] bg-cover bg-center rounded-2xl relative overflow-hidden items-center justify-center">
                             <DefiCardMotionOverlay />
                         </Card>
                     </div>
@@ -283,27 +289,15 @@ export const MainContentSection = (): JSX.Element => {
                     Hubsol Partners
                 </h2>
 
-                <div className="flex w-full items-center gap-12">
+                <div className="flex w-full items-center gap-4">
                     {/* Left column */}
-                    <div className="flex flex-col gap-12">
+                    <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-end gap-4">
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px] hover:opacity-100" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-1.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner1Icon/>
                             </div>
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-2.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner2Icon/>
                             </div>
                         </div>
                         <div className="flex items-center justify-end gap-4">
@@ -311,125 +305,59 @@ export const MainContentSection = (): JSX.Element => {
 
                             </div>
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-3.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner3Icon/>
                             </div>
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-4.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner4Icon/>
                             </div>
                         </div>
                         <div className="flex items-center justify-end gap-4">
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-5.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner5Icon/>
                             </div>
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-6.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner6Icon/>
                             </div>
                         </div>
                     </div>
                     {/* center column */}
-                    <div className="flex flex-col gap-12">
+                    <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-center">
                             <Image
                                 alt="Logo"
                                 src="/image/partner-logo.png"
-                                width={297}
-                                height={275}
+                                width={323}
+                                height={323}
                             />
                         </div>
                     </div>
                     {/* right column */}
-                    <div className="flex flex-col gap-12">
+                    <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-start gap-4">
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-7.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner7Icon />
                             </div>
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-8.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner8Icon />
                             </div>
                         </div>
                         <div className="flex items-center justify-start gap-4">
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-9.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner9Icon />
                             </div>
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-10.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner10Icon />
                             </div>
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-11.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner11Icon />
                             </div>
                         </div>
                         <div className="flex items-center justify-start gap-4">
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-12.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner12Icon />
                             </div>
                             <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
-                                <Image
-                                    alt="Logo"
-                                    src="/icons/partner-13.svg"
-                                    width={45}
-                                    height={45}
-                                    className="w-auto h-auto hover:opacity-100"
-                                />
+                                <Partner13Icon />
                             </div>
                         </div>
 
@@ -457,7 +385,15 @@ export const MainContentSection = (): JSX.Element => {
                                 <div className="flex flex-col w-[257px] items-start gap-1.5">
                                     <div className="items-center gap-2 flex relative flex-1 grow">
                                         <Input
-                                            placeholder="you@example.com"
+                                            placeholder="Enter your email"
+                                            radius="full"
+                                            classNames={{input: ["bg-[#1C1D2D]",
+                                                "placeholder:text-[#5D5664]",
+                                            ],
+                                            inputWrapper: ["bg-[#1C1D2D]",
+                                                "placeholder:text-[#5D5664]",
+                                            ],
+                                        }}
                                             endContent={
                                                 <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                                             }

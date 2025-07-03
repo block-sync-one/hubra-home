@@ -8,15 +8,7 @@ export const siteConfig = {
       label: "Home",
       href: "/",
     },
-
-    {
-      label: "Tokens",
-      href: "/tokens",
-    },
-    {
-      label: "DeFi",
-      href: "/defi",
-    },
+    
     {
       label: "Resources",
       description: "Learn more about Hubra",
@@ -32,6 +24,18 @@ export const siteConfig = {
           href: "/blog",
         }
       ],
+    },
+    {
+      label: "Tokens",
+      href: "/tokens",
+    },
+    {
+      label: "DeFi",
+      href: "/defi",
+    },
+    {
+      label: "Learn",
+      href: "/learn",
     },
     {
       label: "Stats",

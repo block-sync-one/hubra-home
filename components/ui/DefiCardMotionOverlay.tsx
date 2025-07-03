@@ -7,7 +7,7 @@ const LINE_LENGTH = 370;
 const LINE_THICKNESS = 1;
 const PINK_LINE_LENGTH = 60;
 const ANIMATION_DURATION = 2; // seconds
-const SATELLITE_ARC_LENGTH = 30; // degrees
+const SATELLITE_ARC_LENGTH = 20; // degrees
 const SATELLITE_COLOR = "#B84794";
 const SATELLITE_DURATION = 4; // seconds
 
@@ -162,6 +162,7 @@ export const DefiCardMotionOverlay = () => {
                     borderRadius: LINE_THICKNESS,
                     transform: 'translateY(-50%)',
                     opacity: 0.4,
+                    zIndex: 1,
                 }}
                 animate={{
                     x: [0, LINE_LENGTH - PINK_LINE_LENGTH, 0],
@@ -171,6 +172,33 @@ export const DefiCardMotionOverlay = () => {
                     repeat: Infinity,
                     repeatType: 'loop',
                     ease: 'easeInOut',
+                }}
+            />
+            
+            {/* Hexagon mask overlay to hide pink line underneath */}
+            <div 
+                className="absolute inset-0 bg-[url('/icons/Hexagon.png')] w-[125px] h-[113px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-cover bg-center"
+                style={{ zIndex: 2 }}
+            />
+            
+            {/* Dot texture overlay on hexagon */}
+            <div 
+                className="absolute w-[125px] h-[113px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                style={{ 
+                    zIndex: 3,
+                    backgroundImage: `
+                        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+                        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+                        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06) 1px, transparent 1px)
+                    `,
+                    backgroundSize: '8px 8px, 12px 12px, 16px 16px',
+                    backgroundPosition: '0 0, 4px 4px, 8px 8px',
+                    maskImage: 'url(/icons/Hexagon.png)',
+                    maskSize: 'cover',
+                    maskPosition: 'center',
+                    WebkitMaskImage: 'url(/icons/Hexagon.png)',
+                    WebkitMaskSize: 'cover',
+                    WebkitMaskPosition: 'center'
                 }}
             />
         </div>

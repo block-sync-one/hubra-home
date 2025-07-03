@@ -39,21 +39,21 @@ export const Navbar = () => {
 
   const navItems = siteConfig.navItems.filter((item) => item.label !== "Stats" && item.label !== "Home");
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky" 
-    className="bg-transparent backdrop-filter-none"
-    classNames={{
-      menuItem:" text-[#797B92]",
-      menu:" text-[#797B92]",
-      item:" text-[#797B92]"
-    }} >
+    <HeroUINavbar maxWidth="2xl" position="sticky"
+      className="bg-transparent backdrop-filter-none"
+      classNames={{
+        menuItem: " text-[#797B92]",
+        menu: " text-[#797B92]",
+        item: " text-[#797B92]"
+      }} >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
-          <Logo className="text-primary" height={28} width={28} />  
+            <Logo className="text-primary" height={28} width={28} />
             <p className="font-bold text-inherit">Hubra</p>
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
+        <ul className="hidden lg:flex gap-4 justify-start items-center ml-4">
           {navItems.map((item) => (
             item.navItems ? (
               <NavbarItem key={item.label} className="relative">
@@ -81,16 +81,16 @@ export const Navbar = () => {
               </NavbarItem>
             ) : (
               <NavbarItem key={item.href}>
-                <NextLink
+                <Button
+                  variant="light"
                   className={clsx(
                     linkStyles({ color: "foreground" }),
-                    "data-[active=true]:text-primary data-[active=true]:font-medium",
+                    "flex items-center gap-1 data-[active=true]:text-primary data-[active=true]:font-medium"
                   )}
-                  color="foreground"
-                  href={item.href || ""}
+                  href={item.href}
                 >
                   {item.label}
-                </NextLink>
+                </Button>
               </NavbarItem>
             )
           ))}
@@ -101,25 +101,25 @@ export const Navbar = () => {
         className="hidden sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
-        
+
         <NavbarItem className="hidden md:flex">
           <Button
-          variant="light"
-          radius="full"
+            variant="light"
+            radius="full"
             isExternal
             as={Link}
             className="text-sm font-normal "
             href={siteConfig.links.sponsor}
             startContent={isMounted ? <Icon icon="hugeicons:chart-02" width="16" height="16" /> : null}
-            
+
           >
             Stats
-           
+
           </Button>
         </NavbarItem>
         <NavbarItem className="hidden md:flex">
           <Button
-          radius="full"
+            radius="full"
             isExternal
             as={Link}
             className="text-sm font-normal text-black bg-white"
@@ -127,8 +127,8 @@ export const Navbar = () => {
             endContent={isMounted ? <Icon icon="solar:alt-arrow-right-outline" width="14" height="14" /> : null}
             variant="flat"
           >
-            Launch App 
-           
+            Launch App
+
           </Button>
         </NavbarItem>
       </NavbarContent>
@@ -142,7 +142,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarMenu>
-        
+
         <div className="mx-4 mt-2 flex flex-col gap-2">
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
