@@ -131,6 +131,7 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
                     </div>
 
+
                     <div className="w-[484px] gap-[21px] flex flex-col items-start">
                         <div className="w-[334px] gap-4 flex flex-col items-start">
                             <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-2xl tracking-[0] leading-[33.6px]">
