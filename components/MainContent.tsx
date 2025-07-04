@@ -132,6 +132,7 @@ export const MainContentSection = (): JSX.Element => {
                         {/* Glowing pink shadowed stick */}
                         <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-[#FF68CF] to-[#B84794] opacity-80 rounded-full shadow-[0_0_40px_rgba(255,104,207,1),0_0_60px_rgba(255,104,207,0.4)]"></div>
 
+
                         <div className="w-[334px] gap-4 flex flex-col items-start ml-8">
                             <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-2xl tracking-[0] leading-[33.6px]">
                                 Normies
