@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Hero Section Responsive Variables */
+:root {
+  /* Mobile values (default) */
+  --hero-container-width: 353px;
+  --hero-container-height: 303px;
+  --hero-image-width: 280px;
+  --hero-image-height: 280px;
+  --hero-motion-top: 30px;
+  --hero-motion-left: 8px;
+  --hero-gradient-width: 216px;
+  --hero-bars-width: 210px;
+  --hero-bars-height: 300px;
+  --hero-bar-width: 55px;
+  --hero-bar-gap: 4px;
+}
+
+/* Desktop values */
+@media (min-width: 768px) {
+  :root {
+    --hero-container-width: 487px;
+    --hero-container-height: 507px;
+    --hero-image-width: 480px;
+    --hero-image-height: 507px;
+    --hero-motion-top: -25px; /* Desktop: no offset needed */
+    --hero-motion-left: -45px;
+    --hero-gradient-top: 20px;
+    --hero-gradient-left: 22%;
+    --hero-gradient-width: 370px;
+    --hero-bars-top: 150px;
+    --hero-bars-left: 10px;
+    --hero-bars-width: 350px;
+    --hero-bars-height: 500px;
+    --hero-bar-width: 100px;
+    --hero-bar-gap: 8px;
+  }
+}

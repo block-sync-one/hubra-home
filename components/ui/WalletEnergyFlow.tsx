@@ -15,8 +15,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
     <div className={`absolute inset-0 pointer-events-none ${className}`}>
       {/* Left Wallet Liquid */}
       <div
-        className="absolute left-[60px] bottom-[122px] w-[237px] rounded-b-[28%] overflow-hidden"
-        style={{ height: "111px" }}
+        className="absolute left-[28%] top-[18%] w-[43%] rounded-b-[26px] h-[13%] md:left-[6%] md:top-[41%] md:rounded-b-[20px] lg:rounded-b-[38px] md:w-[23.4%] md:h-[9vw] lg:h-[28%] overflow-hidden"
       >
         {/* Background liquid */}
         <div 
@@ -82,8 +81,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
 
       {/* Right Wallet Liquid */}
       <div
-        className="absolute right-[70px] bottom-[120px] w-[255px] rounded-[21%] overflow-hidden"
-        style={{ height: "155px" }}
+        className="absolute left-[26%] top-[70%] w-[46%] rounded-[21%] md:rounded-[0%] lg:rounded-[21%] h-[19%] md:left-[68.3%] md:top-[36%] lg:top-[30%] md:w-[25%] md:rounded-[21%] md:h-[9vw] lg:h-[39%] overflow-hidden"
       >
         {/* Background liquid */}
         <div 
@@ -147,19 +145,24 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
         </svg>
       </div>
       
-      {/* Top Energy Path - FROM left wallet TO right wallet */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+      {/* Responsive Energy Paths - FROM left wallet TO right wallet */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" viewBox="0 0 1014 400" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id="energyGradientTop" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#FF4FCB" stopOpacity="0" />
             <stop offset="50%" stopColor="#FF4FCB" stopOpacity="1" />
             <stop offset="100%" stopColor="#FF4FCB" stopOpacity="0" />
           </linearGradient>
+          <linearGradient id="energyGradientBottom" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#FF4FCB" stopOpacity="0" />
+            <stop offset="50%" stopColor="#FF4FCB" stopOpacity="1" />
+            <stop offset="100%" stopColor="#FF4FCB" stopOpacity="0" />
+          </linearGradient>
         </defs>
         
-        {/* Top path from SVG */}
+        {/* Top path - responsive coordinates */}
         <motion.path
-          d="M 178.499 200 V 106.157 C 178.499 101.445 182.319 97.6254 187.03 97.6254 H 261.678 C 297.016 97.6254 325.663 126.272 325.663 161.609 V 176.539 C 325.663 189.496 336.166 200 349.123 200 H 501.619"
+          d="M 178 200 V 106 C 178 101 182 98 187 98 H 262 C 297 98 326 126 326 162 V 177 C 326 189 336 200 349 200 H 502"
           fill="none"
           stroke="url(#energyGradientTop)"
           strokeWidth="2"
@@ -171,21 +174,10 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
             opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" },
           }}
         />
-      </svg>
-
-      {/* Bottom Energy Path - FROM left wallet TO right wallet */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none">
-        <defs>
-          <linearGradient id="energyGradientBottom" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#FF4FCB" stopOpacity="0" />
-            <stop offset="50%" stopColor="#FF4FCB" stopOpacity="1" />
-            <stop offset="100%" stopColor="#FF4FCB" stopOpacity="0" />
-          </linearGradient>
-        </defs>
         
-        {/* Bottom path from SVG */}
+        {/* Bottom path - responsive coordinates */}
         <motion.path
-          d="M 178.499 200 V 293.843 C 178.499 298.555 182.319 302.375 187.03 302.375 H 261.678 C 297.016 302.375 325.663 273.728 325.663 238.391 V 223.461 C 325.663 210.504 336.166 200 349.123 200 H 501.619"
+          d="M 178 200 V 294 C 178 299 182 302 187 302 H 262 C 297 302 326 274 326 238 V 223 C 326 211 336 200 349 200 H 502"
           fill="none"
           stroke="url(#energyGradientBottom)"
           strokeWidth="2"
@@ -199,8 +191,8 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
         />
       </svg>
 
-      {/* INCOMING Energy Paths - FROM right wallet TO external sources */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+      {/* Responsive INCOMING Energy Paths - FROM right wallet TO external sources */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" viewBox="0 0 1014 400" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id="incomingEnergyGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#FF4FCB" stopOpacity="0" />
@@ -216,7 +208,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
         
         {/* Outgoing path 1 - FROM right wallet TO external (top path) */}
         <motion.path
-          d="M 487.756 200 L 640.252 200 C 653.209 200 663.712 189.496 663.712 176.539 L 663.712 161.609 C 663.712 126.272 692.359 97.6254 727.696 97.6254 L 802.345 97.6254 C 807.056 97.6254 810.876 101.445 810.876 106.157 L 810.876 114.155"
+          d="M 488 200 L 640 200 C 653 200 664 189 664 177 L 664 162 C 664 126 692 98 728 98 L 802 98 C 807 98 811 101 811 106 L 811 114"
           fill="none"
           stroke="url(#incomingEnergyGradient1)"
           strokeWidth="2"
@@ -231,7 +223,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
 
         {/* Outgoing path 2 - FROM right wallet TO external (bottom path) */}
         <motion.path
-          d="M 487.756 200 L 640.252 200 C 653.209 200 663.712 210.504 663.712 223.461 L 663.712 238.391 C 663.712 273.728 692.359 302.375 727.696 302.375 L 802.345 302.375 C 807.056 302.375 810.876 298.555 810.876 293.843 L 810.876 285.845"
+          d="M 488 200 L 640 200 C 653 200 664 211 664 223 L 664 238 C 664 274 692 302 728 302 L 802 302 C 807 302 811 299 811 294 L 811 286"
           fill="none"
           stroke="url(#incomingEnergyGradient2)"
           strokeWidth="2"
@@ -245,9 +237,9 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
         />
       </svg>
 
-      {/* Wallet Glow Effects */}
+      {/* Responsive Wallet Glow Effects */}
       <motion.div
-        className="absolute left-[120px] bottom-[80px] w-[80px] h-[80px] rounded-full"
+        className="absolute left-[120px] bottom-[80px] w-[80px] h-[80px] rounded-full md:left-[80px] md:bottom-[120px] md:w-[120px] md:h-[120px]"
         style={{
           background: "radial-gradient(circle, rgba(255, 105, 210, 0.3) 0%, rgba(255,79,203,0) 70%)",
         }}
@@ -263,7 +255,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
       />
 
       <motion.div
-        className="absolute right-[120px] bottom-[80px] w-[80px] h-[80px] rounded-full"
+        className="absolute right-[120px] bottom-[80px] w-[80px] h-[80px] rounded-full md:right-[80px] md:bottom-[120px] md:w-[120px] md:h-[120px]"
         style={{
           background: "radial-gradient(circle, rgba(255, 105, 210, 0.3) 0%, rgba(255,79,203,0) 70%)",
         }}
@@ -281,7 +273,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
 
       {/* Additional glow for incoming energy to right wallet */}
       <motion.div
-        className="absolute right-[120px] top-[60px] w-[60px] h-[60px] rounded-full"
+        className="absolute right-[120px] top-[60px] w-[60px] h-[60px] rounded-full md:right-[80px] md:top-[80px] md:w-[90px] md:h-[90px]"
         style={{
           background: "radial-gradient(circle, rgba(255, 105, 210, 0.3) 0%, rgba(255,79,203,0) 70%)",
         }}
@@ -298,7 +290,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
       />
 
       <motion.div
-        className="absolute right-[120px] bottom-[140px] w-[60px] h-[60px] rounded-full"
+        className="absolute right-[120px] bottom-[140px] w-[60px] h-[60px] rounded-full md:right-[80px] md:bottom-[200px] md:w-[90px] md:h-[90px]"
         style={{
           background: "radial-gradient(circle, rgba(255, 105, 210, 0.3) 0%, rgba(255,79,203,0) 70%)",
         }}
@@ -313,6 +305,53 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
           delay: 1.5,
         }}
       />
+
+      {/* MOBILE: Responsive energy flow paths */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none md:hidden" viewBox="0 0 350 518" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="energyFlowGradientMobile" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#B84794" stopOpacity="0" />
+            <stop offset="0.2" stopColor="#F07DCB" stopOpacity="1" />
+            <stop offset="0.8" stopColor="#F07DCB" stopOpacity="1" />
+            <stop offset="1" stopColor="#B84794" stopOpacity="0" />
+          </linearGradient>
+          {/* Mask to hide energy flow behind Solana logo */}
+          <mask id="solanaLogoMask">
+            <rect x="0" y="0" width="350" height="518" fill="white" />
+            <circle cx="175" cy="260" r="29" fill="black" />
+          </mask>
+        </defs>
+        {/* Left path: single continuous path from top, through Solana, to bottom, masked */}
+        <motion.path
+          d="M95.3385 113L87.375 113C83.3019 113 80 116.302 80 120.375L80 146.222C80 162.791 93.4315 176.222 110 176.222L160 176.222C168.284 176.222 175 182.938 175 191.222L175 334.778C175 343.062 168.284 349.778 160 349.778L110 349.778C93.4315 349.778 80 363.209 80 379.778L80 405.625C80 409.698 83.3019 413 87.375 413L95.3385 413"
+          fill="none"
+          stroke="url(#energyFlowGradientMobile)"
+          strokeWidth="1"
+          strokeLinecap="round"
+          mask="url(#solanaLogoMask)"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{
+            pathLength: { duration: 2.5, repeat: Infinity, ease: 'easeInOut' },
+            opacity: { duration: 2.5, repeat: Infinity, ease: 'easeInOut' },
+          }}
+        />
+        {/* Right path: single continuous path from top, through Solana, to bottom, masked */}
+        <motion.path
+          d="M254.661 113L262.625 113C266.698 113 270 116.302 270 120.375L270 146.222C270 162.791 256.569 176.222 240 176.222L190 176.222C181.716 176.222 175 182.938 175 191.222L175 334.778C175 343.062 181.716 349.778 190 349.778L240 349.778C256.569 349.778 270 363.209 270 379.778L270 405.625C270 409.698 266.698 413 262.625 413L254.661 413"
+          fill="none"
+          stroke="url(#energyFlowGradientMobile)"
+          strokeWidth="1"
+          strokeLinecap="round"
+          mask="url(#solanaLogoMask)"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{
+            pathLength: { duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: 1.25 },
+            opacity: { duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: 1.25 },
+          }}
+        />
+      </svg>
     </div>
   );
 };
