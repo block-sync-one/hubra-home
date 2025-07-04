@@ -15,7 +15,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
     <div className={`absolute inset-0 pointer-events-none ${className}`}>
       {/* Left Wallet Liquid */}
       <div
-        className="absolute left-[28%] top-[18%] w-[43%] rounded-b-[26px] h-[13%] md:left-[6%] md:top-[41%] md:rounded-b-[20px] lg:rounded-b-[38px] md:w-[23.4%] md:h-[9vw] lg:h-[28%] overflow-hidden"
+        className="absolute left-[28%] top-[18%] w-[43%] rounded-b-[26px] h-[13%] md:left-[6%] md:top-[41%] md:rounded-b-[0px] lg:rounded-b-[38px] md:w-[23.4%] md:h-[8.5vw] lg:h-[28%] overflow-hidden"
       >
         {/* Background liquid */}
         <div 
@@ -81,7 +81,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
 
       {/* Right Wallet Liquid */}
       <div
-        className="absolute left-[26%] top-[70%] w-[46%] rounded-[21%] md:rounded-[0%] lg:rounded-[21%] h-[19%] md:left-[68.3%] md:top-[36%] lg:top-[30%] md:w-[25%] md:rounded-[21%] md:h-[9vw] lg:h-[39%] overflow-hidden"
+        className="absolute left-[26%] top-[70%] w-[46%] rounded-[21%] md:rounded-[0px] md:rounded-t-[20px] lg:rounded-[21%] h-[19%] md:left-[68.3%] md:top-[36%] lg:top-[30%] md:w-[25%] md:rounded-[21%] md:h-[10vw] lg:h-[39%] overflow-hidden"
       >
         {/* Background liquid */}
         <div 

@@ -99,7 +99,7 @@ export const MainContentSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="flex flex-col w-full items-start gap-[120px] mx-auto max-w-[1016px] mb-60">
+        <section className="flex flex-col w-full items-start gap-[120px] mx-auto max-w-[1016px] mb-60 px-8">
             {/* Meet Hubra Section */}
             <div className="flex flex-col w-full items-start gap-8">
                 <div className="flex flex-col items-center gap-10 w-full">
@@ -117,9 +117,21 @@ export const MainContentSection = (): JSX.Element => {
                             <div className="absolute left-[63%] top-[75%] md:left-[88%] md:top-[41%] z-30 backdrop-blur-sm bg-transparent rounded-xl">
                                 <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px] md:w-[75px] md:h-[68px]" />
                             </div>
+                            <div className="absolute left-[32%] top-[18%] z-10 md:hidden">
+                                <Image src="/image/amir.hub-m.svg" alt="Hubra" width={84} height={27} className="" />
+                            </div>
+                            <div className="absolute left-[32%] top-[77%] z-10 md:hidden">
+                                <Image src="/image/friend.hub-m.svg" alt="Hubra" width={98} height={27} className="" />
+                            </div>
                             <div className="hidden md:block">
-                                <div className="flex items-center justify-center mb-10">
-                                    <Image src="/image/wgroup.svg" alt="Hubra" width={1014} height={281} />
+                                <div 
+                                    className="flex items-center justify-center relative"
+                                    style={{ marginBottom: 'var(--dynamic-margin-bottom)' }}
+                                >
+                                    <Image src="/image/amir.hub.svg" alt="Hubra" width={131} height={42} className="absolute md:block hidden left-[7%] top-[50%] z-10" />
+                                    <Image src="/image/friend.hub.svg" alt="Hubra" width={156} height={46} className="absolute md:block hidden left-[70%] top-[50%] z-10" />
+                                    
+                                    <Image src="/image/wgroup.png" alt="Hubra" width={1014} height={281} />
                                 </div>
                             </div>
                             <WalletEnergyFlow />
@@ -127,13 +139,12 @@ export const MainContentSection = (): JSX.Element => {
                     </div>
                 </div>
 
-                <div className="flex flex-col md:flex-row items-center gap-12 w-full">
-                    <div className="w-[484px] gap-[21px] flex flex-col items-start relative">
+                <div className="flex flex-col md:flex-row items-center gap-12 w-full mx-auto">
+                    <div className="flex items-start">
                         {/* Glowing pink shadowed stick */}
-                        <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-[#FF68CF] to-[#B84794] opacity-80 rounded-full shadow-[0_0_40px_rgba(255,104,207,1),0_0_60px_rgba(255,104,207,0.4)]"></div>
+                        <div className="hidden mr-8 md:block w-1 h-[72px] bg-gradient-to-b from-[#FF68CF] to-[#B84794] opacity-80 rounded-full shadow-[0_0_40px_rgba(255,104,207,1),0_0_60px_rgba(255,104,207,0.4)]"></div>
 
-
-                        <div className="w-[334px] gap-4 flex flex-col items-start ml-8">
+                        <div className="w-[334px] gap-4 flex flex-col items-start">
                             <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-2xl tracking-[0] leading-[33.6px]">
                                 Normies
                             </h3>
@@ -143,8 +154,8 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
                     </div>
 
-                    <div className="w-[484px] gap-[21px] flex flex-col items-start">
-                        <div className="w-[334px] gap-4 flex flex-col items-start">
+                    <div className="gap-[21px] flex flex-col items-start">
+                        <div className="w-[334px] gap-4 flex flex-col items-start opacity-50">
                             <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-2xl tracking-[0] leading-[33.6px]">
                                 Degens
                             </h3>
@@ -176,7 +187,7 @@ export const MainContentSection = (): JSX.Element => {
                     </Card>
 
                     {/* Left column: 2 stacked cards */}
-                    <div className="flex flex-col gap-6 w-[370px]">
+                    <div className="flex flex-col gap-6 w-full md:w-[370px]">
                         {/* $13M TVL Card */}
                         <Card className="relative h-[180px] bg-[#121323] rounded-2xl flex flex-col w-full justify-between p-6 overflow-hidden">
                             {/* Chart line (placeholder) */}
@@ -215,7 +226,7 @@ export const MainContentSection = (): JSX.Element => {
                         </p>
                     </div>
                     <div className="flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-12 w-full">
-                        <div className="flex w-full md:w-1/2 flex-col">
+                        <div className="flex w-full md:w-1/2 flex-col gap-8">
                             <Card className="flex w-full h-[310px] bg-[url('/image/df-1.png')] bg-cover bg-center bg-[length:100%_100%] rounded-2xl" />
                             <div className="w-full gap-4 flex flex-col items-start">
                                 <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-[20px] tracking-[0] leading-[33.6px]">
@@ -226,7 +237,7 @@ export const MainContentSection = (): JSX.Element => {
                                 </p>
                             </div>
                         </div>
-                        <div className="flex w-full md:w-1/2 flex-col">
+                        <div className="flex w-full md:w-1/2 flex-col gap-8">
                             <Card className="flex w-full h-[310px] bg-[url('/image/df-2.png')] bg-cover bg-center bg-[length:100%_100%] rounded-2xl" />
                             <div className="w-full gap-4 flex flex-col items-start">
                                 <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-[20px] tracking-[0] leading-[33.6px]">
@@ -240,7 +251,7 @@ export const MainContentSection = (): JSX.Element => {
                     </div>
 
                     <div className="flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-12 w-full">
-                        <div className="flex w-full md:w-1/2 flex-col">
+                        <div className="flex w-full md:w-1/2 flex-col gap-8">
                             <Card className="flex w-full h-[310px] bg-[url('/image/df-3.png')] bg-cover bg-center bg-[length:100%_100%] rounded-2xl" />
                             <div className="w-full gap-4 flex flex-col items-start">
                                 <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-[20px] tracking-[0] leading-[20px]">
@@ -251,7 +262,7 @@ export const MainContentSection = (): JSX.Element => {
                                 </p>
                             </div>
                         </div>
-                        <div className="flex w-full md:w-1/2 flex-col">
+                        <div className="flex w-full md:w-1/2 flex-col gap-8">
                             <Card className="relative overflow-hidden flex w-full h-[310px] bg-[url('/image/df-4.png')] bg-cover bg-center rounded-2xl">
                                 <DefiCardMotionOverlay />
                             </Card>
@@ -296,7 +307,7 @@ export const MainContentSection = (): JSX.Element => {
                     Hubsol Partners
                 </h2>
 
-                <div className="flex w-full flex-col md:flex-row items-center gap-4">
+                <div className="flex w-full flex-col md:flex-row md:justify-center items-center gap-4">
                     {/* Left column */}
                     <div className="flex md:flex-col gap-4">
                         <div className="flex flex-col md:flex-row items-center justify-end gap-4">
@@ -328,12 +339,13 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
                     </div>
                     {/* center column */}
-                    <div className="flex items-center justify-center w-[180px] h-auto md:w-full">
+                    <div className="flex items-center justify-center w-[180px] h-auto md:hidden lg:block lg:w-full">
                         <Image
                             alt="Logo"
                             src="/image/partner-logo.png"
                             width={323}
                             height={323}
+                            className="w-full h-auto"
                         />
                     </div>
                     {/* right column */}
@@ -374,7 +386,7 @@ export const MainContentSection = (): JSX.Element => {
 
             {/* Footer */}
             <footer className="flex flex-col gap-10 w-screen md:w-full items-start bg-[#151626] rounded-[32px] py-12 -ml-10 md:ml-0">
-                <div className="flex flex-col gap-16 md:flex-row items-start md:gap-[150px] px-8 py-0 w-full">
+                <div className="flex flex-col gap-16 md:flex-row md:justify-between items-start px-8 py-0 w-full">
                     <div className="flex-col items-start gap-8 flex relative flex-1 grow">
                         <div className="flex flex-col h-[62px] items-start gap-2 w-full">
                             <h3 className=" font-text-xl-semibold text-white">
@@ -386,7 +398,7 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
 
                         <div className="flex flex-col w-full md:flex-row items-start gap-2.5">
-                            <div className="flex flex-col md:flex-row md:w-[257px] md:items-start gap-1.5 w-full">
+                            <div className="flex flex-col lg:flex-row lg:w-[257px] lg:items-start gap-1.5 w-full">
                                 <div className="items-center gap-2 flex relative flex-1 grow w-full">
                                     <Input
                                         placeholder="Enter your email"
@@ -400,7 +412,7 @@ export const MainContentSection = (): JSX.Element => {
                                             ],
                                         }}
                                         endContent={
-                                            <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0 flex items-center" />
+                                            <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0 flex items-center mt-2" />
                                         }
                                         type="email"
                                     />
@@ -518,7 +530,7 @@ export const MainContentSection = (): JSX.Element => {
                 </div>
 
                 <div className="flex flex-col items-start gap-8 px-8 py-0 w-full">
-                    <div className="flex items-center justify-between w-full">
+                    <div className="flex flex-col items-start gap-4 md:flex-row md:items-center justify-between w-full">
                         <div className="inline-flex items-center gap-[8.03px]">
                             <Image
                                 alt="hub"

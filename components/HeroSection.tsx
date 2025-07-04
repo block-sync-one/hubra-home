@@ -40,7 +40,7 @@ export const HeroSection = (): JSX.Element => {
   }, [isMounted]);
 
   return (
-    <Card className="relative w-full h-[676px] bg-[url('/image/hero-bg1.png')] bg-cover bg-center rounded-3xl overflow-hidden border-none">
+    <Card className="relative w-full h-[676px] bg-[url('/image/hero-bg1.png')] bg-cover bg-center rounded-none md:rounded-3xl overflow-hidden border-none">
 
       {/* Random animated particles OUTSIDE the pink gradient effect */}
       {isMounted && (
@@ -73,41 +73,42 @@ export const HeroSection = (): JSX.Element => {
 
 
       {/* Pink gradient effect with bottom-to-top animation */}
-      <div className="absolute top-[15%] w-full h-full flex justify-center items-center md:absolute md:w-[487px] md:h-[507px] md:top-[24%] md:right-[15%] md:flex md:justify-center md:items-center">
+      <div className="absolute w-full h-full flex justify-center items-center md:w-[487px] md:h-[507px] md:flex md:justify-center md:items-center"
+        style={{
+          width: 'var(--hero-container-width)',
+          height: 'var(--hero-container-height)',
+          right: 'var(--hero-container-right)',
+          top: 'var(--hero-container-top)'
+        }}>
         <div
-          className="relative flex justify-center items-center"
-          style={{
-            width: 'var(--hero-container-width)',
-            height: 'var(--hero-container-height)'
-          }}
+          className="flex justify-center items-center relative"
         >
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: -90, opacity: 1 }}
-            transition={{
-              duration: 0.5,
-              ease: "easeInOut",
-              delay: 0.3
-            }}
-            className="absolute"
-            style={{
-              top: 'var(--hero-motion-top)',
-              left: 'var(--hero-motion-left)'
-            }}
-          >
-            <Image
-              src="/image/hero-ball.png"
-              alt="Pink Gradient"
-              width={240}
-              height={253}
-              className="object-contain"
-              style={{
-                width: 'var(--hero-image-width)',
-                height: 'var(--hero-image-height)'
+          <div className="absolute top-[var(--hero-motion-top)] w-full h-full flex justify-center items-center">
+            <motion.div
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: -90, opacity: 1 }}
+              transition={{
+                duration: 0.5,
+                ease: "easeInOut",
+                delay: 0.3
               }}
-              unoptimized
-            />
-          </motion.div>
+              className="absolute"
+            >
+              <Image
+                src="/image/hero-ball.png"
+                alt="Pink Gradient"
+                width={240}
+                height={240}
+                className="object-contain"
+                style={{
+                  width: 'var(--hero-image-size)',
+                  height: 'var(--hero-image-size)'
+                }}
+                unoptimized
+              />
+            </motion.div>
+          </div>
+
           <div
             className="h-full rounded-[9999px_9999px_0px_0px] bg-[linear-gradient(180deg,rgba(235,66,181,1)_0%,rgba(235,66,181,0)_85%)] opacity-[0.2] flex justify-center items-center"
             style={{
@@ -145,7 +146,7 @@ export const HeroSection = (): JSX.Element => {
 
 
       {/* Main content text */}
-      <div className="flex flex-col w-full items-start gap-5 absolute top-[30px] md:top-[200px] left-[10px] md:left-[100px]">
+      <div className="flex flex-col w-full items-start gap-5 absolute top-[var(--main-content-top)] left-[var(--main-content-left)]">
         <div className="inline-flex items-center justify-end gap-[7px] px-3 py-2 rounded-[100px] border border-solid border-[#ffffff1a] bg-transparent">
           <span className="w-fit mt-[-1.00px] font-medium text-white text-sm tracking-[0] leading-[normal]">
             Built on
@@ -175,7 +176,7 @@ export const HeroSection = (): JSX.Element => {
       </div>
 
       {/* Bottom large circular gradient with animated satellite */}
-      <div className="absolute -bottom-[5%] -left-[40%] md:bottom-0 md:left-0 w-[660px]  h-[304px] pointer-events-none select-none">
+      <div className="absolute bottom-[var(--satellite-bottom)] left-[var(--satellite-left)] w-[660px]  h-[304px] pointer-events-none select-none">
         <Image
           alt="Mask group"
           src="/image/globe.png"
