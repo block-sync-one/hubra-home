@@ -138,7 +138,6 @@ export const MainContentSection = (): JSX.Element => {
                         </Card>
                     </div>
                 </div>
-
                 <div className="flex flex-col md:flex-row items-center gap-12 w-full mx-auto">
                     <div className="flex items-start">
                         {/* Glowing pink shadowed stick */}
