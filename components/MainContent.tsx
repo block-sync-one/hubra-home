@@ -109,7 +109,7 @@ export const MainContentSection = (): JSX.Element => {
                         </h2>
                     </div>
 
-                    <div className="flex-1 w-full">
+                    <div className="flex-1 w-full">     
                         <Card className="flex items-center justify-center relative mx-auto w-[350px] h-[518px] md:w-full md:h-[398px] bg-[url('/image/hubra-m.png')] md:bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
                             <div className="absolute left-[60%] top-[17%] md:left-[24%] md:top-[41%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
                                 <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px] md:w-[75px] md:h-[68px]" />
@@ -118,28 +118,102 @@ export const MainContentSection = (): JSX.Element => {
                                 <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px] md:w-[75px] md:h-[68px]" />
                             </div>
                             <div className="absolute left-[32%] top-[18%] z-10 md:hidden">
-                                <Image src="/image/amir.hub-m.svg" alt="Hubra" width={84} height={27} className="" />
+                                <span
+                                    style={{
+                                        width: 84,
+                                        height: 27,
+                                        display: 'inline-block',
+                                        fontSize: 18,
+                                        fontWeight: 700,
+                                        lineHeight: '27px', 
+                                        background: 'linear-gradient(62deg, rgb(255,255,255) 0%, #B84794 100%)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        backgroundClip: 'text',
+                                        textAlign: 'center',
+                                        letterSpacing: '1px',
+                                    }}
+                                >
+                                    amir.hub
+                                </span>
                             </div>
                             <div className="absolute left-[32%] top-[77%] z-10 md:hidden">
-                                <Image src="/image/friend.hub-m.svg" alt="Hubra" width={98} height={27} className="" />
+                                <span
+                                    style={{
+                                        width: 98,
+                                        height: 27,
+                                        display: 'inline-block',
+                                        fontSize: 18,
+                                        fontWeight: 700,
+                                        lineHeight: '27px', 
+                                        background: 'linear-gradient(62deg, rgb(255,255,255) 0%, #B84794 100%)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        backgroundClip: 'text',
+                                        textAlign: 'center',
+                                        letterSpacing: '1px',
+                                    }}
+                                >
+                                    friend.hub
+                                </span>
                             </div>
                             <div className="hidden md:block">
                                 <div 
                                     className="flex items-center justify-center relative"
                                     style={{ marginBottom: 'var(--dynamic-margin-bottom)' }}
                                 >
-                                    <Image src="/image/amir.hub.svg" alt="Hubra" width={131} height={42} className="absolute md:block hidden left-[7%] top-[50%] z-10" />
-                                    <Image src="/image/friend.hub.svg" alt="Hubra" width={156} height={46} className="absolute md:block hidden left-[70%] top-[50%] z-10" />
+                                    <span
+                                        className="absolute md:block hidden left-[7%] top-[50%] z-10"
+                                        style={{
+                                            width: 131,
+                                            height: 42,
+                                            display: 'inline-block',
+                                            fontSize: 24,
+                                            fontWeight: 700,
+                                            lineHeight: '42px',
+                                            background: 'linear-gradient(62deg,rgb(255, 255, 255) 0%, #B84794 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            backgroundClip: 'text',
+                                            textAlign: 'center',
+                                            letterSpacing: '1px',
+                                        }}
+                                    >
+                                        amir.hub
+                                    </span>
+                                    <span
+                                        className="absolute md:block hidden left-[70%] top-[50%] z-10"
+                                        style={{
+                                            width: 156,
+                                            height: 46,
+                                            display: 'inline-block',
+                                            fontSize: 24,
+                                            fontWeight: 700,
+                                            lineHeight: '42px',
+                                            background: 'linear-gradient(62deg,rgb(255, 255, 255) 0%, #B84794 100%)',
+                                            WebkitBackgroundClip: 'text',
+                                            WebkitTextFillColor: 'transparent',
+                                            backgroundClip: 'text',
+                                            textAlign: 'center',
+                                            letterSpacing: '1px',
+                                        }}
+                                    >
+                                        friend.hub
+                                    </span>
                                     
                                     <Image src="/image/wgroup.png" alt="Hubra" width={1014} height={281} />
                                 </div>
                             </div>
                             <WalletEnergyFlow />
                         </Card>
+                        {/* <Card className="flex items-center justify-center relative mx-auto w-[350px] h-[518px] md:w-full md:h-[398px] bg-[url('/image/degens.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                            <Image src="/image/degenBtns-glow.svg" alt="Degen" width={1014} height={281} />
+                        </Card> */}
                     </div>
                 </div>
+
                 <div className="flex flex-col md:flex-row items-center gap-12 w-full mx-auto">
-                    <div className="flex items-start">
+                    <div className="flex w-1/2 items-start">
                         {/* Glowing pink shadowed stick */}
                         <div className="hidden mr-8 md:block w-1 h-[72px] bg-gradient-to-b from-[#FF68CF] to-[#B84794] opacity-80 rounded-full shadow-[0_0_40px_rgba(255,104,207,1),0_0_60px_rgba(255,104,207,0.4)]"></div>
 
@@ -153,7 +227,7 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
                     </div>
 
-                    <div className="gap-[21px] flex flex-col items-start">
+                    <div className="gap-[21px] flex flex-col items-start w-1/2">
                         <div className="w-[334px] gap-4 flex flex-col items-start opacity-50">
                             <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-2xl tracking-[0] leading-[33.6px]">
                                 Degens
@@ -251,7 +325,7 @@ export const MainContentSection = (): JSX.Element => {
 
                     <div className="flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-12 w-full">
                         <div className="flex w-full md:w-1/2 flex-col gap-8">
-                            <Card className="flex w-full h-[310px] bg-[url('/image/df-3.png')] bg-cover bg-center bg-[length:100%_100%] rounded-2xl" />
+                            <Card className="flex w-full h-[310px] bg-[url('/image/df-3.svg')] bg-cover bg-center bg-[length:100%_100%] rounded-2xl" />
                             <div className="w-full gap-4 flex flex-col items-start">
                                 <h3 className=" [font-family:'Inter',Helvetica] font-semibold text-white text-[20px] tracking-[0] leading-[20px]">
                                     Earn

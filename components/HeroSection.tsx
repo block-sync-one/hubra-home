@@ -6,8 +6,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 export const HeroSection = (): JSX.Element => {
-  // Generate random particles with animation
-  const [randomParticles, setRandomParticles] = useState<{ top: number, left: number, size: number, delay: number }[]>([]);
+  // Fixed particles matching the SVG file positions and sizes
   const [isMounted, setIsMounted] = useState(false);
 
   // Ensure component is mounted on client side
@@ -15,41 +14,36 @@ export const HeroSection = (): JSX.Element => {
     setIsMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!isMounted) return;
-    if (typeof window === 'undefined') return;
-
-    const count = 10; // Number of particles
-    const particles = Array.from({ length: count }).map(() => ({
-      top: Math.random() * 80 + 10, // 10% to 90% vertical
-      left: Math.random() * 80 + 10, // 10% to 90% horizontal
-      size: Math.random() * 16 + 8, // 8px to 24px
-      delay: Math.random() * 3, // random animation delay
-    }));
-    setRandomParticles(particles);
-    // Optionally, re-randomize every 6s for dynamic effect
-    const interval = setInterval(() => {
-      setRandomParticles(Array.from({ length: count }).map(() => ({
-        top: Math.random() * 80 + 10,
-        left: Math.random() * 80 + 10,
-        size: Math.random() * 16 + 8,
-        delay: Math.random() * 3,
-      })));
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [isMounted]);
+  // Particles data positioned around the pink gradient effect
+  // Adjusted to appear within the gradient container area
+  const particles = [
+    { top: -5, left: 40, size: 32, opacity: 0.12, delay: 0 }, // Top left of gradient
+    { top: 30, left: 0, size: 24, opacity: 0.46, delay: 0.5 }, // Center area
+    { top: 40, left: 100, size: 32, opacity: 0.42, delay: 1 }, // Bottom left
+    { top: 25, left: 90, size: 9.624, opacity: 1, delay: 1.5 }, // Upper center
+    { top: 45, left: 5, size: 11, opacity: 1, delay: 2 }, // Lower right
+    { top: 20, left: 10, size: 8, opacity: 1, delay: 2.5 }, // Middle left
+  ];
 
   return (
     <Card className="relative w-full h-[676px] bg-[url('/image/hero-bg1.png')] bg-cover bg-center rounded-none md:rounded-3xl overflow-hidden border-none">
 
-      {/* Random animated particles OUTSIDE the pink gradient effect */}
+      {/* Fixed particles matching SVG file positions and sizes */}
       {isMounted && (
-        <div className="absolute inset-0 pointer-events-none z-10">
-          {randomParticles.map((p, i) => (
+        <div 
+          className="absolute pointer-events-none z-10"
+          style={{
+            width: 'var(--hero-container-width)',
+            height: 'var(--hero-container-height)',
+            right: 'var(--hero-container-right)',
+            top: 'var(--hero-container-top)'
+          }}
+        >
+          {particles.map((p, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 1, 0] }}
+              animate={{ opacity: [0, p.opacity, 0] }}
               transition={{ duration: 3, repeat: Infinity, delay: p.delay, repeatType: "loop" }}
               style={{
                 position: "absolute",
@@ -58,8 +52,9 @@ export const HeroSection = (): JSX.Element => {
                 width: p.size,
                 height: p.size,
                 borderRadius: "50%",
-                background: "radial-gradient(50% 50% at 50% 50%, rgba(243,125,205,0.7) 0%, rgba(227,64,175,0.5) 100%)",
+                background: p.size <=12 ? "radial-gradient(circle, #F37DCD 0%, #E340AF 100%)" : p.size <= 24 ? "radial-gradient(50% 50% at 50% 50%, rgba(243,125,205,0.7) 0%, rgba(227,64,175,0.5) 100%)" : "radial-gradient(circle, #F37DCD 0%, #E340AF 100%)",
                 pointerEvents: "none",
+                transform: "translate(-50%, -50%)", // Center the particles on their coordinates
               }}
             />
           ))}
