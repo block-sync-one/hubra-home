@@ -72,6 +72,7 @@ export const MainContentSection = (): JSX.Element => {
             marketCap: "€207.20M",
         },
     ];
+    
 
     // Data for features section
     const features = [
