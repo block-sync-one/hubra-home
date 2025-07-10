@@ -1,15 +1,17 @@
 import React from "react";
 import { motion, useMotionValue, useTransform, useAnimationFrame } from "framer-motion";
+import Image from "next/image";
 
-const ORBIT_SIZE = 460;
-const ORBIT_THICKNESS = 1;
-const LINE_LENGTH = 370;
-const LINE_THICKNESS = 1;
-const PINK_LINE_LENGTH = 60;
+const ORBIT_SIZE_RATIO = 0.92; // 80% of container width
+const ORBIT_THICKNESS_RATIO = 0.002; // 0.2% of container width
+const LINE_LENGTH_RATIO = 0.74; // 65% of container width
+const LINE_THICKNESS_RATIO = 0.002; // 0.2% of container width
+const PINK_LINE_LENGTH_RATIO = 0.1; // 10% of container width
 const ANIMATION_DURATION = 2; // seconds
 const SATELLITE_ARC_LENGTH = 20; // degrees
 const SATELLITE_COLOR = "#B84794";
 const SATELLITE_DURATION = 4; // seconds
+const HEXAGON_SIZE_RATIO = 0.22; // 22% of container width
 
 function describeArc(
     cx: number,
@@ -55,9 +57,9 @@ const AnimatedArc = ({
     duration,
     color,
     initialAngle = 0,
-    gradientId
-}: AnimatedArcProps & { gradientId: string }) => {
-    const svgSize = ORBIT_SIZE;
+    gradientId,
+    svgSize
+}: AnimatedArcProps & { gradientId: string; svgSize: number }) => {
     const center = svgSize / 2;
     const angle = useMotionValue(initialAngle);
     const startAngle = useTransform(angle, (a) => a % 360);
@@ -86,22 +88,66 @@ const AnimatedArc = ({
 };
 
 export const DefiCardMotionOverlay = () => {
-    const orbit1Radius = ORBIT_SIZE / 2;
-    const orbit2Radius = (ORBIT_SIZE - 90) / 2;
-    const svgSize = ORBIT_SIZE;
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const [sizes, setSizes] = React.useState({
+        orbitSize: 460,
+        orbitThickness: 1,
+        lineLength: 370,
+        lineThickness: 1,
+        pinkLineLength: 60,
+        hexagonSize: 125,
+        iconSize: 52
+    });
+
+    React.useEffect(() => {
+        const updateSizes = () => {
+            if (containerRef.current) {
+                const containerWidth = containerRef.current.offsetWidth;
+                const minDimension = containerWidth;
+                
+                setSizes({
+                    orbitSize: minDimension * ORBIT_SIZE_RATIO,
+                    orbitThickness: Math.max(1, minDimension * ORBIT_THICKNESS_RATIO),
+                    lineLength: minDimension * LINE_LENGTH_RATIO,
+                    lineThickness: Math.max(1, minDimension * LINE_THICKNESS_RATIO),
+                    pinkLineLength: minDimension * PINK_LINE_LENGTH_RATIO,
+                    hexagonSize: minDimension * HEXAGON_SIZE_RATIO,
+                    iconSize: Math.max(32, minDimension * 0.08) // Minimum 32px, 8% of container
+                });
+            }
+        };
+
+        updateSizes();
+        window.addEventListener('resize', updateSizes);
+        
+        // Use ResizeObserver for more accurate container size changes
+        const resizeObserver = new ResizeObserver(updateSizes);
+        if (containerRef.current) {
+            resizeObserver.observe(containerRef.current);
+        }
+
+        return () => {
+            window.removeEventListener('resize', updateSizes);
+            resizeObserver.disconnect();
+        };
+    }, []);
+
+    const orbit1Radius = sizes.orbitSize / 2;
+    const orbit2Radius = sizes.orbitSize * 0.8 / 2; // 20% smaller than outer orbit
+    const svgSize = sizes.orbitSize;
     const center = svgSize / 2;
 
     return (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <svg width={svgSize} height={svgSize} className="absolute left-1/2 top-1/2 opacity-40" style={{ transform: 'translate(-50%, -50%)' }}>
+        <div ref={containerRef} className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <svg width={svgSize} height={svgSize} className="absolute left-1/2 top-1/2 opacity-40" style={{ transform: 'translate(-50%, -50%)', zIndex: 1  }}>
                 <defs>
                     <linearGradient id="satellite-gradient-1" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#FF4FCB" stopOpacity="1" />
-                        <stop offset="100%" stopColor="#FF4FCB" stopOpacity="0" />
+                        <stop offset="0%" stopColor="#FEAA01" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#FEAA01" stopOpacity="0" />
                     </linearGradient>
                     <linearGradient id="satellite-gradient-2" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#FF4FCB" stopOpacity="1" />
-                        <stop offset="100%" stopColor="#FF4FCB" stopOpacity="0" />
+                        <stop offset="0%" stopColor="#FEAA01" stopOpacity="1" />
+                        <stop offset="100%" stopColor="#FEAA01" stopOpacity="0" />
                     </linearGradient>
                 </defs>
                 {/* Orbits */}
@@ -110,7 +156,7 @@ export const DefiCardMotionOverlay = () => {
                     cy={center}
                     r={orbit1Radius}
                     stroke="#fff2"
-                    strokeWidth={ORBIT_THICKNESS}
+                    strokeWidth={sizes.orbitThickness}
                     fill="none"
                 />
                 <circle
@@ -118,7 +164,7 @@ export const DefiCardMotionOverlay = () => {
                     cy={center}
                     r={orbit2Radius}
                     stroke="#fff2"
-                    strokeWidth={ORBIT_THICKNESS}
+                    strokeWidth={sizes.orbitThickness}
                     fill="none"
                 />
                 {/* Animated arc on outer orbit */}
@@ -129,6 +175,7 @@ export const DefiCardMotionOverlay = () => {
                     color={SATELLITE_COLOR}
                     initialAngle={0}
                     gradientId="satellite-gradient-1"
+                    svgSize={svgSize}
                 />
                 {/* Animated arc on inner orbit (opposite direction) */}
                 <AnimatedArc
@@ -138,34 +185,71 @@ export const DefiCardMotionOverlay = () => {
                     color={SATELLITE_COLOR}
                     initialAngle={180}
                     gradientId="satellite-gradient-2"
+                    svgSize={svgSize}
                 />
             </svg>
+            
+            {/* Laptop Icon at start of line */}
+            <div
+                className="absolute left-1/2 top-1/2 backdrop-blur-xl bg-transparent rounded-xl"
+                style={{
+                    transform: `translate(-50%, -50%) translateX(-${sizes.lineLength / 2}px)`,
+                    zIndex: 10,
+                }}
+            >
+                <Image 
+                    src="/icons/laptop.svg" 
+                    alt="Laptop" 
+                    width={sizes.iconSize} 
+                    height={sizes.iconSize}
+                    className="opacity-60"
+                />
+            </div>
+
             {/* Middle Line */}
             <div
                 className="absolute left-1/2 top-1/2"
                 style={{
-                    width: LINE_LENGTH,
-                    height: LINE_THICKNESS,
+                    width: sizes.lineLength,
+                    height: sizes.lineThickness,
                     background: '#fff2',
                     transform: 'translate(-50%, -50%)',
-                    borderRadius: LINE_THICKNESS,
+                    borderRadius: sizes.lineThickness,
                 }}
             />
+            
+            {/* Mobile Icon at end of line */}
+            <div
+                className="absolute left-1/2 top-1/2 backdrop-blur-xl bg-transparent rounded-xl"
+                style={{
+                    transform: `translate(-50%, -50%) translateX(${sizes.lineLength / 2}px)`,
+                    zIndex: 10,
+                }}
+            >
+                <Image 
+                    src="/icons/mobile.svg" 
+                    alt="Mobile" 
+                    width={sizes.iconSize} 
+                    height={sizes.iconSize}
+                    className="opacity-60"
+                />
+            </div>
+
             {/* Animated Pink Line */}
             <motion.div
                 className="absolute top-1/2"
                 style={{
-                    left: `calc(50% - ${LINE_LENGTH / 2}px)`,
-                    width: PINK_LINE_LENGTH,
-                    height: LINE_THICKNESS,
-                    background: 'linear-gradient(90deg, #B84794 0%, #FFB6E6 100%)',
-                    borderRadius: LINE_THICKNESS,
+                    left: `calc(50% - ${sizes.lineLength / 2}px)`,
+                    width: sizes.pinkLineLength,
+                    height: sizes.lineThickness,
+                    background: 'linear-gradient(90deg, #FEAA01 0%, #FEAA01 100%)',
+                    borderRadius: sizes.lineThickness,
                     transform: 'translateY(-50%)',
                     opacity: 0.4,
                     zIndex: 1,
                 }}
                 animate={{
-                    x: [0, LINE_LENGTH - PINK_LINE_LENGTH, 0],
+                    x: [0, sizes.lineLength - sizes.pinkLineLength, 0],
                 }}
                 transition={{
                     duration: ANIMATION_DURATION,
@@ -177,15 +261,21 @@ export const DefiCardMotionOverlay = () => {
             
             {/* Hexagon mask overlay to hide pink line underneath */}
             <div 
-                className="absolute inset-0 bg-[url('/icons/Hexagon.png')] w-[125px] h-[113px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-cover bg-center"
-                style={{ zIndex: 2 }}
+                className="absolute inset-0 bg-[url('/icons/Hexagon.png')] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-cover bg-center"
+                style={{ 
+                    zIndex: 2,
+                    width: sizes.hexagonSize,
+                    height: sizes.hexagonSize * 0.904 // Maintain aspect ratio (113/125)
+                }}
             />
             
             {/* Dot texture overlay on hexagon */}
             <div 
-                className="absolute w-[125px] h-[113px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                 style={{ 
                     zIndex: 3,
+                    width: sizes.hexagonSize,
+                    height: sizes.hexagonSize * 0.904, // Maintain aspect ratio
                     backgroundImage: `
                         radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
                         radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),

@@ -75,16 +75,16 @@ export const FloatingOrbsAnimation = () => {
                         className="w-full h-full rounded-full"
                         style={{
                             background: parseFloat(orb.size) <= 12 
-                                ? 'radial-gradient(circle,rgb(248, 220, 239) 0%, #E340AF 100%)'  // Brightest for smallest
+                                ? 'radial-gradient(circle, #FEC84B 0%, #FEAA01 100%)'  // Brightest for smallest
                                 : parseFloat(orb.size) <= 43 
-                                ? 'radial-gradient(circle, #F37DCD 0%, #E340AF 100%)'  // Medium for medium
-                                : 'radial-gradient(circle, #E02BA6 0%, #B84794 50%, #8A2D6B 100%)', // Darkest for largest
+                                ? 'radial-gradient(circle, #FEC84B 0%, #FEAA01 100%)'  // Medium for medium
+                                : 'radial-gradient(circle, #FEC84B 0%, #FEAA01 100%)', // Darkest for largest
                             boxShadow: `0 0 ${parseFloat(orb.size) * 2}px ${
                                 parseFloat(orb.size) <= 12 
                                     ? 'rgba(255, 145, 220, 0.5)'  // Brighter glow for smaller
                                     : parseFloat(orb.size) <= 43 
-                                    ? 'rgba(243, 125, 205, 0.3)'  // Medium glow
-                                    : 'rgba(224, 43, 166, 0.2)'   // Subtle glow for larger
+                                    ? 'rgba(255, 145, 220, 0.5)'  // Medium glow
+                                    : 'rgba(255, 145, 220, 0.5)'   // Subtle glow for larger
                             }`
                         }}
                     />

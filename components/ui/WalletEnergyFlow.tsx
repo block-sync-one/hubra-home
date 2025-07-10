@@ -30,9 +30,9 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
         >
           <defs>
             <linearGradient id="waveGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#FF68CF" stopOpacity="0" />
-              <stop offset="50%" stopColor="#FF68CF" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#FF68CF" stopOpacity="0.5" />
+              <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
+              <stop offset="50%" stopColor="#FEAA01" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#FEAA01" stopOpacity="0.5" />
             </linearGradient>
           </defs>
           
@@ -96,9 +96,9 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
         >
           <defs>
             <linearGradient id="waveGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#FF68CF" stopOpacity="0" />
-              <stop offset="50%" stopColor="#FF68CF" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#FF68CF" stopOpacity="0.5" />
+              <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
+              <stop offset="50%" stopColor="#FEAA01" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#FEAA01" stopOpacity="0.5" />
             </linearGradient>
           </defs>
           
@@ -149,14 +149,14 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
       <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" viewBox="0 0 1014 400" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id="energyGradientTop" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#FF4FCB" stopOpacity="0" />
-            <stop offset="50%" stopColor="#FF4FCB" stopOpacity="1" />
-            <stop offset="100%" stopColor="#FF4FCB" stopOpacity="0" />
+            <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
+            <stop offset="50%" stopColor="#FEAA01" stopOpacity="1" />
+            <stop offset="100%" stopColor="#FEAA01" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="energyGradientBottom" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#FF4FCB" stopOpacity="0" />
-            <stop offset="50%" stopColor="#FF4FCB" stopOpacity="1" />
-            <stop offset="100%" stopColor="#FF4FCB" stopOpacity="0" />
+            <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
+            <stop offset="50%" stopColor="#FEAA01" stopOpacity="1" />
+            <stop offset="100%" stopColor="#FEAA01" stopOpacity="0" />
           </linearGradient>
         </defs>
         
@@ -195,14 +195,14 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
       <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" viewBox="0 0 1014 400" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id="incomingEnergyGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#FF4FCB" stopOpacity="0" />
-            <stop offset="50%" stopColor="#FF4FCB" stopOpacity="1" />
-            <stop offset="100%" stopColor="#FF4FCB" stopOpacity="0" />
+            <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
+            <stop offset="50%" stopColor="#FEAA01" stopOpacity="1" />
+            <stop offset="100%" stopColor="#FEAA01" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="incomingEnergyGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#FF4FCB" stopOpacity="0" />
-            <stop offset="50%" stopColor="#FF4FCB" stopOpacity="1" />
-            <stop offset="100%" stopColor="#FF4FCB" stopOpacity="0" />
+            <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
+            <stop offset="50%" stopColor="#FEAA01" stopOpacity="1" />
+            <stop offset="100%" stopColor="#FEAA01" stopOpacity="0" />
           </linearGradient>
         </defs>
         
@@ -237,83 +237,15 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
         />
       </svg>
 
-      {/* Responsive Wallet Glow Effects */}
-      <motion.div
-        className="absolute left-[120px] bottom-[80px] w-[80px] h-[80px] rounded-full md:left-[80px] md:bottom-[120px] md:w-[120px] md:h-[120px]"
-        style={{
-          background: "radial-gradient(circle, rgba(255, 105, 210, 0.3) 0%, rgba(255,79,203,0) 70%)",
-        }}
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.6, 0.3],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
-
-      <motion.div
-        className="absolute right-[120px] bottom-[80px] w-[80px] h-[80px] rounded-full md:right-[80px] md:bottom-[120px] md:w-[120px] md:h-[120px]"
-        style={{
-          background: "radial-gradient(circle, rgba(255, 105, 210, 0.3) 0%, rgba(255,79,203,0) 70%)",
-        }}
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.6, 0.3],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
-      />
-
-      {/* Additional glow for incoming energy to right wallet */}
-      <motion.div
-        className="absolute right-[120px] top-[60px] w-[60px] h-[60px] rounded-full md:right-[80px] md:top-[80px] md:w-[90px] md:h-[90px]"
-        style={{
-          background: "radial-gradient(circle, rgba(255, 105, 210, 0.3) 0%, rgba(255,79,203,0) 70%)",
-        }}
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.2, 0.5, 0.2],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 0.5,
-        }}
-      />
-
-      <motion.div
-        className="absolute right-[120px] bottom-[140px] w-[60px] h-[60px] rounded-full md:right-[80px] md:bottom-[200px] md:w-[90px] md:h-[90px]"
-        style={{
-          background: "radial-gradient(circle, rgba(255, 105, 210, 0.3) 0%, rgba(255,79,203,0) 70%)",
-        }}
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.2, 0.5, 0.2],
-        }}
-        transition={{
-          duration: 1.5,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1.5,
-        }}
-      />
 
       {/* MOBILE: Responsive energy flow paths */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none md:hidden" viewBox="0 0 350 518" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id="energyFlowGradientMobile" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#B84794" stopOpacity="0" />
-            <stop offset="0.2" stopColor="#F07DCB" stopOpacity="1" />
-            <stop offset="0.8" stopColor="#F07DCB" stopOpacity="1" />
-            <stop offset="1" stopColor="#B84794" stopOpacity="0" />
+            <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
+            <stop offset="0.2" stopColor="#FEAA01" stopOpacity="1" />
+            <stop offset="0.8" stopColor="#FEAA01" stopOpacity="1" />
+            <stop offset="1" stopColor="#FEAA01" stopOpacity="0" />
           </linearGradient>
           {/* Mask to hide energy flow behind Solana logo */}
           <mask id="solanaLogoMask">

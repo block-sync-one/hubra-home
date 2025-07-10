@@ -42,9 +42,9 @@ export const Navbar = () => {
     <HeroUINavbar maxWidth="2xl" position="sticky"
       className="bg-transparent backdrop-filter-none"
       classNames={{
-        menuItem: " text-[#797B92]",
-        menu: " text-[#797B92]",
-        item: " text-[#797B92]"
+        menuItem: " text-ui-text-navbar",
+        menu: " text-ui-text-navbar",
+        item: " text-ui-text-navbar"
       }} >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
