@@ -5,7 +5,6 @@ import { AnimatedSatelliteOrbit } from "@/components/ui/AnimatedSatellite";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-
 export const HeroSection = (): JSX.Element => {
   // Fixed particles matching the SVG file positions and sizes
   const [isMounted, setIsMounted] = useState(false);

@@ -8,13 +8,14 @@ import { Badge } from "./ui/badge"
 import Image from "next/image"
 import { TVLAnimatedPath } from "./TVLAnimation"
 import { FloatingOrbsAnimation } from "./ui/FloatingOrbAnimation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Solanaglow from "./ui/Solanaglow";
 import WalletEnergyFlow from "./ui/WalletEnergyFlow";
 import DefiCardMotionOverlay from "./ui/DefiCardMotionOverlay";
 import { FloatingEarnImages } from "./ui/FloatingEarnImages";
 import { Partner10Icon, Partner11Icon, Partner12Icon, Partner13Icon, Partner1Icon, Partner2Icon, Partner3Icon, Partner4Icon, Partner5Icon, Partner6Icon, Partner9Icon, Partner7Icon, Partner8Icon } from "./icons";
 import { DegenAnimation } from "./ui/DegenAnimation";
+import { useWindowSize } from "../lib/useWindowSize";
 
 
 // Simple Separator component
@@ -25,6 +26,9 @@ const Separator = ({ className }: { className?: string }) => (
 export const MainContentSection = (): JSX.Element => {
     // Tab state
     const [activeTab, setActiveTab] = useState<'normies' | 'degens'>('normies');
+    
+    // Mobile detection state
+    const { isMobile } = useWindowSize();
 
     // Data for months in chart
     const months = [
@@ -114,101 +118,163 @@ export const MainContentSection = (): JSX.Element => {
                         </h2>
                     </div>
 
-                    <div className="flex-1 w-full"> 
-                        {/* Tab Content */}
-                        {activeTab === 'normies' && (
-                            <Card className="flex items-center justify-center relative mx-auto w-[350px] h-[518px] md:w-full md:h-[398px] bg-[url('/image/hubra-m.png')] md:bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
-                                <div className="absolute left-[60%] top-[17%] md:left-[24%] md:top-[41%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
-                                    <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px] md:w-[75px] md:h-[68px]" />
-                                </div>
-                                <div className="absolute left-[63%] top-[75%] md:left-[88%] md:top-[41%] z-30 backdrop-blur-sm bg-transparent rounded-xl">
-                                    <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px] md:w-[75px] md:h-[68px]" />
-                                </div>
-                                <div className="absolute left-[32%] top-[18%] z-10 md:hidden">
-                                    <span className="w-[84px] h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand text-center tracking-[1px]">
-                                        amir.hub
-                                    </span>
-                                </div>
-                                <div className="absolute left-[32%] top-[77%] z-10 md:hidden">
-                                    <span className="w-[98px] h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand text-center tracking-[1px]">
-                                        friend.hub
-                                    </span>
-                                </div>
-                                <div className="hidden md:block">
-                                    <div 
-                                        className="flex items-center justify-center relative"
-                                        style={{ marginBottom: 'var(--dynamic-margin-bottom)' }}
-                                    >
-                                        <span className="absolute md:block hidden left-[7%] top-[50%] z-10 w-[131px] h-[42px] inline-block text-2xl font-bold leading-[42px] text-gradient-brand text-center tracking-[1px]">
+                    {/* Mobile Layout: Stacked sections */}
+                    {isMobile && (
+                        <div className="flex flex-col gap-8">
+                            {/* Normies Section */}
+                            <div className="flex flex-col gap-4">
+                                <Card className="flex items-center justify-center relative mx-auto w-[350px] h-[518px] bg-[url('/image/hubra-m.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                    <div className="absolute left-[60%] top-[17%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
+                                        <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px]" />
+                                    </div>
+                                    <div className="absolute left-[63%] top-[75%] z-30 backdrop-blur-sm bg-transparent rounded-xl">
+                                        <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px]" />
+                                    </div>
+                                    <div className="absolute left-[32%] top-[18%] z-10">
+                                        <span className="w-[84px] h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand text-center tracking-[1px]">
                                             amir.hub
                                         </span>
-                                        <span className="absolute md:block hidden left-[70%] top-[50%] z-10 w-[156px] h-[46px] inline-block text-2xl font-bold leading-[42px] text-gradient-brand text-center tracking-[1px]">
+                                    </div>
+                                    <div className="absolute left-[32%] top-[77%] z-10">
+                                        <span className="w-[98px] h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand text-center tracking-[1px]">
                                             friend.hub
                                         </span>
-                                        
-                                        <Image src="/image/wgroup.png" alt="Hubra" width={1014} height={281} />
+                                    </div>
+                                    <WalletEnergyFlow />
+                                </Card>
+
+                                {/* Normies Tab Text */}
+                                <div className="flex items-start">
+                                    <div className="w-full gap-4 flex flex-col items-start">
+                                        <h3 className="font-sans text-white text-card-title">
+                                            Normies
+                                        </h3>
+                                        <p className="font-geist text-ui-primary text-body">
+                                            No complicated jargon. Effortless onboarding
+                                        </p>
                                     </div>
                                 </div>
-                                <WalletEnergyFlow />
-                            </Card>
-                        )}
-                        
-                        {activeTab === 'degens' && (
-                            <Card className="flex items-center justify-center relative mx-auto w-[350px] h-[518px] md:w-full md:h-[398px] bg-[url('/image/degens.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
-                                <DegenAnimation />
-                            </Card>
-                        )}
-                    </div>
+                            </div>
+
+                            {/* Degens Section */}
+                            <div className="flex flex-col gap-4">
+                                <Card className="flex items-center justify-center relative mx-auto w-[350px] h-[518px] bg-[url('/image/degens.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                    <DegenAnimation />
+                                </Card>
+
+                                {/* Degens Tab Text */}
+                                <div className="flex items-start">
+                                    <div className="w-full gap-4 flex flex-col items-start">
+                                        <h3 className="font-sans text-white text-card-title">
+                                            Degens
+                                        </h3>
+                                        <p className="font-geist text-ui-primary text-body">
+                                            Powerful DeFi tools. Endless possibilities
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Desktop Layout: Tab functionality */}
+                    {!isMobile && (
+                        <div className="flex-1 w-full">
+                            {/* Tab Content with Animation */}
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={activeTab}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                >
+                                    {activeTab === 'normies' && (
+                                        <Card className="flex items-center justify-center relative mx-auto w-full h-[398px] bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                            <div className="absolute left-[24%] top-[41%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
+                                                <Image src="/icons/wallet.svg" alt="Hubra" width={75} height={68} className="w-[75px] h-[68px]" />
+                                            </div>
+                                            <div className="absolute left-[88%] top-[41%] z-30 backdrop-blur-sm bg-transparent rounded-xl">
+                                                <Image src="/icons/wallet.svg" alt="Hubra" width={75} height={68} className="w-[75px] h-[68px]" />
+                                            </div>
+                                            <div className="flex items-center justify-center relative">
+                                                <div
+                                                    className="flex items-center justify-center relative"
+                                                    style={{ marginBottom: 'var(--dynamic-margin-bottom)' }}
+                                                >
+                                                    <span className="absolute left-[7%] top-[50%] z-10 w-[131px] h-[42px] inline-block text-2xl font-bold leading-[42px] text-gradient-brand text-center tracking-[1px]">
+                                                        amir.hub
+                                                    </span>
+                                                    <span className="absolute left-[70%] top-[50%] z-10 w-[156px] h-[46px] inline-block text-2xl font-bold leading-[42px] text-gradient-brand text-center tracking-[1px]">
+                                                        friend.hub
+                                                    </span>
+
+                                                    <Image src="/image/wgroup.png" alt="Hubra" width={1014} height={281} />
+                                                </div>
+                                            </div>
+                                            <WalletEnergyFlow />
+                                        </Card>
+                                    )}
+
+                                    {activeTab === 'degens' && (
+                                        <Card className="flex items-center justify-center relative mx-auto w-full h-[398px] bg-[url('/image/degens.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                            <DegenAnimation />
+                                        </Card>
+                                    )}
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+                    )}
                 </div>
 
-                {/* Tab Navigation */}
-                <div className="flex flex-col md:flex-row items-center gap-12 w-full mx-auto">
-                    <div className="flex w-1/2 items-start">
-                        {/* Glowing pink shadowed stick - only show for active tab */}
-                        {activeTab === 'normies' && (
-                            <div className="hidden md:mr-8 md:block w-1 h-[72px] bg-brand-primary opacity-80 rounded-full shadow-brand-glow"></div>
-                        )}
+                {/* Desktop Tab Navigation */}
+                {!isMobile && (
+                    <div className="flex flex-row items-center gap-12 w-full mx-auto">
+                        <div className="flex w-1/2 items-start">
+                            {/* Glowing pink shadowed stick - only show for active tab */}
+                            {activeTab === 'normies' && (
+                                <div className="mr-8 w-1 h-[72px] bg-brand-primary opacity-80 rounded-full shadow-brand-glow"></div>
+                            )}
 
-                        <div className="w-[334px] gap-4 flex flex-col items-start">
-                            <button
-                                onClick={() => setActiveTab('normies')}
-                                className={`font-sans text-card-title transition-all duration-300 ${
-                                    activeTab === 'normies' 
-                                        ? 'text-white' 
-                                        : 'text-white opacity-50 hover:opacity-75'
-                                }`}
-                            >
-                                Normies
-                            </button>
-                            <p className="font-geist text-ui-primary text-body">
-                                No complicated jargon. Effortless onboarding
-                            </p>
+                            <div className="w-[334px] gap-4 flex flex-col items-start">
+                                <button
+                                    onClick={() => setActiveTab('normies')}
+                                    className={`font-sans text-card-title transition-all duration-300 ${activeTab === 'normies'
+                                            ? 'text-white'
+                                            : 'text-white opacity-50 hover:opacity-75'
+                                        }`}
+                                >
+                                    Normies
+                                </button>
+                                <p className="font-geist text-ui-primary text-body">
+                                    No complicated jargon. Effortless onboarding
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start w-1/2">
+                            {/* Glowing pink shadowed stick - only show for active tab */}
+                            {activeTab === 'degens' && (
+                                <div className="mr-8 w-1 h-[72px] bg-brand-primary opacity-80 rounded-full shadow-brand-glow"></div>
+                            )}
+
+                            <div className="w-[334px] gap-4 flex flex-col items-start">
+                                <button
+                                    onClick={() => setActiveTab('degens')}
+                                    className={`font-sans text-card-title transition-all duration-300 ${activeTab === 'degens'
+                                            ? 'text-white'
+                                            : 'text-white opacity-50 hover:opacity-75'
+                                        }`}
+                                >
+                                    Degens
+                                </button>
+                                <p className="font-geist text-ui-primary text-body">
+                                    Powerful DeFi tools. Endless possibilities
+                                </p>
+                            </div>
                         </div>
                     </div>
-
-                    <div className="flex items-start w-1/2">
-                        {/* Glowing pink shadowed stick - only show for active tab */}
-                        {activeTab === 'degens' && (
-                            <div className="hidden md:mr-8 md:block w-1 h-[72px] bg-brand-primary opacity-80 rounded-full shadow-brand-glow"></div>
-                        )}
-                        
-                        <div className="w-[334px] gap-4 flex flex-col items-start">
-                            <button
-                                onClick={() => setActiveTab('degens')}
-                                className={`font-sans text-card-title transition-all duration-300 ${
-                                    activeTab === 'degens' 
-                                        ? 'text-white' 
-                                        : 'text-white opacity-50 hover:opacity-75'
-                                }`}
-                            >
-                                Degens
-                            </button>
-                            <p className="font-geist text-ui-primary text-body">
-                                Powerful DeFi tools. Endless possibilities
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                )}
             </div>
 
             <Separator className="w-full h-px bg-ui-border-transparent" />
@@ -262,12 +328,12 @@ export const MainContentSection = (): JSX.Element => {
             <div className="flex flex-col items-start justify-center w-full gap-10">
                 <div className="flex flex-col w-full items-center gap-10">
                     <div className="flex flex-col w-full md:w-[580px] items-center justify-center gap-5">
-                                            <h2 className="font-geist text-white text-section-title text-center">
-                        Defi, Simplified
-                    </h2>
-                    <p className="w-[80%] break-words md:w-fit font-geist text-ui-primary text-xl text-center">
-                        Empowering supporters through platform revenue.
-                    </p>
+                        <h2 className="font-geist text-white text-section-title text-center">
+                            Defi, Simplified
+                        </h2>
+                        <p className="w-[80%] break-words md:w-fit font-geist text-ui-primary text-xl text-center">
+                            Empowering supporters through platform revenue.
+                        </p>
                     </div>
                     <div className="flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-4 w-full">
                         <div className="flex w-full md:w-1/2 flex-col gap-8">

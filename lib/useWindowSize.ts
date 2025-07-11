@@ -3,31 +3,40 @@
 import { useState, useEffect } from 'react';
 
 interface WindowSize {
-  width: number;
-  height: number;
+  width: number | undefined;
+  height: number | undefined;
+  isMobile: boolean;
 }
 
 export function useWindowSize(): WindowSize {
   const [windowSize, setWindowSize] = useState<WindowSize>({
-    width: typeof window !== 'undefined' ? window.innerWidth : 0,
-    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+    width: undefined,
+    height: undefined,
+    isMobile: false,
   });
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
     function handleResize() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const isMobile = width < 768; // md breakpoint in Tailwind
+
       setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width,
+        height,
+        isMobile,
       });
     }
 
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Call once to set initial size
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    // Add event listener
+    window.addEventListener("resize", handleResize);
+    
+    // Call handler right away so state gets updated with initial window size
+    handleResize();
+    
+    // Remove event listener on cleanup
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Empty array ensures that effect is only run on mount
 
   return windowSize;
 } 
