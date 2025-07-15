@@ -271,43 +271,43 @@ export function DegenAnimation() {
 
 const Icons = {
   perpetuals: () => (
-    <div className="flex items-center justify-center relative h-[57px] w-[172px] rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <div className="flex items-center justify-center relative h-[57px] w-[172px] rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <Image src="/image/perpetuals.svg" alt="Perpetuals" width={170} height={57} />
       <RectangularOrbit width={172} height={57} duration={8} delay={0} colors={{ start: "rgb(68 210 246)", end: "rgb(68 210 246)" }} />
     </div>
   ),
   middle: () => (
     // Keep OpenAI as is, or replace if you have a custom icon
-    <div className="flex items-center justify-center relative h-[112px] w-[400px] rounded-full overflow-hidden">
-      <Image src="/image/middle.svg" alt="LP" width={400} height={112} className="relative z-10" />
+    <div className="flex items-center justify-center relative h-[96px] w-[320px] rounded-full overflow-hidden">
+      <Image src="/image/middle.svg" alt="LP" width={320} height={96} className="relative z-10" />
     </div>
   ),
   lp: () => (
-    <div className="flex items-center justify-center relative h-[57px] w-[97px] rounded-full overflow-hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <div className="flex items-center justify-center relative h-[57px] w-[97px] rounded-full overflow-hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <Image src="/image/lp.svg" alt="LP" width={97} height={57} className="relative z-10" />
       <RectangularOrbit width={97} height={57} duration={8} delay={1} colors={{ start: "rgb(210 179 25)", end: "rgb(210 179 25)" }} />
     </div>
   ),
   borrow: () => (
-    <div className="flex items-center justify-center relative h-[57px] w-[144px] rounded-full overflow-hidden absolute left-1/2 -translate-x-1/2">
+    <div className="flex items-center justify-center relative h-[57px] w-[144px] rounded-full overflow-hidden left-1/2 -translate-x-1/2">
       <Image src="/image/borrow.svg" alt="Borrow" width={144} height={57} className="relative z-10" />
       <RectangularOrbit width={144} height={57} duration={8} delay={2} colors={{ start: "rgb(254 102 51)", end: "rgb(254 102 51)" }} />
     </div>
   ),
   vault: () => (
-    <div className="flex items-center justify-center relative h-[57px] w-[120px] rounded-full overflow-hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <div className="flex items-center justify-center relative h-[57px] w-[120px] rounded-full overflow-hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <Image src="/image/vaultd.svg" alt="Vault" width={120} height={57} className="relative z-10" />
       <RectangularOrbit width={120} height={57} duration={8} delay={3} colors={{ start: "rgb(149 69 253)", end: "rgb(149 69 253)" }} />
     </div>
   ),
   lend: () => (
-    <div className="flex items-center justify-center relative h-[57px] w-[120px] rounded-full overflow-hidden absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <div className="flex items-center justify-center relative h-[57px] w-[120px] rounded-full overflow-hidden top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <Image src="/image/lendd.svg" alt="Lend" width={120} height={57} className="relative z-10" />
       <RectangularOrbit width={120} height={57} duration={8} delay={4} colors={{ start: "rgb(53 39 202)", end: "rgb(53 39 202)" }} />
     </div>
   ),
   convert: () => (
-    <div className="flex items-center justify-center relative h-[57px] w-[147px] rounded-full overflow-hidden absolute left-1/2 -translate-x-1/2">
+    <div className="flex items-center justify-center relative h-[57px] w-[147px] rounded-full overflow-hidden left-1/2 -translate-x-1/2">
       <Image src="/image/convert.svg" alt="Convert" width={147} height={57} className="relative z-10" />
       <RectangularOrbit width={147} height={57} duration={8} delay={5} colors={{ start: "rgb(49 229 133)", end: "rgb(49 229 133)" }} />
     </div>

@@ -16,6 +16,7 @@ import { FloatingEarnImages } from "./ui/FloatingEarnImages";
 import { Partner10Icon, Partner11Icon, Partner12Icon, Partner13Icon, Partner1Icon, Partner2Icon, Partner3Icon, Partner4Icon, Partner5Icon, Partner6Icon, Partner9Icon, Partner7Icon, Partner8Icon } from "./icons";
 import { DegenAnimation } from "./ui/DegenAnimation";
 import { useWindowSize } from "../lib/useWindowSize";
+import { MobileDegenAnimation } from "./ui/MobileDegenAnimation";
 
 
 // Simple Separator component
@@ -112,7 +113,7 @@ export const MainContentSection = (): JSX.Element => {
             {/* Meet Hubra Section */}
             <div className="flex flex-col w-full items-start gap-8">
                 <div className="flex flex-col items-center gap-10 w-full">
-                    <div className="flex flex-col w-[580px] items-center justify-center gap-5">
+                    <div className="flex flex-col max-w-[580px] items-center justify-center gap-5">
                         <h2 className="font-geist text-white text-section-title text-center">
                             Meet Hubra
                         </h2>
@@ -123,7 +124,7 @@ export const MainContentSection = (): JSX.Element => {
                         <div className="flex flex-col gap-8">
                             {/* Normies Section */}
                             <div className="flex flex-col gap-4">
-                                <Card className="flex items-center justify-center relative mx-auto w-[350px] h-[518px] bg-[url('/image/hubra-m.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                <Card className="flex items-center justify-center mx-auto w-[350px] h-[518px] bg-[url('/image/hubra-m.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
                                     <div className="absolute left-[60%] top-[17%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
                                         <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px]" />
                                     </div>
@@ -158,8 +159,8 @@ export const MainContentSection = (): JSX.Element => {
 
                             {/* Degens Section */}
                             <div className="flex flex-col gap-4">
-                                <Card className="flex items-center justify-center relative mx-auto w-[350px] h-[518px] bg-[url('/image/degens.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
-                                    <DegenAnimation />
+                                <Card className="flex items-center justify-center mx-auto w-[350px] h-[518px] bg-[url('/image/degens.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                    <MobileDegenAnimation />
                                 </Card>
 
                                 {/* Degens Tab Text */}
@@ -190,7 +191,7 @@ export const MainContentSection = (): JSX.Element => {
                                     transition={{ duration: 0.3, ease: "easeInOut" }}
                                 >
                                     {activeTab === 'normies' && (
-                                        <Card className="flex items-center justify-center relative mx-auto w-full h-[398px] bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                        <Card className="flex items-center justify-center mx-auto w-full h-[398px] bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
                                             <div className="absolute left-[24%] top-[41%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
                                                 <Image src="/icons/wallet.svg" alt="Hubra" width={75} height={68} className="w-[75px] h-[68px]" />
                                             </div>
@@ -217,7 +218,7 @@ export const MainContentSection = (): JSX.Element => {
                                     )}
 
                                     {activeTab === 'degens' && (
-                                        <Card className="flex items-center justify-center relative mx-auto w-full h-[398px] bg-[url('/image/degens.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                        <Card className="flex items-center justify-center mx-auto w-full h-[398px] bg-[url('/image/degens.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
                                             <DegenAnimation />
                                         </Card>
                                     )}
