@@ -24,6 +24,7 @@ export const HeroSection = (): JSX.Element => {
     { top: 45, left: 5, size: 11, opacity: 1, delay: 2 }, // Lower right
     { top: 20, left: 10, size: 8, opacity: 1, delay: 2.5 }, // Middle left
   ];
+  
 
   return (
     <Card className="relative w-full h-[676px] bg-[url('/image/hero-bg1.png')] bg-cover bg-center rounded-none md:rounded-3xl overflow-hidden border-none">
