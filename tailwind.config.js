@@ -458,6 +458,12 @@ const config = {
           '-webkit-text-fill-color': 'transparent',
           'background-clip': 'text'
         },
+        '.text-gradient-brand-mobile': {
+          'background': 'linear-gradient(62deg, rgb(255,255,255) 0%, #E379C1 100%)',
+          '-webkit-background-clip': 'text',
+          '-webkit-text-fill-color': 'transparent',
+          'background-clip': 'text'
+        },
         '.text-gradient-brand-reverse': {
           'background': 'linear-gradient(62deg, #FEAA01 0%, rgb(255,255,255) 100%)',
           '-webkit-background-clip': 'text',

@@ -1,4 +1,5 @@
 "use client";
+import { useWindowSize } from "@/lib/useWindowSize";
 import React, { useRef, useEffect, useState } from "react";
 
 const PATH_D = "M-30 78.426C54.4272 81.111 198.669 75.741 263.556 1.45703";
@@ -17,6 +18,7 @@ export const TVLAnimatedPath = () => {
   const [pathLength, setPathLength] = useState(1);
   const [isVisible, setIsVisible] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const { isMobile } = useWindowSize();
 
   // Ensure component is mounted on client side
   useEffect(() => {
@@ -99,7 +101,7 @@ export const TVLAnimatedPath = () => {
           {/* Static version for SSR */}
           <path
             d={PATH_D}
-            stroke="#FEC84B"
+            stroke={isMobile ? "#E02BA7" : "#FEC84B"}
             strokeWidth={3}
             opacity={0.15}
             fill="none"
@@ -118,69 +120,69 @@ export const TVLAnimatedPath = () => {
         fill="none"
         style={{ overflow: "visible" }}
       >
-      <defs>
-        <filter id="blurOuter" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="12" />
-        </filter>
-      </defs>
-      {/* Background path (faint) */}
-      <path
-        d={PATH_D}
-        stroke="#FEC84B"
-        strokeWidth={3}
-        opacity={0.15}
-        fill="none"
-      />
-      {/* Animated path (revealed) */}
-      <path
-        ref={pathRef}
-        d={PATH_D}
-        stroke="#FEC84B"
-        strokeWidth={3}
-        fill="none"
-        strokeDasharray={pathLength}
-        strokeDashoffset={pathLength * (1 - progress)}
-        style={{ transition: "stroke-dashoffset 0.1s linear" }}
-      />
-      {/* Animated circle with four parts */}
-      {pathRef.current && (
-        <>
-          {/* Big blurred outer circle */}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={40}
-            fill="#FEC84B"
-            opacity={0.12}
-            filter="url(#blurOuter)"
-          />
-          {/* Outer glow circle */}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={28}
-            fill="#FEC84B"
-            opacity={0.04}
-          />
-          {/* Middle circle (main) */}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={10}
-            fill="white"
-            stroke="#FEC84B"
-            strokeWidth={4}
-            style={{ filter: "drop-shadow(0 0 8px #FEC84B)" }}
-          />
-          {/* Optional: Smallest solid white center for extra depth */}
-          {/* <circle
+        <defs>
+          <filter id="blurOuter" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="12" />
+          </filter>
+        </defs>
+        {/* Background path (faint) */}
+        <path
+          d={PATH_D}
+          stroke={isMobile ? "#E02BA7" : "#FEC84B"}
+          strokeWidth={3}
+          opacity={0.15}
+          fill="none"
+        />
+        {/* Animated path (revealed) */}
+        <path
+          ref={pathRef}
+          d={PATH_D}
+          stroke={isMobile ? "#E02BA7" : "#FEC84B"}
+          strokeWidth={3}
+          fill="none"
+          strokeDasharray={pathLength}
+          strokeDashoffset={pathLength * (1 - progress)}
+          style={{ transition: "stroke-dashoffset 0.1s linear" }}
+        />
+        {/* Animated circle with four parts */}
+        {pathRef.current && (
+          <>
+            {/* Big blurred outer circle */}
+            <circle
+              cx={cx}
+              cy={cy}
+              r={40}
+              fill={isMobile ? "#E02BA7" : "#FEC84B"}
+              opacity={0.12}
+              filter="url(#blurOuter)"
+            />
+            {/* Outer glow circle */}
+            <circle
+              cx={cx}
+              cy={cy}
+              r={28}
+              fill={isMobile ? "#E02BA7" : "#FEC84B"}
+              opacity={0.04}
+            />
+            {/* Middle circle (main) */}
+            <circle
+              cx={cx}
+              cy={cy}
+              r={10}
+              fill="white"
+              stroke={isMobile ? "#E02BA7" : "#FEC84B"}
+              strokeWidth={4}
+              style={{ filter: "drop-shadow(0 0 8px #FEC84B)" }}
+            />
+            {/* Optional: Smallest solid white center for extra depth */}
+            {/* <circle
             cx={cx}
             cy={cy}
             r={5}
             fill="white"
           /> */}
-        </>
-      )}
+          </>
+        )}
       </svg>
     </div>
   );

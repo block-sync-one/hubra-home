@@ -161,7 +161,7 @@ export function MobileDegenAnimation() {
             height={89}
             duration={3}
             delay={0}
-            gradientColors={{ start: "rgb(210 179 25)", end: "rgb(210 179 25)" }}
+            gradientColors={{ start: "#E6D36A", end: "#E6D36A" }}
             uniqueId="lp-line-1"
           />
         </div>
@@ -175,7 +175,7 @@ export function MobileDegenAnimation() {
             height={100}
             duration={3}
             delay={2}
-            gradientColors={{ start: "rgb(254 102 51)", end: "rgb(254 102 51)" }}
+            gradientColors={{ start: "#FE6633", end: "#FE6633" }}
             uniqueId="borrow-line-1"
           />
         </div>
@@ -189,8 +189,8 @@ export function MobileDegenAnimation() {
             height={100}
             duration={3}
             delay={0.5}
-            gradientColors={{ start: "rgb(149 69 253)", end: "rgb(149 69 253)" }}
-            uniqueId="vault-line-1"
+            gradientColors={{ start: "#44D2F6", end: "#44D2F6" }}
+            uniqueId="perpetuals-line-1"
           />
         </div>
 
@@ -202,7 +202,7 @@ export function MobileDegenAnimation() {
             height={89}
             duration={3}
             delay={2.5}
-            gradientColors={{ start: "rgb(49 229 133)", end: "rgb(49 229 133)" }}
+            gradientColors={{ start: "#31E585", end: "#31E585" }}
             uniqueId="convert-line-1"
           />
         </div>
@@ -216,8 +216,8 @@ export function MobileDegenAnimation() {
               height={10}
               duration={3}
               delay={1.5}
-              gradientColors={{ start: "rgb(68 210 246)", end: "rgb(68 210 246)" }}
-              uniqueId="lend-line-1"
+              gradientColors={{ start: "#44D2F6", end: "#44D2F6" }}
+              uniqueId="perpetuals-line-2"
             />
           </div>
           <div className="relative w-[154px] h-[10px] ">
@@ -228,8 +228,8 @@ export function MobileDegenAnimation() {
               height={10}
               duration={3}
               delay={1}
-              gradientColors={{ start: "rgb(53 39 202)", end: "rgb(53 39 202)" }}
-              uniqueId="perpetuals-line-1"
+              gradientColors={{ start: "#3527CA", end: "#3527CA" }}
+              uniqueId="lend-line-1"
             />
           </div>
         </div>
@@ -248,7 +248,7 @@ export function MobileDegenAnimation() {
           <Icons.lend />
         </div>
 
-        <div className="z-10 flex items-center rounded-full absolute top-[-155px] right-[-160px]">
+        <div className="z-10 flex items-center justify-center rounded-full absolute top-[-155px] right-[-160px]">
           <Icons.borrow />
         </div>
 
@@ -267,43 +267,43 @@ const Icons = {
   perpetuals: () => (
     <div className="flex items-center justify-center relative h-[44px] w-[132px] rounded-full overflow-hidden">
       <Image src="/image/perpetuals.svg" alt="Perpetuals" width={132} height={44} />
-      <RectangularOrbit width={132} height={44} duration={8} delay={0} colors={{ start: "rgb(68 210 246)", end: "rgb(68 210 246)" }} />
+      <RectangularOrbit width={132} height={44} duration={8} delay={0} colors={{ start: "#44D2F6", end: "#44D2F6" }} />
     </div>
   ),
   middle: () => (
-    // Keep OpenAI as is, or replace if you have a custom icon
     <div className="flex items-center justify-center relative h-[96px] w-[320px] rounded-full overflow-hidden">
-      <Image src="/image/middle.svg" alt="LP" width={320} height={96} className="relative z-10" />
+      <Image src="/image/middle.svg" alt="LP" width={320} height={96} className="relative z-10 md:flex hidden" />
+      <Image src="/image/middle-m.svg" alt="LP" width={320} height={96} className="relative z-10 flex md:hidden" />
     </div>
   ),
   lp: () => (
     <div className="flex items-center justify-center relative h-[42px] w-[72px] rounded-full overflow-hidden">
       <Image src="/image/lp.svg" alt="LP" width={72} height={42} className="relative z-10" />
-      <RectangularOrbit width={72} height={42} duration={8} delay={1} colors={{ start: "rgb(210 179 25)", end: "rgb(210 179 25)" }} />
+      <RectangularOrbit width={72} height={42} duration={8} delay={1} colors={{ start: "#E6D36A", end: "#E6D36A" }} />
     </div>
   ),
   borrow: () => (
     <div className="flex items-center justify-center relative h-[40px] w-[100px] rounded-full overflow-hidden ">
       <Image src="/image/borrow.svg" alt="Borrow" width={100} height={40} className="relative z-10" />
-      <RectangularOrbit width={100} height={40} duration={8} delay={2} colors={{ start: "rgb(254 102 51)", end: "rgb(254 102 51)" }} />
+      <RectangularOrbit width={100} height={40} duration={8} delay={2} colors={{ start: "#FE6633", end: "#FE6633" }} />
     </div>
   ),
   vault: () => (
     <div className="flex items-center justify-center relative h-[44px] w-[96px] rounded-full overflow-hidden top-1/2">
       <Image src="/image/vaultd.svg" alt="Vault" width={96} height={44} className="relative z-10" />
-      <RectangularOrbit width={96} height={44} duration={8} delay={3} colors={{ start: "rgb(149 69 253)", end: "rgb(149 69 253)" }} />
+      <RectangularOrbit width={96} height={44} duration={8} delay={3} colors={{ start: "#9545FD", end: "#9545FD" }} />
     </div>
   ),
   lend: () => (
     <div className="flex items-center justify-center relative h-[40px] w-[84px] rounded-full overflow-hidden">
       <Image src="/image/lendd.svg" alt="Lend" width={84} height={40} className="relative z-10" />
-      <RectangularOrbit width={84} height={40} duration={8} delay={4} colors={{ start: "rgb(53 39 202)", end: "rgb(53 39 202)" }} />
+      <RectangularOrbit width={84} height={40} duration={8} delay={4} colors={{ start: "#3527CA", end: "#3527CA" }} />
     </div>
   ),
   convert: () => (
     <div className="flex items-center justify-center relative h-[40px] w-[100px] rounded-full overflow-hidden ">
       <Image src="/image/convert.svg" alt="Convert" width={100} height={40} className="relative z-10" />
-      <RectangularOrbit width={100} height={40} duration={8} delay={5} colors={{ start: "rgb(49 229 133)", end: "rgb(49 229 133)" }} />
+      <RectangularOrbit width={100} height={40} duration={8} delay={2} colors={{ start: "#31E585", end: "#31E585" }} />
     </div>
   ),
 };
