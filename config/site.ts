@@ -44,36 +44,40 @@ export const siteConfig = {
   ],
   navMenuItems: [
     {
-      label: "Profile",
-      href: "/profile",
+      label: "Resources",
+      navItems: [
+        {
+          icon: 'mdi:docs',
+          label: "Docs",
+          href: "/docs",
+        },
+        {
+          icon: 'mdi:blog',
+          label: "Blog",
+          href: "/blog",
+        }
+      ],
     },
     {
-      label: "Dashboard",
-      href: "/dashboard",
+      label: "Tokens",
+      href: "/tokens",
     },
     {
-      label: "Projects",
-      href: "/projects",
+      label: "DeFi",
+      href: "/defi",
     },
     {
-      label: "Team",
-      href: "/team",
+      label: "Learn",
+      href: "/learn",
     },
     {
-      label: "Calendar",
-      href: "/calendar",
+      label: "Stats",
+      href: "/stats",
     },
     {
-      label: "Settings",
-      href: "/settings",
-    },
-    {
-      label: "Help & Feedback",
-      href: "/help-feedback",
-    },
-    {
-      label: "Logout",
-      href: "/logout",
+      label: "Launch App",
+      href: "https://patreon.com/jrgarciadev",
+      external: true,
     },
   ],
   links: {

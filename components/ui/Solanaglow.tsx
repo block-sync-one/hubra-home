@@ -5,9 +5,10 @@ interface SolanaglowProps {
   right?: number;
   top?: number;
   size?: number;
+  color?: string
 }
 
-const Solanaglow: React.FC<SolanaglowProps> = ({ right = 112, top = 102, size = 1 }) => (
+const Solanaglow: React.FC<SolanaglowProps> = ({ right = 112, top = 102, size = 1, color }) => (
   <motion.div
     className="absolute"
     style={{
@@ -24,9 +25,9 @@ const Solanaglow: React.FC<SolanaglowProps> = ({ right = 112, top = 102, size = 
       opacity: [0.7, 1, 0.7],
       scale: [1, 1.2, 1],
       boxShadow: [
-        '0 0 24px 8px #FEAA01',
-        '0 0 48px 16px #FEAA01',
-        '0 0 24px 8px #FEAA01',
+        `0 0 24px 8px ${color}`,
+        `0 0 48px 16px ${color}`,
+        `0 0 24px 8px ${color}`,
       ],
     }}
     transition={{

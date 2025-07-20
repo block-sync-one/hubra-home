@@ -102,7 +102,7 @@ export const Navbar = () => {
         justify="end"
       >
 
-        <NavbarItem className="hidden md:flex">
+        <NavbarItem className="hidden lg:flex">
           <Button
             variant="light"
             radius="full"
@@ -117,7 +117,7 @@ export const Navbar = () => {
 
           </Button>
         </NavbarItem>
-        <NavbarItem className="hidden md:flex">
+        <NavbarItem className="hidden lg:flex">
           <Button
             radius="full"
             isExternal
@@ -133,7 +133,7 @@ export const Navbar = () => {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+      <NavbarContent className="lg:hidden basis-1 pl-4" justify="end">
         <Link isExternal aria-label="Github" href={siteConfig.links.github}>
           <GithubIcon className="text-default-500" />
         </Link>
@@ -142,23 +142,23 @@ export const Navbar = () => {
       </NavbarContent>
 
       <NavbarMenu>
-
         <div className="mx-4 mt-2 flex flex-col gap-2">
           {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href="#"
-                size="lg"
-              >
-                {item.label}
-              </Link>
+            <NavbarMenuItem key={`${item.label}-${index}`}>
+              {item.href ? (
+                <NextLink href={item.href} passHref legacyBehavior>
+                  <Button
+                    as="a"
+                    variant="light"
+                    className="w-full justify-start text-left"
+                    size="lg"
+                  >
+                    {item.label}
+                  </Button>
+                </NextLink>
+              ) : (
+                <span className="text-lg">{item.label}</span>
+              )}
             </NavbarMenuItem>
           ))}
         </div>

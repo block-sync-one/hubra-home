@@ -4,10 +4,12 @@ import Image from "next/image";
 import { AnimatedSatelliteOrbit } from "@/components/ui/AnimatedSatellite";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useWindowSize } from "@/lib/useWindowSize";
 
 export const HeroSection = (): JSX.Element => {
   // Fixed particles matching the SVG file positions and sizes
   const [isMounted, setIsMounted] = useState(false);
+  const { isMobile } = useWindowSize();
 
   // Ensure component is mounted on client side
   useEffect(() => {
@@ -27,12 +29,12 @@ export const HeroSection = (): JSX.Element => {
   
 
   return (
-    <Card className="relative w-full h-[676px] bg-[url('/image/hero-bg1.png')] bg-cover bg-center rounded-none md:rounded-3xl overflow-hidden border-none">
+    <Card className="relative w-full h-[676px] bg-[url('/image/hero-bg1-m.png')] md:bg-[url('/image/hero-bg1.png')] bg-cover bg-center rounded-none md:rounded-3xl overflow-hidden border-none">
 
       {/* Fixed particles matching SVG file positions and sizes */}
       {isMounted && (
-        <div 
-          className="absolute pointer-events-none z-10 hero-container"
+        <div
+          className="absolute pointer-events-none z-20 hero-container"
         >
           {particles.map((p, i) => (
             <motion.div
@@ -47,7 +49,7 @@ export const HeroSection = (): JSX.Element => {
                 width: p.size,
                 height: p.size,
                 borderRadius: "50%",
-                background: p.size <=12 ? "radial-gradient(circle, #FEC84B 0%, #FEAA01 100%)" : p.size <= 24 ? "radial-gradient(50% 50% at 50% 50%, #FEC84B 0%, #FEAA01 100%)" : "radial-gradient(circle, #FEC84B 0%, #FEAA01 100%)",
+                background: p.size <= 12 ? `radial-gradient(circle, ${isMobile ? "#E02BA7" : "#FEC84B"} 0%, ${isMobile ? "#E02BA7" : "#FEC84B"} 100%)` : p.size <= 24 ? `radial-gradient(50% 50% at 50% 50%, ${isMobile ? "#E02BA7" : "#FEC84B"} 0%, ${isMobile ? "#E02BA7" : "#FEC84B"} 100%)` : `radial-gradient(circle, ${isMobile ? "#E02BA7" : "#FEC84B"} 0%, ${isMobile ? "#E02BA7" : "#FEC84B"} 100%)`,
                 pointerEvents: "none",
                 transform: "translate(-50%, -50%)", // Center the particles on their coordinates
               }}
@@ -57,8 +59,9 @@ export const HeroSection = (): JSX.Element => {
       )}
 
       {/* Pink orb effect */}
-      <div className="absolute -top-[5%] md:top-[0%] md:left-[8%] right-[0%]">
-        <Image src="/image/pink-orb1.png" alt="Pink Orb" width={425} height={167} quality={100} />
+      <div className="absolute top-[0%] md:left-[8%] z-0 right-0">
+        <Image src="/image/pink-orb.png" alt="Pink Orb" width={425} height={167} quality={100} className="flex md:hidden" />
+        <Image src="/image/pink-orb1.png" alt="Pink Orb" width={425} height={167} quality={100} className="md:flex hidden" />
       </div>
 
 
@@ -144,12 +147,20 @@ export const HeroSection = (): JSX.Element => {
       </div>
 
       {/* Bottom large circular gradient with animated satellite */}
-      <div className="absolute satellite-position w-[660px]  h-[304px] pointer-events-none select-none">
+      <div className="absolute satellite-position w-[660px] h-[304px] pointer-events-none select-none">
         <Image
           alt="Mask group"
           src="/image/globe.png"
           quality={100}
           fill
+          className="hidden md:flex"
+        />
+        <Image
+          alt="Mask group"
+          src="/image/globe-m.png"
+          quality={100}
+          fill
+          className="md:hidden flex"
         />
         {/* Animated satellite overlay */}
         <AnimatedSatelliteOrbit />

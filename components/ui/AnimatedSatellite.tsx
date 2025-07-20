@@ -1,12 +1,14 @@
 "use client";
+import { useWindowSize } from "@/lib/useWindowSize";
 import { useAnimationFrame } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 export function AnimatedSatelliteOrbit() {
   // The SVG path from globe.svg
   const pathData = "M496.164 647.036C496.164 953.573 247.493 1202.07 -59.2566 1202.07C-366.007 1202.07 -614.677 953.573 -614.677 647.036C-614.677 340.499 -366.007 92.002 -59.2566 92.002C247.493 92.002 496.164 340.499 496.164 647.036Z";
+  const { isMobile } = useWindowSize();
   const svgWidth = 660;
-  const svgHeight = 304;
+  const svgHeight = isMobile ? 200 : 304;
   const [length, setLength] = useState(0);
   const pathRef = useRef<SVGPathElement>(null);
   const [progress, setProgress] = useState(0);
@@ -21,7 +23,7 @@ export function AnimatedSatelliteOrbit() {
   }, []);
 
   // Get the total length of the path
-  useEffect(() => {     
+  useEffect(() => {
     if (pathRef.current && isMounted) {
       setLength(pathRef.current.getTotalLength());
     }
@@ -110,8 +112,8 @@ export function AnimatedSatelliteOrbit() {
       )}
       <defs>
         <linearGradient id="satelliteGradient" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#FF4FCB" stopOpacity="1" />
-          <stop offset="100%" stopColor="#FF4FCB" stopOpacity="0" />
+          <stop offset="0%" stopColor={`${isMobile ? "#B84794" : "#FF4FCB"}`} stopOpacity="1" />
+          <stop offset="100%" stopColor={`${isMobile ? "#B84794" : "#FF4FCB"}`} stopOpacity="0" />
         </linearGradient>
       </defs>
     </svg>

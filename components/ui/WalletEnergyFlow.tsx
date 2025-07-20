@@ -1,6 +1,22 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+// Add global style for energy gradient color
+if (typeof window !== "undefined") {
+  const style = document.createElement('style');
+  style.innerHTML = `
+    :root {
+      --energy-gradient-color: #FEAA01;
+    }
+    @media (max-width: 767px) {
+      :root {
+        --energy-gradient-color: #E379C1;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
 interface WalletEnergyFlowProps {
   className?: string;
 }
@@ -18,24 +34,24 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
         className="absolute left-[28%] top-[18%] w-[43%] rounded-b-[26px] h-[13%] md:left-[6%] md:top-[41%] md:rounded-b-[0px] lg:rounded-b-[38px] md:w-[23.4%] md:h-[8.5vw] lg:h-[28%] overflow-hidden"
       >
         {/* Background liquid */}
-        <div 
+        <div
           className="absolute inset-0 bg-transparent bg-cover bg-center"
         />
-        
+
         {/* Wave overlay for liquid surface */}
-        <svg 
+        <svg
           className="absolute top-0 left-0 w-full h-full"
           viewBox="0 0 237 111"
           preserveAspectRatio="none"
         >
           <defs>
             <linearGradient id="waveGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
-              <stop offset="50%" stopColor="#FEAA01" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#FEAA01" stopOpacity="0.5" />
+              <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+              <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0.5" />
             </linearGradient>
           </defs>
-          
+
           <motion.path
             d="M0,20 Q59.25,10 118.5,20 T237,20 L237,111 L0,111 Z"
             fill="url(#waveGradient)"
@@ -54,7 +70,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
               ease: "easeInOut"
             }}
           />
-          
+
           {/* Second wave layer for more realistic effect */}
           <motion.path
             d="M0,25 Q79,15 158,25 T237,25 L237,111 L0,111 Z"
@@ -81,27 +97,27 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
 
       {/* Right Wallet Liquid */}
       <div
-        className="absolute left-[26%] top-[70%] w-[46%] rounded-[21%] md:rounded-[0px] md:rounded-t-[20px] lg:rounded-[21%] h-[19%] md:left-[68.3%] md:top-[36%] lg:top-[30%] md:w-[25%] md:rounded-[21%] md:h-[10vw] lg:h-[39%] overflow-hidden"
+        className="absolute left-[26%] top-[70%] w-[46%] rounded-[21%] md:rounded-t-[20px] lg:rounded-[21%] h-[19%] md:left-[68.3%] md:top-[36%] lg:top-[30%] md:w-[25%] md:rounded-[21%] md:h-[10vw] lg:h-[39%] overflow-hidden"
       >
         {/* Background liquid */}
-        <div 
+        <div
           className="absolute inset-0 bg-transparent bg-cover bg-center"
         />
-        
+
         {/* Wave overlay for liquid surface */}
-        <svg 
+        <svg
           className="absolute top-0 left-0 w-full h-full"
           viewBox="0 0 237 111"
           preserveAspectRatio="none"
         >
           <defs>
             <linearGradient id="waveGradient" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
-              <stop offset="50%" stopColor="#FEAA01" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#FEAA01" stopOpacity="0.5" />
+              <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+              <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0.5" />
             </linearGradient>
           </defs>
-          
+
           <motion.path
             d="M0,20 Q59.25,10 118.5,20 T237,20 L237,111 L0,111 Z"
             fill="url(#waveGradient)"
@@ -120,7 +136,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
               ease: "easeInOut"
             }}
           />
-          
+
           {/* Second wave layer for more realistic effect */}
           <motion.path
             d="M0,25 Q79,15 158,25 T237,25 L237,111 L0,111 Z"
@@ -144,22 +160,22 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
           />
         </svg>
       </div>
-      
+
       {/* Responsive Energy Paths - FROM left wallet TO right wallet */}
       <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" viewBox="0 0 1014 400" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id="energyGradientTop" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
-            <stop offset="50%" stopColor="#FEAA01" stopOpacity="1" />
-            <stop offset="100%" stopColor="#FEAA01" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+            <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="energyGradientBottom" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
-            <stop offset="50%" stopColor="#FEAA01" stopOpacity="1" />
-            <stop offset="100%" stopColor="#FEAA01" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+            <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
           </linearGradient>
         </defs>
-        
+
         {/* Top path - responsive coordinates */}
         <motion.path
           d="M 178 200 V 106 C 178 101 182 98 187 98 H 262 C 297 98 326 126 326 162 V 177 C 326 189 336 200 349 200 H 502"
@@ -174,7 +190,7 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
             opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" },
           }}
         />
-        
+
         {/* Bottom path - responsive coordinates */}
         <motion.path
           d="M 178 200 V 294 C 178 299 182 302 187 302 H 262 C 297 302 326 274 326 238 V 223 C 326 211 336 200 349 200 H 502"
@@ -195,17 +211,17 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
       <svg className="absolute inset-0 w-full h-full pointer-events-none hidden md:block" viewBox="0 0 1014 400" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id="incomingEnergyGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
-            <stop offset="50%" stopColor="#FEAA01" stopOpacity="1" />
-            <stop offset="100%" stopColor="#FEAA01" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+            <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="incomingEnergyGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
-            <stop offset="50%" stopColor="#FEAA01" stopOpacity="1" />
-            <stop offset="100%" stopColor="#FEAA01" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+            <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
           </linearGradient>
         </defs>
-        
+
         {/* Outgoing path 1 - FROM right wallet TO external (top path) */}
         <motion.path
           d="M 488 200 L 640 200 C 653 200 664 189 664 177 L 664 162 C 664 126 692 98 728 98 L 802 98 C 807 98 811 101 811 106 L 811 114"
@@ -242,10 +258,10 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) =
       <svg className="absolute inset-0 w-full h-full pointer-events-none md:hidden" viewBox="0 0 350 518" preserveAspectRatio="xMidYMid meet">
         <defs>
           <linearGradient id="energyFlowGradientMobile" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#FEAA01" stopOpacity="0" />
-            <stop offset="0.2" stopColor="#FEAA01" stopOpacity="1" />
-            <stop offset="0.8" stopColor="#FEAA01" stopOpacity="1" />
-            <stop offset="1" stopColor="#FEAA01" stopOpacity="0" />
+            <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+            <stop offset="0.2" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="0.8" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="1" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
           </linearGradient>
           {/* Mask to hide energy flow behind Solana logo */}
           <mask id="solanaLogoMask">
