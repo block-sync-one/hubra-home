@@ -71,7 +71,7 @@ export const HeroSection = (): JSX.Element => {
         <div
           className="flex justify-center items-center relative"
         >
-          <div className="absolute top-[var(--hero-motion-top)] w-full h-full flex justify-center items-center">
+          <div className="absolute top-20px w-full h-full flex justify-center items-center">
             <motion.div
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: -90, opacity: 1 }}
@@ -119,8 +119,8 @@ export const HeroSection = (): JSX.Element => {
 
       {/* Main content text */}
       <div className="flex flex-col w-full items-start gap-5 absolute main-content-position">
-        <div className="inline-flex items-center justify-end gap-[7px] px-3 py-2 rounded-[100px] border border-solid border-ui-light bg-transparent">
-          <span className="w-fit mt-[-1.00px] font-medium text-white text-caption">
+        <div className="inline-flex items-center justify-end gap-2 px-3 py-2 bg-transparent border border-white/10 rounded-full">
+          <span className="w-fit mt-[-1.00px] font-medium text-white text-sm font-medium">
             Built on
           </span>
           <Image
@@ -129,22 +129,23 @@ export const HeroSection = (): JSX.Element => {
             width={20}
             height={14.94}
           />
-          <span className="w-fit mt-[-1.00px] font-medium text-white text-caption">
+          <span className="w-fit mt-[-1.00px] font-medium text-white text-sm font-medium">
             Solana
           </span>
         </div>
-        <div>
-          <h1 className="relative w-full md:w-[525px] mt-[-1.00px] font-geist text-white text-hero-title md:text-hero-title-md">
+        <div className="max-w-lg">
+          <h1 className="relative w-full mt-[-1.00px] font-geist text-white text-3xl md:text-5xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px]">
             The Power Of CEX.
           </h1>
-          <h1 className="relative w-full md:w-[525px] font-geist text-white text-hero-title md:text-hero-title-md">
+          <h1 className="relative w-full  font-geist text-white text-3xl md:text-5xl  font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px]">
             The Freedom Of DeFi.
           </h1>
-        </div>
-        <p className="relative w-full md:w-[482px] font-geist text-ui-primary text-body-large">
+          <p className="relative max-w-md font-geist text-gray-400/70 text-lg leading-[26px] font-normal">
           Hubra is the first truly all-in-one platform. Manage, Explore,
           Earn—across any device.
         </p>
+        </div>
+        
       </div>
 
       {/* Bottom large circular gradient with animated satellite */}

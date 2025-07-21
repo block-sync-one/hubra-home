@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "@heroui/button"
 import { Input } from "@heroui/input"
-import { MailIcon } from "./ui/MailIcon"
 import Image from "next/image"
+import { MailIcon } from "./ui/MailIcon"
+
 import { TVLAnimatedPath } from "./TVLAnimation"
 import { FloatingOrbsAnimation } from "./ui/FloatingOrbAnimation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,15 +17,7 @@ import { Partner10Icon, Partner11Icon, Partner12Icon, Partner13Icon, Partner1Ico
 import { DegenAnimation } from "./ui/DegenAnimation";
 import { useWindowSize } from "../lib/useWindowSize";
 import { MobileDegenAnimation } from "./ui/MobileDegenAnimation";
-import { FaEye, FaTwitter, FaGithub } from "react-icons/fa";
-import { RiKey2Fill } from "react-icons/ri";
-import { IoIosRocket } from "react-icons/io";
-import { GrConnect } from "react-icons/gr";
-import { IoLogoDiscord } from "react-icons/io5";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/pagination';
+import { Icon } from "@iconify/react";
 
 
 // Simple Separator component
@@ -32,89 +25,134 @@ const Separator = ({ className }: { className?: string }) => (
     <div className={className} />
 );
 
+// Mobile Carousel Component
+const MobileCarousel = () => {
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    const slides = [
+        {
+            image: "/image/df-1.svg",
+            title: "Eagle Eye",
+            description: "Track, manage, and optimize your entire on-chain protfoio from one dashboard",
+            isCard: false
+        },
+        {
+            image: "/image/df-2.svg",
+            title: "Explore",
+            description: "Discover emerging trends. Seamlessly convert tokens with minimal fees",
+            isCard: false
+        },
+        {
+            image: "/image/df-3.png",
+            title: "Earn",
+            description: "Effortlessly tap into yield opportunities, all from a single platform",
+            isCard: true,
+            component: <FloatingEarnImages />
+        },
+        {
+            image: "/image/df-4.png",
+            title: "Cross Platform",
+            description: "One app, One account, All Devices",
+            isCard: true,
+            component: <DefiCardMotionOverlay />
+        }
+    ];
+
+
+    return (
+        <div className="relative w-full">
+            {/* Carousel Container */}
+            <div className="relative overflow-hidden">
+                <motion.div
+                    className="flex"
+                    animate={{ x: `-${currentSlide * 100}%` }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                    {slides.map((slide, index) => (
+                        <div key={index} className="w-full flex-shrink-0 px-4">
+                            <div className="flex flex-col gap-8 items-center">
+                                {slide.isCard ? (
+                                    <Card className={`relative flex w-full h-[310px] bg-cover bg-center rounded-2xl ${slide.component ? '' : 'overflow-hidden'}`}>
+                                        {slide.component}
+                                    </Card>
+                                ) : (
+                                    <Image
+                                        src={slide.image}
+                                        alt="Hubra"
+                                        width={310}
+                                        height={310}
+                                        className="w-full h-full object-cover rounded-2xl"
+                                    />
+                                )}
+                                <div className="w-full gap-4 flex flex-col items-start">
+                                    <h3 className={`font-sans text-white text-lg font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px]`}>
+                                        {slide.title}
+                                    </h3>
+                                    <p className={`font-geist text-gray-400/70 break-words text-sm font-normal leading-[26px]`}>
+                                        {slide.description}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </motion.div>
+            </div>
+
+
+
+            {/* Pagination Dots */}
+            <div className="flex justify-center items-center gap-4 mt-6">
+                {slides.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => setCurrentSlide(index)}
+                        className={`w-3.5 h-3.5 rounded-full transition-all duration-200 ${index === currentSlide
+                                ? 'bg-white scale-110'
+                                : 'bg-[#191a2c] hover:bg-gray-600'
+                            }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};
+
 export const MainContentSection = (): JSX.Element => {
     const [activeTab, setActiveTab] = useState<'normies' | 'degens'>('normies');
     const { isMobile } = useWindowSize();
-    const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-    ];
 
-    const tokenRows = [
-        {
-            id: 1,
-            name: "Moo Deng",
-            symbol: "MOODENG",
-            price: "€0.22",
-            change: "20%",
-            marketCap: "€207.20M",
-        },
-        {
-            id: 1,
-            name: "Moo Deng",
-            symbol: "MOODENG",
-            price: "€0.22",
-            change: "20%",
-            marketCap: "€207.20M",
-        },
-        {
-            id: 1,
-            name: "Moo Deng",
-            symbol: "MOODENG",
-            price: "€0.22",
-            change: "20%",
-            marketCap: "€207.20M",
-        },
-        {
-            id: 1,
-            name: "Moo Deng",
-            symbol: "MOODENG",
-            price: "€0.22",
-            change: "20%",
-            marketCap: "€207.20M",
-        },
-    ];
 
     const features = [
         {
-            icon: RiKey2Fill,
+            icon: 'ri:key-2-fill',
             title: "Non-Custodial   ",
             description: "Your keys, your assets. Always."
         },
         {
-            icon: FaEye,
+            icon: 'streamline-sharp:transparent-solid',
             title: "Transparent",
             description: "Fully open-source with clear, straightforward fees."
         },
         {
-            icon: IoIosRocket,
+            icon: 'ri:rocket-fill',
             title: "Scalable",
             description: "Automatically updated with new tokens and pools, ensuring you never miss out."
         },
         {
-            icon: GrConnect,
+            icon: 'mdi:swap-vertical-circle',
             title: "Onramp & Offramp",
             description: "Onramp & offramp with creditcard"
         },
     ];
 
     return (
-        <section className="flex flex-col w-full items-start gap-[120px] mx-auto max-w-[1016px] mb-5 px-8">
+        <section className="flex flex-col w-full items-start gap-20 mx-auto max-w-6xl md:mb-5  px-8">
             {/* Meet Hubra Section */}
             <div className="flex flex-col w-full items-start gap-8">
                 <div className="flex flex-col items-center gap-10 w-full">
                     <div className="flex flex-col max-w-[580px] items-center justify-center gap-5">
-                        <h2 className="font-geist text-white text-section-title text-center">
+                        <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
                             Meet Hubra
                         </h2>
                     </div>
@@ -132,13 +170,13 @@ export const MainContentSection = (): JSX.Element => {
                                         <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px]" />
                                     </div>
                                     <div className="absolute left-[32%] top-[18%] z-10">
-                                        <span className="w-[84px] h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand-mobile text-center tracking-[1px]">
-                                            amir.hub
+                                        <span className="capitalize w-[84px] h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand-mobile text-center tracking-[1px]">
+                                            You.hub
                                         </span>
                                     </div>
                                     <div className="absolute left-[32%] top-[77%] z-10">
-                                        <span className="w-[98px] h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand-mobile text-center tracking-[1px]">
-                                            friend.hub
+                                        <span className="capitalize w-[98px] h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand-mobile text-center tracking-[1px]">
+                                            Friend.hub
                                         </span>
                                     </div>
                                     <WalletEnergyFlow />
@@ -150,7 +188,7 @@ export const MainContentSection = (): JSX.Element => {
                                         <h3 className="font-sans text-white text-card-title">
                                             Normies
                                         </h3>
-                                        <p className="font-geist text-ui-primary text-body">
+                                        <p className="font-geist text-gray-400/70 text-body">
                                             No complicated jargon. Effortless onboarding
                                         </p>
                                     </div>
@@ -169,7 +207,7 @@ export const MainContentSection = (): JSX.Element => {
                                         <h3 className="font-sans text-white text-card-title">
                                             Degens
                                         </h3>
-                                        <p className="font-geist text-ui-primary text-body">
+                                        <p className="font-geist text-gray-400/70 text-body">
                                             Powerful DeFi tools. Endless possibilities
                                         </p>
                                     </div>
@@ -204,10 +242,10 @@ export const MainContentSection = (): JSX.Element => {
                                                     style={{ marginBottom: 'var(--dynamic-margin-bottom)' }}
                                                 >
                                                     <span className="absolute left-[7%] top-[50%] z-10 w-[131px] h-[42px] inline-block text-2xl font-bold leading-[42px] text-gradient-brand text-center tracking-[1px]">
-                                                        amir.hub
+                                                        You.hub
                                                     </span>
                                                     <span className="absolute left-[70%] top-[50%] z-10 w-[156px] h-[46px] inline-block text-2xl font-bold leading-[42px] text-gradient-brand text-center tracking-[1px]">
-                                                        friend.hub
+                                                        Friend.hub
                                                     </span>
 
                                                     <Image src="/image/wgroup.png" alt="Hubra" width={1014} height={281} />
@@ -230,46 +268,46 @@ export const MainContentSection = (): JSX.Element => {
 
                 {/* Desktop Tab Navigation */}
                 {!isMobile && (
-                    <div className="flex flex-row items-center gap-12 w-full mx-auto">
-                        <div className="flex w-1/2 items-start">
+                    <div className="flex flex-row items-center justify-between w-full mx-auto">
+                        <div className="flex w-1/2  h-[72px] items-start cursor-pointer" onClick={() => setActiveTab('normies')}>
                             {/* Glowing pink shadowed stick - only show for active tab */}
-                            {activeTab === 'normies' && (
-                                <div className="mr-8 w-1 h-[72px] bg-brand-primary opacity-80 rounded-full shadow-brand-glow"></div>
-                            )}
 
-                            <div className="w-[334px] gap-4 flex flex-col items-start">
+                            <div className={`mr-8 w-1  h-[72px] opacity-80 rounded-full ${activeTab === 'normies' ? 'bg-primary shadow-[0_0_40px_#FEAA01,0_0_60px_rgba(245,255,104,0.4)]' : ''}`}></div>
+
+
+                            <div className="w-fit h-full flex flex-col items-start justify-between">
                                 <button
-                                    onClick={() => setActiveTab('normies')}
-                                    className={`font-sans text-card-title transition-all duration-300 ${activeTab === 'normies'
+
+                                    className={`text-2xl font-semibold font-sans transition-all duration-300 ${activeTab === 'normies'
                                         ? 'text-white'
                                         : 'text-white opacity-50 hover:opacity-75'
                                         }`}
                                 >
                                     Normies
                                 </button>
-                                <p className="font-geist text-ui-primary text-body">
+                                <p className="font-geist text-gray-400/70 text-body">
                                     No complicated jargon. Effortless onboarding
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex items-start w-1/2">
+                        <div className="flex items-start w-1/2 h-[72px] cursor-pointer" onClick={() => setActiveTab('degens')}>
                             {/* Glowing pink shadowed stick - only show for active tab */}
-                            {activeTab === 'degens' && (
-                                <div className="mr-8 w-1 h-[72px] bg-brand-primary opacity-80 rounded-full shadow-brand-glow"></div>
-                            )}
 
-                            <div className="w-[334px] gap-4 flex flex-col items-start">
+                            <div className={`mr-8 w-1 h-[72px] opacity-80 rounded-full ${activeTab === 'degens' ? 'bg-primary shadow-[0_0_40px_#FEAA01,0_0_60px_rgba(245,255,104,0.4)]' : ''}`}></div>
+
+
+                            <div className="w-fit h-full flex flex-col items-start justify-between">
                                 <button
-                                    onClick={() => setActiveTab('degens')}
-                                    className={`font-sans text-card-title transition-all duration-300 ${activeTab === 'degens'
+
+                                    className={`text-2xl font-semibold font-sans  transition-all duration-300 ${activeTab === 'degens'
                                         ? 'text-white'
                                         : 'text-white opacity-50 hover:opacity-75'
                                         }`}
                                 >
                                     Degens
                                 </button>
-                                <p className="font-geist text-ui-primary text-body">
+                                <p className="font-geist text-gray-400/70 text-body">
                                     Powerful DeFi tools. Endless possibilities
                                 </p>
                             </div>
@@ -283,10 +321,10 @@ export const MainContentSection = (): JSX.Element => {
             {/* Introducing HubSOL Section */}
             <div className="flex flex-col w-full items-center justify-center gap-8 md:gap-10">
                 <div className="flex flex-col w-full text-wrap-break-word md:w-[580px] items-center justify-center gap-5">
-                    <h2 className="font-geist text-white text-section-title text-center">
+                    <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
                         Introducing HubSOL
                     </h2>
-                    <p className="w-[80%] break-words md:w-fit font-geist text-ui-primary text-xl text-center">
+                    <p className="w-[80%] break-words md:w-fit font-geist text-gray-400/70 text-xl text-center">
                         Empowering supporters through platform revenue.
                     </p>
                 </div>
@@ -304,7 +342,7 @@ export const MainContentSection = (): JSX.Element => {
                     {/* Left column: 2 stacked cards */}
                     <div className="flex flex-col gap-6 w-full md:w-[370px]">
                         {/* $13M TVL Card */}
-                        <Card className="relative h-[180px] bg-ui-dark rounded-2xl flex flex-col w-full justify-between p-6 overflow-hidden">
+                        <Card className="relative h-[180px] bg-card rounded-2xl flex flex-col w-full justify-between p-6 overflow-hidden">
                             {/* Chart line (placeholder) */}
                             <div className="absolute left-0 bottom-0 w-full h-2/3 flex items-end">
                                 <TVLAnimatedPath />
@@ -313,7 +351,7 @@ export const MainContentSection = (): JSX.Element => {
                             </div>
                             <div className="z-10">
                                 <div className="text-white text-2xl font-semibold">$13M</div>
-                                <div className="text-ui-primary text-body">TVL</div>
+                                <div className="text-gray-400/70 text-body">TVL</div>
                             </div>
                         </Card>
                         {/* 20+ Integrated platforms Card */}
@@ -321,7 +359,7 @@ export const MainContentSection = (): JSX.Element => {
                             <Solanaglow right={96} top={86} color={isMobile ? "#B84794" : "#FDB122"} />
                             <div className="flex flex-col items-start justify-start">
                                 <div className="text-white text-2xl font-semibold">20+</div>
-                                <div className="text-ui-primary text-body">Integrated platforms</div>
+                                <div className="text-gray-400/70 text-body">Integrated platforms</div>
                             </div>
                         </Card>
                     </div>
@@ -334,101 +372,16 @@ export const MainContentSection = (): JSX.Element => {
             <div className="flex flex-col items-start justify-center w-full gap-10">
                 <div className="flex flex-col w-full items-center gap-10">
                     <div className="flex flex-col w-full md:w-[580px] items-center justify-center gap-5">
-                        <h2 className="font-geist text-white text-section-title text-center">
+                        <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
                             Defi, Simplified
                         </h2>
-                        <p className="w-[80%] break-words md:w-fit font-geist text-ui-primary text-xl text-center">
+                        <p className="w-[80%] break-words md:w-fit font-geist text-gray-400/70 text-xl text-center">
                             Empowering supporters through platform revenue.
                         </p>
                     </div>
                     {isMobile ? (
                         <div className="relative w-full">
-                            <Swiper
-                                spaceBetween={24}
-                                slidesPerView={1}
-                                pagination={{ clickable: true }}
-                                modules={[Pagination]}
-                                className="w-full custom-swiper-pagination"
-                            >
-                                <SwiperSlide>
-                                    <div className="flex flex-col gap-8 items-center">
-                                        <Image src="/image/df-1.svg" alt="Hubra" width={310} height={310} className="w-full h-full object-cover rounded-2xl" />
-                                        <div className="w-full gap-4 flex flex-col items-start">
-                                            <h3 className="font-sans text-white text-card-title">
-                                                Eagle Eye
-                                            </h3>
-                                            <p className="font-geist text-ui-primary text-body break-words">
-                                                Track, manage, and optimize your entire on-chain protfoio from one dashboard
-                                            </p>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <div className="flex flex-col gap-8 items-center">
-                                        <Image src="/image/df-2.svg" alt="Hubra" width={310} height={310} className="w-full h-full object-cover rounded-2xl" />
-                                        <div className="w-full gap-4 flex flex-col items-start">
-                                            <h3 className="font-sans text-white text-card-title">
-                                                Explore
-                                            </h3>
-                                            <p className="font-geist text-ui-primary text-body break-words">
-                                                Discover emerging trends. Seamlessly convert tokens with minimal fees
-                                            </p>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <div className="flex flex-col gap-8 items-center">
-                                        <Card className="relative flex w-full h-[310px] bg-[url('/image/df-3.png')] bg-cover bg-center rounded-2xl" >
-                                            <FloatingEarnImages />
-                                        </Card>
-                                        <div className="w-full gap-4 flex flex-col items-start">
-                                            <h3 className="font-sans text-white text-card-title-compact">
-                                                Earn
-                                            </h3>
-                                            <p className="font-geist text-ui-primary text-body-compact break-words">
-                                                Effortlessly tap into yield opportunities, all from a single platform
-                                            </p>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                                <SwiperSlide>
-                                    <div className="flex flex-col gap-8 items-center">
-                                        <Card className="relative overflow-hidden flex w-full h-[310px] bg-[url('/image/df-4.png')] bg-cover bg-center rounded-2xl">
-                                            <DefiCardMotionOverlay />
-                                        </Card>
-                                        <div className="w-full gap-4 flex flex-col items-start">
-                                            <h3 className="font-sans text-white text-card-title-compact">
-                                                Cross Platform
-                                            </h3>
-                                            <p className="font-geist text-ui-primary text-body-compact break-words">
-                                                One app, One account, All Devices
-                                            </p>
-                                        </div>
-                                    </div>
-                                </SwiperSlide>
-                            </Swiper>
-                            <style jsx global>{`
-                                .custom-swiper-pagination .swiper-pagination {
-                                    position: static;
-                                    margin-top: 20px;
-                                    display: flex;
-                                    justify-content: center;
-                                    align-items: center;
-                                    gap: 18px;
-                                }
-                                .custom-swiper-pagination .swiper-pagination-bullet {
-                                    width: 14px;
-                                    height: 14px;
-                                    background: #191a2c;
-                                    opacity: 1;
-                                    border-radius: 50%;
-                                    margin: 0;
-                                    transition: background 0.2s;
-                                }
-                                .custom-swiper-pagination .swiper-pagination-bullet-active {
-                                    background: #fff;
-                                }
-                            `}</style>
+                            <MobileCarousel />
                         </div>
                     ) : (
                         <>
@@ -436,10 +389,10 @@ export const MainContentSection = (): JSX.Element => {
                                 <div className="flex w-full md:w-1/2 flex-col gap-8">
                                     <Image src="/image/df-1.svg" alt="Hubra" width={310} height={310} className="w-full h-full object-cover rounded-2xl" />
                                     <div className="w-full gap-4 flex flex-col items-start">
-                                        <h3 className="font-sans text-white text-card-title">
+                                        <h3 className="font-sans text-white font-semibold text-xl">
                                             Eagle Eye
                                         </h3>
-                                        <p className="font-geist text-ui-primary text-body break-words">
+                                        <p className="font-geist text-gray-400/70 text-body break-words">
                                             Track, manage, and optimize your entire on-chain protfoio from one dashboard
                                         </p>
                                     </div>
@@ -447,10 +400,10 @@ export const MainContentSection = (): JSX.Element => {
                                 <div className="flex w-full md:w-1/2 flex-col gap-8">
                                     <Image src="/image/df-2.svg" alt="Hubra" width={310} height={310} className="w-full h-full object-cover rounded-2xl" />
                                     <div className="w-full gap-4 flex flex-col items-start">
-                                        <h3 className="font-sans text-white text-card-title">
+                                        <h3 className="font-sans text-white font-semibold text-xl">
                                             Explore
                                         </h3>
-                                        <p className="font-geist text-ui-primary text-body break-words">
+                                        <p className="font-geist text-gray-400/70 text-body break-words">
                                             Discover emerging trends. Seamlessly convert tokens with minimal fees
                                         </p>
                                     </div>
@@ -462,10 +415,10 @@ export const MainContentSection = (): JSX.Element => {
                                         <FloatingEarnImages />
                                     </Card>
                                     <div className="w-full gap-4 flex flex-col items-start">
-                                        <h3 className="font-sans text-white text-card-title-compact">
+                                        <h3 className="font-sans text-white font-semibold text-xl">
                                             Earn
                                         </h3>
-                                        <p className="font-geist text-ui-primary text-body-compact break-words">
+                                        <p className="font-geist text-gray-400/70  break-words">
                                             Effortlessly tap into yield opportunities, all from a single platform
                                         </p>
                                     </div>
@@ -475,10 +428,10 @@ export const MainContentSection = (): JSX.Element => {
                                         <DefiCardMotionOverlay />
                                     </Card>
                                     <div className="w-full gap-4 flex flex-col items-start">
-                                        <h3 className="font-sans text-white text-card-title-compact">
+                                        <h3 className="font-sans text-white font-semibold text-xl">
                                             Cross Platform
                                         </h3>
-                                        <p className="font-geist text-ui-primary text-body-compact break-words">
+                                        <p className="font-geist text-gray-400/70 break-words">
                                             One app, One account, All Devices
                                         </p>
                                     </div>
@@ -489,20 +442,20 @@ export const MainContentSection = (): JSX.Element => {
                 </div>
 
                 {/* Features Section */}
-                <Card className="flex flex-col w-full items-start bg-ui-dark rounded-2xl">
+                <Card className="flex flex-col w-full items-start bg-card rounded-2xl">
                     <CardContent className="p-0 w-full flex flex-col">
                         {features.map((feature, index) => (
                             <div
                                 key={index}
-                                className={`h-[90px] flex flex-col items-start justify-center md:flex-row md:items-center md:justify-between w-full ${index > 0 ? "border-t [border-top-style:solid] border-ui-light" : ""}`}
+                                className={`h-[90px] flex flex-col items-start justify-center md:flex-row md:items-center md:justify-between w-full ${index > 0 ? "border-t [border-top-style:solid] border-white/10" : ""}`}
                             >
                                 <div className="inline-flex items-center gap-[9px] pl-4 md:pl-6">
-                                    {feature.icon && <feature.icon size={18} className="text-[#B84794] md:text-[#FEAA01]" />}
-                                    <div className="font-sans text-white text-body-small whitespace-nowrap">
+                                    {feature.icon && <Icon icon={feature.icon} className="text-[#B84794] md:text-[#FEAA01]" />}
+                                    <div className="font-sans text-white whitespace-nowrap">
                                         {feature.title}
                                     </div>
                                 </div>
-                                <div className="pl-4 md:pr-6 break-words font-sans text-ui-secondary text-label md:text-right">
+                                <div className="pl-4 md:pr-6 break-words font-sans text-gray text-label md:text-right">
                                     {feature.description}
                                 </div>
                             </div>
@@ -513,7 +466,7 @@ export const MainContentSection = (): JSX.Element => {
 
             {/* Partners Section */}
             <div className="flex flex-col items-center gap-[52px] w-full" >
-                <h2 className="font-geist text-white text-section-title text-center">
+                <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
                     Hubsol Partners
                 </h2>
 
@@ -521,29 +474,29 @@ export const MainContentSection = (): JSX.Element => {
                     {/* Left column */}
                     <div className="flex md:flex-col gap-4">
                         <div className="flex flex-col md:flex-row items-center justify-end gap-4">
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px] hover:opacity-100" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px] hover:opacity-100" >
                                 <Partner1Icon />
                             </div>
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner2Icon />
                             </div>
                         </div>
                         <div className="flex flex-col md:flex-row items-center justify-end gap-4">
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
 
                             </div>
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner3Icon />
                             </div>
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner4Icon />
                             </div>
                         </div>
                         <div className="flex flex-col md:flex-row items-center justify-end gap-4">
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner5Icon />
                             </div>
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner6Icon />
                             </div>
                         </div>
@@ -552,45 +505,39 @@ export const MainContentSection = (): JSX.Element => {
                     <div className="flex items-center justify-center w-[180px] h-auto md:hidden lg:block lg:w-full">
                         <Image
                             alt="Logo"
-                            src="/image/partner-logo.png"
+                            src="/image/hero-ball.svg"
                             width={323}
                             height={323}
-                            className="w-full h-auto hidden md:flex"
+                            className="w-full h-auto"
                         />
-                        <Image
-                            alt="mLogo"
-                            src="/image/partner-logo-m.png"
-                            width={323}
-                            height={323}
-                            className="w-full h-auto md:hidden flex"
-                        />
+                        
                     </div>
                     {/* right column */}
                     <div className="flex md:flex-col gap-4">
                         <div className="flex flex-col md:flex-row items-center justify-start gap-4">
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner7Icon />
                             </div>
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner8Icon />
                             </div>
                         </div>
                         <div className="flex flex-col md:flex-row items-center justify-start gap-4">
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner9Icon />
                             </div>
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner10Icon />
                             </div>
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner11Icon />
                             </div>
                         </div>
                         <div className="flex flex-col md:flex-row items-center justify-start gap-4">
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner12Icon />
                             </div>
-                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-[#191a2c] rounded-[100px]" >
+                            <div className="flex items-center justify-center w-[98.22px] aspect-[1/1] bg-card rounded-[100px]" >
                                 <Partner13Icon />
                             </div>
                         </div>
@@ -602,14 +549,14 @@ export const MainContentSection = (): JSX.Element => {
             </div >
 
             {/* Footer */}
-            <footer className="flex flex-col gap-10 w-screen md:w-full items-start bg-ui-darker rounded-[32px] py-12 -ml-10 md:ml-0" >
-                <div className="flex flex-col gap-16 md:flex-row md:justify-between items-start px-8 py-0 mx-auto">
+            <footer className="flex flex-col gap-10 w-screen md:w-full items-start rounded-[32px] py-12 -ml-10 md:ml-0 bg-card px-8" >
+                <div className="flex flex-col gap-16 md:flex-row md:justify-between items-start w-full">
                     <div className="flex-col items-start gap-8 flex relative flex-1 grow">
                         <div className="flex flex-col h-[62px] items-start gap-2 w-full">
                             <h3 className=" font-text-xl-semibold text-white">
                                 Stay Connected
                             </h3>
-                            <p className="w-fit font-sans text-ui-primary text-body break-words">
+                            <p className="w-fit font-sans text-gray-400/70 text-body break-words">
                                 Sign up to stay up to-date on the latest announcements
                             </p>
                         </div>
@@ -621,12 +568,7 @@ export const MainContentSection = (): JSX.Element => {
                                         placeholder="Enter your email"
                                         radius="full"
                                         classNames={{
-                                            input: ["bg-ui-input",
-                                                "placeholder:text-ui-muted",
-                                            ],
-                                            inputWrapper: ["bg-ui-input",
-                                                "placeholder:text-ui-muted",
-                                            ],
+
                                         }}
                                         endContent={
                                             <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0 flex items-center mt-2" />
@@ -636,7 +578,7 @@ export const MainContentSection = (): JSX.Element => {
                                 </div>
                             </div>
 
-                            <Button radius="full" className="bg-[#B84794] md:bg-brand-primary w-full md:w-fit">
+                            <Button radius="full" className="bg-primary-500 ">
                                 Subscribe
                             </Button>
                         </div>
@@ -650,21 +592,21 @@ export const MainContentSection = (): JSX.Element => {
                             <div className="flex flex-col items-start md:items-end justify-center gap-3  w-full">
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-primary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/70 text-body text-left md:text-right break-words">
                                             Download App
                                         </div>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-secondary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Web App
                                         </div>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-secondary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Learn
                                         </div>
                                     </div>
@@ -679,21 +621,21 @@ export const MainContentSection = (): JSX.Element => {
                             <div className="flex flex-col items-start md:items-end justify-center gap-3  w-full">
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-secondary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Discord
                                         </div>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-secondary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Telegram
                                         </div>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-secondary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Twitter
                                         </div>
                                     </div>
@@ -708,35 +650,35 @@ export const MainContentSection = (): JSX.Element => {
                             <div className="flex flex-col items-start md:items-end justify-center gap-3  w-full">
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-secondary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             GitHub
                                         </div>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-secondary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Developer
                                         </div>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-secondary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Docs
                                         </div>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-secondary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Stats
                                         </div>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-ui-secondary text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Privacy
                                         </div>
                                     </div>
@@ -746,37 +688,31 @@ export const MainContentSection = (): JSX.Element => {
                     </div>
                 </div>
 
-                <div className="flex flex-col items-start gap-8 px-8 py-0 w-full">
+                <div className="flex flex-col items-start gap-8 w-full">
                     <div className="flex flex-col items-start gap-4 md:flex-row md:items-center justify-between w-full">
                         <div className="inline-flex items-center gap-[8.03px]">
                             <Image
                                 alt="hub"
-                                src="/icons/hub.svg"
-                                width={24}
-                                height={24}
-                                className="hidden md:flex"
+                                src="/logo.png"
+                                width={32}
+                                height={32}
+                                className="w-4 h-4 md:w-6 md:h-6 rounded-none"
                             />
-                            <Image
-                                alt="hub"
-                                src="/icons/hub-m.svg"
-                                width={24}
-                                height={24}
-                                className="md:hidden flex"
-                            />
-                            <h2 className="text-white text-stats font-medium"> Hubra </h2>
+                           
+                            <h2 className="text-white font-medium"> Hubra </h2>
                         </div>
 
                         <div className="inline-flex items-center gap-6">
                             <a href="/" className="">
-                                <FaTwitter className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white" />
+                                <Icon icon="ri:twitter-fill" className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white" />
                             </a>
 
                             <a href="/" className="">
-                                <FaGithub className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white" />
+                                <Icon icon="ri:github-fill" className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white" />
                             </a>
 
                             <a href="/" className="">
-                                <IoLogoDiscord className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white" />
+                                <Icon icon="ri:discord-fill" className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white" />
                             </a>
 
                         </div>

@@ -11,23 +11,14 @@ import {
 } from "@heroui/navbar";
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
+import {Image} from "@heroui/image";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
-import clsx from "clsx";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
 
 import { siteConfig } from "@/config/site";
-import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  GithubIcon,
-} from "@/components/icons";
-import Logo from "@/components/logo";
+
 import { Icon } from "@iconify/react";
+import { Badge } from "@heroui/badge";
 
 export const Navbar = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -40,20 +31,20 @@ export const Navbar = () => {
   const navItems = siteConfig.navItems.filter((item) => item.label !== "Stats" && item.label !== "Home");
   return (
     <HeroUINavbar maxWidth="2xl" position="sticky"
-      className="bg-transparent backdrop-filter-none"
+      className=" backdrop-filter-none"
       classNames={{
-        menuItem: " text-ui-text-navbar",
-        menu: " text-ui-text-navbar",
-        item: " text-ui-text-navbar"
+        menuItem: " text-white",
+        menu: " text-white",
+        item: " text-white"
       }} >
       <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
-            <Logo className="text-primary" height={28} width={28} />
-            <p className="font-bold text-inherit">Hubra</p>
+          <NextLink className="flex justify-start items-center gap-2" href="/">
+            <Image src="/logo.png" alt="Hubra"  className="rounded-none w-4 h-4 md:w-6 md:h-6" />
+            <p className="font-bold text-white">Hubra</p>
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start items-center ml-4">
+        {/* <ul className=" lg:flex gap-4 justify-start items-center ml-4">
           {navItems.map((item) => (
             item.navItems ? (
               <NavbarItem key={item.label} className="relative">
@@ -94,11 +85,11 @@ export const Navbar = () => {
               </NavbarItem>
             )
           ))}
-        </ul>
+        </ul> */}
       </NavbarContent>
 
       <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
+        className=" sm:flex basis-1/5 sm:basis-full"
         justify="end"
       >
 
@@ -108,18 +99,20 @@ export const Navbar = () => {
             radius="full"
             isExternal
             as={Link}
+            disabled
             className="text-sm font-normal "
-            href={siteConfig.links.sponsor}
+           
             startContent={isMounted ? <Icon icon="hugeicons:chart-02" width="16" height="16" /> : null}
 
           >
-            Stats
+            Stats 
 
           </Button>
         </NavbarItem>
-        <NavbarItem className="hidden lg:flex">
+        <NavbarItem className=" lg:flex">
           <Button
             radius="full"
+            
             isExternal
             as={Link}
             className="text-sm font-normal text-black bg-white"
@@ -133,13 +126,7 @@ export const Navbar = () => {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarContent className="lg:hidden basis-1 pl-4" justify="end">
-        <Link isExternal aria-label="Github" href={siteConfig.links.github}>
-          <GithubIcon className="text-default-500" />
-        </Link>
-        <ThemeSwitch />
-        <NavbarMenuToggle />
-      </NavbarContent>
+ 
 
       <NavbarMenu>
         <div className="mx-4 mt-2 flex flex-col gap-2">

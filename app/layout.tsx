@@ -37,7 +37,7 @@ export default function RootLayout({
           "min-h-screen text-foreground bg-background font-sans antialiased"
         )}
       >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+        <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col items-center">
             <Navbar />
             <main className="w-full px-0 md:px-10 flex flex-col items-center">
