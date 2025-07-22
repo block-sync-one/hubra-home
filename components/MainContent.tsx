@@ -17,6 +17,7 @@ import { Partner10Icon, Partner11Icon, Partner12Icon, Partner13Icon, Partner1Ico
 import { DegenAnimation } from "./ui/DegenAnimation";
 import { useWindowSize } from "../lib/useWindowSize";
 import { MobileDegenAnimation } from "./ui/MobileDegenAnimation";
+import { AnimatedSatelliteOrbit } from "@/components/ui/AnimatedSatellite";
 import { Icon } from "@iconify/react";
 
 
@@ -333,10 +334,13 @@ export const MainContentSection = (): JSX.Element => {
                     {/* Right column: Large logo card */}
                     <Card className="relative w-full h-[390px] md:flex-1 bg-[url('/image/hubsol-sec.png')] bg-cover bg-center rounded-2xl overflow-hidden flex items-center justify-center">
                         <FloatingOrbsAnimation />
+                        <div className="w-[600px] h-[304px] flex relative -bottom-16 -left-20">
+                            <AnimatedSatelliteOrbit />
+                        </div>
                     </Card>
 
                     {/* Left column: 2 stacked cards */}
-                    <div className="flex flex-col gap-6 w-full md:w-[370px]">
+                    <div className="flex flex-col justify-between w-full h-[390px] md:w-[370px]">
                         {/* $13M TVL Card */}
                         <Card className="relative h-[180px] bg-card rounded-2xl flex flex-col w-full justify-between p-6 overflow-hidden">
                             {/* Chart line (placeholder) */}
@@ -497,13 +501,13 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
                     </div>
                     {/* center column */}
-                    <div className="flex items-center justify-center w-[180px] h-auto md:hidden lg:block lg:w-full">
+                    <div className="flex items-center justify-center w-full max-w-[180px] h-auto md:hidden lg:block md:max-w-[320px]">
                         <Image
                             alt="Logo"
                             src="/image/hero-ball.svg"
                             width={323}
                             height={323}
-                            className="w-full h-auto hidden md:flex"
+                            className="w-full h-auto hidden md:flex max-w-[320px] max-h-[320px]"
                         />
                         <Image
                             alt="Logo"

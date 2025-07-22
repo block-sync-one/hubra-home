@@ -106,31 +106,31 @@ export const HeroSection = (): JSX.Element => {
                 ))}
               </div>
             )}
-            <Image
-              src={isMobile ? "/image/hero-ball-m.svg" : "/image/hero-ball.svg"}
-              alt="Pink Gradient"
-              width={200}
-              height={200}
-              className="w-[60%] max-w-[260px] md:max-w-[340px] hero-image absolute z-20 rounded-full"
-              unoptimized
-            />
             <div
-              className="absolute h-full top-[40%] w-[60%] max-w-[260px] md:max-w-[340px] rounded-[9999px_9999px_0px_0px] flex flex-row justify-center items-center z-10"
+              className="absolute h-full top-1/4 w-full max-w-[324px] md:max-w-[348px] flex flex-row z-10 object-cover px-[2px]"
             >
+              <Image
+                src={isMobile ? "/image/hero-ball-m.svg" : "/image/hero-ball.svg"}
+                alt="Pink Gradient"
+                width={200}
+                height={200}
+                className="w-full max-w-[320px] top-1 md:max-w-[340px] hero-image absolute z-20 rounded-full md:mt-[6px]"
+                unoptimized
+              />
               <div
-                className="flex w-full h-full items-start p-1 bg-gradient-bar gap-4 relative"
+                className="flex w-full h-full items-start p-1 bg-gradient-to-t from-[#FEAA01]/5 md:from-[#2E2E2E]/5 to-[#FEAA01]/30 md:to-[#2E2E2E]/25 rounded-[9999px_9999px_0px_0px] px-[2px`] gap-4 relative"
               >
                 <div
-                  className="h-full w-full bg-gradient-bar-tab flex relative top-5"
+                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/10 md:from-[#2E2E2E]/5 to-[#FEAA01]/30 md:to-[#2E2E2E]/25 flex relative top-1/2 md:top-1/3"
                 />
                 <div
-                  className="h-full w-full bg-gradient-bar-tab flex relative top-5"
+                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/10 md:from-[#2E2E2E]/5 to-[#FEAA01]/30 md:to-[#2E2E2E]/25 flex relative top-1/2 md:top-1/3"
                 />
                 <div
-                  className="h-full w-full bg-gradient-bar-tab flex relative top-5"
+                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/10 md:from-[#2E2E2E]/5 to-[#FEAA01]/30 md:to-[#2E2E2E]/25 flex relative top-1/2 md:top-1/3"
                 />
                 <div
-                  className="h-full w-full bg-gradient-bar-tab flex relative top-5"
+                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/10 md:from-[#2E2E2E]/5 to-[#FEAA01]/30 md:to-[#2E2E2E]/25 flex relative top-1/2 md:top-1/3"
                 />
               </div>
             </div>

@@ -145,12 +145,12 @@ const config = {
         },
 
         // Background gradients
-        '.bg-gradient-bar': {
-          'background': 'linear-gradient(180deg, #FEAA0100 12%, #FEAA0110 100%)',
-        },
-        '.bg-gradient-bar-tab': {
-          'background': 'linear-gradient(180deg, #FEAA0100 0%, #FEAA0110 100%)',
-        },
+        // '.bg-gradient-bar': {
+        //   'background': 'linear-gradient(180deg, #FEAA0100 12%, #FEAA0110 100%)',
+        // },
+        // '.bg-gradient-bar-tab': {
+        //   'background': 'linear-gradient(180deg, #FEAA0100 0%, #FEAA0110 100%)',
+        // },
       })
     }
   ]
