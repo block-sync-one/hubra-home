@@ -10,7 +10,7 @@ if (typeof window !== "undefined") {
     }
     @media (max-width: 767px) {
       :root {
-        --energy-gradient-color: #E379C1;
+        --energy-gradient-color: #FEAA01;
       }
     }
   `;

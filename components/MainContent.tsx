@@ -147,7 +147,7 @@ export const MainContentSection = (): JSX.Element => {
     ];
 
     return (
-        <section className="flex flex-col w-full items-start gap-20 mx-auto max-w-6xl md:mb-5  px-8">
+        <section className="flex flex-col w-full items-start gap-20 mx-auto max-w-6xl md:mb-5 md:px-4">
             {/* Meet Hubra Section */}
             <div className="flex flex-col w-full items-start gap-8">
                 <div className="flex flex-col items-center gap-10 w-full">
@@ -162,7 +162,7 @@ export const MainContentSection = (): JSX.Element => {
                         <div className="flex flex-col gap-8">
                             {/* Normies Section */}
                             <div className="flex flex-col gap-4">
-                                <Card className="flex items-center justify-center mx-auto w-[350px] h-[518px] bg-[url('/image/hubra-m.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                <Card className="flex items-center justify-center mx-auto w-[350px] h-[518px] bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
                                     <div className="absolute left-[60%] top-[17%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
                                         <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px]" />
                                     </div>
@@ -197,7 +197,7 @@ export const MainContentSection = (): JSX.Element => {
 
                             {/* Degens Section */}
                             <div className="flex flex-col gap-4">
-                                <Card className="flex items-center justify-center mx-auto w-[350px] h-[518px] bg-[url('/image/degens-m.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                <Card className="flex items-center justify-center mx-auto w-[350px] h-[518px] bg-[url('/image/degens.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
                                     <MobileDegenAnimation />
                                 </Card>
 
@@ -319,7 +319,7 @@ export const MainContentSection = (): JSX.Element => {
             <Separator className="w-full h-px bg-ui-border-transparent" />
 
             {/* Introducing HubSOL Section */}
-            <div className="flex flex-col w-full items-center justify-center gap-8 md:gap-10">
+            <div className="flex flex-col w-full items-center justify-center gap-8 md:gap-10 px-4">
                 <div className="flex flex-col w-full text-wrap-break-word md:w-[580px] items-center justify-center gap-5">
                     <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
                         Introducing HubSOL
@@ -331,12 +331,8 @@ export const MainContentSection = (): JSX.Element => {
                 <div className="flex flex-col items-center md:flex-row-reverse md:items-start gap-4 w-full">
 
                     {/* Right column: Large logo card */}
-                    <Card className="relative w-full h-[390px] hidden md:flex-1 bg-[url('/image/hubsol-sec.png')] bg-cover bg-center rounded-2xl overflow-hidden md:flex items-center justify-center">
+                    <Card className="relative w-full h-[390px] md:flex-1 bg-[url('/image/hubsol-sec.png')] bg-cover bg-center rounded-2xl overflow-hidden flex items-center justify-center">
                         <FloatingOrbsAnimation />
-                    </Card>
-
-                    <Card className="relative w-full h-[390px] md:flex-1 bg-[url('/image/hubsol-sec.svg')] bg-cover bg-center rounded-2xl overflow-hidden md:hidden flex items-center justify-center">
-                        {/* <FloatingOrbsAnimation /> */}
                     </Card>
 
                     {/* Left column: 2 stacked cards */}
@@ -346,8 +342,7 @@ export const MainContentSection = (): JSX.Element => {
                             {/* Chart line (placeholder) */}
                             <div className="absolute left-0 bottom-0 w-full h-2/3 flex items-end">
                                 <TVLAnimatedPath />
-                                <Image src="/image/tvl.svg" alt="Solana" width={264} height={80} className="absolute left-0 bottom-0 w-auto h-[90%] hidden md:flex hover:opacity-100" />
-                                <Image src="/image/tvl.png" alt="Solana" width={264} height={80} className="absolute left-0 bottom-0 flex md:hidden w-full max-w-fit h-[90%] hover:opacity-100" />
+                                <Image src="/image/tvl.svg" alt="Solana" width={264} height={80} className="absolute left-0 bottom-0 w-auto h-[90%] flex hover:opacity-100" />
                             </div>
                             <div className="z-10">
                                 <div className="text-white text-2xl font-semibold">$13M</div>
@@ -355,8 +350,8 @@ export const MainContentSection = (): JSX.Element => {
                             </div>
                         </Card>
                         {/* 20+ Integrated platforms Card */}
-                        <Card className="relative h-[180px] bg-[url('/image/hex-group-m.svg')] md:bg-[url('/image/hex-group.svg')] bg-cover bg-center rounded-2xl flex flex-col justify-between p-6 overflow-hidden">
-                            <Solanaglow right={96} top={86} color={isMobile ? "#B84794" : "#FDB122"} />
+                        <Card className="relative h-[180px] bg-[url('/image/hex-group.svg')] bg-cover bg-center rounded-2xl flex flex-col justify-between p-6 overflow-hidden">
+                            <Solanaglow right={96} top={86} color={isMobile ? "#FDB122" : "#FDB122"} />
                             <div className="flex flex-col items-start justify-start">
                                 <div className="text-white text-2xl font-semibold">20+</div>
                                 <div className="text-gray-400/70 text-body">Integrated platforms</div>
@@ -369,7 +364,7 @@ export const MainContentSection = (): JSX.Element => {
             <Separator className="w-full h-px bg-ui-border-transparent" />
 
             {/* DeFi, Simplified Section */}
-            <div className="flex flex-col items-start justify-center w-full gap-10">
+            <div className="flex flex-col items-start justify-center w-full gap-10 px-4">
                 <div className="flex flex-col w-full items-center gap-10">
                     <div className="flex flex-col w-full md:w-[580px] items-center justify-center gap-5">
                         <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
@@ -447,15 +442,15 @@ export const MainContentSection = (): JSX.Element => {
                         {features.map((feature, index) => (
                             <div
                                 key={index}
-                                className={`h-[90px] flex flex-col items-start justify-center md:flex-row md:items-center md:justify-between w-full ${index > 0 ? "border-t [border-top-style:solid] border-white/10" : ""}`}
+                                className={`h-[90px] flex flex-col items-start justify-center md:flex-row md:items-center md:justify-between px-4 md:px-6 w-full ${index > 0 ? "border-t [border-top-style:solid] border-white/10" : ""}`}
                             >
-                                <div className="inline-flex items-center gap-[9px] pl-4 md:pl-6">
-                                    {feature.icon && <Icon icon={feature.icon} className="text-[#B84794] md:text-[#FEAA01]" />}
+                                <div className="inline-flex items-center gap-[9px]">
+                                    {feature.icon && <Icon icon={feature.icon} className="text-[#FEAA01]" />}
                                     <div className="font-sans text-white whitespace-nowrap">
                                         {feature.title}
                                     </div>
                                 </div>
-                                <div className="pl-4 md:pr-6 break-words font-sans text-gray text-label md:text-right">
+                                <div className="break-words font-sans text-gray-500 text-label md:text-right">
                                     {feature.description}
                                 </div>
                             </div>
@@ -508,7 +503,14 @@ export const MainContentSection = (): JSX.Element => {
                             src="/image/hero-ball.svg"
                             width={323}
                             height={323}
-                            className="w-full h-auto"
+                            className="w-full h-auto hidden md:flex"
+                        />
+                        <Image
+                            alt="Logo"
+                            src="/image/hero-ball-m.png"
+                            width={323}
+                            height={323}
+                            className="w-full h-auto flex md:hidden"
                         />
 
                     </div>
@@ -549,7 +551,7 @@ export const MainContentSection = (): JSX.Element => {
             </div >
 
             {/* Footer */}
-            <footer className="flex flex-col gap-10 w-full items-start rounded-[32px] py-12 mb-4 bg-card px-8" >
+            <footer className="flex flex-col gap-10 w-full items-start md:rounded-[32px] py-12 md:mb-4 bg-card px-4 md:px-8" >
                 <div className="flex flex-col gap-16 md:flex-row justify-between items-start w-full">
                     <div className="flex-col items-start gap-8 flex relative flex-1 grow w-full">
                         <div className="flex flex-col h-[62px] items-start gap-2 w-full">
@@ -578,18 +580,18 @@ export const MainContentSection = (): JSX.Element => {
                                 </div>
                             </div>
 
-                            <Button radius="full" className="bg-primary-500 ">
+                            <Button radius="full" className="bg-primary-500 w-full md:w-[120px] text-center">
                                 Subscribe
                             </Button>
                         </div>
                     </div>
 
-                    <div className="flex items-start gap-8 relative flex-1 grow w-full">
+                    <div className="flex items-start gap-4 md:gap-8 relative flex-1 grow w-full">
                         <div className="flex flex-col items-start md:items-end justify-center gap-4 flex-1 grow">
-                            <h4 className="font-sans text-white text-lg text-left md:text-right">
+                            <h4 className="font-sans text-white text-sm sm:text-base md:text-lg text-left md:text-right">
                                 Product
                             </h4>
-                            <div className="flex flex-col items-start md:items-end justify-center gap-3  w-full">
+                            <div className="flex flex-col items-start md:items-end text-xs sm:text-sm md:text-base justify-center gap-3 w-full">
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
                                         <div className="w-fit font-sans text-gray-400/70 text-body text-left md:text-right break-words">
@@ -615,10 +617,10 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
 
                         <div className="flex flex-col items-start md:items-end justify-center gap-4 flex-1 grow">
-                            <h4 className="font-sans text-white text-lg text-left md:text-right">
+                            <h4 className="font-sans text-white text-sm sm:text-base md:text-lg text-left md:text-right">
                                 Community
                             </h4>
-                            <div className="flex flex-col items-start md:items-end justify-center gap-3  w-full">
+                            <div className="flex flex-col items-start md:items-end text-xs sm:text-sm md:text-base justify-center gap-3 w-full">
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
                                         <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
@@ -644,10 +646,10 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
 
                         <div className="flex flex-col items-start md:items-end justify-center gap-4 flex-1 grow">
-                            <h4 className="font-sans text-white text-lg text-left md:text-right">
+                            <h4 className="font-sans text-white text-sm sm:text-base md:text-lg text-left md:text-right">
                                 Resources
                             </h4>
-                            <div className="flex flex-col items-start md:items-end justify-center gap-3  w-full">
+                            <div className="flex flex-col items-start md:items-end text-xs sm:text-sm md:text-base justify-center gap-3 w-full">
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
                                         <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">

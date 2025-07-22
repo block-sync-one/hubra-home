@@ -11,12 +11,7 @@ const config = {
     extend: {
       // Font Families
       fontFamily: {
-        sans: [
-          'Inter',
-        ],
-        mono: [
-          'Geist'
-        ]
+        sans: ['Geist', 'Inter', 'sans-serif'],
       },
 
       // Typography Scale
@@ -117,7 +112,7 @@ const config = {
           'background-clip': 'text'
         },
         '.text-gradient-brand-mobile': {
-          'background': 'linear-gradient(62deg, rgb(255,255,255) 0%, #E379C1 100%)',
+          'background': 'linear-gradient(62deg, rgb(255,255,255) 0%, #FEAA01 100%)',
           '-webkit-background-clip': 'text',
           '-webkit-text-fill-color': 'transparent',
           'background-clip': 'text'
@@ -133,11 +128,6 @@ const config = {
         '.hero-image': {
           'width': 'var(--hero-image-size)',
           'height': 'var(--hero-image-size)'
-        },
-        '.hero-bars': {
-          'width': 'var(--hero-bars-width)',
-          'height': 'var(--hero-bars-height)',
-          'gap': 'var(--hero-bar-gap)'
         },
         '.hero-bar': {
           'width': 'var(--hero-bar-width)'
@@ -155,8 +145,11 @@ const config = {
         },
 
         // Background gradients
-        '.bg-gradient-bars': {
-          'background': 'linear-gradient(0deg,rgba(255,75,198,0) 0%,rgba(184,71,148,1) 10%,rgba(255,75,198,0) 70%)'
+        '.bg-gradient-bar': {
+          'background': 'linear-gradient(180deg, #FEAA0100 12%, #FEAA0110 100%)',
+        },
+        '.bg-gradient-bar-tab': {
+          'background': 'linear-gradient(180deg, #FEAA0100 0%, #FEAA0110 100%)',
         },
       })
     }

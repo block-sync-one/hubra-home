@@ -11,17 +11,20 @@ import {
 } from "@heroui/navbar";
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
-import {Image} from "@heroui/image";
+import { Image } from "@heroui/image";
 import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
-
+import clsx from "clsx";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/dropdown";
 import { siteConfig } from "@/config/site";
 
 import { Icon } from "@iconify/react";
-import { Badge } from "@heroui/badge";
+import { useWindowSize } from "../lib/useWindowSize";
 
 export const Navbar = () => {
   const [isMounted, setIsMounted] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { isMobile } = useWindowSize();
 
   // Ensure component is mounted on client side
   useEffect(() => {
@@ -31,20 +34,20 @@ export const Navbar = () => {
   const navItems = siteConfig.navItems.filter((item) => item.label !== "Stats" && item.label !== "Home");
   return (
     <HeroUINavbar maxWidth="2xl" position="sticky"
-      className=" backdrop-filter-none"
+      className="backdrop-filter-none"
       classNames={{
         menuItem: " text-white",
         menu: " text-white",
         item: " text-white"
       }} >
-      <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
+      <NavbarContent className="basis-full" justify='center'>
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-2" href="/">
-            <Image src="/logo.png" alt="Hubra"  className="rounded-none w-4 h-4 md:w-6 md:h-6" />
+            <Image src="/logo.png" alt="Hubra" className="rounded-none w-4 h-4 md:w-6 md:h-6" />
             <p className="font-bold text-white">Hubra</p>
           </NextLink>
         </NavbarBrand>
-        {/* <ul className=" lg:flex gap-4 justify-start items-center ml-4">
+        <ul className="hidden lg:flex gap-4 justify-start items-center ml-4">
           {navItems.map((item) => (
             item.navItems ? (
               <NavbarItem key={item.label} className="relative">
@@ -85,15 +88,22 @@ export const Navbar = () => {
               </NavbarItem>
             )
           ))}
-        </ul> */}
+        </ul>
+        {/* Mobile menu toggle button */}
+        <button
+          className="lg:hidden p-2 ml-auto rounded focus:outline-none focus:ring-2 focus:ring-white"
+          aria-label="Open menu"
+          onClick={() => setMenuOpen(true)}
+        >
+          <Icon icon="mdi:menu" width="28" height="28" className="text-white" />
+        </button>
       </NavbarContent>
 
       <NavbarContent
-        className=" sm:flex basis-1/5 sm:basis-full"
+        className="hidden lg:flex basis-1/5 lg:basis-full"
         justify="end"
       >
-
-        <NavbarItem className="hidden lg:flex">
+        <NavbarItem>
           <Button
             variant="light"
             radius="full"
@@ -101,18 +111,14 @@ export const Navbar = () => {
             as={Link}
             disabled
             className="text-sm font-normal "
-           
             startContent={isMounted ? <Icon icon="hugeicons:chart-02" width="16" height="16" /> : null}
-
           >
-            Stats 
-
+            Stats
           </Button>
         </NavbarItem>
-        <NavbarItem className=" lg:flex">
+        <NavbarItem>
           <Button
             radius="full"
-            
             isExternal
             as={Link}
             className="text-sm font-normal text-black bg-white"
@@ -121,35 +127,66 @@ export const Navbar = () => {
             variant="flat"
           >
             Launch App
-
           </Button>
         </NavbarItem>
       </NavbarContent>
 
- 
-
-      <NavbarMenu>
-        <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item.label}-${index}`}>
-              {item.href ? (
-                <NextLink href={item.href} passHref legacyBehavior>
-                  <Button
-                    as="a"
-                    variant="light"
-                    className="w-full justify-start text-left"
-                    size="lg"
-                  >
-                    {item.label}
-                  </Button>
-                </NextLink>
-              ) : (
-                <span className="text-lg">{item.label}</span>
-              )}
-            </NavbarMenuItem>
-          ))}
+      {/* Mobile Menu Overlay */}
+      {menuOpen && (
+        <div className="fixed left-0 right-0 top-16 z-50 bg-black bg-opacity-90 flex flex-col transition-all duration-300 lg:hidden" style={{ height: 'calc(100vh - 64px)' }}>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+            <div className="flex items-center gap-2">
+              <Image src="/logo.png" alt="Hubra" className="rounded-none w-6 h-6" />
+              <span className="font-bold text-white text-lg">Hubra</span>
+            </div>
+            <button
+              className="p-2 rounded focus:outline-none focus:ring-2 focus:ring-white"
+              aria-label="Close menu"
+              onClick={() => setMenuOpen(false)}
+            >
+              <Icon icon="mdi:close" width="28" height="28" className="text-white" />
+            </button>
+          </div>
+          <div className="flex flex-col gap-2 px-6 py-6 flex-1">
+            {siteConfig.navMenuItems.map((item, index) => (
+              <NavbarMenuItem key={`${item.label}-${index}`}>
+                {item.href ? (
+                  <NextLink href={item.href} passHref legacyBehavior>
+                    <Button
+                      as="a"
+                      variant="light"
+                      className="justify-start text-left text-white text-lg px-0 bg-transparent hover:bg-white/10"
+                      size="lg"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {item.label}
+                    </Button>
+                  </NextLink>
+                ) : (
+                  <span className="text-lg text-white">{item.label}</span>
+                )}
+              </NavbarMenuItem>
+            ))}
+            {/* Launch App button in mobile menu */}
+            <Button
+              radius="full"
+              isExternal
+              as={Link}
+              className="mt-8 text-sm font-normal text-black bg-white w-full"
+              href={siteConfig.links.sponsor}
+              endContent={isMounted ? <Icon icon="solar:alt-arrow-right-outline" width="14" height="14" /> : null}
+              variant="flat"
+              onClick={() => setMenuOpen(false)}
+            >
+              Launch App
+            </Button>
+          </div>
         </div>
-      </NavbarMenu>
+      )}
+      {/* End Mobile Menu Overlay */}
+
+      {/* Desktop NavbarMenu (for accessibility, but hidden on mobile) */}
+      <NavbarMenu className="hidden" />
     </HeroUINavbar>
   );
 };

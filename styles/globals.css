@@ -1,4 +1,13 @@
+/* Inter from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Geist (if self-hosted or from a CDN, replace the URL if needed) */
+@import url('https://geists.vercel.app/fonts.css'); /* Example CDN */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+body {
+  font-family: 'Geist', 'Inter', sans-serif;
+}

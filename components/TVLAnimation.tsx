@@ -101,7 +101,7 @@ export const TVLAnimatedPath = () => {
           {/* Static version for SSR */}
           <path
             d={PATH_D}
-            stroke={isMobile ? "#E02BA7" : "#FEC84B"}
+            stroke={isMobile ? "#FEC84B" : "#FEC84B"}
             strokeWidth={3}
             opacity={0.15}
             fill="none"
@@ -128,7 +128,7 @@ export const TVLAnimatedPath = () => {
         {/* Background path (faint) */}
         <path
           d={PATH_D}
-          stroke={isMobile ? "#E02BA7" : "#FEC84B"}
+          stroke={isMobile ? "#FEC84B" : "#FEC84B"}
           strokeWidth={3}
           opacity={0.15}
           fill="none"
@@ -137,7 +137,7 @@ export const TVLAnimatedPath = () => {
         <path
           ref={pathRef}
           d={PATH_D}
-          stroke={isMobile ? "#E02BA7" : "#FEC84B"}
+          stroke={isMobile ? "#FEC84B" : "#FEC84B"}
           strokeWidth={3}
           fill="none"
           strokeDasharray={pathLength}
@@ -152,7 +152,7 @@ export const TVLAnimatedPath = () => {
               cx={cx}
               cy={cy}
               r={40}
-              fill={isMobile ? "#E02BA7" : "#FEC84B"}
+              fill={isMobile ? "#FEC84B" : "#FEC84B"}
               opacity={0.12}
               filter="url(#blurOuter)"
             />
@@ -161,7 +161,7 @@ export const TVLAnimatedPath = () => {
               cx={cx}
               cy={cy}
               r={28}
-              fill={isMobile ? "#E02BA7" : "#FEC84B"}
+              fill={isMobile ? "#FEC84B" : "#FEC84B"}
               opacity={0.04}
             />
             {/* Middle circle (main) */}
@@ -170,7 +170,7 @@ export const TVLAnimatedPath = () => {
               cy={cy}
               r={10}
               fill="white"
-              stroke={isMobile ? "#E02BA7" : "#FEC84B"}
+              stroke={isMobile ? "#FEC84B" : "#FEC84B"}
               strokeWidth={4}
               style={{ filter: "drop-shadow(0 0 8px #FEC84B)" }}
             />

@@ -272,8 +272,7 @@ const Icons = {
   ),
   middle: () => (
     <div className="flex items-center justify-center relative h-[96px] w-[320px] rounded-full overflow-hidden">
-      <Image src="/image/middle.svg" alt="LP" width={320} height={96} className="relative z-10 md:flex hidden" />
-      <Image src="/image/middle-m.svg" alt="LP" width={320} height={96} className="relative z-10 flex md:hidden" />
+      <Image src="/image/middle.svg" alt="LP" width={320} height={96} className="relative z-10 flex" />
     </div>
   ),
   lp: () => (
