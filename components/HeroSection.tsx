@@ -27,7 +27,7 @@ export const HeroSection = (): JSX.Element => {
     { top: 45, left: 5, size: 11, opacity: 1, delay: 2 }, // Lower right
     { top: 20, left: 10, size: 8, opacity: 1, delay: 2.5 }, // Middle left
   ];
-  
+
 
   return (
     <Card className="relative w-full h-[676px] bg-[url('/image/hero-bg1-m.png')] md:bg-[url('/image/hero-bg1.png')] bg-cover bg-center rounded-none md:rounded-3xl overflow-hidden border-none">
@@ -35,7 +35,7 @@ export const HeroSection = (): JSX.Element => {
       {/* Fixed particles matching SVG file positions and sizes */}
       {isMounted && (
         <div
-          className="absolute pointer-events-none z-20 hero-container"
+          className="relative pointer-events-none z-20 hero-container w-full h-full"
         >
           {particles.map((p, i) => (
             <motion.div
@@ -60,67 +60,61 @@ export const HeroSection = (): JSX.Element => {
       )}
 
       {/* Pink orb effect */}
-      <div className="absolute top-[0%] md:left-[8%] z-0 right-0">
-        <Image src="/image/pink-orb.png" alt="Pink Orb" width={425} height={167} quality={100} className="flex md:hidden" />
-        <Image src="/image/pink-orb1.png" alt="Pink Orb" width={425} height={167} quality={100} className="md:flex hidden" />
+      <div className="absolute flex w-full h-full z-0 top-0 left-0">
+        <Image src="/image/pink-orb.png" alt="Pink Orb" width={425} height={167} quality={100} className="flex md:hidden absolute top-0 -right-10 opacity-90 " />
+        <Image src="/image/pink-orb1.png" alt="Pink Orb" width={425} height={167} quality={100} className="md:flex hidden absolute top-0 left-[50%]" />
       </div>
 
 
       {/* Pink gradient effect with bottom-to-top animation */}
-      <div className="absolute w-full h-full flex justify-center items-center md:w-[487px] md:h-[507px] md:flex md:justify-center md:items-center hero-container">
-        <div
-          className="flex justify-center items-center relative"
+      <div className="absolute z-20 w-full h-full top-0 left-0 justify-center items-center">
+        <motion.div
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: -90, opacity: 1 }}
+          transition={{
+            duration: 0.5,
+            ease: "easeInOut",
+            delay: 0.3
+          }}
+          className="relative justify-center items-center h-full flex top-36 "
         >
-          <div className="absolute top-20px w-full h-full flex justify-center items-center">
-            <motion.div
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: -90, opacity: 1 }}
-              transition={{
-                duration: 0.5,
-                ease: "easeInOut",
-                delay: 0.3
-              }}
-              className="absolute"
-            >
-              <Image
-                src="/image/hero-ball.svg"
-                alt="Pink Gradient"
-                width={240}
-                height={240}
-                className="object-contain hero-image"
-                unoptimized
-              />
-            </motion.div>
-          </div>
-
+          <Image
+            src="/image/hero-ball.svg"
+            alt="Pink Gradient"
+            width={200}
+            height={200}
+            className="absolute w-[200px] h-[200px] hero-image"
+            unoptimized
+          />
           <div
-            className="h-full rounded-[9999px_9999px_0px_0px] bg-gradient-hero opacity-[0.2] flex justify-center items-center hero-gradient"
+            className="relative h-2/3 top-1/4 w-[200px] rounded-[9999px_9999px_0px_0px] flex flex-row justify-center items-center"
           >
             <div
-              className="flex items-start p-1 overflow-hidden hero-bars"
+              className="flex h-full items-start p-1 overflow-hidden hero-bars gap-2"
             >
               <div
-                className="h-full bg-gradient-bars hero-bar"
+                className="h-full w-[45px] bg-gradient-bars flex"
               />
               <div
-                className="h-full bg-gradient-bars hero-bar"
+                className="h-full w-[45px] bg-gradient-bars flex"
               />
               <div
-                className="h-full bg-gradient-bars hero-bar"
+                className="h-full w-[45px] bg-gradient-bars flex"
               />
               <div
-                className="h-full bg-gradient-bars hero-bar"
+                className="h-full w-[45px] bg-gradient-bars flex"
               />
             </div>
           </div>
-        </div>
+        </motion.div>
+
       </div>
 
 
       {/* Main content text */}
-      <div className="flex flex-col w-full items-start gap-5 absolute main-content-position">
+      <div className="flex flex-col w-full items-start gap-5 absolute top-4 left-4 main-content-position">
         <div className="inline-flex items-center justify-end gap-2 px-3 py-2 bg-transparent border border-white/10 rounded-full">
-          <span className="w-fit mt-[-1.00px] font-medium text-white text-sm font-medium">
+          <span className="w-fit mt-[-1.00px] text-white text-sm font-medium">
             Built on
           </span>
           <Image
@@ -129,7 +123,7 @@ export const HeroSection = (): JSX.Element => {
             width={20}
             height={14.94}
           />
-          <span className="w-fit mt-[-1.00px] font-medium text-white text-sm font-medium">
+          <span className="w-fit mt-[-1.00px] text-white text-sm font-medium">
             Solana
           </span>
         </div>
@@ -141,11 +135,10 @@ export const HeroSection = (): JSX.Element => {
             The Freedom Of DeFi.
           </h1>
           <p className="relative max-w-md font-geist text-gray-400/70 text-lg leading-[26px] font-normal">
-          Hubra is the first truly all-in-one platform. Manage, Explore,
-          Earn—across any device.
-        </p>
+            Hubra is the first truly all-in-one platform. Manage, Explore,
+            Earn—across any device.
+          </p>
         </div>
-        
       </div>
 
       {/* Bottom large circular gradient with animated satellite */}

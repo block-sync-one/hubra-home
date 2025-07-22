@@ -107,8 +107,8 @@ const MobileCarousel = () => {
                         key={index}
                         onClick={() => setCurrentSlide(index)}
                         className={`w-3.5 h-3.5 rounded-full transition-all duration-200 ${index === currentSlide
-                                ? 'bg-white scale-110'
-                                : 'bg-[#191a2c] hover:bg-gray-600'
+                            ? 'bg-white scale-110'
+                            : 'bg-[#191a2c] hover:bg-gray-600'
                             }`}
                         aria-label={`Go to slide ${index + 1}`}
                     />
@@ -230,11 +230,11 @@ export const MainContentSection = (): JSX.Element => {
                                 >
                                     {activeTab === 'normies' && (
                                         <Card className="flex items-center justify-center mx-auto w-full h-[398px] bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
-                                            <div className="absolute left-[24%] top-[41%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
-                                                <Image src="/icons/wallet.svg" alt="Hubra" width={75} height={68} className="w-[75px] h-[68px]" />
+                                            <div className="absolute left-[24.5%] lg:left-[25%] xl:left-[26.4%] top-[45%] lg:top-[44%] xl:top-[42%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
+                                                <Image src="/icons/wallet.svg" alt="Hubra" width={70} height={63} className="w-[45px] h-[43px] lg:w-[59px] lg:h-[51px] xl:w-[75px] xl:h-[63px]" />
                                             </div>
-                                            <div className="absolute left-[88%] top-[41%] z-30 backdrop-blur-sm bg-transparent rounded-xl">
-                                                <Image src="/icons/wallet.svg" alt="Hubra" width={75} height={68} className="w-[75px] h-[68px]" />
+                                            <div className="absolute left-[91.5%] lg:left-[89%] xl:left-[87%] top-[45%] lg:top-[44%] xl:top-[42%] z-30 backdrop-blur-sm bg-transparent rounded-xl">
+                                                <Image src="/icons/wallet.svg" alt="Hubra" width={70} height={63} className="w-[45px] h-[43px] lg:w-[59px] lg:h-[51px] xl:w-[75px] xl:h-[63px]" />
                                             </div>
                                             <div className="flex items-center justify-center relative">
                                                 <div
@@ -510,7 +510,7 @@ export const MainContentSection = (): JSX.Element => {
                             height={323}
                             className="w-full h-auto"
                         />
-                        
+
                     </div>
                     {/* right column */}
                     <div className="flex md:flex-col gap-4">
@@ -549,9 +549,9 @@ export const MainContentSection = (): JSX.Element => {
             </div >
 
             {/* Footer */}
-            <footer className="flex flex-col gap-10 w-screen md:w-full items-start rounded-[32px] py-12 -ml-10 md:ml-0 bg-card px-8" >
-                <div className="flex flex-col gap-16 md:flex-row md:justify-between items-start w-full">
-                    <div className="flex-col items-start gap-8 flex relative flex-1 grow">
+            <footer className="flex flex-col gap-10 w-full items-start rounded-[32px] py-12 mb-4 bg-card px-8" >
+                <div className="flex flex-col gap-16 md:flex-row justify-between items-start w-full">
+                    <div className="flex-col items-start gap-8 flex relative flex-1 grow w-full">
                         <div className="flex flex-col h-[62px] items-start gap-2 w-full">
                             <h3 className=" font-text-xl-semibold text-white">
                                 Stay Connected
@@ -584,7 +584,7 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
                     </div>
 
-                    <div className="flex items-start gap-8 relative flex-1 grow">
+                    <div className="flex items-start gap-8 relative flex-1 grow w-full">
                         <div className="flex flex-col items-start md:items-end justify-center gap-4 flex-1 grow">
                             <h4 className="font-sans text-white text-lg text-left md:text-right">
                                 Product
@@ -689,7 +689,7 @@ export const MainContentSection = (): JSX.Element => {
                 </div>
 
                 <div className="flex flex-col items-start gap-8 w-full">
-                    <div className="flex flex-col items-start gap-4 md:flex-row md:items-center justify-between w-full">
+                    <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center justify-between w-full">
                         <div className="inline-flex items-center gap-[8.03px]">
                             <Image
                                 alt="hub"
@@ -698,7 +698,7 @@ export const MainContentSection = (): JSX.Element => {
                                 height={32}
                                 className="w-4 h-4 md:w-6 md:h-6 rounded-none"
                             />
-                           
+
                             <h2 className="text-white font-medium"> Hubra </h2>
                         </div>
 
