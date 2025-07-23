@@ -40,11 +40,11 @@ export const Navbar = () => {
         menu: " text-white",
         item: " text-white"
       }} >
-      <NavbarContent className="basis-full" justify='center'>
+      <div className="flex flex-row items-center justify-between lg:justify-start w-full">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-2" href="/">
-            <Image src="/logo.png" alt="Hubra" className="rounded-none w-4 h-4 md:w-6 md:h-6" />
-            <p className="font-bold text-white">Hubra</p>
+            <Image src="/logo.png" alt="Hubra" className="rounded-none w-[22px] h-[22px] md:w-6 md:h-6" />
+            <p className="font-bold text-white text-lg">Hubra</p>
           </NextLink>
         </NavbarBrand>
         <ul className="hidden lg:flex gap-4 justify-start items-center ml-4">
@@ -97,7 +97,7 @@ export const Navbar = () => {
         >
           <Icon icon="mdi:menu" width="28" height="28" className="text-white" />
         </button>
-      </NavbarContent>
+      </div>
 
       <NavbarContent
         className="hidden lg:flex basis-1/5 lg:basis-full"

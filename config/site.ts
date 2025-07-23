@@ -74,11 +74,11 @@ export const siteConfig = {
       label: "Stats",
       href: "/stats",
     },
-    {
-      label: "Launch App",
-      href: "https://patreon.com/jrgarciadev",
-      external: true,
-    },
+    // {
+    //   label: "Launch App",
+    //   href: "https://patreon.com/jrgarciadev",
+    //   external: true,
+    // },
   ],
   links: {
     github: "https://github.com/heroui-inc/heroui",

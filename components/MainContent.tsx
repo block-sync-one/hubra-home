@@ -163,7 +163,7 @@ export const MainContentSection = (): JSX.Element => {
                         <div className="flex flex-col gap-8">
                             {/* Normies Section */}
                             <div className="flex flex-col gap-4">
-                                <Card className="flex items-center justify-center mx-auto w-[350px] h-[518px] bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                                <Card className="flex items-center justify-center mx-auto w-[350px] h-[518px] bg-[url('/image/hubra-m.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
                                     <div className="absolute left-[60%] top-[17%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
                                         <Image src="/icons/wallet.svg" alt="Hubra" width={47} height={43} className="w-[47px] h-[43px]" />
                                     </div>
@@ -180,6 +180,7 @@ export const MainContentSection = (): JSX.Element => {
                                             Friend.hub
                                         </span>
                                     </div>
+                                    <Image src="/image/wgroup-m2.png" alt="Hubra" width={238} height={300} className="relative top-[-9px] left-[2px]" />
                                     <WalletEnergyFlow />
                                 </Card>
 
@@ -231,10 +232,10 @@ export const MainContentSection = (): JSX.Element => {
                                 >
                                     {activeTab === 'normies' && (
                                         <Card className="flex items-center justify-center mx-auto w-full h-[398px] bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
-                                            <div className="absolute left-[24.5%] lg:left-[25%] xl:left-[26.4%] top-[45%] lg:top-[44%] xl:top-[42%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
+                                            <div className="absolute left-[25.8%] lg:left-[26%] xl:left-[26.4%] top-[45%] lg:top-[44%] xl:top-[42%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
                                                 <Image src="/icons/wallet.svg" alt="Hubra" width={70} height={63} className="w-[45px] h-[43px] lg:w-[59px] lg:h-[51px] xl:w-[75px] xl:h-[63px]" />
                                             </div>
-                                            <div className="absolute left-[91.5%] lg:left-[89%] xl:left-[87%] top-[45%] lg:top-[44%] xl:top-[42%] z-30 backdrop-blur-sm bg-transparent rounded-xl">
+                                            <div className="absolute left-[90.5%] lg:left-[89%] xl:left-[87%] top-[45%] lg:top-[44%] xl:top-[42%] z-30 backdrop-blur-sm bg-transparent rounded-xl">
                                                 <Image src="/icons/wallet.svg" alt="Hubra" width={70} height={63} className="w-[45px] h-[43px] lg:w-[59px] lg:h-[51px] xl:w-[75px] xl:h-[63px]" />
                                             </div>
                                             <div className="flex items-center justify-center relative">
@@ -294,13 +295,9 @@ export const MainContentSection = (): JSX.Element => {
 
                         <div className="flex items-start w-1/2 h-[72px] cursor-pointer" onClick={() => setActiveTab('degens')}>
                             {/* Glowing pink shadowed stick - only show for active tab */}
-
                             <div className={`mr-8 w-1 h-[72px] opacity-80 rounded-full ${activeTab === 'degens' ? 'bg-primary shadow-[0_0_40px_#FEAA01,0_0_60px_rgba(245,255,104,0.4)]' : ''}`}></div>
-
-
                             <div className="w-fit h-full flex flex-col items-start justify-between">
                                 <button
-
                                     className={`text-2xl font-semibold font-sans  transition-all duration-300 ${activeTab === 'degens'
                                         ? 'text-white'
                                         : 'text-white opacity-50 hover:opacity-75'
@@ -501,7 +498,7 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
                     </div>
                     {/* center column */}
-                    <div className="flex items-center justify-center w-full max-w-[180px] h-auto md:hidden lg:block md:max-w-[320px]">
+                    <div className="flex items-center justify-center w-full max-w-[180px] h-auto lg:block md:max-w-[320px]">
                         <Image
                             alt="Logo"
                             src="/image/hero-ball.svg"
@@ -702,7 +699,7 @@ export const MainContentSection = (): JSX.Element => {
                                 src="/logo.png"
                                 width={32}
                                 height={32}
-                                className="w-4 h-4 md:w-6 md:h-6 rounded-none"
+                                className="w-[22px] h-[22px] md:w-6 md:h-6 rounded-none"
                             />
 
                             <h2 className="text-white font-medium"> Hubra </h2>

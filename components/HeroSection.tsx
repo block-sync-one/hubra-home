@@ -34,12 +34,13 @@ export const HeroSection = (): JSX.Element => {
 
       {/* Pink orb effect */}
       <div className="absolute flex w-full h-full z-0 top-0 left-0">
-        <Image src="/image/pink-orb1.png" alt="Pink Orb" width={425} height={167} quality={100} className="flex absolute top-0 left-14 md:left-[16%]" />
+        <Image src="/image/pink-orb1.png" alt="Pink Orb" width={360} height={124} quality={100} className="flex absolute opacity-90 -top-5 md:top-0 left-20 md:left-[16%]" />
+        <Image src="/image/top-m.png" alt="top" width={360} height={124} quality={100} className="flex absolute top-0 right-0 opacity-55" />
       </div>
 
-      <div className={`${isMobile ? "flex-col h-full" : "flex-row h-4/5"} absolute flex justify-center items-center gap-8 w-full md:top-[10%] py-10 px-8 md:px-14 xl:px-24`}>
+      <div className={`${isMobile ? "flex-col h-full" : "flex-row h-4/5"} absolute flex justify-center items-center gap-8 w-full md:top-[10%] py-8 md:py-10 px-4 md:px-14 xl:px-24`}>
         {/* Main content text */}
-        <div className="flex flex-col w-full md:max-w-lg items-start gap-5 top-4 left-4 main-content-position font-mono">
+        <div className="flex flex-col w-full md:max-w-lg items-start gap-6 top-4 left-4 main-content-position font-sans">
           <div className="inline-flex items-center justify-end gap-2 px-3 py-2 bg-transparent border border-white/10 rounded-full">
             <span className="w-fit mt-[-1.00px] text-white text-sm font-sans">
               Built on
@@ -54,16 +55,14 @@ export const HeroSection = (): JSX.Element => {
               Solana
             </span>
           </div>
-          <div className={`${isMobile ? "w-full" : "max-w-lg"}`}>
-            <h1 className="relative w-full font-mono text-white text-3xl md:text-2xl lg:text-5xl font-semibold ">
+          <div className={`${isMobile ? "w-full" : "max-w-lg"} gap-6 flex flex-col`}>
+            <div className="w-full font-sans text-white text-[34px] sm:text-3xl md:text-[34px] lg:text-5xl font-semibold tracking-[-2%] leading-[105%] ">
               The Power Of CEX.
-            </h1>
-            <h1 className="relative w-full  font-mono text-white text-3xl md:text-2xl lg:text-5xl  font-semibold">
+              <br />
               The Freedom Of DeFi.
-            </h1>
-            <p className="relative max-w-md font-mono text-gray-400/70 text-lg md:text-base lg:text-lg font-normal">
-              Hubra is the first truly all-in-one platform. Manage, Explore,
-              Earn—across any device.
+            </div>
+            <p className="sm:max-w-md font-sans text-[#797B92] text-lg md:text-base lg:text-lg tracking-[1%]">
+              Hubra is the first truly all-in-one platform. Manage, Explore, Earn—across any device.
             </p>
           </div>
         </div>
@@ -107,30 +106,30 @@ export const HeroSection = (): JSX.Element => {
               </div>
             )}
             <div
-              className="absolute h-full top-1/4 w-full max-w-[324px] md:max-w-[348px] flex flex-row z-10 object-cover px-[2px]"
+              className="absolute h-full top-1/4 w-full max-w-[236px] sm:max-w-[326px] md:max-w-[350px] flex flex-row z-10 object-cover px-[2px]"
             >
               <Image
                 src={isMobile ? "/image/hero-ball-m.svg" : "/image/hero-ball.svg"}
                 alt="Pink Gradient"
                 width={200}
                 height={200}
-                className="w-full max-w-[320px] top-1 md:max-w-[340px] hero-image absolute z-20 rounded-full md:mt-[6px]"
+                className="w-full max-w-[230px] sm:max-w-[320px] top-1 md:max-w-[340px] hero-image absolute z-20 rounded-full md:mt-[6px] ml-[1px]"
                 unoptimized
               />
               <div
-                className="flex w-full h-full items-start p-1 bg-gradient-to-t from-[#FEAA01]/5 md:from-[#2E2E2E]/5 to-[#FEAA01]/30 md:to-[#2E2E2E]/25 rounded-[9999px_9999px_0px_0px] px-[2px`] gap-4 relative"
+                className="flex w-full h-full items-start p-1 bg-gradient-to-t from-[#FEAA0104] md:from-[#2E2E2E]/5 to-[#FEAA01]/25 md:to-[#2E2E2E]/25 rounded-[9999px_9999px_0px_0px] px-1.5 gap-1 md:gap-4 relative"
               >
                 <div
-                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/10 md:from-[#2E2E2E]/5 to-[#FEAA01]/30 md:to-[#2E2E2E]/25 flex relative top-1/2 md:top-1/3"
+                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/0 md:from-[#2E2E2E]/5 to-[#FEAA01]/25 md:to-[#2E2E2E]/25 flex relative top-[25%] sm:top-1/2 md:top-1/3"
                 />
                 <div
-                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/10 md:from-[#2E2E2E]/5 to-[#FEAA01]/30 md:to-[#2E2E2E]/25 flex relative top-1/2 md:top-1/3"
+                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/0 md:from-[#2E2E2E]/5 to-[#FEAA01]/25 md:to-[#2E2E2E]/25 flex relative top-[25%] sm:top-1/2 md:top-1/3"
                 />
                 <div
-                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/10 md:from-[#2E2E2E]/5 to-[#FEAA01]/30 md:to-[#2E2E2E]/25 flex relative top-1/2 md:top-1/3"
+                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/0 md:from-[#2E2E2E]/5 to-[#FEAA01]/25 md:to-[#2E2E2E]/25 flex relative top-[25%] sm:top-1/2 md:top-1/3"
                 />
                 <div
-                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/10 md:from-[#2E2E2E]/5 to-[#FEAA01]/30 md:to-[#2E2E2E]/25 flex relative top-1/2 md:top-1/3"
+                  className="h-full w-full bg-gradient-bar-tab bg-gradient-to-t from-[#FEAA01]/0 md:from-[#2E2E2E]/5 to-[#FEAA01]/25 md:to-[#2E2E2E]/25 flex relative top-[25%] sm:top-1/2 md:top-1/3"
                 />
               </div>
             </div>
@@ -140,17 +139,17 @@ export const HeroSection = (): JSX.Element => {
       </div>
 
       {/* Bottom large circular gradient with animated satellite */}
-      <div className="absolute satellite-position w-[660px] h-[304px] pointer-events-none select-none">
+      <div className="absolute satellite-position w-[375px] h-[180px] md:w-[660px] md:h-[304px] pointer-events-none select-none z-40">
         <Image
           alt="Mask group"
           src="/image/globe.png"
           quality={100}
           fill
-          className="flex w-[400px] h-[150px] md:h-[300px]"
+          className="flex w-[400px] h-[300px]"
         />
         {/* Animated satellite overlay */}
         <AnimatedSatelliteOrbit />
       </div>
-    </Card>
+    </Card >
   );
 };
