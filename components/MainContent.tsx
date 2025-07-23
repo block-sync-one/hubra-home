@@ -73,7 +73,7 @@ const MobileCarousel = () => {
                         <div key={index} className="w-full flex-shrink-0 px-4">
                             <div className="flex flex-col gap-8 items-center">
                                 {slide.isCard ? (
-                                    <Card className={`relative flex w-full h-[310px] bg-cover bg-center rounded-2xl ${slide.component ? '' : 'overflow-hidden'}`}>
+                                    <Card className={`relative flex w-full h-[310px] bg-cover bg-center rounded-2xl ${slide.component ? 'overflow-hidden' : 'overflow-hidden'}`}>
                                         {slide.component}
                                     </Card>
                                 ) : (

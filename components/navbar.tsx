@@ -36,7 +36,7 @@ export const Navbar = () => {
     <HeroUINavbar maxWidth="2xl" position="sticky"
       className="backdrop-filter-none"
       classNames={{
-        menuItem: " text-white",
+        menuItem: "text-white",
         menu: " text-white",
         item: " text-white"
       }} >
@@ -57,7 +57,7 @@ export const Navbar = () => {
                       variant="light"
                       className={clsx(
                         linkStyles({ color: "foreground" }),
-                        "flex items-center gap-1 data-[active=true]:text-primary data-[active=true]:font-medium"
+                        "flex items-center gap-1 data-[active=true]:text-primary data-[active=true]:font-medium text-[#797B92] hover:text-white"
                       )}
                     >
                       {item.label}
@@ -79,7 +79,7 @@ export const Navbar = () => {
                   variant="light"
                   className={clsx(
                     linkStyles({ color: "foreground" }),
-                    "flex items-center gap-1 data-[active=true]:text-primary data-[active=true]:font-medium"
+                    "flex items-center gap-1 data-[active=true]:text-primary data-[active=true]:font-medium text-[#797B92] hover:text-white"
                   )}
                   href={item.href}
                 >
