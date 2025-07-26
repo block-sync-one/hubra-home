@@ -1,18 +1,16 @@
-import { generateStructuredData } from "./utils"
 
 interface SchemaMarkupProps {
   type: "Organization" | "WebSite" | "Article"
   data?: any
 }
 
-export function SchemaMarkup({ type, data = {} }: SchemaMarkupProps) {
-  const schema = generateStructuredData(type, data)
+export function SchemaMarkup({ data = {} }: SchemaMarkupProps) {
   
   return (
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{
-        __html: JSON.stringify(schema),
+        __html: JSON.stringify(data),
       }}
     />
   )
