@@ -19,7 +19,7 @@ export const siteConfig = {
     "Web3"
   ],
   url: "https://hubra.com",
-  ogImage: "/image/hubra.png",
+  ogImage: "/hubra-og-image.png",
   twitter: {
     handle: "@hubraApp",
     site: "@hubraApp",
