@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default function TokensLayout({
+export default function TokensLayout({
   children,
 }: {
   children: React.ReactNode;

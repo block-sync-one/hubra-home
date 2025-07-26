@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default function StatsLayout({
+export default function StatsLayout({
   children,
 }: {
   children: React.ReactNode;
