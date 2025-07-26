@@ -62,7 +62,7 @@ export const Navbar = () => {
             <p className="font-bold text-white text-lg">Hubra</p>
           </NextLink>
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start items-center ml-4">
+        {/* <ul className="hidden lg:flex gap-4 justify-start items-center ml-4">
           {navItems.map((item) =>
             item.navItems ? (
               <NavbarItem key={item.label} className="relative">
@@ -122,22 +122,16 @@ export const Navbar = () => {
               </NavbarItem>
             ),
           )}
-        </ul>
+        </ul> */}
         {/* Mobile menu toggle button */}
-        <button
-          aria-label="Open menu"
-          className="lg:hidden p-2 ml-auto rounded focus:outline-none focus:ring-2 focus:ring-white"
-          onClick={() => setMenuOpen(true)}
-        >
-          <Icon className="text-white" height="28" icon="mdi:menu" width="28" />
-        </button>
+      
       </div>
 
       <NavbarContent
-        className="hidden lg:flex basis-1/5 lg:basis-full"
+        className=" lg:flex basis-1/5 lg:basis-full"
         justify="end"
       >
-        <NavbarItem>
+        {/* <NavbarItem>
           <Button
             disabled
             isExternal
@@ -153,7 +147,7 @@ export const Navbar = () => {
           >
             Stats
           </Button>
-        </NavbarItem>
+        </NavbarItem> */}
         <NavbarItem>
           <Button
             isExternal
@@ -168,7 +162,7 @@ export const Navbar = () => {
                 />
               ) : null
             }
-            href={siteConfig.links.sponsor}
+            href={siteConfig.links.app}
             radius="full"
             variant="flat"
           >
@@ -178,7 +172,7 @@ export const Navbar = () => {
       </NavbarContent>
 
       {/* Mobile Menu Overlay */}
-      {menuOpen && (
+      {/* {menuOpen && (
         <div
           className="fixed left-0 right-0 top-16 z-50 bg-black bg-opacity-90 flex flex-col transition-all duration-300 lg:hidden"
           style={{ height: "calc(100vh - 64px)" }}
@@ -225,7 +219,7 @@ export const Navbar = () => {
                 )}
               </NavbarMenuItem>
             ))}
-            {/* Launch App button in mobile menu */}
+           
             <Button
               isExternal
               as={Link}
@@ -248,11 +242,11 @@ export const Navbar = () => {
             </Button>
           </div>
         </div>
-      )}
+      )} */}
       {/* End Mobile Menu Overlay */}
 
       {/* Desktop NavbarMenu (for accessibility, but hidden on mobile) */}
-      <NavbarMenu className="hidden" />
+      <NavbarMenu  />
     </HeroUINavbar>
   );
 };

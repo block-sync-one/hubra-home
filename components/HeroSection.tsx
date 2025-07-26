@@ -128,14 +128,14 @@ export const HeroSection = (): JSX.Element => {
                 ))}
               </div>
             )}
-            <div className="absolute h-full top-1/4 w-full max-w-[236px] sm:max-w-[326px] md:max-w-[350px] flex flex-row z-10 object-cover px-[2px]">
+            <div className="absolute h-full top-1/4 w-full max-w-[236px] sm:max-w-[326px] md:max-w-[350px] flex flex-row z-10 object-cover">
               <Image
                 unoptimized
                 alt="Pink Gradient"
                 className="w-full max-w-[230px] sm:max-w-[320px] top-1 md:max-w-[340px] hero-image absolute z-20 rounded-full md:mt-[6px] ml-[1px]"
                 height={200}
                 src={
-                  isMobile ? "/image/hero-ball-m.svg" : "/image/hero-ball.svg"
+                   "/image/hero-ball.svg"
                 }
                 width={200}
               />

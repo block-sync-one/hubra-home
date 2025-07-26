@@ -271,7 +271,7 @@ export const MainContentSection = (): JSX.Element => {
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                 >
                   {activeTab === "normies" && (
-                    <Card className="flex items-center justify-center mx-auto w-full h-[398px] bg-[url('/image/hubra.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
+                    <Card className="flex items-center justify-center mx-auto w-full h-[398px] bg-[url('/image/token.svg')] bg-no-repeat  bg-center rounded-2xl relative overflow-hidden">
                       <div className="absolute left-[25.8%] lg:left-[26%] xl:left-[26.4%] top-[45%] lg:top-[44%] xl:top-[42%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
                         <Image
                           alt="Hubra"
@@ -391,14 +391,14 @@ export const MainContentSection = (): JSX.Element => {
 
       <Separator className="w-full h-px bg-ui-border-transparent" />
 
-      {/* Introducing HubSOL Section */}
+      {/* Introducing sunSOL Section */}
       <div className="flex flex-col w-full items-center justify-center gap-8 md:gap-10 px-4">
         <div className="flex flex-col w-full text-wrap-break-word md:w-[580px] items-center justify-center gap-5">
           <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
-            Introducing HubSOL
+            Introducing sunSOL
           </h2>
           <p className="w-[80%] break-words md:w-fit font-geist text-gray-400/70 text-xl text-center">
-            Empowering supporters through platform revenue.
+            our empowered liquid staked SOL 
           </p>
         </div>
         <div className="flex flex-col items-center md:flex-row-reverse md:items-start gap-4 w-full">
@@ -426,7 +426,7 @@ export const MainContentSection = (): JSX.Element => {
                 />
               </div>
               <div className="z-10">
-                <div className="text-white text-2xl font-semibold">$13M</div>
+                <div className="text-white text-2xl font-semibold">$5M+</div>
                 <div className="text-gray-400/70 text-body">TVL</div>
               </div>
             </Card>
@@ -602,18 +602,13 @@ export const MainContentSection = (): JSX.Element => {
           <div className="flex items-center justify-center w-full max-w-[180px] h-auto lg:block md:max-w-[320px]">
             <Image
               alt="Logo"
-              className="w-full h-auto hidden md:flex max-w-[320px] max-h-[320px]"
+              className="w-full h-auto  md:flex max-w-[320px] max-h-[320px]"
               height={323}
               src="/image/hero-ball.svg"
               width={323}
             />
-            <Image
-              alt="Logo"
-              className="w-full h-auto flex md:hidden"
-              height={323}
-              src="/image/hero-ball-m.png"
-              width={323}
-            />
+  
+  
           </div>
           {/* right column */}
           <div className="flex md:flex-col gap-4">
@@ -657,11 +652,11 @@ export const MainContentSection = (): JSX.Element => {
                 Stay Connected
               </h3>
               <p className="w-fit font-sans text-gray-400/70 text-body break-words">
-                Sign up to stay up to-date on the latest announcements
+                Follow us on social to stay up to date on the latest announcements
               </p>
             </div>
 
-            <div className="flex flex-col w-full md:flex-row items-start gap-2.5">
+            {/* <div className="flex flex-col w-full md:flex-row items-start gap-2.5">
               <div className="flex flex-col lg:flex-row lg:w-[257px] lg:items-start gap-1.5 w-full">
                 <div className="items-center gap-2 flex relative flex-1 grow w-full">
                   <Input
@@ -682,7 +677,7 @@ export const MainContentSection = (): JSX.Element => {
               >
                 Subscribe
               </Button>
-            </div>
+            </div> */}
           </div>
 
           <div className="flex items-start gap-4 md:gap-8 relative flex-1 grow w-full">
