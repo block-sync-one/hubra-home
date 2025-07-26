@@ -19,8 +19,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DefiLayout({
-export default function DefiLayout({
+export default function DefiLayout({    
   children,
 }: {
   children: React.ReactNode;
