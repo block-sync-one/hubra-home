@@ -5,22 +5,16 @@ interface SolanaglowProps {
   right?: number;
   top?: number;
   size?: number;
-  color?: string
+  color?: string;
 }
 
-const Solanaglow: React.FC<SolanaglowProps> = ({ right = 112, top = 102, size = 1, color }) => (
+const Solanaglow: React.FC<SolanaglowProps> = ({
+  right = 112,
+  top = 102,
+  size = 1,
+  color,
+}) => (
   <motion.div
-    className="absolute"
-    style={{
-      right,
-      top,
-      width: size,
-      height: size,
-      pointerEvents: 'none',
-      zIndex: 2,
-      borderRadius: '100%',
-    }}
-    initial={{ opacity: 0.7, scale: 1 }}
     animate={{
       opacity: [0.7, 1, 0.7],
       scale: [1, 1.2, 1],
@@ -30,18 +24,29 @@ const Solanaglow: React.FC<SolanaglowProps> = ({ right = 112, top = 102, size = 
         `0 0 24px 8px ${color}`,
       ],
     }}
+    className="absolute"
+    initial={{ opacity: 0.7, scale: 1 }}
+    style={{
+      right,
+      top,
+      width: size,
+      height: size,
+      pointerEvents: "none",
+      zIndex: 2,
+      borderRadius: "100%",
+    }}
     transition={{
       duration: 2,
       repeat: Infinity,
-      repeatType: 'loop',
-      ease: 'easeInOut',
+      repeatType: "loop",
+      ease: "easeInOut",
     }}
   >
     <div
       style={{
-        width: '100%',
-        height: '100%',
-        borderRadius: '100%',
+        width: "100%",
+        height: "100%",
+        borderRadius: "100%",
       }}
     />
   </motion.div>

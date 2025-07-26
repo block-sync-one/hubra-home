@@ -22,15 +22,15 @@ export const siteConfig = {
       description: "Learn more about Hubra",
       navItems: [
         {
-          icon: 'mdi:docs',
+          icon: "mdi:docs",
           label: "Docs",
           href: "/docs",
         },
         {
-          icon: 'mdi:blog',
+          icon: "mdi:blog",
           label: "Blog",
           href: "/blog",
-        }
+        },
       ],
     },
     {
@@ -43,15 +43,15 @@ export const siteConfig = {
       label: "Resources",
       navItems: [
         {
-          icon: 'mdi:docs',
+          icon: "mdi:docs",
           label: "Docs",
           href: "/docs",
         },
         {
-          icon: 'mdi:blog',
+          icon: "mdi:blog",
           label: "Blog",
           href: "/blog",
-        }
+        },
       ],
     },
     {

@@ -19,9 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "black" },
-  ],
+  themeColor: [{ media: "(prefers-color-scheme: dark)", color: "black" }],
 };
 
 export default function RootLayout({
@@ -34,7 +32,7 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "min-h-screen text-foreground bg-background font-sans antialiased"
+          "min-h-screen text-foreground bg-background font-sans antialiased",
         )}
       >
         <Providers themeProps={{ attribute: "class" }}>

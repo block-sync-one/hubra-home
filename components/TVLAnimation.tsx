@@ -1,6 +1,7 @@
 "use client";
-import { useWindowSize } from "@/lib/useWindowSize";
 import React, { useRef, useEffect, useState } from "react";
+
+import { useWindowSize } from "@/lib/useWindowSize";
 
 const PATH_D = "M-30 78.426C54.4272 81.111 198.669 75.741 263.556 1.45703";
 const SVG_WIDTH = 274;
@@ -8,6 +9,7 @@ const SVG_HEIGHT = 112;
 
 function getPointAtLength(path: SVGPathElement, length: number) {
   const pt = path.getPointAtLength(length);
+
   return { x: pt.x, y: pt.y };
 }
 
@@ -42,8 +44,8 @@ export const TVLAnimatedPath = () => {
       },
       {
         threshold: 0.3, // Trigger when 30% of the component is visible
-        rootMargin: "0px 0px -50px 0px" // Trigger slightly before fully in view
-      }
+        rootMargin: "0px 0px -50px 0px", // Trigger slightly before fully in view
+      },
     );
 
     if (containerRef.current) {
@@ -56,7 +58,7 @@ export const TVLAnimatedPath = () => {
   // Animation effect - only run when component becomes visible
   useEffect(() => {
     if (!isVisible) return;
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     if (pathRef.current) {
       setPathLength(pathRef.current.getTotalLength());
@@ -70,19 +72,24 @@ export const TVLAnimatedPath = () => {
       if (!start) start = ts;
       const elapsed = ts - start;
       const t = Math.min(elapsed / duration, 1);
+
       setProgress(t);
       if (t < 1) {
         req = requestAnimationFrame(animate);
       }
     }
     req = requestAnimationFrame(animate);
+
     return () => cancelAnimationFrame(req);
   }, [isVisible]);
 
   // Calculate current position for the circle
-  let cx = 0, cy = 0;
+  let cx = 0,
+    cy = 0;
+
   if (pathRef.current) {
     const pt = pathRef.current.getPointAtLength(pathLength * progress);
+
     cx = pt.x;
     cy = pt.y;
   }
@@ -92,19 +99,19 @@ export const TVLAnimatedPath = () => {
     return (
       <div ref={containerRef}>
         <svg
-          width={SVG_WIDTH}
-          height={SVG_HEIGHT}
-          viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
           fill="none"
+          height={SVG_HEIGHT}
           style={{ overflow: "visible" }}
+          viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
+          width={SVG_WIDTH}
         >
           {/* Static version for SSR */}
           <path
             d={PATH_D}
+            fill="none"
+            opacity={0.15}
             stroke={isMobile ? "#FEC84B" : "#FEC84B"}
             strokeWidth={3}
-            opacity={0.15}
-            fill="none"
           />
         </svg>
       </div>
@@ -114,34 +121,34 @@ export const TVLAnimatedPath = () => {
   return (
     <div ref={containerRef}>
       <svg
-        width={SVG_WIDTH}
-        height={SVG_HEIGHT}
-        viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
         fill="none"
+        height={SVG_HEIGHT}
         style={{ overflow: "visible" }}
+        viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
+        width={SVG_WIDTH}
       >
         <defs>
-          <filter id="blurOuter" x="-50%" y="-50%" width="200%" height="200%">
+          <filter height="200%" id="blurOuter" width="200%" x="-50%" y="-50%">
             <feGaussianBlur stdDeviation="12" />
           </filter>
         </defs>
         {/* Background path (faint) */}
         <path
           d={PATH_D}
+          fill="none"
+          opacity={0.15}
           stroke={isMobile ? "#FEC84B" : "#FEC84B"}
           strokeWidth={3}
-          opacity={0.15}
-          fill="none"
         />
         {/* Animated path (revealed) */}
         <path
           ref={pathRef}
           d={PATH_D}
-          stroke={isMobile ? "#FEC84B" : "#FEC84B"}
-          strokeWidth={3}
           fill="none"
+          stroke={isMobile ? "#FEC84B" : "#FEC84B"}
           strokeDasharray={pathLength}
           strokeDashoffset={pathLength * (1 - progress)}
+          strokeWidth={3}
           style={{ transition: "stroke-dashoffset 0.1s linear" }}
         />
         {/* Animated circle with four parts */}
@@ -151,25 +158,25 @@ export const TVLAnimatedPath = () => {
             <circle
               cx={cx}
               cy={cy}
-              r={40}
               fill={isMobile ? "#FEC84B" : "#FEC84B"}
-              opacity={0.12}
               filter="url(#blurOuter)"
+              opacity={0.12}
+              r={40}
             />
             {/* Outer glow circle */}
             <circle
               cx={cx}
               cy={cy}
-              r={28}
               fill={isMobile ? "#FEC84B" : "#FEC84B"}
               opacity={0.04}
+              r={28}
             />
             {/* Middle circle (main) */}
             <circle
               cx={cx}
               cy={cy}
-              r={10}
               fill="white"
+              r={10}
               stroke={isMobile ? "#FEC84B" : "#FEC84B"}
               strokeWidth={4}
               style={{ filter: "drop-shadow(0 0 8px #FEC84B)" }}
