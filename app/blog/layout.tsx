@@ -1,31 +1,21 @@
 import { Metadata } from "next";
-
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: `Blog - ${siteConfig.name}`,
-  description: siteConfig.description,
+  title: "Blog",
+  description: "Stay updated with the latest Solana and DeFi news, tutorials, and insights. Learn about blockchain technology, crypto trading, and Web3 developments.",
+  keywords: ["Solana blog", "DeFi news", "crypto education", "blockchain tutorials", "Web3 insights", "cryptocurrency news"],
   openGraph: {
-    title: `Blog - ${siteConfig.name}`,
-    description: siteConfig.description,
-    url: "/blog",
+    title: "Blog",
+    description: "Stay updated with the latest Solana and DeFi news, tutorials, and insights. Learn about blockchain technology, crypto trading, and Web3 developments.",
+    url: `${siteConfig.url}/blog`,
     siteName: siteConfig.name,
-    images: [
-      {
-        url: "/favicon.ico",
-        width: 32,
-        height: 32,
-        alt: siteConfig.name,
-      },
-    ],
-    locale: "en_US",
-    type: "website",
+    type: "article",
   },
   twitter: {
     card: "summary_large_image",
-    title: `Blog - ${siteConfig.name}`,
-    description: siteConfig.description,
-    site: siteConfig.links.twitter,
+    title: "Blog",
+    description: "Stay updated with the latest Solana and DeFi news, tutorials, and insights. Learn about blockchain technology, crypto trading, and Web3 developments.",
   },
 };
 

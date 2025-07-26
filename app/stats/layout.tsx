@@ -1,35 +1,25 @@
 import { Metadata } from "next";
-
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: `Stats - ${siteConfig.name}`,
-  description: siteConfig.description,
+  title: "Stats",
+  description: "Real-time Solana blockchain statistics and analytics. Track network performance, transaction volumes, validator data, and ecosystem metrics.",
+  keywords: ["Solana stats", "blockchain analytics", "SOL statistics", "network metrics", "validator data", "transaction volume"],
   openGraph: {
-    title: `Stats - ${siteConfig.name}`,
-    description: siteConfig.description,
-    url: "/stats",
+    title: "Stats",
+    description: "Real-time Solana blockchain statistics and analytics. Track network performance, transaction volumes, validator data, and ecosystem metrics.",
+    url: `${siteConfig.url}/stats`,
     siteName: siteConfig.name,
-    images: [
-      {
-        url: "/favicon.ico",
-        width: 32,
-        height: 32,
-        alt: siteConfig.name,
-      },
-    ],
-    locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: `Stats - ${siteConfig.name}`,
-    description: siteConfig.description,
-    site: siteConfig.links.twitter,
+    title: "Stats",
+    description: "Real-time Solana blockchain statistics and analytics. Track network performance, transaction volumes, validator data, and ecosystem metrics.",
   },
 };
 
-export default function DocsLayout({
+export default function StatsLayout({
   children,
 }: {
   children: React.ReactNode;

@@ -1,35 +1,25 @@
 import { Metadata } from "next";
-
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: `DeFi - ${siteConfig.name}`,
-  description: siteConfig.description,
+  title: "DeFi",
+  description: "Explore the best DeFi protocols on Solana. Access lending, borrowing, yield farming, and decentralized trading opportunities in the Solana ecosystem.",
+  keywords: ["DeFi", "Solana DeFi", "decentralized finance", "lending", "borrowing", "yield farming", "liquidity pools", "DEX"],
   openGraph: {
-    title: `DeFi - ${siteConfig.name}`,
-    description: siteConfig.description,
-    url: "/defi",
+    title: "DeFi",
+    description: "Explore the best DeFi protocols on Solana. Access lending, borrowing, yield farming, and decentralized trading opportunities in the Solana ecosystem.",
+    url: `${siteConfig.url}/defi`,
     siteName: siteConfig.name,
-    images: [
-      {
-        url: "/favicon.ico",
-        width: 32,
-        height: 32,
-        alt: siteConfig.name,
-      },
-    ],
-    locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: `DeFi - ${siteConfig.name}`,
-    description: siteConfig.description,
-    site: siteConfig.links.twitter,
+    title: "DeFi",
+    description: "Explore the best DeFi protocols on Solana. Access lending, borrowing, yield farming, and decentralized trading opportunities in the Solana ecosystem.",
   },
 };
 
-export default function DocsLayout({
+export default function DefiLayout({
   children,
 }: {
   children: React.ReactNode;

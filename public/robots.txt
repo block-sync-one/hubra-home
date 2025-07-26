@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Block access to admin and private areas
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Allow specific API endpoints that should be crawled
+Allow: /api/sitemap
+
+# Sitemap location
+Sitemap: https://hubra.com/sitemap.xml
+
+# Crawl delay to be respectful to the server
+Crawl-delay: 1 

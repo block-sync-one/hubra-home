@@ -1,35 +1,25 @@
 import { Metadata } from "next";
-
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
-  title: `Tokens - ${siteConfig.name}`,
-  description: siteConfig.description,
+  title: "Tokens",
+  description: "Discover and track Solana tokens. Get real-time prices, market cap, trading volume, and comprehensive analytics for all SOL ecosystem tokens.",
+  keywords: ["Solana tokens", "SOL", "cryptocurrency prices", "token analytics", "crypto market data", "SPL tokens"],
   openGraph: {
-    title: `Tokens - ${siteConfig.name}`,
-    description: siteConfig.description,
-    url: "/tokens",
+    title: "Tokens",
+    description: "Discover and track Solana tokens. Get real-time prices, market cap, trading volume, and comprehensive analytics for all SOL ecosystem tokens.",
+    url: `${siteConfig.url}/tokens`,
     siteName: siteConfig.name,
-    images: [
-      {
-        url: "/favicon.ico",
-        width: 32,
-        height: 32,
-        alt: siteConfig.name,
-      },
-    ],
-    locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: `Tokens - ${siteConfig.name}`,
-    description: siteConfig.description,
-    site: siteConfig.links.twitter,
+    title: "Tokens",
+    description: "Discover and track Solana tokens. Get real-time prices, market cap, trading volume, and comprehensive analytics for all SOL ecosystem tokens.",
   },
 };
 
-export default function AboutLayout({
+export default function TokensLayout({
   children,
 }: {
   children: React.ReactNode;
