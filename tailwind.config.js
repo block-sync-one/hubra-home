@@ -25,6 +25,7 @@ const config = {
       colors: {
         // Base colors
         'card': '#121323',
+        background: '#000000',
         primary: {
           25: "#FCFBF6",
           50: "#FFFFE7",
