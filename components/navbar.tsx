@@ -42,7 +42,7 @@ export const Navbar = () => {
 
   return (
     <HeroUINavbar
-      className="backdrop-filter-none"
+      className="backdrop-filter-none z-50"
       classNames={{
         menuItem: "text-white",
         menu: " text-white",
