@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
-
+import { Analytics } from "@vercel/analytics/next"
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -87,6 +87,7 @@ export default function RootLayout({
             </main>
           </div>
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
