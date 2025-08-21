@@ -35,6 +35,7 @@ import { DegenAnimation } from "./ui/DegenAnimation";
 import { MobileDegenAnimation } from "./ui/MobileDegenAnimation";
 
 import { AnimatedSatelliteOrbit } from "@/components/ui/AnimatedSatellite";
+import Link from "next/link";
 
 // Simple Separator component
 const Separator = ({ className }: { className?: string }) => (
@@ -694,23 +695,24 @@ export const MainContentSection = (): JSX.Element => {
                             <div className="flex flex-col items-start md:items-end text-xs sm:text-sm md:text-base justify-center gap-3 w-full">
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/70 text-body text-left md:text-right break-words">
-                                            Download App
-                                        </div>
+                                        <span className="disabled:opacity-50 w-fit font-sans text-gray-400/70 text-body text-left md:text-right break-words cursor-not-allowed">
+                                            Download App (soon)
+                                        </span>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                        <Link target="_blank" href="https://hubra.app" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Web App
-                                        </div>
+                                        </Link>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                        <Link target="_blank" href="https://hubra.gitbook.io/hubra/" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Learn
-                                        </div>
+                                        </Link>
+                                       
                                     </div>
                                 </div>
                             </div>
@@ -723,23 +725,23 @@ export const MainContentSection = (): JSX.Element => {
                             <div className="flex flex-col items-start md:items-end text-xs sm:text-sm md:text-base justify-center gap-3 w-full">
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                        <Link target="_blank" href="https://discord.hubra.app" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Discord
-                                        </div>
+                                        </Link>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                        <Link target="_blank" href="https://t.me/hubraapp" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Telegram
-                                        </div>
+                                        </Link>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
-                                            Twitter
-                                        </div>
+                                        <Link target="_blank" href="https://x.com/hubraapp" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                            X
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
@@ -752,26 +754,20 @@ export const MainContentSection = (): JSX.Element => {
                             <div className="flex flex-col items-start md:items-end text-xs sm:text-sm md:text-base justify-center gap-3 w-full">
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                        <Link target="_blank" href="https://github.com/block-sync-one/hubra" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             GitHub
-                                        </div>
+                                        </Link>
                                     </div>
                                 </div>
+                                
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
-                                            Developer
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="inline-flex items-center gap-2">
-                                    <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                        <Link target="_blank" href="https://hubra.gitbook.io/hubra/" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Docs
-                                        </div>
+                                        </Link>
                                     </div>
                                 </div>
-                                <div className="inline-flex items-center gap-2">
+                                {/* <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
                                         <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Stats
@@ -784,7 +780,7 @@ export const MainContentSection = (): JSX.Element => {
                                             Privacy
                                         </div>
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -805,26 +801,26 @@ export const MainContentSection = (): JSX.Element => {
                         </div>
 
                         <div className="inline-flex items-center gap-6">
-                            <a className="" href="/">
+                            <Link target="_blank" href="https://x.com/hubraapp" className="">
                                 <Icon
                                     className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white"
-                                    icon="ri:twitter-fill"
+                                    icon="prime:twitter"
                                 />
-                            </a>
+                            </Link>
 
-                            <a className="" href="/">
+                            <Link target="_blank" href="https://github.com/block-sync-one/hubra" className="">
                                 <Icon
                                     className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white"
                                     icon="ri:github-fill"
                                 />
-                            </a>
+                            </Link>
 
-                            <a className="" href="/">
+                            <Link target="_blank" href="https://discord.hubra.app" className="">
                                 <Icon
                                     className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white"
                                     icon="ri:discord-fill"
                                 />
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </div>
