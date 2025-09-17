@@ -709,7 +709,7 @@ export const MainContentSection = (): JSX.Element => {
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <Link target="_blank" href="https://hubra.gitbook.io/hubra/" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                        <Link target="_blank" href="https://docs.hubra.app" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Learn
                                         </Link>
                                        
@@ -762,7 +762,7 @@ export const MainContentSection = (): JSX.Element => {
                                 
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <Link target="_blank" href="https://hubra.gitbook.io/hubra/" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                        <Link target="_blank" href="https://docs.hubra.app" className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
                                             Docs
                                         </Link>
                                     </div>
