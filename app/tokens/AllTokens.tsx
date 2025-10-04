@@ -24,9 +24,10 @@ export default function AllTokens() {
   }, [data]);
 
   return (
-    <section>
-      <h2 className="text-xl font-semibold">All Tokens</h2>
-      <TableWrapper data={data} isLoading={isLoading} tabs={tabTableData} />
-    </section>
+    <div className="flex flex-col gap-6">
+    <h2 className="text-2xl font-medium text-white">All Tokens</h2>
+    
+    <TableWrapper data={data} isLoading={isLoading} tabs={tabTableData} />
+  </div>
   );
 }
