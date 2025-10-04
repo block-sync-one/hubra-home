@@ -10,7 +10,7 @@ Disallow: /admin/
 Allow: /api/sitemap
 
 # Sitemap location
-Sitemap: https://hubra.com/sitemap.xml
+Sitemap: https://hubra.app/sitemap.xml
 
 # Crawl delay to be respectful to the server
 Crawl-delay: 1 
