@@ -1,12 +1,12 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
+import { Analytics } from "@vercel/analytics/next";
 
 import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
-import { Analytics } from "@vercel/analytics/next"
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -39,14 +39,16 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
-    images: siteConfig.ogImage ? [
-      {
-        url: siteConfig.ogImage,
-        width: 1200,
-        height: 630,
-        alt: siteConfig.name,
-      },
-    ] : [],
+    images: siteConfig.ogImage
+      ? [
+          {
+            url: siteConfig.ogImage,
+            width: 1200,
+            height: 630,
+            alt: siteConfig.name,
+          },
+        ]
+      : [],
   },
   twitter: {
     card: "summary_large_image",
@@ -75,14 +77,12 @@ export default function RootLayout({
     <html suppressHydrationWarning lang="en">
       <head />
       <body
-        className={clsx(
-          "min-h-screen text-foreground font-sans antialiased",
-        )}
+        className={clsx("min-h-screen text-foreground font-sans antialiased")}
       >
         <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col items-center">
             <Navbar />
-            <main className="w-full px-0 md:px-10 flex flex-col items-center">
+            <main className="w-full px-6 md:px-10 flex flex-col">
               {children}
             </main>
           </div>

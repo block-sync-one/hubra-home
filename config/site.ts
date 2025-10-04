@@ -18,7 +18,7 @@ export const siteConfig = {
     "crypto portfolio",
     "Web3"
   ],
-  url: "https://hubra.com",
+  url: "https://hubra.app",
   ogImage: "/hubra-og-image.png",
   twitter: {
     handle: "@hubraApp",

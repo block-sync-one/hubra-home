@@ -1,0 +1,220 @@
+import React from 'react';
+import { Card, CardBody, CardHeader } from '@heroui/react';
+import { Icon } from '@iconify/react';
+
+interface VolumeStatsProps {
+  buyVolume: string;
+  buyVolumePercent: number;
+  sellVolume: string;
+  sellVolumePercent: number;
+  exchangeRate: string;
+  tradesCount: string;
+  tokenAddress: string;
+  holders: string;
+}
+
+// Reusable components to eliminate duplication
+const VolumeBar = ({ 
+  label, 
+  volume, 
+  percentage, 
+  color 
+}: { 
+  label: string; 
+  volume: string; 
+  percentage: number; 
+  color: string; 
+}) => (
+  <div>
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-sm font-medium text-white">{label}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-white">{volume}</span>
+        <span className="text-base font-medium text-gray-400">({percentage}%)</span>
+      </div>
+    </div>
+    <div className="flex gap-1">
+      <div 
+        className={`h-1 ${color} rounded`}
+        style={{ width: `${percentage}%` }}
+      />
+      <div 
+        className="h-1 bg-white/10 rounded"
+        style={{ width: `${100 - percentage}%` }}
+      />
+    </div>
+  </div>
+);
+
+const VolumeSection = ({ 
+  buyVolume, 
+  buyVolumePercent, 
+  sellVolume, 
+  sellVolumePercent 
+}: {
+  buyVolume: string;
+  buyVolumePercent: number;
+  sellVolume: string;
+  sellVolumePercent: number;
+}) => (
+  <div className="space-y-6">
+    <VolumeBar 
+      label="Buy vol" 
+      volume={buyVolume} 
+      percentage={buyVolumePercent} 
+      color="bg-success-500" 
+    />
+    <VolumeBar 
+      label="Sell vol" 
+      volume={sellVolume} 
+      percentage={sellVolumePercent} 
+      color="bg-error-500" 
+    />
+  </div>
+);
+
+const TokenInfo = ({ 
+  exchangeRate, 
+  tradesCount, 
+  tokenAddress, 
+  holders 
+}: {
+  exchangeRate: string;
+  tradesCount: string;
+  tokenAddress: string;
+  holders: string;
+}) => (
+  <div className="space-y-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <p className="text-sm font-medium text-gray-400 mb-1">Exchange rate:</p>
+        <p className="text-sm font-medium text-white">{exchangeRate}</p>
+      </div>
+      <div>
+        <p className="text-sm font-medium text-gray-400 mb-1">Trades count:</p>
+        <p className="text-sm font-medium text-white">{tradesCount}</p>
+      </div>
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <div>
+        <p className="text-sm font-medium text-gray-400 mb-1">Token Address:</p>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-white">{tokenAddress}</span>
+          <Icon icon="lucide:copy" className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
+          <Icon icon="lucide:external-link" className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
+        </div>
+      </div>
+      <div>
+        <p className="text-sm font-medium text-gray-400 mb-1">Holders:</p>
+        <p className="text-sm font-medium text-white">{holders}</p>
+      </div>
+    </div>
+  </div>
+);
+
+const MobileTokenInfo = ({ 
+  exchangeRate, 
+  tradesCount, 
+  tokenAddress, 
+  holders 
+}: {
+  exchangeRate: string;
+  tradesCount: string;
+  tokenAddress: string;
+  holders: string;
+}) => (
+  <div>
+    <div className="border-b border-white/10 p-5 flex items-center justify-between">
+      <p className="text-sm font-medium text-gray-400">Exchange rate:</p>
+      <p className="text-sm font-medium text-white">{exchangeRate}</p>
+    </div>
+    <div className="border-b border-white/10 p-5 flex items-center justify-between">
+      <p className="text-sm font-medium text-gray-400">Trades count:</p>
+      <p className="text-sm font-medium text-white">{tradesCount}</p>
+    </div>
+    <div className="border-b border-white/10 p-5 flex items-center justify-between">
+      <p className="text-sm font-medium text-gray-400">Token Address:</p>
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-white">{tokenAddress}</span>
+        <Icon icon="lucide:copy" className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
+        <Icon icon="lucide:external-link" className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
+      </div>
+    </div>
+    <div className="p-5 flex items-center justify-between">
+      <p className="text-sm font-medium text-gray-400">Holders:</p>
+      <p className="text-sm font-medium text-white">{holders}</p>
+    </div>
+  </div>
+);
+
+export function VolumeStats({
+  buyVolume,
+  buyVolumePercent,
+  sellVolume,
+  sellVolumePercent,
+  exchangeRate,
+  tradesCount,
+  tokenAddress,
+  holders
+}: VolumeStatsProps) {
+  return (
+    <div className="space-y-6">
+      {/* Desktop - Single Card */}
+      <Card className="hidden md:block bg-gray-950 border-white/10 rounded-2xl">
+        <CardHeader className="p-5">
+          <h3 className="text-sm font-medium text-gray-400">Volume:</h3>
+        </CardHeader>
+        <CardBody className="space-y-6 p-5">
+          <div className="flex gap-6">
+            <div className="flex-1">
+              <VolumeBar 
+                label="Buy vol" 
+                volume={buyVolume} 
+                percentage={buyVolumePercent} 
+                color="bg-success-500" 
+              />
+            </div>
+            <div className="flex-1">
+              <VolumeBar 
+                label="Sell vol" 
+                volume={sellVolume} 
+                percentage={sellVolumePercent} 
+                color="bg-error-500" 
+              />
+            </div>
+          </div>
+          <TokenInfo 
+            exchangeRate={exchangeRate}
+            tradesCount={tradesCount}
+            tokenAddress={tokenAddress}
+            holders={holders}
+          />
+        </CardBody>
+      </Card>
+
+      {/* Mobile - Two Separate Cards */}
+      <div className="md:hidden space-y-4">
+        <Card className="bg-gray-950 border-white/10 rounded-2xl">
+
+          <CardBody className="p-5">
+            <VolumeSection 
+              buyVolume={buyVolume}
+              buyVolumePercent={buyVolumePercent}
+              sellVolume={sellVolume}
+              sellVolumePercent={sellVolumePercent}
+            />
+          </CardBody>
+        </Card>
+
+        <Card className="bg-gray-950 border-white/10 rounded-2xl">
+          <MobileTokenInfo 
+            exchangeRate={exchangeRate}
+            tradesCount={tradesCount}
+            tokenAddress={tokenAddress}
+            holders={holders}
+          />
+        </Card>
+      </div>
+    </div>
+  );
+}

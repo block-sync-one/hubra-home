@@ -1,9 +1,17 @@
-import { title } from "@/components/primitives";
+"use client";
 
-export default function AboutPage() {
+import React from "react";
+
+import Tokens from "@/app/tokens/Tokens";
+import AllTokens from "@/app/tokens/AllTokens";
+import HotTokens from "@/app/tokens/HotTokens";
+
+export default function TokensPage() {
   return (
-    <div>
-      <h1 className={title()}>About</h1>
-    </div>
+    <main className="flex flex-col gap-12 md:max-w-7xl mx-auto">
+      <Tokens />
+      <HotTokens />
+      <AllTokens />
+    </main>
   );
 }
