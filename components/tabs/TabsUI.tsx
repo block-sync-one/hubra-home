@@ -1,17 +1,8 @@
 import React, { useMemo } from "react";
 import { Icon } from "@iconify/react";
-import {
-  Tabs,
-  Tab,
-  Chip,
-  DropdownTrigger,
-  Dropdown,
-  Button,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/react";
+import { Tabs, Tab, Chip, DropdownTrigger, Dropdown, Button, DropdownMenu, DropdownItem } from "@heroui/react";
 
-import { AppTab, TabId, TabIdType } from "@/lib/models/appTab";
+import { AppTab, TabIdType } from "@/lib/models/appTab";
 
 interface TabsUIProps {
   selectedTab: TabIdType;
@@ -21,29 +12,45 @@ interface TabsUIProps {
   shouldKeepTabOnSmallScreen?: boolean;
 }
 
-export const TabsUI = React.memo(({
-  selectedTab,
-  onTabChange,
-  tabsData,
-  className,
-  shouldKeepTabOnSmallScreen = false,
-}: TabsUIProps) => {
+export const TabsUI = React.memo(({ selectedTab, onTabChange, tabsData, className, shouldKeepTabOnSmallScreen = false }: TabsUIProps) => {
   // Memoize the selected tab data to avoid repeated lookups
-  const selectedTabData = useMemo(() => 
-    tabsData.find((tab) => tab.id === selectedTab), 
-    [tabsData, selectedTab]
-  );
+  const selectedTabData = useMemo(() => tabsData.find((tab) => tab.id === selectedTab), [tabsData, selectedTab]);
 
   // Memoize tab rendering to prevent unnecessary re-renders
-  const renderTab = useMemo(() => (tab: AppTab) => {
-    const isSelected = tab.id === selectedTab;
-    const color = isSelected ? "primary" : "default";
+  const renderTab = useMemo(
+    () => (tab: AppTab) => {
+      const isSelected = tab.id === selectedTab;
+      const color = isSelected ? "primary" : "default";
 
-    return (
-      <Tab
-        key={tab.id}
-        className="w-full"
-        title={
+      return (
+        <Tab
+          key={tab.id}
+          className="w-full"
+          title={
+            <div className="flex items-center gap-2">
+              {tab.icon && <Icon icon={tab.icon} width={16} />} {tab.label}
+              {tab.itemCount && (
+                <Chip color={color} size="sm" variant="flat">
+                  {tab.itemCount}
+                </Chip>
+              )}
+            </div>
+          }
+          value={tab.id}
+        />
+      );
+    },
+    [selectedTab]
+  );
+
+  // Memoize dropdown item rendering
+  const renderDropdownItem = useMemo(
+    () => (tab: AppTab) => {
+      const isSelected = tab.id === selectedTab;
+      const color = isSelected ? "primary" : "default";
+
+      return (
+        <DropdownItem key={tab.id} color={color} textValue={tab.label}>
           <div className="flex items-center gap-2">
             {tab.icon && <Icon icon={tab.icon} width={16} />} {tab.label}
             {tab.itemCount && (
@@ -52,31 +59,11 @@ export const TabsUI = React.memo(({
               </Chip>
             )}
           </div>
-        }
-        value={tab.id}
-      />
-    );
-  }, [selectedTab]);
-
-  // Memoize dropdown item rendering
-  const renderDropdownItem = useMemo(() => (tab: AppTab) => {
-    const isSelected = tab.id === selectedTab;
-    const color = isSelected ? "primary" : "default";
-
-    return (
-      <DropdownItem key={tab.id} color={color} textValue={tab.label}>
-        <div className="flex items-center gap-2">
-          {tab.icon && <Icon icon={tab.icon} width={16} />}{" "}
-          {tab.label}
-          {tab.itemCount && (
-            <Chip color={color} size="sm" variant="flat">
-              {tab.itemCount}
-            </Chip>
-          )}
-        </div>
-      </DropdownItem>
-    );
-  }, [selectedTab]);
+        </DropdownItem>
+      );
+    },
+    [selectedTab]
+  );
 
   return (
     <>
@@ -91,30 +78,16 @@ export const TabsUI = React.memo(({
         }}
         selectedKey={selectedTab}
         variant="underlined"
-        onSelectionChange={(key) => onTabChange(key as TabIdType)}
-      >
+        onSelectionChange={(key) => onTabChange(key as TabIdType)}>
         {tabsData.map(renderTab)}
       </Tabs>
       {!shouldKeepTabOnSmallScreen && (
         <Dropdown placement="bottom-end">
           <DropdownTrigger className="mb-4 lg:hidden bg-card">
-            <Button
-              className="min-w-fit capitalize bg-card flex items-center gap-1.5 font-semibold"
-              radius="full"
-              size="md"
-              variant="flat"
-            >
-              {selectedTabData?.icon && (
-                <Icon icon={selectedTabData.icon} width={16} />
-              )}{" "}
-              {selectedTabData?.label}
+            <Button className="min-w-fit capitalize bg-card flex items-center gap-1.5 font-semibold" radius="full" size="md" variant="flat">
+              {selectedTabData?.icon && <Icon icon={selectedTabData.icon} width={16} />} {selectedTabData?.label}
               {selectedTabData?.itemCount && (
-                <Chip
-                  className="hidden lg:block"
-                  color="primary"
-                  size="sm"
-                  variant="flat"
-                >
+                <Chip className="hidden lg:block" color="primary" size="sm" variant="flat">
                   {selectedTabData.itemCount}
                 </Chip>
               )}
@@ -127,10 +100,7 @@ export const TabsUI = React.memo(({
             selectedKeys={[selectedTab]}
             selectionMode="single"
             variant="flat"
-            onSelectionChange={(keys) =>
-              onTabChange(Array.from(keys)[0] as TabIdType)
-            }
-          >
+            onSelectionChange={(keys) => onTabChange(Array.from(keys)[0] as TabIdType)}>
             {tabsData.map(renderDropdownItem)}
           </DropdownMenu>
         </Dropdown>

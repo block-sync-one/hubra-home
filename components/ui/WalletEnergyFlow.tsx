@@ -22,36 +22,18 @@ interface WalletEnergyFlowProps {
   className?: string;
 }
 
-const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({
-  className = "",
-}) => {
+const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({ className = "" }) => {
   return (
     <div className={`absolute mb-0 lg:mb-1 xl:mb-2 inset-0 md:inset-auto pointer-events-none ${className}`}>
       {/* Left Wallet Liquid */}
       <div className="absolute flex flex-col w-full left-[28%] top-[18%] max-w-[43%] rounded-b-[26px] h-[13%] md:max-w-[152px] md:h-[54px] md:left-10 md:top-[48%] lg:max-w-[198px] lg:h-[70px] lg:left-[50px] lg:top-[41%] overflow-hidden object-cover">
         {/* Wave overlay for liquid surface */}
-        <svg
-          className="absolute top-0 left-0 w-full h-full"
-          preserveAspectRatio="none"
-          viewBox="0 0 237 111"
-        >
+        <svg className="absolute top-0 left-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 237 111">
           <defs>
             <linearGradient id="waveGradient" x1="0%" x2="0%" y1="100%" y2="0%">
-              <stop
-                offset="0%"
-                stopColor="var(--energy-gradient-color)"
-                stopOpacity="0"
-              />
-              <stop
-                offset="50%"
-                stopColor="var(--energy-gradient-color)"
-                stopOpacity="0.3"
-              />
-              <stop
-                offset="100%"
-                stopColor="var(--energy-gradient-color)"
-                stopOpacity="0.5"
-              />
+              <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+              <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0.5" />
             </linearGradient>
           </defs>
 
@@ -103,28 +85,12 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({
       {/* Right Wallet Liquid */}
       <div className="absolute flex flex-col w-full left-[26%] top-[76.5%] max-w-[46%] rounded-b-[26px] h-[13%] md:max-w-[164px] md:h-[66px] md:left-[444px] md:top-[41%] md:rounded-b-[26px] lg:max-w-[213px] lg:h-[86px] lg:left-[580px] lg:top-[35%] object-cover overflow-hidden">
         {/* Wave overlay for liquid surface */}
-        <svg
-          className="absolute top-0 left-0 w-full h-full"
-          preserveAspectRatio="none"
-          viewBox="0 0 237 111"
-        >
+        <svg className="absolute top-0 left-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 237 111">
           <defs>
             <linearGradient id="waveGradient" x1="0%" x2="0%" y1="100%" y2="0%">
-              <stop
-                offset="0%"
-                stopColor="var(--energy-gradient-color)"
-                stopOpacity="0"
-              />
-              <stop
-                offset="50%"
-                stopColor="var(--energy-gradient-color)"
-                stopOpacity="0.3"
-              />
-              <stop
-                offset="100%"
-                stopColor="var(--energy-gradient-color)"
-                stopOpacity="0.5"
-              />
+              <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+              <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0.5" />
             </linearGradient>
           </defs>
 
@@ -177,54 +143,17 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none hidden md:block max-w-[1000px] max-h-[400px] gap-10 rotate-180 top-[14px] -left-[16px] lg:-left-[36px] xl:top-4"
         preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 1014 281"
-      >
+        viewBox="0 0 1014 281">
         <defs>
-          <linearGradient
-            id="incomingEnergyGradient1"
-            x1="0%"
-            x2="100%"
-            y1="0%"
-            y2="0%"
-          >
-            <stop
-              offset="0%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="0"
-            />
-            <stop
-              offset="50%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="1"
-            />
-            <stop
-              offset="100%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="0"
-            />
+          <linearGradient id="incomingEnergyGradient1" x1="0%" x2="100%" y1="0%" y2="0%">
+            <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+            <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
           </linearGradient>
-          <linearGradient
-            id="incomingEnergyGradient2"
-            x1="0%"
-            x2="100%"
-            y1="0%"
-            y2="0%"
-          >
-            <stop
-              offset="0%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="0"
-            />
-            <stop
-              offset="50%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="1"
-            />
-            <stop
-              offset="100%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="0"
-            />
+          <linearGradient id="incomingEnergyGradient2" x1="0%" x2="100%" y1="0%" y2="0%">
+            <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+            <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
           </linearGradient>
         </defs>
         {/* Outgoing path 1 - FROM right wallet TO external (top path) */}
@@ -281,54 +210,17 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none hidden md:block max-w-[1000px] max-h-[400px] gap-10 -top-[14px] left-[0px] lg:-top-[18px] lg:left-[15px] xl:-top-[16px] xl:left-[16px]"
         preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 1014 281"
-      >
+        viewBox="0 0 1014 281">
         <defs>
-          <linearGradient
-            id="incomingEnergyGradient1"
-            x1="0%"
-            x2="100%"
-            y1="0%"
-            y2="0%"
-          >
-            <stop
-              offset="0%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="0"
-            />
-            <stop
-              offset="50%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="1"
-            />
-            <stop
-              offset="100%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="0"
-            />
+          <linearGradient id="incomingEnergyGradient1" x1="0%" x2="100%" y1="0%" y2="0%">
+            <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+            <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
           </linearGradient>
-          <linearGradient
-            id="incomingEnergyGradient2"
-            x1="0%"
-            x2="100%"
-            y1="0%"
-            y2="0%"
-          >
-            <stop
-              offset="0%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="0"
-            />
-            <stop
-              offset="50%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="1"
-            />
-            <stop
-              offset="100%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="0"
-            />
+          <linearGradient id="incomingEnergyGradient2" x1="0%" x2="100%" y1="0%" y2="0%">
+            <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+            <stop offset="50%" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="100%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
           </linearGradient>
         </defs>
         {/* Outgoing path 1 - FROM right wallet TO external (top path) */}
@@ -385,36 +277,13 @@ const WalletEnergyFlow: React.FC<WalletEnergyFlowProps> = ({
       <svg
         className="absolute inset-0 w-full h-full pointer-events-none md:hidden"
         preserveAspectRatio="xMidYMid meet"
-        viewBox="0 0 350 518"
-      >
+        viewBox="0 0 350 518">
         <defs>
-          <linearGradient
-            id="energyFlowGradientMobile"
-            x1="0%"
-            x2="0%"
-            y1="0%"
-            y2="100%"
-          >
-            <stop
-              offset="0%"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="0"
-            />
-            <stop
-              offset="0.2"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="1"
-            />
-            <stop
-              offset="0.8"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="1"
-            />
-            <stop
-              offset="1"
-              stopColor="var(--energy-gradient-color)"
-              stopOpacity="0"
-            />
+          <linearGradient id="energyFlowGradientMobile" x1="0%" x2="0%" y1="0%" y2="100%">
+            <stop offset="0%" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
+            <stop offset="0.2" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="0.8" stopColor="var(--energy-gradient-color)" stopOpacity="1" />
+            <stop offset="1" stopColor="var(--energy-gradient-color)" stopOpacity="0" />
           </linearGradient>
           {/* Mask to hide energy flow behind Solana logo */}
           <mask id="solanaLogoMask">

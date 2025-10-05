@@ -1,6 +1,6 @@
-import React from 'react';
-import Image from 'next/image';
-import { Icon } from '@iconify/react';
+import React from "react";
+import Image from "next/image";
+import { Icon } from "@iconify/react";
 
 interface TokenHeaderProps {
   name: string;
@@ -15,12 +15,12 @@ interface TokenHeaderProps {
 }
 
 // Helper component for stat cards
-function StatCard({ 
-  label, 
-  value, 
-  change, 
-  isPositive, 
-  roundedClass 
+function StatCard({
+  label,
+  value,
+  change,
+  isPositive,
+  roundedClass,
 }: {
   label: string;
   value: string;
@@ -35,13 +35,11 @@ function StatCard({
         <p className="text-lg font-medium text-white">{value}</p>
         {change && (
           <div className="flex items-center gap-0.5">
-            <Icon 
-              icon="mdi:arrow-up" 
-              className={`h-3 w-3 ${isPositive ? 'text-success-500' : 'text-error-500'} ${!isPositive ? 'rotate-180' : ''}`} 
+            <Icon
+              className={`h-3 w-3 ${isPositive ? "text-success-500" : "text-error-500"} ${!isPositive ? "rotate-180" : ""}`}
+              icon="mdi:arrow-up"
             />
-            <span className={`text-xs font-medium ${isPositive ? 'text-success-500' : 'text-error-500'}`}>
-              {Math.abs(change)}%
-            </span>
+            <span className={`text-xs font-medium ${isPositive ? "text-success-500" : "text-error-500"}`}>{Math.abs(change)}%</span>
           </div>
         )}
       </div>
@@ -58,13 +56,13 @@ export function TokenHeader({
   marketCapChange,
   volume24h,
   volume24hChange,
-  supply
+  supply,
 }: TokenHeaderProps) {
   const stats = [
-    { label: 'Change', value: `${change}%`, roundedClass: 'rounded-tl-lg' },
-    { label: 'Market Cap', value: marketCap, change: marketCapChange, isPositive: true, roundedClass: 'rounded-tr-lg' },
-    { label: '24 Hour Trading Vol', value: volume24h, change: volume24hChange, isPositive: false, roundedClass: 'rounded-bl-lg' },
-    { label: 'Supply', value: supply, roundedClass: 'rounded-br-lg' }
+    { label: "Change", value: `${change}%`, roundedClass: "rounded-tl-lg" },
+    { label: "Market Cap", value: marketCap, change: marketCapChange, isPositive: true, roundedClass: "rounded-tr-lg" },
+    { label: "24 Hour Trading Vol", value: volume24h, change: volume24hChange, isPositive: false, roundedClass: "rounded-bl-lg" },
+    { label: "Supply", value: supply, roundedClass: "rounded-br-lg" },
   ];
 
   return (
@@ -72,14 +70,14 @@ export function TokenHeader({
       <div className="flex items-center flex-wrap justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full overflow-hidden">
-            <Image 
-              alt={`${name} token logo`} 
-              height={32} 
-              src={imgUrl} 
-              width={32}
-              className="w-full h-full object-cover"
+            <Image
               priority
+              alt={`${name} token logo`}
+              className="w-full h-full object-cover"
+              height={32}
               sizes="32px"
+              src={imgUrl}
+              width={32}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -87,17 +85,17 @@ export function TokenHeader({
             <span className="text-xl font-medium text-gray-400 uppercase">{symbol}</span>
           </div>
         </div>
-        
+
         <div className="w-full md:w-auto">
           <div className="grid grid-cols-2 md:flex md:gap-12">
             {stats.map((stat, index) => (
               <StatCard
                 key={index}
-                label={stat.label}
-                value={stat.value}
                 change={stat.change}
                 isPositive={stat.isPositive}
+                label={stat.label}
                 roundedClass={stat.roundedClass}
+                value={stat.value}
               />
             ))}
           </div>

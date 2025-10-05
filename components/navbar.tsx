@@ -1,25 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import {
-  Navbar as HeroUINavbar,
-  NavbarContent,
-  NavbarMenu,
-  NavbarBrand,
-  NavbarItem,
-  NavbarMenuItem,
-} from "@heroui/navbar";
+import { Navbar as HeroUINavbar, NavbarContent, NavbarMenu, NavbarBrand, NavbarItem } from "@heroui/navbar";
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import { Image } from "@heroui/image";
-import { link as linkStyles } from "@heroui/theme";
 import NextLink from "next/link";
-import clsx from "clsx";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/dropdown";
 import { Icon } from "@iconify/react";
 
 import { useWindowSize } from "../lib/useWindowSize";
@@ -36,9 +21,7 @@ export const Navbar = () => {
     setIsMounted(true);
   }, []);
 
-  const navItems = siteConfig.navItems.filter(
-    (item) => item.label !== "Stats" && item.label !== "Home",
-  );
+  const navItems = siteConfig.navItems.filter((item) => item.label !== "Stats" && item.label !== "Home");
 
   return (
     <HeroUINavbar
@@ -49,16 +32,11 @@ export const Navbar = () => {
         item: " text-white",
       }}
       maxWidth="2xl"
-      position="sticky"
-    >
+      position="sticky">
       <div className="flex flex-row items-center justify-between lg:justify-start w-full">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-2" href="/">
-            <Image
-              alt="Hubra"
-              className="rounded-none w-[22px] h-[22px] md:w-6 md:h-6"
-              src="/logo.png"
-            />
+            <Image alt="Hubra" className="rounded-none w-[22px] h-[22px] md:w-6 md:h-6" src="/logo.png" />
             <p className="font-bold text-white text-lg">Hubra</p>
           </NextLink>
         </NavbarBrand>
@@ -124,13 +102,9 @@ export const Navbar = () => {
           )}
         </ul> */}
         {/* Mobile menu toggle button */}
-      
       </div>
 
-      <NavbarContent
-        className=" lg:flex basis-1/5 lg:basis-full"
-        justify="end"
-      >
+      <NavbarContent className=" lg:flex basis-1/5 lg:basis-full" justify="end">
         {/* <NavbarItem>
           <Button
             disabled
@@ -153,19 +127,10 @@ export const Navbar = () => {
             isExternal
             as={Link}
             className="text-sm font-normal text-black bg-white"
-            endContent={
-              isMounted ? (
-                <Icon
-                  height="14"
-                  icon="solar:alt-arrow-right-outline"
-                  width="14"
-                />
-              ) : null
-            }
+            endContent={isMounted ? <Icon height="14" icon="solar:alt-arrow-right-outline" width="14" /> : null}
             href={siteConfig.links.app}
             radius="full"
-            variant="flat"
-          >
+            variant="flat">
             Launch App
           </Button>
         </NavbarItem>
@@ -246,7 +211,7 @@ export const Navbar = () => {
       {/* End Mobile Menu Overlay */}
 
       {/* Desktop NavbarMenu (for accessibility, but hidden on mobile) */}
-      <NavbarMenu  />
+      <NavbarMenu />
     </HeroUINavbar>
   );
 };

@@ -1,16 +1,7 @@
 import type { TableProps } from "./types";
 
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import {
-  SortDescriptor,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Button,
-} from "@heroui/react";
+import { SortDescriptor, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@heroui/react";
 
 // Simple get function to replace lodash
 const get = (obj: any, path: string) => {
@@ -36,15 +27,10 @@ const UnifiedTable = <T extends Record<string, any>>({
   selectedTab,
 }: ReusableTableProps<T>) => {
   // Validate configuration *after* hooks are guaranteed to run to avoid conditional hook calls
-  const invalidConfig =
-    !configuration ||
-    !configuration.columns ||
-    configuration.columns.length === 0;
+  const invalidConfig = !configuration || !configuration.columns || configuration.columns.length === 0;
 
   const [page, setPage] = useState(1);
-  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>(
-    configuration.defaultSort || { column: "", direction: "ascending" },
-  );
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>(configuration.defaultSort || { column: "", direction: "ascending" });
 
   // Fallback safely if configuration is invalid
   const rowsPerPage = configuration?.rowsPerPage || ROWS_PER_PAGE;
@@ -176,10 +162,7 @@ const UnifiedTable = <T extends Record<string, any>>({
 
     return cols.map((column) => ({
       ...column,
-      sortDirection:
-        column.key === sortDescriptor.column
-          ? sortDescriptor.direction
-          : undefined,
+      sortDirection: column.key === sortDescriptor.column ? sortDescriptor.direction : undefined,
     }));
   }, [configuration.columns, sortDescriptor]);
 
@@ -200,7 +183,7 @@ const UnifiedTable = <T extends Record<string, any>>({
     (item: T) => {
       onRowClick?.(item);
     },
-    [onRowClick],
+    [onRowClick]
   );
 
   const handleSortChange = useCallback((descriptor: SortDescriptor) => {
@@ -229,8 +212,7 @@ const UnifiedTable = <T extends Record<string, any>>({
             isDisabled={page === 1}
             size="md"
             variant="flat"
-            onPress={onPreviousPage}
-          >
+            onPress={onPreviousPage}>
             Previous
           </Button>
           <Button
@@ -239,31 +221,19 @@ const UnifiedTable = <T extends Record<string, any>>({
             isDisabled={page === pages}
             size="md"
             variant="flat"
-            onPress={onNextPage}
-          >
+            onPress={onNextPage}>
             Next
           </Button>
         </div>
       </div>
     );
-  }, [
-    page,
-    pages,
-    onPreviousPage,
-    onNextPage,
-    sortedItems.length,
-    rowsPerPage,
-  ]);
+  }, [page, pages, onPreviousPage, onNextPage, sortedItems.length, rowsPerPage]);
 
   // Render a fallback message if the configuration is invalid
   if (invalidConfig) {
     console.warn("ReusableTable: Invalid configuration provided");
 
-    return (
-      <div className="p-4 text-center text-gray-500">
-        Table configuration error
-      </div>
-    );
+    return <div className="p-4 text-center text-gray-500">Table configuration error</div>;
   }
 
   return (
@@ -275,8 +245,7 @@ const UnifiedTable = <T extends Record<string, any>>({
           wrapper: "bg-transparent rounded-t-none lg:bg-card p-0 lg:p-4",
         }}
         sortDescriptor={sortDescriptor}
-        onSortChange={handleSortChange}
-      >
+        onSortChange={handleSortChange}>
         <TableHeader className="">
           {headerColumns?.map((column) => (
             <TableColumn
@@ -287,51 +256,36 @@ const UnifiedTable = <T extends Record<string, any>>({
                 bg-gray-30  
                 text-gray-400 ${column.align === "left" ? "text-left" : "text-right"}
                 ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
-              `}
-            >
+              `}>
               {column.label}
             </TableColumn>
           ))}
         </TableHeader>
         <TableBody
-          emptyContent={
-            <div className="py-6 text-center text-gray-500 w-full">
-              No data available
-            </div>
-          }
+          emptyContent={<div className="py-6 text-center text-gray-500 w-full">No data available</div>}
           isLoading={isLoading}
-          loadingContent={
-            <TableSkeleton columns={configuration.columns.length} rows={2} />
-          }
-        >
+          loadingContent={<TableSkeleton columns={configuration.columns.length} rows={2} />}>
           {paginatedItems.map((item: any) => (
             <TableRow
               key={item.key || item.id || item.asset?.mint || item._index}
               className="cursor-pointer hover:bg-transparent border-none"
-              onClick={() => handleRowClick(item)}
-            >
+              onClick={() => handleRowClick(item)}>
               {configuration.columns.map((column) => (
                 <TableCell
                   key={column.key}
                   className={`border-none h-[40px] lg:h-[60px] first:text-left text-right lg:p-auto px-0 pb-4
                     ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
-                  `}
-                >
+                  `}>
                   {(() => {
                     try {
                       if (column.render) {
-                        const rendered = column.render(
-                          item,
-                          get(item, String(column.key)),
-                        );
+                        const rendered = column.render(item, get(item, String(column.key)));
 
                         return rendered || null;
                       } else {
                         const value = get(item, String(column.key));
 
-                        return value !== null && value !== undefined
-                          ? String(value)
-                          : "-";
+                        return value !== null && value !== undefined ? String(value) : "-";
                       }
                     } catch (error) {
                       console.error("Error rendering cell:", error, {
@@ -353,6 +307,4 @@ const UnifiedTable = <T extends Record<string, any>>({
   );
 };
 
-export default React.memo(UnifiedTable) as <T extends Record<string, any>>(
-  props: ReusableTableProps<T>,
-) => React.ReactElement;
+export default React.memo(UnifiedTable) as <T extends Record<string, any>>(props: ReusableTableProps<T>) => React.ReactElement;

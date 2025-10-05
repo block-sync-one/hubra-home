@@ -1,6 +1,6 @@
-import React from 'react';
-import { Card, CardBody, CardHeader } from '@heroui/react';
-import { Icon } from '@iconify/react';
+import React from "react";
+import { Card, CardBody, CardHeader } from "@heroui/react";
+import { Icon } from "@iconify/react";
 
 interface VolumeStatsProps {
   buyVolume: string;
@@ -14,17 +14,7 @@ interface VolumeStatsProps {
 }
 
 // Reusable components to eliminate duplication
-const VolumeBar = ({ 
-  label, 
-  volume, 
-  percentage, 
-  color 
-}: { 
-  label: string; 
-  volume: string; 
-  percentage: number; 
-  color: string; 
-}) => (
+const VolumeBar = ({ label, volume, percentage, color }: { label: string; volume: string; percentage: number; color: string }) => (
   <div>
     <div className="flex items-center justify-between mb-2">
       <span className="text-sm font-medium text-white">{label}</span>
@@ -34,23 +24,17 @@ const VolumeBar = ({
       </div>
     </div>
     <div className="flex gap-1">
-      <div 
-        className={`h-1 ${color} rounded`}
-        style={{ width: `${percentage}%` }}
-      />
-      <div 
-        className="h-1 bg-white/10 rounded"
-        style={{ width: `${100 - percentage}%` }}
-      />
+      <div className={`h-1 ${color} rounded`} style={{ width: `${percentage}%` }} />
+      <div className="h-1 bg-white/10 rounded" style={{ width: `${100 - percentage}%` }} />
     </div>
   </div>
 );
 
-const VolumeSection = ({ 
-  buyVolume, 
-  buyVolumePercent, 
-  sellVolume, 
-  sellVolumePercent 
+const VolumeSection = ({
+  buyVolume,
+  buyVolumePercent,
+  sellVolume,
+  sellVolumePercent,
 }: {
   buyVolume: string;
   buyVolumePercent: number;
@@ -58,26 +42,16 @@ const VolumeSection = ({
   sellVolumePercent: number;
 }) => (
   <div className="space-y-6">
-    <VolumeBar 
-      label="Buy vol" 
-      volume={buyVolume} 
-      percentage={buyVolumePercent} 
-      color="bg-success-500" 
-    />
-    <VolumeBar 
-      label="Sell vol" 
-      volume={sellVolume} 
-      percentage={sellVolumePercent} 
-      color="bg-error-500" 
-    />
+    <VolumeBar color="bg-success-500" label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
+    <VolumeBar color="bg-error-500" label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
   </div>
 );
 
-const TokenInfo = ({ 
-  exchangeRate, 
-  tradesCount, 
-  tokenAddress, 
-  holders 
+const TokenInfo = ({
+  exchangeRate,
+  tradesCount,
+  tokenAddress,
+  holders,
 }: {
   exchangeRate: string;
   tradesCount: string;
@@ -100,8 +74,8 @@ const TokenInfo = ({
         <p className="text-sm font-medium text-gray-400 mb-1">Token Address:</p>
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-white">{tokenAddress}</span>
-          <Icon icon="lucide:copy" className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
-          <Icon icon="lucide:external-link" className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
+          <Icon className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" icon="lucide:copy" />
+          <Icon className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" icon="lucide:external-link" />
         </div>
       </div>
       <div>
@@ -112,11 +86,11 @@ const TokenInfo = ({
   </div>
 );
 
-const MobileTokenInfo = ({ 
-  exchangeRate, 
-  tradesCount, 
-  tokenAddress, 
-  holders 
+const MobileTokenInfo = ({
+  exchangeRate,
+  tradesCount,
+  tokenAddress,
+  holders,
 }: {
   exchangeRate: string;
   tradesCount: string;
@@ -136,8 +110,8 @@ const MobileTokenInfo = ({
       <p className="text-sm font-medium text-gray-400">Token Address:</p>
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium text-white">{tokenAddress}</span>
-        <Icon icon="lucide:copy" className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
-        <Icon icon="lucide:external-link" className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" />
+        <Icon className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" icon="lucide:copy" />
+        <Icon className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" icon="lucide:external-link" />
       </div>
     </div>
     <div className="p-5 flex items-center justify-between">
@@ -155,7 +129,7 @@ export function VolumeStats({
   exchangeRate,
   tradesCount,
   tokenAddress,
-  holders
+  holders,
 }: VolumeStatsProps) {
   return (
     <div className="space-y-6">
@@ -167,37 +141,21 @@ export function VolumeStats({
         <CardBody className="space-y-6 p-5">
           <div className="flex gap-6">
             <div className="flex-1">
-              <VolumeBar 
-                label="Buy vol" 
-                volume={buyVolume} 
-                percentage={buyVolumePercent} 
-                color="bg-success-500" 
-              />
+              <VolumeBar color="bg-success-500" label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
             </div>
             <div className="flex-1">
-              <VolumeBar 
-                label="Sell vol" 
-                volume={sellVolume} 
-                percentage={sellVolumePercent} 
-                color="bg-error-500" 
-              />
+              <VolumeBar color="bg-error-500" label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
             </div>
           </div>
-          <TokenInfo 
-            exchangeRate={exchangeRate}
-            tradesCount={tradesCount}
-            tokenAddress={tokenAddress}
-            holders={holders}
-          />
+          <TokenInfo exchangeRate={exchangeRate} holders={holders} tokenAddress={tokenAddress} tradesCount={tradesCount} />
         </CardBody>
       </Card>
 
       {/* Mobile - Two Separate Cards */}
       <div className="md:hidden space-y-4">
         <Card className="bg-gray-950 border-white/10 rounded-2xl">
-
           <CardBody className="p-5">
-            <VolumeSection 
+            <VolumeSection
               buyVolume={buyVolume}
               buyVolumePercent={buyVolumePercent}
               sellVolume={sellVolume}
@@ -207,12 +165,7 @@ export function VolumeStats({
         </Card>
 
         <Card className="bg-gray-950 border-white/10 rounded-2xl">
-          <MobileTokenInfo 
-            exchangeRate={exchangeRate}
-            tradesCount={tradesCount}
-            tokenAddress={tokenAddress}
-            holders={holders}
-          />
+          <MobileTokenInfo exchangeRate={exchangeRate} holders={holders} tokenAddress={tokenAddress} tradesCount={tradesCount} />
         </Card>
       </div>
     </div>

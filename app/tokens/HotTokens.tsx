@@ -11,12 +11,7 @@ export default function HotTokens() {
 
   return (
     <section className="py-12">
-      <TabsUI
-        className="mb-4"
-        selectedTab={selectedTab}
-        tabsData={tableTabData}
-        onTabChange={setSelectedTab}
-      />
+      <TabsUI className="mb-4" selectedTab={selectedTab} tabsData={tableTabData} onTabChange={setSelectedTab} />
       <TabContent tabId={selectedTab} />
     </section>
   );

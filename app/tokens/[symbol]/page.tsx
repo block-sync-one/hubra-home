@@ -12,10 +12,8 @@ const TokenHeader = dynamic(
       default: mod.TokenHeader,
     })),
   {
-    loading: () => (
-      <div className="h-32 bg-gray-800 animate-pulse rounded mb-8" />
-    ),
-  },
+    loading: () => <div className="h-32 bg-gray-800 animate-pulse rounded mb-8" />,
+  }
 );
 
 const PriceChart = dynamic(
@@ -24,10 +22,8 @@ const PriceChart = dynamic(
       default: mod.PriceChart,
     })),
   {
-    loading: () => (
-      <div className="h-64 bg-gray-800 animate-pulse rounded-2xl" />
-    ),
-  },
+    loading: () => <div className="h-64 bg-gray-800 animate-pulse rounded-2xl" />,
+  }
 );
 
 const VolumeStats = dynamic(
@@ -36,10 +32,8 @@ const VolumeStats = dynamic(
       default: mod.VolumeStats,
     })),
   {
-    loading: () => (
-      <div className="h-80 bg-gray-800 animate-pulse rounded-2xl" />
-    ),
-  },
+    loading: () => <div className="h-80 bg-gray-800 animate-pulse rounded-2xl" />,
+  }
 );
 
 const TradingSection = dynamic(
@@ -48,10 +42,8 @@ const TradingSection = dynamic(
       default: mod.TradingSection,
     })),
   {
-    loading: () => (
-      <div className="h-64 bg-gray-800 animate-pulse rounded-2xl" />
-    ),
-  },
+    loading: () => <div className="h-64 bg-gray-800 animate-pulse rounded-2xl" />,
+  }
 );
 
 const TokenDescription = dynamic(
@@ -60,19 +52,13 @@ const TokenDescription = dynamic(
       default: mod.TokenDescription,
     })),
   {
-    loading: () => (
-      <div className="h-48 bg-gray-800 animate-pulse rounded-2xl" />
-    ),
-  },
+    loading: () => <div className="h-48 bg-gray-800 animate-pulse rounded-2xl" />,
+  }
 );
 
 interface TokenDetailPageProps {}
 
-export default function TokenDetailPage({
-  params,
-}: {
-  params: Promise<{ symbol: string }>;
-}) {
+export default function TokenDetailPage({ params }: { params: Promise<{ symbol: string }> }) {
   const [symbol, setSymbol] = useState<string>("");
   const router = useRouter();
 
@@ -105,7 +91,7 @@ export default function TokenDetailPage({
         "Moo Deng (MOODENG) is a memecoin based on the famous pygmy hippopotamus at the Khao Kheow Open Zoo in Si Racha, Chonburi, Thailand. The Solana-based token is held by fans of the hippo, whose community congregates on X and Telegram. As a memecoin, MOODENG has no stated utility, its value instead arising from the vibrancy of its community and the virality of Moo Deng the hippo.",
       imgUrl: "/logo.svg",
     }),
-    [],
+    []
   );
 
   // Memoized chart data for better performance
@@ -118,7 +104,7 @@ export default function TokenDetailPage({
       { month: "May", price: 0.25 },
       { month: "Jun", price: 0.22 },
     ],
-    [],
+    []
   );
 
   const periods = useMemo(() => ["24H", "1W", "1M", "6M", "1Y"], []);
@@ -148,10 +134,7 @@ export default function TokenDetailPage({
     <div className="md:max-w-7xl mx-auto">
       {/* Header Navigation */}
       <div className="flex items-center gap-2 text-sm font-medium text-gray-400 pb-10">
-        <button
-          className="hover:text-white transition-colors cursor-pointer"
-          onClick={handleTokensClick}
-        >
+        <button className="hover:text-white transition-colors cursor-pointer" onClick={handleTokensClick}>
           Tokens
         </button>
         <Icon className="h-4 w-4" icon="lucide:chevron-right" />
@@ -200,18 +183,10 @@ export default function TokenDetailPage({
         {/* Right Column - Trading and Description */}
         <div className="space-y-6">
           {/* Trading Section */}
-          <TradingSection
-            tokenImgUrl={tokenData.imgUrl}
-            tokenName={tokenData.name}
-            onSwap={handleSwap}
-          />
+          <TradingSection tokenImgUrl={tokenData.imgUrl} tokenName={tokenData.name} onSwap={handleSwap} />
 
           {/* Description */}
-          <TokenDescription
-            description={tokenData.description}
-            onTwitterClick={handleTwitterClick}
-            onWebsiteClick={handleWebsiteClick}
-          />
+          <TokenDescription description={tokenData.description} onTwitterClick={handleTwitterClick} onWebsiteClick={handleWebsiteClick} />
         </div>
       </div>
     </div>

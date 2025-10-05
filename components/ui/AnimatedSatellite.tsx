@@ -44,12 +44,7 @@ export function AnimatedSatelliteOrbit() {
   const end = Math.min(start + segmentLength, length);
 
   // Helper to get a curved path segment as a new path string
-  function getCurvedSegmentPath(
-    d: string,
-    start: number,
-    end: number,
-    samples = 20,
-  ): string {
+  function getCurvedSegmentPath(d: string, start: number, end: number, samples = 20): string {
     if (!pathRef.current) return "";
     const path = pathRef.current;
     const points = [];
@@ -64,8 +59,7 @@ export function AnimatedSatelliteOrbit() {
     return `M${points.join(" L")}`;
   }
 
-  const segmentPath =
-    length > 0 ? getCurvedSegmentPath(pathData, start, end, 32) : "";
+  const segmentPath = length > 0 ? getCurvedSegmentPath(pathData, start, end, 32) : "";
 
   // Don't render animated content until mounted to prevent hydration mismatch
   if (!isMounted) {
@@ -77,17 +71,9 @@ export function AnimatedSatelliteOrbit() {
         style={{ zIndex: 2 }}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         width={svgWidth}
-        xmlns="http://www.w3.org/2000/svg"
-      >
+        xmlns="http://www.w3.org/2000/svg">
         {/* Static version for SSR */}
-        <path
-          d={pathData}
-          fill="none"
-          opacity={0.2}
-          stroke="white"
-          strokeLinecap="round"
-          strokeWidth={orbitThickness}
-        />
+        <path d={pathData} fill="none" opacity={0.2} stroke="white" strokeLinecap="round" strokeWidth={orbitThickness} />
       </svg>
     );
   }
@@ -100,26 +86,12 @@ export function AnimatedSatelliteOrbit() {
       style={{ zIndex: 2 }}
       viewBox={`0 0 ${svgWidth} ${svgHeight}`}
       width={svgWidth}
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       {/* Visible whitish orbit path */}
-      <path
-        ref={pathRef}
-        d={pathData}
-        fill="none"
-        opacity={0.2}
-        stroke="white"
-        strokeLinecap="round"
-        strokeWidth={orbitThickness}
-      />
+      <path ref={pathRef} d={pathData} fill="none" opacity={0.2} stroke="white" strokeLinecap="round" strokeWidth={orbitThickness} />
       {/* Animated gradient pink satellite line segment */}
       {length > 0 && segmentPath && (
-        <path
-          d={segmentPath}
-          stroke="url(#satelliteGradient)"
-          strokeLinecap="round"
-          strokeWidth={satelliteThickness}
-        />
+        <path d={segmentPath} stroke="url(#satelliteGradient)" strokeLinecap="round" strokeWidth={satelliteThickness} />
       )}
       <defs>
         <linearGradient id="satelliteGradient" x1="0" x2="1" y1="0" y2="0">

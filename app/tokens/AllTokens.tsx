@@ -1,12 +1,6 @@
 import React, { useMemo } from "react";
 
-import {
-  tradable,
-  allAssets,
-  gainers,
-  losers,
-  newlyListed,
-} from "@/lib/constants/tabs-data";
+import { tradable, allAssets, gainers, losers, newlyListed } from "@/lib/constants/tabs-data";
 import { TableWrapper } from "@/components/table";
 
 export default function AllTokens() {
@@ -25,9 +19,9 @@ export default function AllTokens() {
 
   return (
     <div className="flex flex-col gap-6">
-    <h2 className="text-2xl font-medium text-white">All Tokens</h2>
-    
-    <TableWrapper data={data} isLoading={isLoading} tabs={tabTableData} />
-  </div>
+      <h2 className="text-2xl font-medium text-white">All Tokens</h2>
+
+      <TableWrapper data={data} isLoading={isLoading} tabs={tabTableData} />
+    </div>
   );
 }

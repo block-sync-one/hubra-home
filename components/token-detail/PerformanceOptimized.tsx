@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo } from "react";
 
 // Memoized components for better performance
 export const MemoizedTokenHeader = memo(function MemoizedTokenHeader(props: any) {
@@ -24,9 +24,9 @@ export const usePerformanceOptimizedData = (data: any) => {
     return {
       ...data,
       // Pre-compute expensive calculations
-      formattedPrice: data.price?.replace('€', '') || '0',
+      formattedPrice: data.price?.replace("€", "") || "0",
       isPositiveChange: data.change > 0,
-      changeColor: data.change > 0 ? '#15b79e' : '#f63d68'
+      changeColor: data.change > 0 ? "#15b79e" : "#f63d68",
     };
   }, [data]);
 };

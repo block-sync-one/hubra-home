@@ -6,14 +6,15 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 
+import { TokenCard } from "./TokenCard";
+
 import { ChangeIndicator } from "@/components/price";
 import { useCryptoData } from "@/lib/hooks/useCryptoData";
-import { TokenCard } from "./TokenCard";
 
 export const HotTokensContent = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const router = useRouter();
-  
+
   // Live crypto data from CoinGecko
   const { hotTokens, loading, error, isFallbackData, retryCount, retry } = useCryptoData();
 
@@ -21,7 +22,7 @@ export const HotTokensContent = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-4"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-4" />
         <p className="text-gray-400">Loading live data...</p>
       </div>
     );
@@ -31,25 +32,17 @@ export const HotTokensContent = () => {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <Icon icon="mdi:alert-circle" className="w-12 h-12 text-red-500 mb-4" />
+        <Icon className="w-12 h-12 text-red-500 mb-4" icon="mdi:alert-circle" />
         <h3 className="text-lg font-semibold text-white mb-2">Failed to Load Data</h3>
-        <p className="text-gray-400 text-center mb-4 max-w-md">
-          {error}
-        </p>
-        <p className="text-sm text-gray-500 mb-6">
-          Retry attempts: {retryCount}
-        </p>
+        <p className="text-gray-400 text-center mb-4 max-w-md">{error}</p>
+        <p className="text-sm text-gray-500 mb-6">Retry attempts: {retryCount}</p>
         <div className="flex gap-3">
-          <button
-            onClick={retry}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
+          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onClick={retry}>
             Retry
           </button>
           <button
-            onClick={() => window.location.reload()}
             className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-          >
+            onClick={() => window.location.reload()}>
             Reload Page
           </button>
         </div>
@@ -61,15 +54,12 @@ export const HotTokensContent = () => {
   if (!hotTokens || hotTokens.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <Icon icon="mdi:database-off" className="w-12 h-12 text-gray-500 mb-4" />
+        <Icon className="w-12 h-12 text-gray-500 mb-4" icon="mdi:database-off" />
         <h3 className="text-lg font-semibold text-white mb-2">No Data Available</h3>
-        <p className="text-gray-400 text-center mb-6">
-          Unable to fetch cryptocurrency data at this time.
-        </p>
+        <p className="text-gray-400 text-center mb-6">Unable to fetch cryptocurrency data at this time.</p>
         <button
-          onClick={() => window.location.reload()}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
+          onClick={() => window.location.reload()}>
           Try Again
         </button>
       </div>
@@ -77,29 +67,22 @@ export const HotTokensContent = () => {
   }
 
   const mobile = () => (
-      <div className="bg-white/5 backdrop-blur-[10px] border border-white/10 rounded-2xl overflow-hidden">
+    <div className="bg-white/5 backdrop-blur-[10px] border border-white/10 rounded-2xl overflow-hidden">
       <div>
         {hotTokens.map((token, index) => (
-          <div 
-            key={token.id} 
+          <div
+            key={token.id}
+            aria-label="Token details"
             className="flex items-center p-3 hover:bg-white/5 transition-colors cursor-pointer"
-            onClick={() => router.push(`/tokens/${token.symbol?.toLowerCase()}`)}
-          >
+            role="button"
+            onClick={() => router.push(`/tokens/${token.symbol?.toLowerCase()}`)}>
             {/* Rank */}
-            <div className="mr-4 flex-shrink-0 text-center text-sm text-gray-400 font-normal">
-              {index + 1}
-            </div>
+            <div className="mr-4 flex-shrink-0 text-center text-sm text-gray-400 font-normal">{index + 1}</div>
 
             {/* Token Info */}
             <div className="flex-1 flex items-center gap-3">
               <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                <Image 
-                  alt={token.name} 
-                  height={24} 
-                  src={token.imgUrl || "/logo.svg"} 
-                  width={24}
-                  className="w-full h-full object-cover"
-                />
+                <Image alt={token.name} className="w-full h-full object-cover" height={24} src={token.imgUrl || "/logo.svg"} width={24} />
               </div>
               <div className="flex items-center">
                 <span className="text-sm font-semibold text-white">{token.name}</span>
@@ -127,12 +110,12 @@ export const HotTokensContent = () => {
       {hotTokens.map((token, index) => (
         <div key={index} className="flex-shrink-0 w-80">
           <TokenCard
-            name={token.name}
-            symbol={token.symbol}
-            price={token.price}
             change={token.change}
-            imgUrl={token.imgUrl}
             coinId={token.id}
+            imgUrl={token.imgUrl}
+            name={token.name}
+            price={token.price}
+            symbol={token.symbol}
           />
         </div>
       ))}
@@ -145,10 +128,8 @@ export const HotTokensContent = () => {
       <div className="space-y-4">
         <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-3 mb-4">
           <div className="flex items-center gap-2">
-            <Icon icon="mdi:warning" className="w-4 h-4 text-yellow-500" />
-            <span className="text-yellow-200 text-sm font-medium">
-              Using cached data - API temporarily unavailable
-            </span>
+            <Icon className="w-4 h-4 text-yellow-500" icon="mdi:warning" />
+            <span className="text-yellow-200 text-sm font-medium">Using cached data - API temporarily unavailable</span>
           </div>
         </div>
         {isMobile ? mobile() : desktop()}

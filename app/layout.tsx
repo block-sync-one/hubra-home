@@ -68,23 +68,15 @@ export const viewport: Viewport = {
   userScalable: true,
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html suppressHydrationWarning lang="en">
       <head />
-      <body
-        className={clsx("min-h-screen text-foreground font-sans antialiased")}
-      >
+      <body className={clsx("min-h-screen text-foreground font-sans antialiased")}>
         <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col items-center">
             <Navbar />
-            <main className="w-full px-6 md:px-10 flex flex-col">
-              {children}
-            </main>
+            <main className="w-full px-6 md:px-10 flex flex-col">{children}</main>
           </div>
         </Providers>
         <Analytics />

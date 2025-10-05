@@ -9,12 +9,7 @@ import { TabId, TabIdType } from "@/lib/models";
 import { newlyListed } from "@/lib/constants/tabs-data";
 import { TabsUI } from "@/components/tabs";
 
-const TableWrapper: React.FC<TableWrapperProps> = ({
-  tabs,
-  data,
-  isLoading,
-  onAssetClick,
-}) => {
+const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAssetClick }) => {
   // State
   const [filterValue, setFilterValue] = useState("");
   const [summaryValue, setSummaryValue] = useState(0);
@@ -69,7 +64,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({
       alert("navigate to asset page");
       onAssetClick?.(asset);
     },
-    [onAssetClick, tab],
+    [onAssetClick, tab]
   );
 
   const handleFilterChange = useCallback((value: string) => {
@@ -116,14 +111,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({
         </div>
       </div>
     ),
-    [
-      tab,
-      tabs,
-      filterValue,
-      handleFilterChange,
-      handleFilterClear,
-      summaryValue,
-    ],
+    [tab, tabs, filterValue, handleFilterChange, handleFilterClear, summaryValue]
   );
 
   return (

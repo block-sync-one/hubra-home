@@ -6,14 +6,7 @@ export const metadata: Metadata = {
   title: "Tokens",
   description:
     "Discover and track Solana tokens. Get real-time prices, market cap, trading volume, and comprehensive analytics for all SOL ecosystem tokens.",
-  keywords: [
-    "Solana tokens",
-    "SOL",
-    "cryptocurrency prices",
-    "token analytics",
-    "crypto market data",
-    "SPL tokens",
-  ],
+  keywords: ["Solana tokens", "SOL", "cryptocurrency prices", "token analytics", "crypto market data", "SPL tokens"],
   openGraph: {
     title: "Tokens",
     description:
@@ -30,14 +23,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TokensLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="py-8 md:py-10">
-      {children}
-    </section>
-  );
+export default function TokensLayout({ children }: { children: React.ReactNode }) {
+  return <section className="py-8 md:py-10">{children}</section>;
 }

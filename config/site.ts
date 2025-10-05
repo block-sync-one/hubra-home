@@ -3,10 +3,11 @@ export type SiteConfig = typeof siteConfig;
 export const siteConfig = {
   name: "Hubra",
   description: "Hubra - the power of CEX, the freedom of DeFi",
-  longDescription: " Hubra is your Solana all-in-one portal to the decentralized world - delivering a seamless, CEX-grade experience without compromising on security, trust, or speed.",
+  longDescription:
+    " Hubra is your Solana all-in-one portal to the decentralized world - delivering a seamless, CEX-grade experience without compromising on security, trust, or speed.",
   keywords: [
     "Solana",
-    "DeFi", 
+    "DeFi",
     "cryptocurrency",
     "blockchain",
     "tokens",
@@ -16,7 +17,7 @@ export const siteConfig = {
     "Solana ecosystem",
     "blockchain analytics",
     "crypto portfolio",
-    "Web3"
+    "Web3",
   ],
   url: "https://hubra.app",
   ogImage: "/hubra-og-image.png",
@@ -94,7 +95,7 @@ export const siteConfig = {
     // },
   ],
   links: {
-    app:"https://hubra.app",
+    app: "https://hubra.app",
     github: "https://github.com/block-sync-one/hubra-app",
     twitter: "https://twitter.com/hubrapp",
     docs: "https://docs.hubra.app",

@@ -9,33 +9,23 @@ interface CurrencyContextType {
   currency: Currency;
   setCurrency: (currency: Currency) => void;
   formatPrice: (value: number, longNumbers?: boolean) => string;
-  convertCurrency: (
-    value: number,
-    fromCurrency: CurrencyIdType,
-    toCurrency: CurrencyIdType,
-  ) => number;
+  convertCurrency: (value: number, fromCurrency: CurrencyIdType, toCurrency: CurrencyIdType) => number;
   exchangeRates: Record<CurrencyIdType, number>;
   isLoading: boolean;
 }
 
-const CurrencyContext = createContext<CurrencyContextType | undefined>(
-  undefined,
-);
+const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   console.log("=== CurrencyProvider", new Date().toISOString()); // local storage service
   const vrs = new VirtualStorageService();
   const [currency, setCurrency] = useState<Currency>(() => {
-    const savedCurrencyId =
-      vrs.localStorage.getData("preferredCurrency") ??
-      currencies[CurrencyId.USD].id;
+    const savedCurrencyId = vrs.localStorage.getData("preferredCurrency") ?? currencies[CurrencyId.USD].id;
 
     return getCurrencyById(savedCurrencyId);
   });
 
-  const [exchangeRates, setExchangeRates] = useState<
-    Record<CurrencyIdType, number>
-  >({} as Record<CurrencyIdType, number>);
+  const [exchangeRates, setExchangeRates] = useState<Record<CurrencyIdType, number>>({} as Record<CurrencyIdType, number>);
   const [isLoading, setIsLoading] = useState(true);
 
   // Save currency preference to localStorage when it changes
@@ -52,7 +42,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       try {
         const response = await fetch(
-          "https://api.coingecko.com/api/v3/simple/price?ids=solana,bitcoin&vs_currencies=usd,eur,gbp,jpy,cny,inr",
+          "https://api.coingecko.com/api/v3/simple/price?ids=solana,bitcoin&vs_currencies=usd,eur,gbp,jpy,cny,inr"
         );
 
         if (!isMounted) return;
@@ -96,10 +86,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const formatPrice = (value: number, longNumbers?: boolean) => {
     const { id, symbol } = currency;
     // Convert the value to the selected currency if we have exchange rates
-    const convertedValue =
-      !isLoading && exchangeRates[id]
-        ? convertCurrency(value, CurrencyId.USD, id)
-        : value;
+    const convertedValue = !isLoading && exchangeRates[id] ? convertCurrency(value, CurrencyId.USD, id) : value;
 
     // For crypto currencies
     if (id === CurrencyId.BTC || id === CurrencyId.SOL) {
@@ -144,11 +131,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
     //   .join("");
   };
 
-  const convertCurrency = (
-    value: number,
-    fromCurrency: CurrencyIdType,
-    toCurrency: CurrencyIdType,
-  ): number => {
+  const convertCurrency = (value: number, fromCurrency: CurrencyIdType, toCurrency: CurrencyIdType): number => {
     if (fromCurrency === toCurrency) return value;
 
     // Convert to USD first (our base currency)
@@ -166,9 +149,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 
     if (toCurrency === CurrencyId.BTC || toCurrency === CurrencyId.SOL) {
       // If converting to crypto, divide by its USD price
-      return Number(valueInUSD / exchangeRates[toCurrency]).toFixedNoRounding(
-        4,
-      );
+      return Number(valueInUSD / exchangeRates[toCurrency]).toFixedNoRounding(4);
     } else {
       // If converting to fiat, use the exchange rate
       return Number(valueInUSD / exchangeRates[toCurrency]);
@@ -184,8 +165,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
         convertCurrency,
         exchangeRates,
         isLoading,
-      }}
-    >
+      }}>
       {children}
     </CurrencyContext.Provider>
   );
