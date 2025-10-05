@@ -43,3 +43,32 @@ export const PriceChangeChip = ({
     </Chip>
   );
 };
+
+const getChangeConfig = (value: number) => {
+  const isPositive = value >= 0;
+  return {
+    isPositive,
+    icon: isPositive ? "mdi:arrow-up" : "mdi:arrow-down",
+    bgColor: isPositive ? "bg-green-500/20" : "bg-red-500/20",
+    textColor: isPositive ? "text-success-500" : "text-error-500",
+    iconColor: isPositive ? "text-success-500" : "text-error-500"
+  };
+};
+
+export const ChangeIndicator = React.memo(({ value }: { value: number }) => {
+  const config = getChangeConfig(value);
+
+  return (
+    <div className={`${config.bgColor} rounded-xl px-1 py-0.5 flex items-center gap-1`}>
+      <Icon 
+        icon={config.icon}
+        className={`w-3 h-3 ${config.iconColor}`}
+      />
+      <span className={`text-xs font-medium ${config.textColor}`}>
+        {Math.abs(value)}%
+      </span>
+    </div>
+  );
+});
+
+ChangeIndicator.displayName = 'ChangeIndicator';

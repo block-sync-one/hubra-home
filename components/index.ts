@@ -1,2 +1,2 @@
-export * from "./tabs/tabs";
+export * from "./tabs/TabsUI";
 export * from "./price";

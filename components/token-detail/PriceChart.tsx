@@ -33,7 +33,7 @@ const TokenChart = React.memo(({ chartData }: { chartData: Array<{ month: string
         <LineChart data={chartData} margin={{ left: 10, right: 10, top: 10, bottom: 0 }}>
           <XAxis 
             dataKey="month" 
-            stroke="#9CA3AF"
+            stroke="rgb(156 163 175)" // text-gray-400
             fontSize={12}
             fontFamily="Inter"
             fontWeight={500}
@@ -44,7 +44,7 @@ const TokenChart = React.memo(({ chartData }: { chartData: Array<{ month: string
             height={40}
           />
           <YAxis 
-            stroke="#9CA3AF"
+            stroke="rgb(156 163 175)" // text-gray-400
             fontSize={12}
             fontFamily="Inter"
             fontWeight={500}
@@ -53,10 +53,10 @@ const TokenChart = React.memo(({ chartData }: { chartData: Array<{ month: string
           />
           <Tooltip 
             contentStyle={{
-              backgroundColor: '#1f2937',
-              border: '1px solid #374151',
+              backgroundColor: 'rgb(31 41 55)', // bg-gray-800
+              border: '1px solid rgb(55 65 81)', // border-gray-700
               borderRadius: '8px',
-              color: '#fff',
+              color: 'rgb(255 255 255)', // text-white
               fontFamily: 'Inter',
               fontWeight: 500
             }}
@@ -64,7 +64,7 @@ const TokenChart = React.memo(({ chartData }: { chartData: Array<{ month: string
           <Line 
             type="monotone" 
             dataKey="price" 
-            stroke="#15b79e" 
+            stroke="rgb(21 183 158)" // success-500
             strokeWidth={2}
             dot={false}
           />

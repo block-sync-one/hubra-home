@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 
-import { useAllTokens } from "@/lib/context/allTokens";
 import {
   tradable,
   allAssets,
@@ -11,7 +10,8 @@ import {
 import { TableWrapper } from "@/components/table";
 
 export default function AllTokens() {
-  const { data, isLoading } = useAllTokens();
+  const data = [] as any[];
+  const isLoading = false;
   const tableTabData = [tradable, allAssets, gainers, losers, newlyListed];
 
   const tabTableData = useMemo(() => {

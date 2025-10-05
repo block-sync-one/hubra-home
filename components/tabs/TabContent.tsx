@@ -1,5 +1,5 @@
 import { TabId, TabIdType } from "@/lib/models";
-import { HotTokensContent } from "@/components/tabs/HotTokensContent";
+import { HotTokensContent, LosersContent, GainersContent, VolumeContent } from "@/components/tabs";
 
 /**
  * Tab Content Component
@@ -17,11 +17,11 @@ export const TabContent: React.FC<TabContentProps> = ({ tabId }) => {
     case TabId.hotTokens:
       return <HotTokensContent />;
     case TabId.losers:
-      return <p>Losers Tab</p>;
+      return <LosersContent />;
     case TabId.gainers:
-      return <p>Gainers Tab</p>;
+      return <GainersContent />;
     case TabId.volume:
-      return <p>Volume Tab</p>;
+      return <VolumeContent />;
     default:
       return (
         <div className="flex flex-col items-center justify-center min-h-[200px]">
