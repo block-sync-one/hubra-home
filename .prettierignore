@@ -1,0 +1,16 @@
+# Add files here to ignore them from prettier formatting
+dist/
+coverage/
+img/
+.vscode
+.idea
+.cursor
+jsconfig.json
+*.xml
+*.ico
+*.png
+*.PNG
+*.xlsx
+*.csv
+*.svg
+*.pdf
