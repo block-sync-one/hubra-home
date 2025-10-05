@@ -1,7 +1,8 @@
 "use client";
 
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
+import { fixedNumber, formatBigNumbers } from "@/lib/utils";
 
 const getChangeConfig = (value: number) => {
   const isPositive = value >= 0;
@@ -24,7 +25,7 @@ const ChangeIndicator = React.memo(({ value }: { value: number }) => {
         className={`w-3 h-3 ${config.iconColor}`}
       />
       <span className={`text-xs font-medium ${config.textColor}`}>
-        {Math.abs(value)}%
+        {fixedNumber(Math.abs(value))}%
       </span>
     </div>
   );
@@ -41,27 +42,17 @@ interface StatCardProps {
 }
 
 const StatCard = memo(function StatCard({ title, value, change, isPositive, className = "" }: StatCardProps) {
-  const valueColor = useMemo(() => {
-    if (title === "Total Value Locked" && isPositive) {
-      return 'text-success-500';
-    }
-    return 'text-white';
-  }, [isPositive, title]);
-
   return (
     <div className={`flex flex-col gap-1.5 h-[91px] justify-center px-4 relative md:flex-1 w-full ${className}`}>
-      {/* Border for desktop - always show */}
-      <div className="hidden md:block absolute border-r border-white/10 right-0 top-0 bottom-0" />
-      
-      {/* Border for mobile - always show vertical separation */}
-      <div className="md:hidden absolute border-r border-white/10 right-0 top-0 bottom-0" />
+      {/* Border separator */}
+      <div className="absolute border-r border-white/10 right-0 top-0 bottom-0" />
       
       <p className="text-sm font-medium text-gray-400 whitespace-nowrap">
         {title}
       </p>
       
       <div className="flex items-center gap-1">
-        <p className={`text-lg font-medium whitespace-nowrap ${valueColor}`}>
+        <p className="text-lg font-medium whitespace-nowrap text-white">
           {value}
         </p>
         
@@ -123,26 +114,166 @@ interface StatData {
   isPositive?: boolean;
 }
 
-const STATS_DATA: StatData[] = [
-  { title: "Total Value Locked", value: "75.43%", isPositive: true },
-  { title: "Market Cap", value: "$4.02B", change: 35.54, isPositive: true },
-  { title: "24h Volume", value: "$195.40K", change: -12.5, isPositive: false },
-  { title: "Active Users", value: "610.63K" },
-  { title: "Total Supply", value: "583.20M" },
-];
+interface GlobalData {
+  data: {
+    total_market_cap: { usd: number };
+    total_volume: { usd: number };
+    market_cap_change_percentage_24h_usd: number;
+    active_cryptocurrencies: number;
+    markets: number;
+  };
+}
 
 export default function Tokens() {
+  const [globalData, setGlobalData] = useState<GlobalData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGlobalData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/crypto/global');
+        if (!response.ok) {
+          throw new Error('Failed to fetch global data');
+        }
+        
+        const data = await response.json();
+        setGlobalData(data);
+      } catch (err) {
+        console.error('Error fetching global data:', err);
+        setError('Failed to fetch global data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGlobalData();
+    
+    // Refresh data every 5 minutes
+    const interval = setInterval(fetchGlobalData, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const statsData: StatData[] = useMemo(() => {
+    if (!globalData?.data) return [];
+
+    const { data } = globalData;
+    const marketCapChange = data.market_cap_change_percentage_24h_usd;
+    
+    return [
+      { 
+        title: "Total Market Cap", 
+        value: formatBigNumbers(data.total_market_cap.usd), 
+        change: marketCapChange,
+        isPositive: marketCapChange >= 0
+      },
+      { 
+        title: "24h Trading Volume", 
+        value: formatBigNumbers(data.total_volume.usd),
+        isPositive: true
+      },
+      { 
+        title: "Active Cryptocurrencies", 
+        value: data.active_cryptocurrencies.toLocaleString()
+      },
+      { 
+        title: "Active Markets", 
+        value: data.markets.toLocaleString()
+      }
+    ];
+  }, [globalData]);
+
   const statsCards = useMemo(() => 
-    STATS_DATA.map((stat, index) => (
+    statsData.map((stat, index) => (
       <StatCard 
         key={`stat-${index}`}
-        title={stat.title}
-        value={stat.value}
-        change={stat.change}
-        isPositive={stat.isPositive}
+        {...stat}
       />
-    )), []
+    )), [statsData]
   );
+
+  // Enhanced loading state with skeleton
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-6">
+        <h2 className="text-2xl font-medium text-white">Tokens</h2>
+        <div className="relative rounded-xl border border-white/10 overflow-hidden">
+          <div className="flex items-center justify-center py-12">
+            <div className="flex items-center space-x-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+              <span className="text-white">Loading global data...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Enhanced error state with retry functionality
+  if (error) {
+    return (
+      <div className="flex flex-col gap-6">
+        <h2 className="text-2xl font-medium text-white">Tokens</h2>
+        <div className="relative rounded-xl border border-white/10 overflow-hidden">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center max-w-md">
+              <Icon icon="mdi:alert-circle" className="w-12 h-12 text-red-500 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-white mb-2">Failed to Load Data</h3>
+              <p className="text-gray-400 mb-6">{error}</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  <Icon icon="mdi:refresh" className="w-4 h-4 inline mr-2" />
+                  Retry
+                </button>
+                <button 
+                  onClick={() => {
+                    setGlobalData(null);
+                    setLoading(true);
+                    setError(null);
+                  }} 
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  <Icon icon="mdi:reload" className="w-4 h-4 inline mr-2" />
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle no data scenario
+  if (!globalData || !globalData.data) {
+    return (
+      <div className="flex flex-col gap-6">
+        <h2 className="text-2xl font-medium text-white">Tokens</h2>
+        <div className="relative rounded-xl border border-white/10 overflow-hidden">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center max-w-md">
+              <Icon icon="mdi:database-off" className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-white mb-2">No Data Available</h3>
+              <p className="text-gray-400 mb-6">Unable to fetch global cryptocurrency data at this time.</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                <Icon icon="mdi:refresh" className="w-4 h-4 inline mr-2" />
+                Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
