@@ -3,7 +3,8 @@
 import React, { memo, useMemo, useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 
-import { fixedNumber, formatBigNumbers } from "@/lib/utils";
+import { fixedNumber } from "@/lib/utils";
+import { useCurrency } from "@/lib/context/currency-format";
 
 const getChangeConfig = (value: number) => {
   const isPositive = value >= 0;
@@ -114,6 +115,7 @@ interface GlobalData {
 }
 
 export default function Tokens() {
+  const { formatPrice } = useCurrency();
   const [globalData, setGlobalData] = useState<GlobalData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -158,13 +160,13 @@ export default function Tokens() {
     return [
       {
         title: "Total Market Cap",
-        value: formatBigNumbers(data.total_market_cap.usd),
+        value: formatPrice(data.total_market_cap.usd),
         change: marketCapChange,
         isPositive: marketCapChange >= 0,
       },
       {
         title: "24h Trading Volume",
-        value: formatBigNumbers(data.total_volume.usd),
+        value: formatPrice(data.total_volume.usd),
         isPositive: true,
       },
       {

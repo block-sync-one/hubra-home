@@ -109,7 +109,7 @@ const MiniChart = ({ change, priceHistory, currentPrice }: { change: number; pri
                 fontSize: "12px",
                 padding: "6px 8px",
               }}
-              formatter={(value: number) => [`$${value.toLocaleString()}`, "Price"]}
+              formatter={(value: any) => [`$${Number(value).toLocaleString()}`, "Price"]}
               labelFormatter={(label: string, payload: any) => {
                 if (payload && payload.length > 0) {
                   const dayIndex = payload[0].payload.day;
@@ -170,7 +170,7 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
 
   const handleClick = () => {
     if (symbol) {
-      router.push(`/tokens/${symbol.toLowerCase()}`);
+      router.push(`/tokens/${name.toLowerCase().replace(/\s+/g, "-")}`);
     }
   };
 

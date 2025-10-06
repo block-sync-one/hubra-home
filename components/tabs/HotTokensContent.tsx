@@ -75,7 +75,7 @@ export const HotTokensContent = () => {
             aria-label="Token details"
             className="flex items-center p-3 hover:bg-white/5 transition-colors cursor-pointer"
             role="button"
-            onClick={() => router.push(`/tokens/${token.symbol?.toLowerCase()}`)}>
+            onClick={() => router.push(`/tokens/${token.name?.toLowerCase().replace(/\s+/g, "-")}`)}>
             {/* Rank */}
             <div className="mr-4 flex-shrink-0 text-center text-sm text-gray-400 font-normal">{index + 1}</div>
 

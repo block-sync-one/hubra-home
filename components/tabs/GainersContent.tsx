@@ -50,7 +50,7 @@ export function HotTokenCard({ name, symbol, imgUrl, price, change, volume }: Ho
 
   const handleClick = () => {
     if (symbol) {
-      router.push(`/tokens/${symbol.toLowerCase()}`);
+      router.push(`/tokens/${name.toLowerCase().replace(/\s+/g, "-")}`);
     }
   };
 
