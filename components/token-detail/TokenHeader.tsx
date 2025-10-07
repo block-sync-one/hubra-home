@@ -6,7 +6,7 @@ interface TokenHeaderProps {
   name: string;
   symbol: string;
   imgUrl: string;
-  change: number;
+  change: string;
   marketCap: string;
   marketCapChange: number;
   volume24h: string;
@@ -79,7 +79,7 @@ export function TokenStats({
   volume24hChange,
   supply,
 }: {
-  change: number;
+  change: string;
   marketCap: string;
   marketCapChange: number;
   volume24h: string;

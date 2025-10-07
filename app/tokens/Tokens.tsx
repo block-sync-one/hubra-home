@@ -111,6 +111,11 @@ interface GlobalData {
     market_cap_change_percentage_24h_usd: number;
     active_cryptocurrencies: number;
     markets: number;
+    new_tokens?: number;
+    sol_tvl?: number;
+    sol_tvl_change?: number;
+    stablecoins_tvl?: number;
+    stablecoins_tvl_change?: number;
   };
 }
 
@@ -145,8 +150,8 @@ export default function Tokens() {
 
     fetchGlobalData();
 
-    // Refresh data every 5 minutes
-    const interval = setInterval(fetchGlobalData, 5 * 60 * 1000);
+    // Refresh data every 2 minutes
+    const interval = setInterval(fetchGlobalData, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -155,30 +160,44 @@ export default function Tokens() {
     if (!globalData?.data) return [];
 
     const { data } = globalData;
-    const marketCapChange = data.market_cap_change_percentage_24h_usd;
+
+    console.log("Stats Data:", {
+      sol_tvl: data.sol_tvl,
+      sol_tvl_change: data.sol_tvl_change,
+      stablecoins_tvl: data.stablecoins_tvl,
+      stablecoins_tvl_change: data.stablecoins_tvl_change,
+    });
 
     return [
       {
         title: "Total Market Cap",
         value: formatPrice(data.total_market_cap.usd),
-        change: marketCapChange,
-        isPositive: marketCapChange >= 0,
+        change: data.market_cap_change_percentage_24h_usd,
+        isPositive: (data.market_cap_change_percentage_24h_usd || 0) >= 0,
       },
       {
-        title: "24h Trading Volume",
+        title: "Trading Vol",
         value: formatPrice(data.total_volume.usd),
         isPositive: true,
       },
       {
-        title: "Active Cryptocurrencies",
-        value: data.active_cryptocurrencies.toLocaleString(),
+        title: "New Tokens",
+        value: (data.new_tokens || 0).toLocaleString(),
       },
       {
-        title: "Active Markets",
-        value: data.markets.toLocaleString(),
+        title: "SOL TVL",
+        value: formatPrice(data.sol_tvl || 0),
+        change: data.sol_tvl_change,
+        isPositive: (data.sol_tvl_change || 0) >= 0,
+      },
+      {
+        title: "Stablecoins TVL",
+        value: formatPrice(data.stablecoins_tvl || 0),
+        change: data.stablecoins_tvl_change,
+        isPositive: (data.stablecoins_tvl_change || 0) >= 0,
       },
     ];
-  }, [globalData]);
+  }, [globalData, formatPrice]);
 
   const statsCards = useMemo(() => statsData.map((stat, index) => <StatCard key={`stat-${index}`} {...stat} />), [statsData]);
 

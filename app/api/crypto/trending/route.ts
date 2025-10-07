@@ -1,127 +1,143 @@
 import { NextResponse } from "next/server";
 
+import { fetchBirdeyeData } from "@/lib/services/birdeye";
+
 /**
- * Fallback trending cryptocurrency data for when CoinGecko API fails
- * Provides a single Bitcoin entry to maintain data structure consistency
+ * Fallback trending data
  */
 const FALLBACK_TRENDING_DATA = {
-  coins: [
-    {
-      item: {
-        id: "bitcoin",
-        coin_id: 1,
-        name: "Bitcoin",
-        symbol: "btc",
-        market_cap_rank: 1,
-        thumb: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png",
-        small: "https://assets.coingecko.com/coins/images/1/small/bitcoin.png",
-        large: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png",
-        slug: "bitcoin",
-        price_btc: 1,
-        score: 0,
-      },
-    },
-  ],
+  coins: [],
 };
 
 /**
- * Trending cryptocurrencies endpoint
+ * API route to fetch trending tokens
  *
- * Fetches currently trending cryptocurrencies based on:
- * - Search volume and social media mentions
- * - Market activity and trading volume
- * - Community interest and engagement
- * - Recent price movements and news
+ * @description Fetches trending token list from Birdeye API
+ * showing tokens with high trading activity and volume.
  *
- * @description This endpoint provides real-time trending cryptocurrency data
- * from CoinGecko API with 5-minute caching and fallback data support.
- * Useful for identifying popular and emerging cryptocurrencies.
- *
- * @returns {Promise<NextResponse>} JSON response containing trending cryptocurrencies data
+ * @returns JSON response with trending tokens data
  *
  * @example
- * ```typescript
- * // Fetch trending cryptocurrencies
- * const response = await fetch('/api/crypto/trending');
- * const data = await response.json();
+ * GET /api/crypto/trending
  *
- * console.log(data.coins[0].item.name); // Trending coin name
- * console.log(data.coins[0].item.market_cap_rank); // Market cap rank
- * console.log(data.coins[0].item.score); // Trending score
- * ```
- *
- * @example
- * ```typescript
- * // Display trending coins with their images
- * data.coins.forEach(coin => {
- *   console.log(`${coin.item.name} (${coin.item.symbol})`);
- *   console.log(`Rank: ${coin.item.market_cap_rank}`);
- *   console.log(`Image: ${coin.item.thumb}`);
- * });
- * ```
- *
- * @throws {Error} When CoinGecko API is unavailable, returns fallback data with 200 status
- *
+ * @throws {Error} When API request fails, returns fallback data
  * @since 1.0.0
- * @version 1.0.0
- *
- * @see {@link https://docs.coingecko.com/reference/search-trending} CoinGecko Trending API Documentation
+ * @version 2.0.0
+ * @see {@link https://docs.birdeye.so/reference/get-defi-v3-token-trending} Birdeye Trending API Documentation
  */
 export async function GET() {
   try {
-    const apiKey = process.env.COINGECKO_API_KEY;
-    const baseUrl = apiKey ? "https://pro-api.coingecko.com/api/v3" : "https://api.coingecko.com/api/v3";
-    const url = `${baseUrl}/search/trending${apiKey ? `?x_cg_pro_api_key=${apiKey}` : ""}`;
+    console.log("Fetching trending tokens from Birdeye API");
 
-    const response = await fetch(url, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
+    // Fetch trending tokens from Birdeye using the official trending endpoint
+    // Already sorted by volume, limited to top 4
+    const response = await fetchBirdeyeData<{
+      data: {
+        tokens: Array<{
+          address: string;
+          decimals: number;
+          symbol: string;
+          name: string;
+          logoURI?: string;
+          liquidity?: number;
+          volume24hUSD?: number;
+          volume24hChangePercent?: number | null;
+          price?: number;
+          price24hChangePercent?: number;
+          marketcap?: number;
+          fdv?: number;
+          rank?: number;
+        }>;
+      };
+      success: boolean;
+    }>(
+      "/defi/token_trending",
+      {
+        offset: "0",
+        limit: "4", // Return only top 4
+        // No sort parameters needed - endpoint returns trending tokens by default
       },
-      next: {
-        revalidate: 300, // Cache for 5 minutes (300 seconds)
-      },
-    });
+      {
+        cache: "no-store", // Fresh data for trending
+      }
+    );
 
-    if (!response.ok) {
-      console.warn(`CoinGecko API error: ${response.status} - Serving fallback data`);
+    if (!response.success || !response.data?.tokens) {
+      console.warn("Invalid response from Birdeye API - Serving fallback data");
 
       return NextResponse.json(FALLBACK_TRENDING_DATA, {
         headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+          "Cache-Control": "no-store, no-cache, must-revalidate",
           "X-Fallback-Data": "true",
         },
       });
     }
 
-    const data = await response.json();
+    const tokens = response.data.tokens;
 
-    // Validate data structure
-    if (!data?.coins || !Array.isArray(data.coins) || data.coins.length === 0) {
-      console.warn("Invalid or empty trending data from CoinGecko API - Serving fallback data");
+    if (tokens.length === 0) {
+      console.warn("No trending tokens from Birdeye API - Serving fallback data");
 
       return NextResponse.json(FALLBACK_TRENDING_DATA, {
         headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+          "Cache-Control": "no-store, no-cache, must-revalidate",
           "X-Fallback-Data": "true",
         },
       });
     }
 
-    return NextResponse.json(data, {
+    // Transform Birdeye trending data to expected format
+    const transformedCoins = tokens.map((token, index) => ({
+      item: {
+        id: token.address,
+        coin_id: token.address,
+        name: token.name,
+        symbol: token.symbol,
+        market_cap_rank: token.rank || index + 1,
+        thumb: token.logoURI || "",
+        small: token.logoURI || "",
+        large: token.logoURI || "",
+        slug: token.symbol.toLowerCase(),
+        price_btc: 0, // Not provided by Birdeye
+        score: 0,
+        data: {
+          price: token.price || 0,
+          price_btc: "0",
+          price_change_percentage_24h: {
+            usd: token.price24hChangePercent || 0,
+          },
+          market_cap: `$${(token.marketcap || 0).toLocaleString()}`,
+          market_cap_btc: "0",
+          total_volume: `$${(token.volume24hUSD || 0).toLocaleString()}`,
+          total_volume_btc: "0",
+          sparkline: "",
+          content: {
+            title: token.name,
+            description: `${token.name} (${token.symbol}) is trending on Solana by 24h volume`,
+          },
+        },
+      },
+    }));
+
+    const transformedData = {
+      coins: transformedCoins,
+    };
+
+    console.log(`Successfully fetched ${transformedCoins.length} trending tokens from Birdeye API (sorted by 24h volume)`);
+
+    return NextResponse.json(transformedData, {
       headers: {
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
-        "CDN-Cache-Control": "public, s-maxage=300",
-        "Vercel-CDN-Cache-Control": "public, s-maxage=300",
+        // Cache for 2 minutes on CDN/server
+        "Cache-Control": "public, s-maxage=120, stale-while-revalidate=240",
       },
     });
   } catch (error) {
-    console.error("Error fetching trending data:", error);
+    console.error("Error fetching trending data from Birdeye:", error);
 
     return NextResponse.json(FALLBACK_TRENDING_DATA, {
-      status: 200, // Return 200 with fallback data instead of 500
+      status: 200,
       headers: {
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        "Cache-Control": "no-store, no-cache, must-revalidate",
         "X-Fallback-Data": "true",
         "X-Error": error instanceof Error ? error.message : "Unknown error",
       },

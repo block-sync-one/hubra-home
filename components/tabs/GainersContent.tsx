@@ -141,18 +141,17 @@ export const GainersContent = () => {
   );
 
   const desktop = () => (
-    <div className="flex gap-4 w-full overflow-x-auto scrollbar-none pb-2">
-      {gainers.map((token, index) => (
-        <div key={index} className="flex-shrink-0 w-80">
-          <TokenCard
-            change={token.change}
-            coinId={token.id}
-            imgUrl={token.imgUrl}
-            name={token.name}
-            price={token.price}
-            symbol={token.symbol}
-          />
-        </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+      {gainers.map((token) => (
+        <TokenCard
+          key={token.id}
+          change={token.change}
+          coinId={token.id}
+          imgUrl={token.imgUrl}
+          name={token.name}
+          price={token.price}
+          symbol={token.symbol}
+        />
       ))}
     </div>
   );

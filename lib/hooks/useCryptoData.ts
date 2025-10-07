@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { formatBigNumbers } from "../utils";
+import { useCurrency } from "../context/currency-format";
 
 /**
  * Comprehensive cryptocurrency market data interface
@@ -195,6 +196,7 @@ export interface HotToken {
  * @version 1.0.0
  */
 export function useCryptoData() {
+  const { formatPrice } = useCurrency();
   const [hotTokens, setHotTokens] = useState<HotToken[]>([]);
   const [trending, setTrending] = useState<HotToken[]>([]);
   const [gainers, setGainers] = useState<HotToken[]>([]);
@@ -205,18 +207,39 @@ export function useCryptoData() {
   const [isFallbackData, setIsFallbackData] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
+  // Transform function to convert API data to UI format
   const transformCryptoData = (data: CryptoData[]): any[] => {
     return data.map((crypto) => ({
       id: crypto.id,
       name: crypto.name,
       symbol: crypto.symbol.toUpperCase(),
-      price: crypto.current_price,
+      price: formatPrice(crypto.current_price, true),
       change: fixedNumber(crypto.price_change_percentage_24h || 0),
       volume: formatBigNumbers(crypto.total_volume),
       imgUrl: crypto.image,
       marketCap: formatBigNumbers(crypto.market_cap),
       rank: crypto.market_cap_rank,
     }));
+  };
+
+  // Transform trending data to UI format
+  const transformTrendingData = (coins: any[]): any[] => {
+    return coins.map((coin: any) => {
+      const item = coin.item || coin;
+      const data = item.data || {};
+
+      return {
+        id: item.id || item.coin_id,
+        name: item.name,
+        symbol: (item.symbol || "").toUpperCase(),
+        price: formatPrice(data.price || 0, true),
+        change: fixedNumber(data.price_change_percentage_24h?.usd || 0),
+        volume: data.total_volume || "N/A",
+        imgUrl: item.large || item.thumb || item.small || "",
+        marketCap: data.market_cap || "N/A",
+        rank: item.market_cap_rank || 0,
+      };
+    });
   };
 
   const fetchData = async () => {
@@ -245,38 +268,9 @@ export function useCryptoData() {
       // Transform data
       const transformedData = transformCryptoData(topCryptos);
 
-      // Set hot tokens (top 20 by market cap)
-      setHotTokens(transformedData.slice(0, 20));
+      // Fetch trending data first (for Hot Tokens)
+      let trendingTokens: any[] = [];
 
-      // Set gainers (top 20 with highest 24h change)
-      const gainersData = [...transformedData]
-        .filter((crypto) => crypto.change > 0)
-        .sort((a, b) => b.change - a.change)
-        .slice(0, 20);
-
-      setGainers(gainersData);
-
-      // Set losers (top 20 with lowest 24h change)
-      const losersData = [...transformedData]
-        .filter((crypto) => crypto.change < 0)
-        .sort((a, b) => a.change - b.change)
-        .slice(0, 20);
-
-      setLosers(losersData);
-
-      // Set volume (top 20 by volume)
-      const volumeData = [...transformedData]
-        .sort((a, b) => {
-          const aVol = parseFloat(a.volume.replace(/[$,]/g, ""));
-          const bVol = parseFloat(b.volume.replace(/[$,]/g, ""));
-
-          return bVol - aVol;
-        })
-        .slice(0, 20);
-
-      setVolume(volumeData);
-
-      // Set trending (get trending data from API route)
       try {
         const trendingResponse = await fetch("/api/crypto/trending");
 
@@ -284,31 +278,61 @@ export function useCryptoData() {
           const trendingData = await trendingResponse.json();
           const isTrendingFallback = trendingResponse.headers.get("X-Fallback-Data") === "true";
 
+          console.log("Trending data received:", trendingData);
+
           if (isTrendingFallback) {
             console.warn("Using fallback data for trending");
           }
 
-          const trendingCoins = trendingData.coins.slice(0, 20).map((coin: any) => ({
-            id: coin.item.id,
-            name: coin.item.name,
-            symbol: coin.item.symbol.toUpperCase(),
-            price: coin.item.price_btc * 50000,
-            change: 0,
-            volume: "N/A",
-            imgUrl: coin.item.thumb,
-            marketCap: "N/A",
-            rank: coin.item.market_cap_rank,
-          }));
-
-          setTrending(trendingCoins);
+          if (trendingData.coins && trendingData.coins.length > 0) {
+            trendingTokens = transformTrendingData(trendingData.coins);
+            console.log("Transformed trending tokens:", trendingTokens);
+          } else {
+            console.warn("No trending coins in response, using market data as fallback");
+            trendingTokens = transformedData.slice(0, 4);
+          }
         } else {
           console.warn("Trending API failed, using market data as fallback");
-          setTrending(transformedData.slice(0, 20));
+          trendingTokens = transformedData.slice(0, 4);
         }
       } catch (trendingError) {
-        console.warn("Could not fetch trending data:", trendingError);
-        setTrending(transformedData.slice(0, 20));
+        console.error("Could not fetch trending data:", trendingError);
+        trendingTokens = transformedData.slice(0, 4);
       }
+
+      // Set hot tokens (trending tokens)
+      setHotTokens(trendingTokens);
+
+      // Set trending for backward compatibility
+      setTrending(trendingTokens);
+
+      // Set gainers (top 4 with highest 24h change from all tokens)
+      const gainersData = [...transformedData]
+        .filter((crypto) => crypto.change > 0)
+        .sort((a, b) => b.change - a.change)
+        .slice(0, 4);
+
+      setGainers(gainersData);
+
+      // Set losers (top 4 with lowest 24h change from all tokens)
+      const losersData = [...transformedData]
+        .filter((crypto) => crypto.change < 0)
+        .sort((a, b) => a.change - b.change)
+        .slice(0, 4);
+
+      setLosers(losersData);
+
+      // Set volume (top 4 by volume from all tokens)
+      const volumeData = [...transformedData]
+        .sort((a, b) => {
+          const aVol = parseFloat(a.volume.replace(/[$,]/g, ""));
+          const bVol = parseFloat(b.volume.replace(/[$,]/g, ""));
+
+          return bVol - aVol;
+        })
+        .slice(0, 4);
+
+      setVolume(volumeData);
     } catch (err) {
       console.error("Error fetching crypto data:", err);
       setError(`Failed to fetch live data: ${err instanceof Error ? err.message : "Unknown error"}`);
@@ -327,8 +351,8 @@ export function useCryptoData() {
   useEffect(() => {
     fetchData();
 
-    // Refresh data every 5 minutes
-    const interval = setInterval(fetchData, 5 * 60 * 1000);
+    // Refresh data every 2 minutes
+    const interval = setInterval(fetchData, 2 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, []);

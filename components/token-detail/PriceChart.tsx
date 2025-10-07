@@ -30,23 +30,24 @@ const TokenChart = React.memo(
   ({ chartData, selectedPeriod }: { chartData: Array<{ month: string; price: number }>; selectedPeriod: string }) => {
     // Get appropriate interval for X-axis based on period with dynamic calculation
     const getXAxisInterval = (period: string) => {
-      switch (period) {
-        case "24h":
-          return 0; // Show all 5 points (00:00, 04:00, 08:00, 12:00, 16:00)
-        case "7d":
-          return 0; // Show all 6 days (Mon, Tue, Wed, Thu, Fri, Sat)
-        case "1M":
-          return 2; // Show every 3rd day (7 labels)
-        case "3M":
-          return 0; // Show all 5 weeks (W1, W3, W5, W7, W9)
-        case "1Y":
-          return 0; // Show all 7 months (Jan, Mar, May, Jul, Sep, Nov, Jan)
-        case "All":
-          return 1; // Show every 2nd year (7 labels)
-        default:
-          return 0;
+      // Calculate interval based on data length to show ~6-8 labels
+      const dataLength = chartData.length;
+
+      if (dataLength <= 8) {
+        return 0; // Show all labels if 8 or fewer points
       }
+
+      // Show approximately 6-8 labels regardless of data length
+      const targetLabels = 6;
+      const interval = Math.floor(dataLength / targetLabels);
+
+      return Math.max(0, interval - 1);
     };
+
+    // Ensure we have valid data
+    if (!chartData || chartData.length === 0) {
+      return <div className="h-48 flex items-center justify-center text-gray-400">No chart data available</div>;
+    }
 
     return (
       <Suspense fallback={<ChartFallback />}>
@@ -66,7 +67,7 @@ const TokenChart = React.memo(
                 tickMargin={8}
               />
               <YAxis
-                domain={["dataMin - 0.05", "dataMax + 0.05"]}
+                domain={["auto", "auto"]}
                 fontFamily="Inter"
                 fontSize={12}
                 fontWeight={500}
@@ -84,6 +85,7 @@ const TokenChart = React.memo(
                 }}
               />
               <Line
+                animationDuration={300}
                 dataKey="price"
                 dot={false}
                 stroke="rgb(21 183 158)" // success-500
@@ -124,7 +126,7 @@ export const PriceChart = memo(function PriceChart({ price, selectedPeriod, onPe
   const days = getDaysFromPeriod(selectedPeriod);
   const { chartData, loading, error, retry, isFallbackData } = usePriceHistory(tokenId, days);
 
-  // Loading state
+  // Loading state with spinner
   if (loading) {
     return (
       <Card className="bg-gray-950 rounded-2xl">
@@ -135,8 +137,8 @@ export const PriceChart = memo(function PriceChart({ price, selectedPeriod, onPe
           </div>
         </CardHeader>
         <CardBody className="p-5">
-          <div className="h-48 bg-gray-800 animate-pulse rounded flex items-center justify-center">
-            <p className="text-gray-400">Loading chart data...</p>
+          <div className="h-48 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
           </div>
         </CardBody>
       </Card>

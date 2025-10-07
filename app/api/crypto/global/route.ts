@@ -1,84 +1,90 @@
 import { NextResponse } from "next/server";
 
+import { fetchBirdeyeData } from "@/lib/services/birdeye";
+
 /**
- * Fallback data structure for when CoinGecko API fails
- * Provides safe default values to prevent application crashes
+ * Fallback global market data
  */
 const FALLBACK_GLOBAL_DATA = {
   data: {
     active_cryptocurrencies: 0,
-    total_market_cap: { usd: 0 },
-    total_volume: { usd: 0 },
-    market_cap_change_percentage_24h_usd: 0,
+    upcoming_icos: 0,
+    ongoing_icos: 0,
+    ended_icos: 0,
     markets: 0,
-    updated_at: Date.now(),
+    total_market_cap: {
+      usd: 0,
+    },
+    total_volume: {
+      usd: 0,
+    },
+    market_cap_percentage: {
+      btc: 0,
+      eth: 0,
+    },
+    market_cap_change_percentage_24h_usd: 0,
+    updated_at: Math.floor(Date.now() / 1000),
+    new_tokens: 0,
+    sol_tvl: 0,
+    sol_tvl_change: 0,
+    stablecoins_tvl: 0,
+    stablecoins_tvl_change: 0,
   },
 };
 
 /**
- * Global cryptocurrency market data endpoint
+ * API route to fetch global cryptocurrency market data
  *
- * Fetches comprehensive global cryptocurrency statistics including:
- * - Total market capitalization across all cryptocurrencies
- * - Total 24-hour trading volume
- * - Number of active cryptocurrencies
- * - Market cap change percentage over 24 hours
- * - Number of active markets
+ * @description Fetches aggregated global market statistics from Birdeye API
+ * including total market cap, volume, and market dominance data.
+ * Note: Birdeye focuses on specific chains, so this aggregates Solana ecosystem data.
  *
- * @description This endpoint provides real-time global cryptocurrency market data
- * from CoinGecko API with 5-minute caching and fallback data support.
- *
- * @returns {Promise<NextResponse>} JSON response containing global market data
+ * @returns JSON response with global market data
  *
  * @example
- * ```typescript
- * // Fetch global market data
- * const response = await fetch('/api/crypto/global');
- * const data = await response.json();
+ * GET /api/crypto/global
  *
- * console.log(data.data.total_market_cap.usd); // Total market cap in USD
- * console.log(data.data.active_cryptocurrencies); // Number of active cryptos
- * ```
- *
- * @throws {Error} When CoinGecko API is unavailable, returns fallback data with 200 status
- *
+ * @throws {Error} When API request fails, returns fallback data
  * @since 1.0.0
- * @version 1.0.0
- *
- * @see {@link https://docs.coingecko.com/reference/crypto-global} CoinGecko Global API Documentation
+ * @version 2.0.0
+ * @see {@link https://docs.birdeye.so/reference/get-defi-v3-token-list} Birdeye Token List API Documentation
  */
 export async function GET() {
   try {
-    const apiKey = process.env.COINGECKO_API_KEY;
-    const baseUrl = apiKey ? "https://pro-api.coingecko.com/api/v3" : "https://api.coingecko.com/api/v3";
-    const url = `${baseUrl}/global${apiKey ? `?x_cg_pro_api_key=${apiKey}` : ""}`;
+    console.log("Fetching global market data from Birdeye API");
 
-    const response = await fetch(url, {
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
+    // Fetch top tokens to aggregate market data
+    const response = await fetchBirdeyeData<{
+      data: {
+        items: Array<{
+          address: string;
+          symbol: string;
+          name: string;
+          market_cap?: number;
+          volume_24h_usd?: number;
+          volume_24h_change_percent?: number;
+          price?: number;
+          price_change_24h_percent?: number;
+          liquidity?: number;
+          recent_listing_time?: number | null;
+        }>;
+      };
+      success: boolean;
+    }>(
+      "/defi/v3/token/list",
+      {
+        offset: "0",
+        limit: "100", // Fetch top 100 tokens for aggregation
       },
-      next: {
-        revalidate: 300, // Cache for 5 minutes (300 seconds)
-      },
-    });
-
-    if (!response.ok) {
-      console.warn(`CoinGecko API error: ${response.status} - Serving fallback data`);
-
-      return NextResponse.json(FALLBACK_GLOBAL_DATA, {
-        headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120", // Shorter cache for fallback
-          "X-Fallback-Data": "true",
+      {
+        next: {
+          revalidate: 300, // Cache for 5 minutes
         },
-      });
-    }
+      }
+    );
 
-    const data = await response.json();
-
-    // Validate data structure
-    if (!data?.data || !data.data.total_market_cap) {
-      console.warn("Invalid data structure from CoinGecko API - Serving fallback data");
+    if (!response.success || !response.data?.items) {
+      console.warn("Invalid response from Birdeye API - Serving fallback data");
 
       return NextResponse.json(FALLBACK_GLOBAL_DATA, {
         headers: {
@@ -88,18 +94,100 @@ export async function GET() {
       });
     }
 
-    return NextResponse.json(data, {
+    const items = response.data.items;
+
+    if (items.length === 0) {
+      console.warn("No tokens returned from Birdeye API - Serving fallback data");
+
+      return NextResponse.json(FALLBACK_GLOBAL_DATA, {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+          "X-Fallback-Data": "true",
+        },
+      });
+    }
+
+    // Aggregate market data
+    const totalMarketCap = items.reduce((sum, token) => sum + (token.market_cap || 0), 0);
+    const totalVolume = items.reduce((sum, token) => sum + (token.volume_24h_usd || 0), 0);
+    const activeTokens = items.length;
+
+    // Calculate weighted average market cap change
+    const totalMarketCapChange = items.reduce((sum, token) => {
+      const weight = (token.market_cap || 0) / totalMarketCap;
+      const change = token.price_change_24h_percent || 0;
+
+      return sum + weight * change;
+    }, 0);
+
+    // Calculate SOL TVL (using liquidity as proxy)
+    const solToken = items.find((t) => t.symbol === "SOL");
+    const solTVL = solToken?.liquidity || 0;
+    const solTVLChange = solToken?.price_change_24h_percent || 0; // Use price change as proxy for TVL change
+
+    // Calculate stablecoins TVL (USDC + USDT liquidity)
+    const stablecoins = items.filter((t) => ["USDC", "USDT", "USDS", "DAI"].includes(t.symbol));
+    const stablecoinsTVL = stablecoins.reduce((sum, token) => sum + (token.liquidity || 0), 0);
+
+    // Calculate average change for stablecoins TVL
+    const stablecoinsAvgChange =
+      stablecoins.length > 0 ? stablecoins.reduce((sum, token) => sum + (token.volume_24h_change_percent || 0), 0) / stablecoins.length : 0;
+
+    // Count new tokens (listed in last 7 days)
+    const sevenDaysAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
+    const newTokens = items.filter((t) => t.recent_listing_time && t.recent_listing_time > sevenDaysAgo).length;
+
+    // Transform to format expected by frontend
+    const transformedData = {
+      data: {
+        active_cryptocurrencies: activeTokens,
+        upcoming_icos: 0,
+        ongoing_icos: 0,
+        ended_icos: 0,
+        markets: activeTokens * 2, // Approximation
+        total_market_cap: {
+          usd: totalMarketCap,
+        },
+        total_volume: {
+          usd: totalVolume,
+        },
+        market_cap_percentage: {
+          sol: solToken ? solToken.market_cap || 0 : 0,
+          usdc: 0,
+        },
+        market_cap_change_percentage_24h_usd: totalMarketCapChange,
+        updated_at: Math.floor(Date.now() / 1000),
+        // New fields for Solana ecosystem
+        new_tokens: newTokens,
+        sol_tvl: solTVL,
+        sol_tvl_change: solTVLChange,
+        stablecoins_tvl: stablecoinsTVL,
+        stablecoins_tvl_change: stablecoinsAvgChange,
+      },
+    };
+
+    console.log(`Successfully fetched global market data:`, {
+      totalMarketCap,
+      totalMarketCapChange,
+      totalVolume,
+      newTokens,
+      solTVL,
+      solTVLChange,
+      stablecoinsTVL,
+      stablecoinsAvgChange,
+    });
+
+    return NextResponse.json(transformedData, {
       headers: {
-        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
-        "CDN-Cache-Control": "public, s-maxage=300",
-        "Vercel-CDN-Cache-Control": "public, s-maxage=300",
+        // Cache for 2 minutes on CDN/server
+        "Cache-Control": "public, s-maxage=120, stale-while-revalidate=240",
       },
     });
   } catch (error) {
-    console.error("Error fetching global data:", error);
+    console.error("Error fetching global data from Birdeye:", error);
 
     return NextResponse.json(FALLBACK_GLOBAL_DATA, {
-      status: 200, // Return 200 with fallback data instead of 500
+      status: 200,
       headers: {
         "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
         "X-Fallback-Data": "true",

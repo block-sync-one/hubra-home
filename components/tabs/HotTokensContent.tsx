@@ -75,7 +75,7 @@ export const HotTokensContent = () => {
             aria-label="Token details"
             className="flex items-center p-3 hover:bg-white/5 transition-colors cursor-pointer"
             role="button"
-            onClick={() => router.push(`/tokens/${token.name?.toLowerCase().replace(/\s+/g, "-")}`)}>
+            onClick={() => router.push(`/tokens/${token.id}`)}>
             {/* Rank */}
             <div className="mr-4 flex-shrink-0 text-center text-sm text-gray-400 font-normal">{index + 1}</div>
 
@@ -106,18 +106,17 @@ export const HotTokensContent = () => {
   );
 
   const desktop = () => (
-    <div className="flex gap-4 w-full overflow-x-auto pb-2">
-      {hotTokens.map((token, index) => (
-        <div key={index} className="flex-shrink-0 w-80">
-          <TokenCard
-            change={token.change}
-            coinId={token.id}
-            imgUrl={token.imgUrl}
-            name={token.name}
-            price={token.price}
-            symbol={token.symbol}
-          />
-        </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+      {hotTokens.map((token) => (
+        <TokenCard
+          key={token.id}
+          change={token.change}
+          coinId={token.id}
+          imgUrl={token.imgUrl}
+          name={token.name}
+          price={token.price}
+          symbol={token.symbol}
+        />
       ))}
     </div>
   );

@@ -12,9 +12,9 @@ const Line = dynamic(() => import("recharts").then((mod) => ({ default: mod.Line
 const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => ({ default: mod.ResponsiveContainer })), { ssr: false });
 const Tooltip = dynamic(() => import("recharts").then((mod) => ({ default: mod.Tooltip })), { ssr: false });
 
-// Hook to fetch price history for charts
+// Hook to fetch price history for charts (Birdeye format)
 const usePriceHistory = (coinId: string) => {
-  const [priceHistory, setPriceHistory] = useState<number[][] | null>(null);
+  const [priceHistory, setPriceHistory] = useState<Array<{ timestamp: number; price: number }> | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -24,9 +24,10 @@ const usePriceHistory = (coinId: string) => {
       setLoading(true);
       try {
         const response = await fetch(`/api/crypto/price-history?id=${coinId}&days=7`);
-        const data = await response.json();
+        const result = await response.json();
 
-        setPriceHistory(data.prices || []);
+        // Use Birdeye-native format
+        setPriceHistory(result.data || []);
       } catch (error) {
         console.error("Error fetching price history:", error);
         setPriceHistory(null);
@@ -49,8 +50,8 @@ const parsePrice = (price: string | number | undefined): number => {
   return 0;
 };
 
-// Transform CoinGecko price history data for chart
-const transformPriceData = (priceHistory: number[][], currentPrice: number) => {
+// Transform Birdeye price history data for chart
+const transformPriceData = (priceHistory: Array<{ timestamp: number; price: number }> | null, currentPrice: number) => {
   if (!priceHistory || priceHistory.length === 0) {
     // Fallback: generate 7 points representing 7-day trend
     const data = [];
@@ -75,15 +76,23 @@ const transformPriceData = (priceHistory: number[][], currentPrice: number) => {
   return priceHistory
     .filter((_, index) => index % step === 0)
     .slice(-sampleSize)
-    .map(([timestamp, price], index) => ({
+    .map((item, index) => ({
       day: index,
-      value: price,
+      value: item.price,
     }));
 };
 
 // Mini chart component
-const MiniChart = ({ change, priceHistory, currentPrice }: { change: number; priceHistory?: number[][]; currentPrice: number }) => {
-  const chartData = transformPriceData(priceHistory || [], currentPrice);
+const MiniChart = ({
+  change,
+  priceHistory,
+  currentPrice,
+}: {
+  change: number;
+  priceHistory?: Array<{ timestamp: number; price: number }> | null;
+  currentPrice: number;
+}) => {
+  const chartData = transformPriceData(priceHistory || null, currentPrice);
   const isPositive = change >= 0;
 
   return (
@@ -169,8 +178,9 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
   const { priceHistory } = usePriceHistory(coinId || "");
 
   const handleClick = () => {
-    if (symbol) {
-      router.push(`/tokens/${name.toLowerCase().replace(/\s+/g, "-")}`);
+    // Use coinId (Solana address) for navigation with Birdeye API
+    if (coinId) {
+      router.push(`/tokens/${coinId}`);
     }
   };
 
@@ -197,7 +207,7 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
 
       {/* Mini chart */}
       <div className="flex-1 relative">
-        <MiniChart change={change || 0} currentPrice={parsePrice(price)} priceHistory={priceHistory || undefined} />
+        <MiniChart change={change || 0} currentPrice={parsePrice(price)} priceHistory={priceHistory} />
       </div>
     </div>
   );
