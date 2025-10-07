@@ -5,7 +5,7 @@ import { useMediaQuery } from "usehooks-ts";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 
-import { TokenCard } from "./TokenCard";
+import { TokenCardNew } from "./TokenCardNew";
 
 import { useCryptoData } from "@/lib/hooks/useCryptoData";
 
@@ -77,7 +77,7 @@ export const LosersContent = () => {
   const mobile = () => (
     <div className="space-y-4">
       {losers.map((token, index) => (
-        <TokenCard
+        <TokenCardNew
           key={index}
           change={token.change}
           coinId={token.id}
@@ -93,7 +93,7 @@ export const LosersContent = () => {
   const desktop = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
       {losers.map((token) => (
-        <TokenCard
+        <TokenCardNew
           key={token.id}
           change={token.change}
           coinId={token.id}

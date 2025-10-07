@@ -7,88 +7,11 @@ const nextConfig = {
   images: {
     formats: ["image/webp", "image/avif"],
     minimumCacheTTL: 60,
+    // Allow all HTTPS images for maximum flexibility with Birdeye token logos
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "coin-images.coingecko.com",
-        port: "",
-        pathname: "/coins/images/**",
-      },
-      {
-        protocol: "https",
-        hostname: "assets.coingecko.com",
-        port: "",
-        pathname: "/coins/images/**",
-      },
-      {
-        protocol: "https",
-        hostname: "raw.githubusercontent.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "gateway.pinata.cloud",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "arweave.net",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.arweave.net",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "ipfs.io",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.ipfs.nftstorage.link",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.ipfs.dweb.link",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "i.ibb.co",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.xyz",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.com",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.io",
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "*.org",
+        hostname: "**",
         port: "",
         pathname: "/**",
       },

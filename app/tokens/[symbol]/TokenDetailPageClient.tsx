@@ -21,9 +21,12 @@ const TokenStats = dynamic(() => import("@/components/token-detail/TokenHeader")
   loading: () => <div className="h-32 bg-gray-800 animate-pulse rounded" />,
 });
 
-const PriceChart = dynamic(() => import("@/components/token-detail/PriceChart").then((mod) => ({ default: mod.PriceChart })), {
-  loading: () => <div className="h-64 bg-gray-800 animate-pulse rounded-2xl" />,
-});
+const TokenPriceChart = dynamic(
+  () => import("@/components/token-detail/TokenPriceChart").then((mod) => ({ default: mod.TokenPriceChart })),
+  {
+    loading: () => <div className="h-64 bg-gray-800 animate-pulse rounded-2xl" />,
+  }
+);
 
 const VolumeStats = dynamic(() => import("@/components/token-detail/VolumeStats").then((mod) => ({ default: mod.VolumeStats })), {
   loading: () => <div className="h-48 bg-gray-800 animate-pulse rounded-2xl" />,
@@ -195,7 +198,8 @@ export function TokenDetailPageClient({ apiTokenData, symbol, tokenName }: Token
         {/* Left Column - Chart and Stats */}
         <div className="lg:col-span-2 space-y-6">
           {/* Price Chart */}
-          <PriceChart
+          <TokenPriceChart
+            change={tokenData.change}
             periods={periods}
             price={tokenData.price}
             selectedPeriod={selectedPeriod}

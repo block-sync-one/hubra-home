@@ -5,7 +5,7 @@ import { useMediaQuery } from "usehooks-ts";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 
-import { TokenCard } from "./TokenCard";
+import { TokenCardNew } from "./TokenCardNew";
 
 import { useCryptoData } from "@/lib/hooks/useCryptoData";
 
@@ -75,7 +75,7 @@ export const VolumeContent = () => {
   const mobile = () => (
     <div className="space-y-4">
       {volume.map((token, index) => (
-        <TokenCard
+        <TokenCardNew
           key={index}
           change={token.change}
           coinId={token.id}
@@ -91,7 +91,7 @@ export const VolumeContent = () => {
   const desktop = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
       {volume.map((token) => (
-        <TokenCard
+        <TokenCardNew
           key={token.id}
           change={token.change}
           coinId={token.id}
