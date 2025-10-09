@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 interface TokenLayoutProps {
   children: React.ReactNode;
-  params: { symbol: string };
+  params: Promise<{ symbol: string }>;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ symbol: string }> }): Promise<Metadata> {

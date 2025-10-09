@@ -20,7 +20,7 @@ interface CurrentTokenContextType {
   clearCurrentToken: () => void;
 }
 
-const CurrentTokenContext = createContext<CurrentTokenContextContextType | undefined>(undefined);
+const CurrentTokenContext = createContext<CurrentTokenContextType | undefined>(undefined);
 
 /**
  * Provider component for current token context

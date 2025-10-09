@@ -22,7 +22,7 @@ export const HotTokensContent = () => {
   const { prefetchTokens } = useBatchPrefetch();
 
   // Live crypto data from Birdeye
-  const { hotTokens, loading, error, isFallbackData, retryCount, retry } = useCryptoData();
+  const { hotTokens, loading, error, retry } = useCryptoData();
 
   // Prefetch all visible hot tokens when they load
   React.useEffect(() => {
@@ -62,7 +62,6 @@ export const HotTokensContent = () => {
         />
         <h3 className="text-lg font-semibold text-white mb-2">Failed to Load Data</h3>
         <p className="text-gray-400 text-center mb-4 max-w-md">{error}</p>
-        <p className="text-sm text-gray-500 mb-6">Retry attempts: {retryCount}</p>
         <div className="flex gap-3">
           <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onClick={retry}>
             Retry
@@ -151,21 +150,6 @@ export const HotTokensContent = () => {
       ))}
     </div>
   );
-
-  // Fallback data indicator
-  if (isFallbackData) {
-    return (
-      <div className="space-y-4">
-        <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-3 mb-4">
-          <div className="flex items-center gap-2">
-            <Icon className="w-4 h-4 text-yellow-500" icon="mdi:warning" />
-            <span className="text-yellow-200 text-sm font-medium">Using cached data - API temporarily unavailable</span>
-          </div>
-        </div>
-        {isMobile ? mobile() : desktop()}
-      </div>
-    );
-  }
 
   return isMobile ? mobile() : desktop();
 };

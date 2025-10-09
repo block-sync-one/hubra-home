@@ -279,7 +279,7 @@ export default function Component() {
                         </div>
                       );
                     })}
-                    <span className="text-small text-foreground-400 font-medium">{formatMonth(label)} 25, 2024</span>
+                    <span className="text-small text-foreground-400 font-medium">{formatMonth(String(label || ""))} 25, 2024</span>
                   </div>
                 </div>
               )}

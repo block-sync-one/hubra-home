@@ -10,6 +10,7 @@ import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
 import { WebVitals } from "@/components/WebVitals";
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
     default: siteConfig.name,
     template: `%s - ${siteConfig.name}`,
@@ -71,9 +72,49 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Organization structured data for better brand recognition
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Hubra",
+    "description": "Hubra - the power of CEX, the freedom of DeFi",
+    "url": "https://hubra.app",
+    "logo": "https://hubra.app/logo.png",
+    "sameAs": ["https://twitter.com/hubraApp"],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "Customer Support",
+      "url": "https://hubra.app",
+    },
+  };
+
+  // Website schema with search functionality
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Hubra",
+    "description": "Solana DeFi Analytics Platform",
+    "url": "https://hubra.app",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://hubra.app/tokens?search={search_term_string}",
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <html suppressHydrationWarning lang="en">
-      <head />
+      <head>
+        <script
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          id="organization-jsonld"
+          type="application/ld+json"
+        />
+        <script dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} id="website-jsonld" type="application/ld+json" />
+      </head>
       <body className={clsx("min-h-screen text-foreground font-sans antialiased")}>
         <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col items-center">

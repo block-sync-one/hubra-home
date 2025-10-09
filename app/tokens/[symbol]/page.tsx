@@ -153,10 +153,37 @@ export default async function TokenDetailPage({ params }: TokenDetailPageProps) 
       }
     : null;
 
+  // Breadcrumb structured data for better navigation
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://hubra.app",
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tokens",
+        "item": "https://hubra.app/tokens",
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": apiTokenData?.name || "Token",
+        "item": `https://hubra.app/tokens/${symbol}`,
+      },
+    ],
+  };
+
   // Pass server-fetched data to client
   return (
     <>
       {jsonLd && <script dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} id="token-jsonld" type="application/ld+json" />}
+      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
       <TokenDetailPageClient
         apiTokenData={apiTokenData}
         symbol={symbol}
