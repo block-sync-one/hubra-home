@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
@@ -8,12 +9,6 @@ import Link from "next/link";
 import { useWindowSize } from "../lib/useWindowSize";
 
 import { Card, CardContent } from "./ui/card";
-import { TVLAnimatedPath } from "./TVLAnimation";
-import { FloatingOrbsAnimation } from "./ui/FloatingOrbAnimation";
-import Solanaglow from "./ui/Solanaglow";
-import WalletEnergyFlow from "./ui/WalletEnergyFlow";
-import DefiCardMotionOverlay from "./ui/DefiCardMotionOverlay";
-import { FloatingEarnImages } from "./ui/FloatingEarnImages";
 import {
   Partner10Icon,
   Partner11Icon,
@@ -29,10 +24,55 @@ import {
   Partner7Icon,
   Partner8Icon,
 } from "./icons";
-import { DegenAnimation } from "./ui/DegenAnimation";
-import { MobileDegenAnimation } from "./ui/MobileDegenAnimation";
 
-import { AnimatedSatelliteOrbit } from "@/components/ui/AnimatedSatellite";
+// Lazy load heavy animation components
+const TVLAnimatedPath = dynamic(() => import("./TVLAnimation").then((mod) => ({ default: mod.TVLAnimatedPath })), {
+  ssr: false,
+  loading: () => <div className="h-64 animate-pulse bg-gray-800/20 rounded" />,
+});
+
+const FloatingOrbsAnimation = dynamic(() => import("./ui/FloatingOrbAnimation").then((mod) => ({ default: mod.FloatingOrbsAnimation })), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0" />,
+});
+
+const Solanaglow = dynamic(() => import("./ui/Solanaglow"), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0" />,
+});
+
+const WalletEnergyFlow = dynamic(() => import("./ui/WalletEnergyFlow"), {
+  ssr: false,
+  loading: () => <div className="h-64 animate-pulse bg-gray-800/20 rounded" />,
+});
+
+const DefiCardMotionOverlay = dynamic(() => import("./ui/DefiCardMotionOverlay"), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0" />,
+});
+
+const FloatingEarnImages = dynamic(() => import("./ui/FloatingEarnImages").then((mod) => ({ default: mod.FloatingEarnImages })), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0" />,
+});
+
+const DegenAnimation = dynamic(() => import("./ui/DegenAnimation").then((mod) => ({ default: mod.DegenAnimation })), {
+  ssr: false,
+  loading: () => <div className="h-96 animate-pulse bg-gray-800/20 rounded" />,
+});
+
+const MobileDegenAnimation = dynamic(() => import("./ui/MobileDegenAnimation").then((mod) => ({ default: mod.MobileDegenAnimation })), {
+  ssr: false,
+  loading: () => <div className="h-64 animate-pulse bg-gray-800/20 rounded" />,
+});
+
+const AnimatedSatelliteOrbit = dynamic(
+  () => import("@/components/ui/AnimatedSatellite").then((mod) => ({ default: mod.AnimatedSatelliteOrbit })),
+  {
+    ssr: false,
+    loading: () => <div className="absolute inset-0" />,
+  }
+);
 
 // Simple Separator component
 const Separator = ({ className }: { className?: string }) => <div className={className} />;

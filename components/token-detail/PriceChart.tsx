@@ -137,8 +137,29 @@ export const PriceChart = memo(function PriceChart({ price, selectedPeriod, onPe
           </div>
         </CardHeader>
         <CardBody className="p-5">
-          <div className="h-48 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
+          <div className="h-48 relative overflow-hidden rounded">
+            {/* Simulated chart skeleton */}
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-800/30 to-gray-800/10" />
+            <svg className="w-full h-full opacity-20 animate-pulse" preserveAspectRatio="none" viewBox="0 0 400 200">
+              <path
+                className="text-gray-500"
+                d="M0,150 Q40,120 80,130 T160,110 Q200,100 240,120 T320,100 Q360,110 400,90"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+              <path
+                d="M0,150 Q40,120 80,130 T160,110 Q200,100 240,120 T320,100 Q360,110 400,90 L400,200 L0,200 Z"
+                fill="url(#skeletonGradient2)"
+                opacity="0.3"
+              />
+              <defs>
+                <linearGradient id="skeletonGradient2" x1="0%" x2="0%" y1="0%" y2="100%">
+                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
         </CardBody>
       </Card>

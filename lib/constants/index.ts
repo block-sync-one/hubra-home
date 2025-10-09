@@ -1,2 +1,7 @@
-export * from "./currencies";
-export * from "./tabs-data";
+/**
+ * Constants Index
+ * @description Centralized export for all application constants
+ */
+
+export * from "./chart";
+export * from "./ui";

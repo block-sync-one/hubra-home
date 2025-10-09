@@ -1,3 +1,5 @@
+"use client";
+
 import type { TableProps } from "./types";
 
 import React, { useMemo, useState, useCallback, useEffect } from "react";

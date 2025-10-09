@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useMemo } from "react";
 import { Card, CardBody, CardHeader } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
@@ -8,18 +10,59 @@ interface TokenDescriptionProps {
   onWebsiteClick?: () => void;
 }
 
+// Clean HTML from description and convert to plain text
+function cleanDescription(html: string): string {
+  if (!html) return "No description available";
+
+  // Remove HTML tags
+  let text = html.replace(/<[^>]*>/g, " ");
+
+  // Decode HTML entities
+  text = text
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ");
+
+  // Remove extra whitespace
+  text = text.replace(/\s+/g, " ").trim();
+
+  // Limit length for better UX
+  if (text.length > 500) {
+    text = text.substring(0, 500) + "...";
+  }
+
+  return text || "No description available";
+}
+
 export function TokenDescription({ description, onTwitterClick, onWebsiteClick }: TokenDescriptionProps) {
+  const cleanedDescription = useMemo(() => cleanDescription(description), [description]);
+
   return (
     <Card className="bg-gray-950 border-white/10 rounded-2xl">
       <CardHeader className="p-5">
-        <h3 className="text-sm font-medium text-white">Description</h3>
+        <h3 className="text-sm font-medium text-white">About</h3>
       </CardHeader>
       <CardBody className="p-5 pt-0">
-        <p className="text-sm font-medium text-gray-400 leading-relaxed mb-4">{description}</p>
+        <p className="text-sm text-gray-400 leading-relaxed mb-4 whitespace-pre-line">{cleanedDescription}</p>
 
         <div className="flex gap-4">
-          <Icon className="h-5 w-5 text-gray-400 cursor-pointer hover:text-white" icon="lucide:twitter" onClick={onTwitterClick} />
-          <Icon className="h-5 w-5 text-gray-400 cursor-pointer hover:text-white" icon="lucide:globe" onClick={onWebsiteClick} />
+          {onTwitterClick && (
+            <Icon
+              className="h-5 w-5 text-gray-400 cursor-pointer hover:text-white transition-colors"
+              icon="lucide:twitter"
+              onClick={onTwitterClick}
+            />
+          )}
+          {onWebsiteClick && (
+            <Icon
+              className="h-5 w-5 text-gray-400 cursor-pointer hover:text-white transition-colors"
+              icon="lucide:globe"
+              onClick={onWebsiteClick}
+            />
+          )}
         </div>
       </CardBody>
     </Card>

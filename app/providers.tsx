@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 import { CurrencyProvider } from "@/lib/context";
+import { CurrentTokenProvider } from "@/lib/context/current-token-context";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -26,7 +27,9 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   return (
     <HeroUIProvider navigate={router.push}>
       <CurrencyProvider>
-        <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+        <CurrentTokenProvider>
+          <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+        </CurrentTokenProvider>
       </CurrencyProvider>
     </HeroUIProvider>
   );

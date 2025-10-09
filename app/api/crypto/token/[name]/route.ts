@@ -64,10 +64,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         market_cap?: number;
         holder?: number;
         extensions?: {
+          description?: string;
+          coingeckoId?: string;
           website?: string;
           twitter?: string;
           telegram?: string;
           discord?: string;
+          medium?: string;
         };
       };
       success: boolean;
@@ -89,6 +92,49 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     const token = overviewResponse.data;
+
+    // Try to fetch enhanced description from CoinGecko if coingeckoId is available
+    let enhancedDescription = token.extensions?.description || "";
+
+    console.log(`Description check for ${token.name}:`, {
+      hasBirdeyeDesc: !!token.extensions?.description,
+      birdeyeDescLength: token.extensions?.description?.length || 0,
+      hasCoinGeckoId: !!token.extensions?.coingeckoId,
+      coinGeckoId: token.extensions?.coingeckoId,
+      willFetchCoinGecko: token.extensions?.coingeckoId && (!enhancedDescription || enhancedDescription.length < 50),
+    });
+
+    if (token.extensions?.coingeckoId && (!enhancedDescription || enhancedDescription.length < 50)) {
+      try {
+        console.log(`Fetching enhanced description from CoinGecko for ${token.extensions.coingeckoId}...`);
+
+        const cgResponse = await fetch(
+          `https://api.coingecko.com/api/v3/coins/${token.extensions.coingeckoId}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false`,
+          {
+            next: { revalidate: 3600 }, // Cache for 1 hour
+          }
+        );
+
+        console.log(`CoinGecko response status: ${cgResponse.status}`);
+
+        if (cgResponse.ok) {
+          const cgData = await cgResponse.json();
+
+          if (cgData.description?.en) {
+            enhancedDescription = cgData.description.en;
+            console.log(`✅ Enhanced description from CoinGecko for ${token.name} (${enhancedDescription.length} chars)`);
+          } else {
+            console.log(`CoinGecko response has no description.en field`);
+          }
+        } else {
+          console.log(`CoinGecko API failed with status: ${cgResponse.status}`);
+        }
+      } catch (cgError) {
+        console.error("Could not fetch CoinGecko description:", cgError);
+      }
+    } else {
+      console.log(`Skipping CoinGecko fetch: ${!token.extensions?.coingeckoId ? "No coingeckoId" : "Description long enough"}`);
+    }
 
     // Fetch market data from the market-data endpoint
     let marketData: any = null;
@@ -237,7 +283,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
       // Metadata
       decimals: token.decimals || 9,
-      extensions: token.extensions || {},
+      extensions: {
+        ...token.extensions,
+        description: enhancedDescription, // Use enhanced description
+      },
 
       // Trading info
       buy_volume_24h: buyVolume24h,

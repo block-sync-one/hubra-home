@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useMemo } from "react";
 import { Icon } from "@iconify/react";
 import { Tabs, Tab, Chip, DropdownTrigger, Dropdown, Button, DropdownMenu, DropdownItem } from "@heroui/react";

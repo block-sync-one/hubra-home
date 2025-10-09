@@ -13,4 +13,19 @@ body {
   font-size: 14px;
   box-sizing: border-box;
   background-color: #0d0e21;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent selection highlight on charts */
+svg {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Remove focus outline from Recharts elements */
+.recharts-surface:focus,
+.recharts-wrapper:focus {
+  outline: none;
 }

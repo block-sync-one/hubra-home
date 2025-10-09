@@ -1,3 +1,5 @@
+"use client";
+
 import React, { memo, useMemo } from "react";
 
 // Memoized components for better performance

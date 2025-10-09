@@ -7,52 +7,72 @@ import dynamic from "next/dynamic";
 
 import { fixedNumber, formatBigNumbers } from "@/lib/utils";
 import { useCurrency } from "@/lib/context/currency-format";
+import { useCurrentToken } from "@/lib/context/current-token-context";
+import {
+  TokenHeaderSkeleton,
+  TokenInfoSkeleton,
+  TokenStatsSkeleton,
+  TokenPriceChartSkeleton,
+  VolumeStatsSkeleton,
+  TradingSectionSkeleton,
+  TokenDescriptionSkeleton,
+} from "@/components/token-detail/TokenDetailSkeleton";
 
-// Lazy load components
+// Lazy load components with proper skeletons
 const TokenHeader = dynamic(() => import("@/components/token-detail/TokenHeader").then((mod) => ({ default: mod.TokenHeader })), {
-  loading: () => <div className="h-32 bg-gray-800 animate-pulse rounded mb-8" />,
+  loading: () => <TokenHeaderSkeleton />,
 });
 
 const TokenInfo = dynamic(() => import("@/components/token-detail/TokenHeader").then((mod) => ({ default: mod.TokenInfo })), {
-  loading: () => <div className="h-16 bg-gray-800 animate-pulse rounded mb-8" />,
+  loading: () => <TokenInfoSkeleton />,
 });
 
 const TokenStats = dynamic(() => import("@/components/token-detail/TokenHeader").then((mod) => ({ default: mod.TokenStats })), {
-  loading: () => <div className="h-32 bg-gray-800 animate-pulse rounded" />,
+  loading: () => <TokenStatsSkeleton />,
 });
 
 const TokenPriceChart = dynamic(
   () => import("@/components/token-detail/TokenPriceChart").then((mod) => ({ default: mod.TokenPriceChart })),
   {
-    loading: () => <div className="h-64 bg-gray-800 animate-pulse rounded-2xl" />,
+    loading: () => <TokenPriceChartSkeleton />,
   }
 );
 
 const VolumeStats = dynamic(() => import("@/components/token-detail/VolumeStats").then((mod) => ({ default: mod.VolumeStats })), {
-  loading: () => <div className="h-48 bg-gray-800 animate-pulse rounded-2xl" />,
+  loading: () => <VolumeStatsSkeleton />,
 });
 
 const TradingSection = dynamic(() => import("@/components/token-detail/TradingSection").then((mod) => ({ default: mod.TradingSection })), {
-  loading: () => <div className="h-64 bg-gray-800 animate-pulse rounded-2xl" />,
+  loading: () => <TradingSectionSkeleton />,
 });
 
 const TokenDescription = dynamic(
   () => import("@/components/token-detail/TokenDescription").then((mod) => ({ default: mod.TokenDescription })),
-  { loading: () => <div className="h-48 bg-gray-800 animate-pulse rounded-2xl" /> }
+  { loading: () => <TokenDescriptionSkeleton /> }
 );
 
 interface TokenDetailPageClientProps {
-  apiTokenData: any;
+  apiTokenData: any; // Server-fetched data
+  tokenAddress: string; // Resolved token address
   symbol: string;
   tokenName: string;
 }
 
-export function TokenDetailPageClient({ apiTokenData, symbol, tokenName }: TokenDetailPageClientProps) {
+export function TokenDetailPageClient({ apiTokenData, tokenAddress, symbol, tokenName }: TokenDetailPageClientProps) {
   const { formatPrice } = useCurrency();
   const router = useRouter();
+  const { currentToken } = useCurrentToken();
   const [selectedPeriod, setSelectedPeriod] = useState("24h");
 
   const periods = ["24h", "7d", "1M", "3M", "1Y", "All"];
+
+  console.log("TokenDetailPageClient:", {
+    symbol,
+    tokenName,
+    tokenAddress,
+    hasApiData: !!apiTokenData,
+    currentToken,
+  });
 
   // Transform API data to match component expectations
   const tokenData = useMemo((): {
@@ -136,12 +156,17 @@ export function TokenDetailPageClient({ apiTokenData, symbol, tokenName }: Token
       tradesCount: apiTokenData.trade_count_24h > 0 ? formatNumber(apiTokenData.trade_count_24h) : "N/A",
       tokenAddress: shortAddress,
       holders: apiTokenData.holder > 0 ? formatNumber(apiTokenData.holder) : "N/A",
-      description: apiTokenData.extensions?.description || "No description available",
-      imgUrl: apiTokenData.logo_uri || "/logo.svg",
+      description:
+        apiTokenData.extensions?.description ||
+        (apiTokenData.name && apiTokenData.symbol
+          ? `${apiTokenData.name} (${apiTokenData.symbol}) is a token on the Solana blockchain. ${apiTokenData.extensions?.website ? `Visit ${apiTokenData.extensions.website} for more information.` : ""}`
+          : "No description available"),
+      // Prefer context image (from token list), then API image, then fallback
+      imgUrl: currentToken?.imgUrl || apiTokenData.logo_uri || apiTokenData.logoURI || apiTokenData.image || "/logo.svg",
       homepage: apiTokenData.extensions?.website || "https://hubra.app",
       twitter: apiTokenData.extensions?.twitter || "https://twitter.com/hubra",
     };
-  }, [apiTokenData, tokenName, formatPrice]);
+  }, [apiTokenData, tokenName, formatPrice, currentToken]);
 
   const handleSwap = () => {
     console.log("Swap clicked");
@@ -160,7 +185,7 @@ export function TokenDetailPageClient({ apiTokenData, symbol, tokenName }: Token
   };
 
   return (
-    <div className="min-h-screen text-white p-6">
+    <div className="min-h-screen text-white md:max-w-7xl mx-auto">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm mb-6 text-gray-400">
         <button
@@ -203,7 +228,7 @@ export function TokenDetailPageClient({ apiTokenData, symbol, tokenName }: Token
             periods={periods}
             price={tokenData.price}
             selectedPeriod={selectedPeriod}
-            tokenId={apiTokenData?.id || symbol}
+            tokenId={tokenAddress}
             onPeriodChange={setSelectedPeriod}
           />
 

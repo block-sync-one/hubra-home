@@ -4,21 +4,12 @@ import { fetchBirdeyeData, mapTimeRange } from "@/lib/services/birdeye";
 
 /**
  * Fallback price history data (Birdeye-native format)
+ * Returns empty array to let client handle gracefully
  */
 const FALLBACK_PRICE_HISTORY = {
-  data: [
-    {
-      timestamp: Date.now() - 24 * 60 * 60 * 1000,
-      price: 0,
-      volume: 0,
-    },
-    {
-      timestamp: Date.now(),
-      price: 0,
-      volume: 0,
-    },
-  ],
+  data: [],
   success: true,
+  error: "Unable to fetch price history data",
 };
 
 /**
@@ -101,27 +92,43 @@ export async function GET(request: Request) {
     );
 
     if (!response.success || !response.data?.items) {
-      console.warn("Invalid response from Birdeye API - Serving fallback data");
-
-      return NextResponse.json(FALLBACK_PRICE_HISTORY, {
-        headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-          "X-Fallback-Data": "true",
-        },
+      console.warn("Invalid response from Birdeye API", {
+        success: response.success,
+        hasData: !!response.data,
+        hasItems: !!response.data?.items,
       });
+
+      return NextResponse.json(
+        {
+          ...FALLBACK_PRICE_HISTORY,
+          error: "Invalid response from Birdeye API",
+        },
+        {
+          headers: {
+            "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+            "X-Fallback-Data": "true",
+          },
+        }
+      );
     }
 
     const items = response.data.items;
 
     if (items.length === 0) {
-      console.warn("No price history data from Birdeye API - Serving fallback data");
+      console.warn("No price history data from Birdeye API for token:", tokenAddress);
 
-      return NextResponse.json(FALLBACK_PRICE_HISTORY, {
-        headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-          "X-Fallback-Data": "true",
+      return NextResponse.json(
+        {
+          ...FALLBACK_PRICE_HISTORY,
+          error: "No price history data available for this token",
         },
-      });
+        {
+          headers: {
+            "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+            "X-Fallback-Data": "true",
+          },
+        }
+      );
     }
 
     // Transform to clean Birdeye-native format
@@ -152,15 +159,24 @@ export async function GET(request: Request) {
       },
     });
   } catch (error) {
-    console.error("Error fetching price history from Birdeye:", error);
-
-    return NextResponse.json(FALLBACK_PRICE_HISTORY, {
-      status: 200,
-      headers: {
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-        "X-Fallback-Data": "true",
-        "X-Error": error instanceof Error ? error.message : "Unknown error",
-      },
+    console.error("Error fetching price history from Birdeye:", {
+      error,
+      message: error instanceof Error ? error.message : "Unknown error",
     });
+
+    return NextResponse.json(
+      {
+        ...FALLBACK_PRICE_HISTORY,
+        error: error instanceof Error ? error.message : "Failed to fetch price history",
+      },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+          "X-Fallback-Data": "true",
+          "X-Error": error instanceof Error ? error.message : "Unknown error",
+        },
+      }
+    );
   }
 }

@@ -34,6 +34,8 @@
  * ```
  */
 
+"use client";
+
 import React, { useState, useMemo } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { Icon } from "@iconify/react";

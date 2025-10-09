@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useMemo } from "react";
 
 import { tradable, allAssets, gainers, losers, newlyListed } from "@/lib/constants/tabs-data";

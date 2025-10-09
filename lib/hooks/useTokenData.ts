@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 /**
  * Interface for detailed token information from Birdeye API
@@ -105,7 +105,7 @@ export function useTokenData(tokenName: string) {
   const [isFallbackData, setIsFallbackData] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
-  const fetchTokenData = async () => {
+  const fetchTokenData = useCallback(async () => {
     if (!tokenName) return;
 
     try {
@@ -143,17 +143,17 @@ export function useTokenData(tokenName: string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [tokenName]);
 
-  const retry = () => {
+  const retry = useCallback(() => {
     setError(null);
     setRetryCount(0);
     fetchTokenData();
-  };
+  }, [fetchTokenData]);
 
   useEffect(() => {
     fetchTokenData();
-  }, [tokenName]);
+  }, [fetchTokenData]);
 
   return {
     tokenData,

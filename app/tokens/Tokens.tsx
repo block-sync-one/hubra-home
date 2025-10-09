@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 
 import { fixedNumber } from "@/lib/utils";
 import { useCurrency } from "@/lib/context/currency-format";
+import { StatsGridSkeleton } from "@/components/StatsCardSkeleton";
 
 const getChangeConfig = (value: number) => {
   const isPositive = value >= 0;
@@ -206,14 +207,7 @@ export default function Tokens() {
     return (
       <div className="flex flex-col gap-6">
         <h2 className="text-2xl font-medium text-white">Tokens</h2>
-        <div className="relative rounded-xl border border-white/10 overflow-hidden">
-          <div className="flex items-center justify-center py-12">
-            <div className="flex items-center space-x-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
-              <span className="text-white">Loading global data...</span>
-            </div>
-          </div>
-        </div>
+        <StatsGridSkeleton count={4} />
       </div>
     );
   }

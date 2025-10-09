@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * @deprecated This component has been replaced by UnifiedChart.
  * Use UnifiedChart with headerConfig instead.

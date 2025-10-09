@@ -6,33 +6,60 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 
-import { TokenCardNew } from "./TokenCardNew";
+import { TokenCard } from "./TokenCard";
+import { TokenCardSkeletonGrid, TokenCardSkeletonStack } from "./TokenCardSkeleton";
 
 import { ChangeIndicator } from "@/components/price";
 import { useCryptoData } from "@/lib/hooks/useCryptoData";
+import { ICON_SIZES, BREAKPOINTS } from "@/lib/constants";
+import { useCurrentToken } from "@/lib/context/current-token-context";
+import { useBatchPrefetch } from "@/lib/hooks/usePrefetch";
 
 export const HotTokensContent = () => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery(BREAKPOINTS.MOBILE);
   const router = useRouter();
+  const { setCurrentToken } = useCurrentToken();
+  const { prefetchTokens } = useBatchPrefetch();
 
-  // Live crypto data from CoinGecko
+  // Live crypto data from Birdeye
   const { hotTokens, loading, error, isFallbackData, retryCount, retry } = useCryptoData();
+
+  // Prefetch all visible hot tokens when they load
+  React.useEffect(() => {
+    if (hotTokens && hotTokens.length > 0) {
+      prefetchTokens(hotTokens);
+    }
+  }, [hotTokens, prefetchTokens]);
+
+  const handleTokenClick = (token: any) => {
+    // Store token data in context
+    setCurrentToken({
+      id: token.id,
+      name: token.name,
+      symbol: token.symbol,
+      imgUrl: token.imgUrl,
+      price: token.price,
+      change: token.change,
+    });
+
+    // Navigate with token address directly
+    router.push(`/tokens/${token.id}`);
+  };
 
   // Enhanced loading state
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-4" />
-        <p className="text-gray-400">Loading live data...</p>
-      </div>
-    );
+    return isMobile ? <TokenCardSkeletonStack count={4} /> : <TokenCardSkeletonGrid count={4} />;
   }
 
   // Enhanced error state
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <Icon className="w-12 h-12 text-red-500 mb-4" icon="mdi:alert-circle" />
+        <Icon
+          className="text-red-500 mb-4"
+          icon="mdi:alert-circle"
+          style={{ width: ICON_SIZES.EXTRA_LARGE, height: ICON_SIZES.EXTRA_LARGE }}
+        />
         <h3 className="text-lg font-semibold text-white mb-2">Failed to Load Data</h3>
         <p className="text-gray-400 text-center mb-4 max-w-md">{error}</p>
         <p className="text-sm text-gray-500 mb-6">Retry attempts: {retryCount}</p>
@@ -54,7 +81,11 @@ export const HotTokensContent = () => {
   if (!hotTokens || hotTokens.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <Icon className="w-12 h-12 text-gray-500 mb-4" icon="mdi:database-off" />
+        <Icon
+          className="text-gray-500 mb-4"
+          icon="mdi:database-off"
+          style={{ width: ICON_SIZES.EXTRA_LARGE, height: ICON_SIZES.EXTRA_LARGE }}
+        />
         <h3 className="text-lg font-semibold text-white mb-2">No Data Available</h3>
         <p className="text-gray-400 text-center mb-6">Unable to fetch cryptocurrency data at this time.</p>
         <button
@@ -75,7 +106,7 @@ export const HotTokensContent = () => {
             aria-label="Token details"
             className="flex items-center p-3 hover:bg-white/5 transition-colors cursor-pointer"
             role="button"
-            onClick={() => router.push(`/tokens/${token.id}`)}>
+            onClick={() => handleTokenClick(token)}>
             {/* Rank */}
             <div className="mr-4 flex-shrink-0 text-center text-sm text-gray-400 font-normal">{index + 1}</div>
 
@@ -108,7 +139,7 @@ export const HotTokensContent = () => {
   const desktop = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
       {hotTokens.map((token) => (
-        <TokenCardNew
+        <TokenCard
           key={token.id}
           change={token.change}
           coinId={token.id}

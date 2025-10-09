@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 /**
  * Interface for Birdeye OHLCV data point
@@ -77,7 +77,7 @@ export function usePriceHistory(tokenId: string, days: number | "max") {
   const [error, setError] = useState<string | null>(null);
   const [isFallbackData, setIsFallbackData] = useState(false);
 
-  const fetchPriceHistory = async () => {
+  const fetchPriceHistory = useCallback(async () => {
     if (!tokenId) return;
 
     try {
@@ -85,10 +85,25 @@ export function usePriceHistory(tokenId: string, days: number | "max") {
       setError(null);
 
       const response = await fetch(`/api/crypto/price-history?id=${tokenId}&days=${days === "max" ? "max" : days}`);
+
+      // Log response details for debugging
+      console.log(`Fetching price history for ${tokenId} (${days} days)`, {
+        status: response.status,
+        ok: response.ok,
+      });
+
       const result: BirdeyePriceHistoryData = await response.json();
 
-      if (!response.ok || !result.success) {
-        throw new Error("Failed to fetch price history");
+      if (!response.ok) {
+        const errorMsg = (result as any).error || `HTTP ${response.status}: Failed to fetch price history`;
+
+        throw new Error(errorMsg);
+      }
+
+      if (!result.success) {
+        const errorMsg = (result as any).error || "API returned success: false";
+
+        throw new Error(errorMsg);
       }
 
       // Check if we're using fallback data
@@ -105,6 +120,7 @@ export function usePriceHistory(tokenId: string, days: number | "max") {
         firstPoint: transformedData[0],
         lastPoint: transformedData[transformedData.length - 1],
         timeRange: result.timeRange,
+        isFallback,
       });
 
       setChartData(transformedData);
@@ -112,20 +128,28 @@ export function usePriceHistory(tokenId: string, days: number | "max") {
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch price history";
 
       setError(errorMessage);
-      console.error("Price history fetch error:", err);
+      console.error("Price history fetch error:", {
+        error: err,
+        tokenId,
+        days,
+        message: errorMessage,
+      });
+
+      // Set empty chart data on error
+      setChartData([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [tokenId, days]);
 
-  const retry = () => {
+  const retry = useCallback(() => {
     setError(null);
     fetchPriceHistory();
-  };
+  }, [fetchPriceHistory]);
 
   useEffect(() => {
     fetchPriceHistory();
-  }, [tokenId, days]);
+  }, [fetchPriceHistory]);
 
   return {
     chartData,

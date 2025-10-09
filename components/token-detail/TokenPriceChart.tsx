@@ -56,8 +56,29 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
               <p className="text-2xl font-semibold text-white">{price}</p>
             </div>
           </div>
-          <div className="h-48 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
+          <div className="h-48 relative overflow-hidden rounded">
+            {/* Simulated chart skeleton */}
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-800/30 to-gray-800/10" />
+            <svg className="w-full h-full opacity-20 animate-pulse" preserveAspectRatio="none" viewBox="0 0 400 200">
+              <path
+                className="text-gray-500"
+                d="M0,150 Q40,120 80,130 T160,110 Q200,100 240,120 T320,100 Q360,110 400,90"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              />
+              <path
+                d="M0,150 Q40,120 80,130 T160,110 Q200,100 240,120 T320,100 Q360,110 400,90 L400,200 L0,200 Z"
+                fill="url(#skeletonGradient)"
+                opacity="0.3"
+              />
+              <defs>
+                <linearGradient id="skeletonGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.3" />
+                  <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
         </div>
       </Card>
@@ -143,7 +164,7 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
         </div>
 
         {/* Chart */}
-        <div className="h-48 w-full">
+        <div className="h-48 w-full select-none" style={{ WebkitTapHighlightColor: "transparent" }}>
           <ResponsiveContainer height="100%" width="100%">
             <AreaChart data={transformedChartData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
               <defs>

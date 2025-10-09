@@ -5,9 +5,12 @@ import { useMediaQuery } from "usehooks-ts";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
 
-import { TokenCardNew } from "./TokenCardNew";
+import { TokenCard } from "./TokenCard";
+import { TokenCardSkeletonGrid, TokenCardSkeletonStack } from "./TokenCardSkeleton";
 
 import { useCryptoData } from "@/lib/hooks/useCryptoData";
+import { BREAKPOINTS } from "@/lib/constants";
+import { useBatchPrefetch } from "@/lib/hooks/usePrefetch";
 
 const getChangeConfig = (value: number) => {
   const isPositive = value >= 0;
@@ -35,22 +38,23 @@ const ChangeIndicator = React.memo(({ value }: { value: number }) => {
 ChangeIndicator.displayName = "ChangeIndicator";
 
 export const VolumeContent = () => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useMediaQuery(BREAKPOINTS.MOBILE);
   const router = useRouter();
+  const { prefetchTokens } = useBatchPrefetch();
 
-  // Live crypto data from CoinGecko
+  // Live crypto data from Birdeye
   const { volume, loading, error } = useCryptoData();
+
+  // Prefetch all visible volume tokens when they load
+  React.useEffect(() => {
+    if (volume && volume.length > 0) {
+      prefetchTokens(volume);
+    }
+  }, [volume, prefetchTokens]);
 
   // Loading state
   if (loading) {
-    return (
-      <div className="bg-white/5 backdrop-blur-[10px] border border-white/10 rounded-2xl overflow-hidden p-6">
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white" />
-          <span className="ml-3 text-white">Loading live data...</span>
-        </div>
-      </div>
-    );
+    return isMobile ? <TokenCardSkeletonStack count={4} /> : <TokenCardSkeletonGrid count={4} />;
   }
 
   // Error state
@@ -75,7 +79,7 @@ export const VolumeContent = () => {
   const mobile = () => (
     <div className="space-y-4">
       {volume.map((token, index) => (
-        <TokenCardNew
+        <TokenCard
           key={index}
           change={token.change}
           coinId={token.id}
@@ -91,7 +95,7 @@ export const VolumeContent = () => {
   const desktop = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
       {volume.map((token) => (
-        <TokenCardNew
+        <TokenCard
           key={token.id}
           change={token.change}
           coinId={token.id}

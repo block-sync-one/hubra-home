@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 
 import { gainers, losers, hotTokens, volume } from "@/lib/constants/tabs-data";

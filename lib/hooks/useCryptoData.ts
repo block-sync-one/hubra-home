@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { formatBigNumbers } from "../utils";
 import { useCurrency } from "../context/currency-format";
+
+import { INTERVALS } from "@/lib/constants";
 
 /**
  * Comprehensive cryptocurrency market data interface
@@ -208,48 +210,57 @@ export function useCryptoData() {
   const [retryCount, setRetryCount] = useState(0);
 
   // Transform function to convert API data to UI format
-  const transformCryptoData = (data: CryptoData[]): any[] => {
-    return data.map((crypto) => ({
-      id: crypto.id,
-      name: crypto.name,
-      symbol: crypto.symbol.toUpperCase(),
-      price: formatPrice(crypto.current_price, true),
-      change: fixedNumber(crypto.price_change_percentage_24h || 0),
-      volume: formatBigNumbers(crypto.total_volume),
-      imgUrl: crypto.image,
-      marketCap: formatBigNumbers(crypto.market_cap),
-      rank: crypto.market_cap_rank,
-    }));
-  };
+  const transformCryptoData = useCallback(
+    (data: CryptoData[]): any[] => {
+      return data.map((crypto) => ({
+        id: crypto.id,
+        name: crypto.name,
+        symbol: crypto.symbol.toUpperCase(),
+        price: formatPrice(crypto.current_price, true),
+        change: fixedNumber(crypto.price_change_percentage_24h || 0),
+        volume: formatBigNumbers(crypto.total_volume),
+        imgUrl: crypto.image,
+        marketCap: formatBigNumbers(crypto.market_cap),
+        rank: crypto.market_cap_rank,
+      }));
+    },
+    [formatPrice]
+  );
 
   // Transform trending data to UI format
-  const transformTrendingData = (coins: any[]): any[] => {
-    return coins.map((coin: any) => {
-      const item = coin.item || coin;
-      const data = item.data || {};
+  const transformTrendingData = useCallback(
+    (coins: any[]): any[] => {
+      return coins.map((coin: any) => {
+        const item = coin.item || coin;
+        const data = item.data || {};
 
-      return {
-        id: item.id || item.coin_id,
-        name: item.name,
-        symbol: (item.symbol || "").toUpperCase(),
-        price: formatPrice(data.price || 0, true),
-        change: fixedNumber(data.price_change_percentage_24h?.usd || 0),
-        volume: data.total_volume || "N/A",
-        imgUrl: item.large || item.thumb || item.small || "",
-        marketCap: data.market_cap || "N/A",
-        rank: item.market_cap_rank || 0,
-      };
-    });
-  };
+        return {
+          id: item.id || item.coin_id,
+          name: item.name,
+          symbol: (item.symbol || "").toUpperCase(),
+          price: formatPrice(data.price || 0, true),
+          change: fixedNumber(data.price_change_percentage_24h?.usd || 0),
+          volume: data.total_volume || "N/A",
+          imgUrl: item.large || item.thumb || item.small || "",
+          marketCap: data.market_cap || "N/A",
+          rank: item.market_cap_rank || 0,
+        };
+      });
+    },
+    [formatPrice]
+  );
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       setIsFallbackData(false);
 
       // Fetch top 100 cryptocurrencies from API route
-      const response = await fetch("/api/crypto/markets?limit=100");
+      // Next.js will automatically cache this for 2 minutes based on the API route's revalidate setting
+      const response = await fetch("/api/crypto/markets?limit=100", {
+        next: { revalidate: 120 }, // Cache for 2 minutes - Next.js will return cached response
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch market data: ${response.status}`);
@@ -272,7 +283,9 @@ export function useCryptoData() {
       let trendingTokens: any[] = [];
 
       try {
-        const trendingResponse = await fetch("/api/crypto/trending");
+        const trendingResponse = await fetch("/api/crypto/trending", {
+          next: { revalidate: 120 }, // Cache for 2 minutes
+        });
 
         if (trendingResponse.ok) {
           const trendingData = await trendingResponse.json();
@@ -340,22 +353,22 @@ export function useCryptoData() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [transformCryptoData, transformTrendingData]);
 
-  const retryFetch = () => {
+  const retryFetch = useCallback(() => {
     setError(null);
     setRetryCount(0);
     fetchData();
-  };
+  }, [fetchData]);
 
   useEffect(() => {
     fetchData();
 
     // Refresh data every 2 minutes
-    const interval = setInterval(fetchData, 2 * 60 * 1000);
+    const interval = setInterval(fetchData, INTERVALS.REFRESH_DATA);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchData]);
 
   return {
     hotTokens,

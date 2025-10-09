@@ -2,11 +2,13 @@ import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
+import { WebVitals } from "@/components/WebVitals";
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
@@ -79,7 +81,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="w-full px-6 md:px-10 flex flex-col">{children}</main>
           </div>
         </Providers>
+        <WebVitals />
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
