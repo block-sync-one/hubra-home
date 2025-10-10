@@ -73,8 +73,25 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
 async function getTokenData(tokenAddress: string) {
   try {
     // Build absolute URL for server-side fetching
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.VERCEL_URL || "http://localhost:3000";
-    const apiUrl = `${baseUrl.startsWith("http") ? baseUrl : `https://${baseUrl}`}/api/${tokenAddress}`;
+    // Priority: NEXT_PUBLIC_SITE_URL -> VERCEL_URL -> localhost
+    let baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+    if (!baseUrl && process.env.VERCEL_URL) {
+      // VERCEL_URL doesn't include protocol, add https://
+      baseUrl = `https://${process.env.VERCEL_URL}`;
+    }
+
+    if (!baseUrl) {
+      // Fallback to localhost for local development
+      baseUrl = "http://localhost:3000";
+    }
+
+    // Ensure baseUrl doesn't have trailing slash
+    baseUrl = baseUrl.replace(/\/$/, "");
+
+    const apiUrl = `${baseUrl}/api/${tokenAddress}`;
+
+    console.log("Fetching token data from:", apiUrl);
 
     const response = await fetch(apiUrl, {
       next: { revalidate: 120 },
@@ -84,14 +101,17 @@ async function getTokenData(tokenAddress: string) {
     });
 
     if (!response.ok) {
-      console.error(`Failed to fetch token data: ${response.status}`);
+      console.error(`Failed to fetch token data: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+
+      console.error("Error response:", errorText);
 
       return null;
     }
 
     const res = await response.json();
 
-    console.log("response====>", res);
+    console.log("Token data fetched successfully:", res.symbol || "unknown");
 
     return res;
   } catch (error) {
