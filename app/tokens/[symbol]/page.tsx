@@ -72,12 +72,22 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
 // Fetch token data server-side with smart caching
 async function getTokenData(tokenAddress: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    // Construct absolute URL for server-side fetches
+    // VERCEL_URL is automatically set by Vercel
+    const protocol = process.env.VERCEL_URL ? "https" : "http";
+    const host = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https?:\/\//, "") || "localhost:3000";
+    const baseUrl = `${protocol}://${host}`;
+
     const response = await fetch(`${baseUrl}/api/crypto/token/${tokenAddress}`, {
       next: { revalidate: 120 },
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {
+      console.error(`Failed to fetch token data: ${response.status}`);
+
       return null;
     }
 
