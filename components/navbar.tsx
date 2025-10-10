@@ -1,10 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Navbar as HeroUINavbar, NavbarContent, NavbarMenu, NavbarBrand, NavbarItem, NavbarMenuItem } from "@heroui/navbar";
-import { Button } from "@heroui/button";
-import { Link } from "@heroui/link";
-import { Image } from "@heroui/image";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/dropdown";
+import {
+  Navbar as HeroUINavbar,
+  NavbarContent,
+  NavbarMenu,
+  NavbarBrand,
+  NavbarItem,
+  NavbarMenuItem,
+  Button,
+  Link,
+  Image,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/react";
 import NextLink from "next/link";
 import { Icon } from "@iconify/react";
 
