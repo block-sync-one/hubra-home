@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { fetchBirdeyeData } from "@/lib/services/birdeye";
-import { BirdEyeTokenOverview } from "@/lib/types/birdeye";
+import { fetchTokenData } from "@/lib/data/token-data";
 
 /**
  * API route to fetch detailed token information by address
@@ -25,37 +24,24 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const { token } = await params;
 
-    console.log("token=====>", token);
+    console.log("API route - fetching token:", token);
 
     if (!token) {
       return NextResponse.json({ error: "Token address is required" }, { status: 400 });
     }
 
-    // Fetch token overview from Birdeye (Solana network)
-    const overviewResponse = await fetchBirdeyeData<BirdEyeTokenOverview>(
-      "/defi/token_overview",
-      {
-        address: token,
-        ui_amount_mode: "scaled",
-        // chain parameter will be auto-added by buildBirdeyeUrl
-      },
-      {
-        cache: "no-store", // Disable cache for fresh data
-      }
-    );
+    // Use shared data fetching function
+    const tokenData = await fetchTokenData(token, { revalidate: 0 }); // No cache for API route
 
-    if (!overviewResponse.success || !overviewResponse.data) {
+    if (!tokenData) {
       console.warn(`Token not found: ${token}`);
 
       return NextResponse.json({ error: "Token not found" }, { status: 404 });
     }
-    console.log("overviewResponse.data=====>", overviewResponse.data);
 
-    const tokenRes = overviewResponse.data;
+    console.log("API route - token data fetched:", tokenData.symbol);
 
-    tokenRes.name === "Wrapped SOL" ? (tokenRes.name = "Solana") : tokenRes.name;
-
-    return NextResponse.json(tokenRes, {
+    return NextResponse.json(tokenData, {
       headers: {
         "Cache-Control": "public, s-maxage=120, stale-while-revalidate=240",
         "X-Fallback-Data": "false",

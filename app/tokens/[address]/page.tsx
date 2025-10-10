@@ -3,6 +3,8 @@ import { Metadata } from "next";
 
 import { TokenDetailPageClient } from "./TokenDetailPageClient";
 
+import { fetchTokenData } from "@/lib/data/token-data";
+
 interface TokenDetailPageProps {
   params: Promise<{ address: string }>;
 }
@@ -70,55 +72,9 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
 }
 
 // Fetch token data server-side with smart caching
+// Uses shared data fetching function - no HTTP request needed!
 async function getTokenData(tokenAddress: string) {
-  try {
-    // Build absolute URL for server-side fetching
-    // Priority: NEXT_PUBLIC_SITE_URL -> VERCEL_URL -> localhost
-    let baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
-
-    if (!baseUrl && process.env.VERCEL_URL) {
-      // VERCEL_URL doesn't include protocol, add https://
-      baseUrl = `https://${process.env.VERCEL_URL}`;
-    }
-
-    if (!baseUrl) {
-      // Fallback to localhost for local development
-      baseUrl = "http://localhost:3000";
-    }
-
-    // Ensure baseUrl doesn't have trailing slash
-    baseUrl = baseUrl.replace(/\/$/, "");
-
-    const apiUrl = `${baseUrl}/api/${tokenAddress}`;
-
-    console.log("Fetching token data from:", apiUrl);
-
-    const response = await fetch(apiUrl, {
-      next: { revalidate: 120 },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      console.error(`Failed to fetch token data: ${response.status} ${response.statusText}`);
-      const errorText = await response.text();
-
-      console.error("Error response:", errorText);
-
-      return null;
-    }
-
-    const res = await response.json();
-
-    console.log("Token data fetched successfully:", res.symbol || "unknown");
-
-    return res;
-  } catch (error) {
-    console.error("Error fetching token data:", error);
-
-    return null;
-  }
+  return await fetchTokenData(tokenAddress, { revalidate: 120 });
 }
 
 /**

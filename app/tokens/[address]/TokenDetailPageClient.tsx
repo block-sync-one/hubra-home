@@ -54,7 +54,7 @@ const TokenDescription = dynamic(
 );
 
 interface TokenDetailPageClientProps {
-  apiTokenData: TokenOverviewData;
+  apiTokenData: TokenOverviewData | null;
 }
 
 export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientProps) {
@@ -63,6 +63,24 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
   const [selectedPeriod, setSelectedPeriod] = useState("24h");
 
   const periods = ["24h", "7d", "1M", "3M", "1Y", "All"];
+
+  // Handle case when token data is not available
+  if (!apiTokenData) {
+    return (
+      <div className="min-h-screen text-white md:max-w-7xl mx-auto flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Token Not Found</h2>
+          <p className="text-gray-400 mb-6">Unable to load token data. Please try again later.</p>
+          <button
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+            type="button"
+            onClick={() => router.push("/tokens")}>
+            Back to Tokens
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Helper functions
   const shortenAddress = (address: string) => {
