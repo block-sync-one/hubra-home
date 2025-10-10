@@ -53,3 +53,21 @@ export interface TokenDetail {
   website: string;
   twitter: string;
 }
+
+/**
+ * Aggregated token data for application use
+ */
+export interface AppTokenData {
+  tokenName: string;
+  tokenSymbol: string;
+  tokenAddress: string;
+  priceChange24h: number;
+  marketCap: number;
+  volume24h: number;
+  supply: number;
+  description: string;
+  exchangeRate: number; // Current price
+  holders: number;
+  sellVolume: number | null;
+  buyVolume: number | null;
+}

@@ -1,0 +1,208 @@
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Icon } from "@iconify/react";
+import dynamic from "next/dynamic";
+
+import { useCurrency } from "@/lib/context/currency-format";
+import {
+  TokenHeaderSkeleton,
+  TokenInfoSkeleton,
+  TokenStatsSkeleton,
+  TokenPriceChartSkeleton,
+  VolumeStatsSkeleton,
+  TradingSectionSkeleton,
+  TokenDescriptionSkeleton,
+} from "@/components/token-detail/TokenDetailSkeleton";
+import { BirdEyeTokenOverview } from "@/lib/types/birdeye";
+
+// Type for the data portion of BirdEyeTokenOverview
+type TokenOverviewData = BirdEyeTokenOverview["data"];
+
+// Lazy load components with proper skeletons
+const TokenHeader = dynamic(() => import("@/components/token-detail/TokenHeader").then((mod) => ({ default: mod.TokenHeader })), {
+  loading: () => <TokenHeaderSkeleton />,
+});
+
+const TokenInfo = dynamic(() => import("@/components/token-detail/TokenHeader").then((mod) => ({ default: mod.TokenInfo })), {
+  loading: () => <TokenInfoSkeleton />,
+});
+
+const TokenStats = dynamic(() => import("@/components/token-detail/TokenHeader").then((mod) => ({ default: mod.TokenStats })), {
+  loading: () => <TokenStatsSkeleton />,
+});
+
+const TokenPriceChart = dynamic(
+  () => import("@/components/token-detail/TokenPriceChart").then((mod) => ({ default: mod.TokenPriceChart })),
+  {
+    loading: () => <TokenPriceChartSkeleton />,
+  }
+);
+
+const VolumeStats = dynamic(() => import("@/components/token-detail/VolumeStats").then((mod) => ({ default: mod.VolumeStats })), {
+  loading: () => <VolumeStatsSkeleton />,
+});
+
+const TradingSection = dynamic(() => import("@/components/token-detail/TradingSection").then((mod) => ({ default: mod.TradingSection })), {
+  loading: () => <TradingSectionSkeleton />,
+});
+
+const TokenDescription = dynamic(
+  () => import("@/components/token-detail/TokenDescription").then((mod) => ({ default: mod.TokenDescription })),
+  { loading: () => <TokenDescriptionSkeleton /> }
+);
+
+interface TokenDetailPageClientProps {
+  apiTokenData: TokenOverviewData;
+}
+
+export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientProps) {
+  const { formatPrice } = useCurrency();
+  const router = useRouter();
+  const [selectedPeriod, setSelectedPeriod] = useState("24h");
+
+  const periods = ["24h", "7d", "1M", "3M", "1Y", "All"];
+
+  // Helper functions
+  const shortenAddress = (address: string) => {
+    if (!address || address.length < 10) return "...";
+
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+  };
+
+  const formatNumber = (value: number | undefined, prefix = "") => {
+    if (!value) return "N/A";
+
+    return prefix + formatPrice(value);
+  };
+
+  const formatBigNumber = (value: number | undefined) => {
+    if (!value) return "N/A";
+    if (value >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
+    if (value >= 1e6) return `${(value / 1e6).toFixed(2)}M`;
+    if (value >= 1e3) return `${(value / 1e3).toFixed(2)}K`;
+
+    return value.toFixed(2);
+  };
+
+  const handleSwap = () => {
+    console.log("Swap clicked");
+  };
+
+  const handleWebsiteClick = () => {
+    if (apiTokenData.extensions?.website) {
+      window.open(apiTokenData.extensions.website, "_blank");
+    }
+  };
+
+  const handleTwitterClick = () => {
+    if (apiTokenData.extensions?.twitter) {
+      window.open(apiTokenData.extensions.twitter, "_blank");
+    }
+  };
+
+  // Calculate buy/sell percentages
+  const buyVolume = apiTokenData.vBuy24hUSD ?? 0;
+  const sellVolume = apiTokenData.vSell24hUSD ?? 0;
+  const totalVolume = buyVolume + sellVolume;
+  const buyPercent = totalVolume > 0 ? (buyVolume / totalVolume) * 100 : 50;
+  const sellPercent = totalVolume > 0 ? (sellVolume / totalVolume) * 100 : 50;
+
+  return (
+    <div className="min-h-screen text-white md:max-w-7xl mx-auto">
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-2 text-sm mb-6 text-gray-400">
+        <button
+          className="cursor-pointer hover:text-white transition-colors bg-transparent border-none p-0 text-gray-400 text-sm"
+          type="button"
+          onClick={() => router.push("/tokens")}>
+          Tokens
+        </button>
+        <Icon className="h-4 w-4" icon="lucide:chevron-right" />
+        <span className="text-white">{apiTokenData.name}</span>
+      </div>
+
+      {/* Token Header - Desktop only */}
+      <div className="hidden md:block">
+        <TokenHeader
+          change={apiTokenData.priceChange24hPercent?.toFixed(2) || "0"}
+          imgUrl={apiTokenData.logoURI || "/logo.svg"}
+          marketCap={formatNumber(apiTokenData.marketCap)}
+          marketCapChange={apiTokenData.priceChange24hPercent || 0}
+          name={apiTokenData.name}
+          supply={formatBigNumber(apiTokenData.totalSupply)}
+          symbol={apiTokenData.symbol}
+          volume24h={formatNumber(apiTokenData.v24hUSD)}
+          volume24hChange={apiTokenData.v24hChangePercent || 0}
+        />
+      </div>
+
+      {/* Token Info - Mobile only */}
+      <div className="md:hidden mb-8">
+        <TokenInfo imgUrl={apiTokenData.logoURI || "/logo.svg"} name={apiTokenData.name} symbol={apiTokenData.symbol} />
+      </div>
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Chart and Stats */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Price Chart */}
+          <TokenPriceChart
+            change={apiTokenData.priceChange24hPercent?.toFixed(2) || "0"}
+            periods={periods}
+            price={formatPrice(apiTokenData.price || 0, true)}
+            selectedPeriod={selectedPeriod}
+            tokenId={apiTokenData.address}
+            onPeriodChange={setSelectedPeriod}
+          />
+
+          {/* Token Stats - Mobile only */}
+          <div className="md:hidden">
+            <TokenStats
+              change={apiTokenData.priceChange24hPercent?.toFixed(2) || "0"}
+              marketCap={formatNumber(apiTokenData.marketCap)}
+              marketCapChange={apiTokenData.priceChange24hPercent || 0}
+              supply={formatBigNumber(apiTokenData.totalSupply)}
+              volume24h={formatNumber(apiTokenData.v24hUSD)}
+              volume24hChange={apiTokenData.v24hChangePercent || 0}
+            />
+          </div>
+
+          {/* Volume Stats */}
+          <VolumeStats
+            buyVolume={formatNumber(apiTokenData.vBuy24hUSD)}
+            buyVolumePercent={buyPercent}
+            exchangeRate={`1 ${apiTokenData.symbol} ≈ ${formatPrice(apiTokenData.price || 0, true)}`}
+            holders={(apiTokenData.holder || 0).toLocaleString()}
+            sellVolume={formatNumber(apiTokenData.vSell24hUSD)}
+            sellVolumePercent={sellPercent}
+            tokenAddress={shortenAddress(apiTokenData.address)}
+            tradesCount={(apiTokenData.trade24h || 0).toLocaleString()}
+          />
+        </div>
+
+        {/* Right Column - Trading and Description */}
+        <div className="space-y-6">
+          {/* Trading Section */}
+          <TradingSection
+            currentPrice={apiTokenData.price || 0}
+            tokenImgUrl={apiTokenData.logoURI || "/logo.svg"}
+            tokenName={apiTokenData.name}
+            tokenSymbol={apiTokenData.symbol}
+            onSwap={handleSwap}
+          />
+
+          {/* Description */}
+          <TokenDescription
+            description={
+              apiTokenData.extensions?.description || `${apiTokenData.name} (${apiTokenData.symbol}) is a token on the Solana blockchain.`
+            }
+            onTwitterClick={handleTwitterClick}
+            onWebsiteClick={handleWebsiteClick}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}

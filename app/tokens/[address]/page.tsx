@@ -4,26 +4,26 @@ import { Metadata } from "next";
 import { TokenDetailPageClient } from "./TokenDetailPageClient";
 
 interface TokenDetailPageProps {
-  params: Promise<{ symbol: string }>;
+  params: Promise<{ address: string }>;
 }
 
 /**
  * Generate dynamic metadata for token detail pages
  */
 export async function generateMetadata({ params }: TokenDetailPageProps): Promise<Metadata> {
-  const { symbol } = await params;
+  const { address } = await params;
 
   // Fetch token data for metadata
-  const tokenData = await getTokenData(symbol);
+  const tokenData = await getTokenData(address);
 
-  const tokenName = tokenData?.data?.name || "Token";
-  const tokenSymbol = tokenData?.data?.symbol || "";
-  const tokenPrice = tokenData?.data?.price ? `$${tokenData.data.price.toFixed(2)}` : "";
-  const tokenChange = tokenData?.data?.price_change_24h_percent || 0;
+  const tokenName = tokenData?.name || "Token";
+  const tokenSymbol = tokenData?.symbol || "";
+  const tokenPrice = tokenData?.price ? `$${tokenData.price.toFixed(2)}` : "";
+  const tokenChange = tokenData?.priceChange24hPercent || 0;
   const changeText = tokenChange >= 0 ? `+${tokenChange.toFixed(2)}%` : `${tokenChange.toFixed(2)}%`;
 
   const title = `${tokenName} (${tokenSymbol}) Price ${tokenPrice} ${changeText} | Hubra`;
-  const description = `Live ${tokenName} (${tokenSymbol}) price, market cap, trading volume, and price charts. ${tokenData?.data?.extensions?.description || `Track ${tokenName} performance on Solana blockchain.`}`;
+  const description = `Live ${tokenName} (${tokenSymbol}) price, market cap, trading volume, and price charts. ${tokenData?.extensions?.description || `Track ${tokenName} performance on Solana blockchain.`}`;
 
   return {
     title,
@@ -43,10 +43,10 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
       title: `${tokenName} (${tokenSymbol}) - ${tokenPrice} ${changeText}`,
       description,
       type: "website",
-      url: `https://hubra.app/tokens/${symbol}`,
+      url: `https://hubra.app/tokens/${address}`,
       images: [
         {
-          url: tokenData?.data?.logo_uri || "/og-token-default.png",
+          url: tokenData?.logoURI || "/og-token-default.png",
           width: 1200,
           height: 630,
           alt: `${tokenName} (${tokenSymbol}) Logo`,
@@ -57,10 +57,10 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
       card: "summary_large_image",
       title: `${tokenName} (${tokenSymbol}) - ${tokenPrice}`,
       description: `${tokenName} price ${tokenPrice} ${changeText}. Live market data on Hubra.`,
-      images: [tokenData?.data?.logo_uri || "/og-token-default.png"],
+      images: [tokenData?.logoURI || "/og-token-default.png"],
     },
     alternates: {
-      canonical: `https://hubra.app/tokens/${symbol}`,
+      canonical: `https://hubra.app/tokens/${address}`,
     },
     robots: {
       index: true,
@@ -72,13 +72,14 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
 // Fetch token data server-side with smart caching
 async function getTokenData(tokenAddress: string) {
   try {
+    console.log("tokenAddress", tokenAddress);
     // Construct absolute URL for server-side fetches
     // VERCEL_URL is automatically set by Vercel
     const protocol = process.env.VERCEL_URL ? "https" : "http";
     const host = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_BASE_URL?.replace(/^https?:\/\//, "") || "localhost:3000";
     const baseUrl = `${protocol}://${host}`;
 
-    const response = await fetch(`${baseUrl}/api/crypto/token/${tokenAddress}`, {
+    const response = await fetch(`${baseUrl}/api/${tokenAddress}`, {
       next: { revalidate: 120 },
       headers: {
         "Content-Type": "application/json",
@@ -91,7 +92,11 @@ async function getTokenData(tokenAddress: string) {
       return null;
     }
 
-    return await response.json();
+    const res = await response.json();
+
+    console.log("response====>", res);
+
+    return res;
   } catch (error) {
     console.error("Error fetching token data:", error);
 
@@ -101,13 +106,13 @@ async function getTokenData(tokenAddress: string) {
 
 /**
  * Server component - SSR with token data prefetching
- * Expects symbol to be a Solana address (not a name/slug)
+ * Expects address to be a Solana address
  */
 export default async function TokenDetailPage({ params }: TokenDetailPageProps) {
-  const { symbol } = await params;
+  const { address } = await params;
 
-  // symbol is now the token address (e.g., "So111...112")
-  const tokenAddress = symbol;
+  // address is the token address (e.g., "So111...112")
+  const tokenAddress = address;
 
   // Prefetch token data on server (SSR - NO LOADING SPINNER!)
   const apiTokenData = await getTokenData(tokenAddress);
@@ -124,7 +129,7 @@ export default async function TokenDetailPage({ params }: TokenDetailPageProps) 
         "@type": "Product",
         "name": apiTokenData.name,
         "description": apiTokenData.extensions?.description || `${apiTokenData.name} cryptocurrency token on Solana blockchain`,
-        "image": apiTokenData.logo_uri,
+        "image": apiTokenData.logoURI,
         "brand": {
           "@type": "Brand",
           "name": "Solana",
@@ -134,12 +139,12 @@ export default async function TokenDetailPage({ params }: TokenDetailPageProps) 
           "price": apiTokenData.price,
           "priceCurrency": "USD",
           "availability": "https://schema.org/InStock",
-          "url": `https://hubra.app/tokens/${symbol}`,
+          "url": `https://hubra.app/tokens/${address}`,
         },
-        "aggregateRating": apiTokenData.market_cap
+        "aggregateRating": apiTokenData.marketCap
           ? {
               "@type": "AggregateRating",
-              "ratingValue": apiTokenData.price_change_24h_percent > 0 ? "4.5" : "3.5",
+              "ratingValue": apiTokenData.priceChange24hPercent > 0 ? "4.5" : "3.5",
               "reviewCount": apiTokenData.holder || 1000,
             }
           : undefined,
@@ -147,17 +152,17 @@ export default async function TokenDetailPage({ params }: TokenDetailPageProps) 
           {
             "@type": "PropertyValue",
             "name": "Market Cap",
-            "value": apiTokenData.market_cap,
+            "value": apiTokenData.marketCap,
           },
           {
             "@type": "PropertyValue",
             "name": "24h Volume",
-            "value": apiTokenData.volume_24h,
+            "value": apiTokenData.v24hUSD,
           },
           {
             "@type": "PropertyValue",
             "name": "24h Change",
-            "value": apiTokenData.price_change_24h_percent,
+            "value": apiTokenData.priceChange24hPercent,
           },
         ],
       }
@@ -184,7 +189,7 @@ export default async function TokenDetailPage({ params }: TokenDetailPageProps) 
         "@type": "ListItem",
         "position": 3,
         "name": apiTokenData?.name || "Token",
-        "item": `https://hubra.app/tokens/${symbol}`,
+        "item": `https://hubra.app/tokens/${address}`,
       },
     ],
   };
@@ -194,12 +199,7 @@ export default async function TokenDetailPage({ params }: TokenDetailPageProps) 
     <>
       {jsonLd && <script dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} id="token-jsonld" type="application/ld+json" />}
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
-      <TokenDetailPageClient
-        apiTokenData={apiTokenData}
-        symbol={symbol}
-        tokenAddress={tokenAddress}
-        tokenName={apiTokenData?.name || "Token"}
-      />
+      <TokenDetailPageClient apiTokenData={apiTokenData} />
     </>
   );
 }
