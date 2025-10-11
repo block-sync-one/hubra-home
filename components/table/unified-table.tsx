@@ -249,15 +249,19 @@ const UnifiedTable = <T extends Record<string, any>>({
         sortDescriptor={sortDescriptor}
         onSortChange={handleSortChange}>
         <TableHeader className="">
-          {headerColumns?.map((column) => (
+          {headerColumns?.map((column, index) => (
             <TableColumn
               key={column.key}
               allowsSorting={column.sortable}
               className={`
                 ${column.showHeader !== false ? "hidden lg:table-cell" : ""}
                 bg-gray-30  
-                text-gray-400 ${column.align === "left" ? "text-left" : "text-right"}
+                text-gray-400 
+                text-left
                 ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
+                ${index === 0 ? "pl-3" : ""} 
+                px-0
+                [&>div]:flex [&>div]:items-center [&>div]:gap-1
               `}>
               {column.label}
             </TableColumn>
@@ -275,7 +279,7 @@ const UnifiedTable = <T extends Record<string, any>>({
               {configuration.columns.map((column) => (
                 <TableCell
                   key={column.key}
-                  className={`border-none h-[40px] lg:h-[60px] first:text-left text-right lg:p-auto px-0 pb-4
+                  className={`border-none h-[40px] lg:h-[80px] text-left lg:p-auto px-0 pb-4
                     ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
                   `}>
                   {(() => {

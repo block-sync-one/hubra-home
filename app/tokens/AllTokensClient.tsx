@@ -23,7 +23,7 @@ export default function AllTokensClient({ initialAllTokens, initialGainers, init
   const { setCurrentToken } = useCurrentToken();
   const { formatPrice } = useCurrency();
 
-  const tableTabData = [allAssets, gainers, losers, newlyListed];
+  const tableTabData = [allAssets, losers, gainers, newlyListed];
 
   // Format tokens with user's currency preference (client-side)
   const formatTokens = useCallback(

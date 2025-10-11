@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react";
 import React from "react";
 
 import { useCurrency } from "@/lib/context/currency-format";
+import { formatBigNumbers } from "@/lib/utils";
 
 export const PriceDisplay = ({ value, longNumbers = false }: { value: number; longNumbers?: boolean }) => {
   const { formatPrice } = useCurrency();
@@ -43,7 +44,7 @@ export const ChangeIndicator = React.memo(({ value }: { value: number }) => {
   return (
     <div className={`${config.bgColor} rounded-xl px-1 py-0.5 flex items-center gap-1`}>
       <Icon className={`w-3 h-3 ${config.iconColor}`} icon={config.icon} />
-      <span className={`text-xs font-medium ${config.textColor}`}>{Math.abs(value)}%</span>
+      <span className={`text-xs font-medium ${config.textColor}`}>{formatBigNumbers(Math.abs(value))}%</span>
     </div>
   );
 });

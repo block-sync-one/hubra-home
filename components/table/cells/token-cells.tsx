@@ -2,11 +2,18 @@ import React from "react";
 import { Image, Chip } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
+import { MiniChart } from "./mini-chart";
+
 import { Token } from "@/lib/types/token";
 import { PriceDisplay } from "@/components/price";
 
 export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnKey: string }) => {
   switch (columnKey) {
+    case "rank":
+      return (
+        <div className="text-left text-sm text-gray-400 pl-3">{(item as any)._index !== undefined ? (item as any)._index + 1 : "-"}</div>
+      );
+
     case "token":
       return (
         <div className="flex items-center gap-2">
@@ -24,28 +31,28 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
 
     case "price":
       return (
-        <div className="text-right font-medium flex flex-col items-end gap-1">
+        <div className="text-left font-medium">
           <span className="text-sm text-foreground">{item.price || "N/A"}</span>
         </div>
       );
 
     case "marketCap":
       return (
-        <div className="text-right font-medium flex flex-col items-end">
+        <div className="text-left font-medium">
           <PriceDisplay value={item.marketCap ?? 0} />
         </div>
       );
 
     case "volume":
       return (
-        <div className="text-right font-medium flex flex-col items-end">
+        <div className="text-left font-medium">
           <span className="text-sm text-foreground">{item.volume || "N/A"}</span>
         </div>
       );
 
     case "priceChange24hPct":
       return (
-        <div className="flex justify-end">
+        <div className="flex justify-start">
           <Chip
             className="py-1 h-[30px]"
             color={item.change && item.change > 0 ? "success" : item.change && item.change < 0 ? "danger" : "default"}
@@ -56,6 +63,22 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
               <span>{item.change ? item.change.toFixed(2) : 0}%</span>
             </div>
           </Chip>
+        </div>
+      );
+
+    case "chart":
+      return (
+        <div className="flex justify-start items-center h-12">
+          <MiniChart change={item.change} tokenId={item.id} />
+        </div>
+      );
+
+    case "action":
+      return (
+        <div className="flex justify-end">
+          <span className="px-4 py-2 bg-orange-500/10 text-orange-500 rounded-lg text-sm font-medium cursor-pointer hover:bg-orange-500/20">
+            Buy/Sell
+          </span>
         </div>
       );
 
