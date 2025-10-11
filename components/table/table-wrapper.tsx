@@ -15,31 +15,16 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
   const [filterValue, setFilterValue] = useState("");
   const [tab, setTab] = useState<TabIdType>(tabs[0]?.id || TabId.allAssets);
 
-  // Memoized table data per tab
-  const [tableDataMap, setTableDataMap] = useState<Record<string, any[]>>({});
-
   const currentData = useMemo(() => {
-    return tableDataMap[tab] || [];
-  }, [tableDataMap, tab]);
+    return data?.[tab] || [];
+  }, [data, tab]);
 
-  // Ensure the selected tab is always valid when tabs/data change
   useEffect(() => {
     if (!tabs?.length) return;
     if (!tabs.some((t) => t.id === tab)) {
       setTab(tabs[0].id);
     }
   }, [tabs, tab]);
-
-  // Update tableDataMap when data or tab changes
-  useEffect(() => {
-    if (data && tab) {
-      const newData = data[tab] ?? [];
-
-      setTableDataMap((prev) => {
-        return { ...prev, [tab]: newData };
-      });
-    }
-  }, [data, tab]);
 
   // Reset filter and selected asset when tab changes
   useEffect(() => {

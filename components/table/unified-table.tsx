@@ -242,9 +242,10 @@ const UnifiedTable = <T extends Record<string, any>>({
     <>
       <Table
         aria-label="Data table"
-        className="min-w-full shadow-none border-none [&>div]:border-none [&>div]:shadow-none p-0  "
+        className="min-w-full shadow-none border-none [&>div]:border-none [&>div]:shadow-none p-0 [&_th_svg]:opacity-100"
         classNames={{
           wrapper: "bg-transparent rounded-t-none lg:bg-card p-0 lg:p-4",
+          th: "[&>div>svg]:opacity-100 [&>div>svg]:visible",
         }}
         sortDescriptor={sortDescriptor}
         onSortChange={handleSortChange}>
@@ -254,14 +255,14 @@ const UnifiedTable = <T extends Record<string, any>>({
               key={column.key}
               allowsSorting={column.sortable}
               className={`
-                ${column.showHeader !== false ? "hidden lg:table-cell" : ""}
                 bg-gray-30  
                 text-gray-400 
-                text-left
+                ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"}
                 ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
-                ${index === 0 ? "pl-3" : ""} 
+                ${column.key === "rank" ? "pl-3" : ""} 
                 px-0
                 [&>div]:flex [&>div]:items-center [&>div]:gap-1
+                ${column.align === "center" ? "[&>div]:justify-center" : column.align === "right" ? "[&>div]:justify-end" : ""}
               `}>
               {column.label}
             </TableColumn>
@@ -279,7 +280,7 @@ const UnifiedTable = <T extends Record<string, any>>({
               {configuration.columns.map((column) => (
                 <TableCell
                   key={column.key}
-                  className={`border-none h-[40px] lg:h-[80px] text-left lg:p-auto px-0 pb-4
+                  className={`border-none h-[40px] lg:h-[80px] ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"} lg:p-auto px-0 pb-4
                     ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
                   `}>
                   {(() => {

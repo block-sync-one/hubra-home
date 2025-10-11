@@ -31,14 +31,14 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
 
     case "price":
       return (
-        <div className="text-left font-medium">
+        <div className="text-right font-medium">
           <span className="text-sm text-foreground">{item.price || "N/A"}</span>
         </div>
       );
 
     case "marketCap":
       return (
-        <div className="text-left font-medium">
+        <div className="text-right font-medium">
           <PriceDisplay value={item.marketCap ?? 0} />
         </div>
       );
@@ -52,7 +52,7 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
 
     case "priceChange24hPct":
       return (
-        <div className="flex justify-start">
+        <div className="flex justify-end">
           <Chip
             className="py-1 h-[30px]"
             color={item.change && item.change > 0 ? "success" : item.change && item.change < 0 ? "danger" : "default"}
@@ -60,7 +60,7 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
             variant="flat">
             <div className="flex items-center font-bold gap-1">
               {item.change !== undefined && item.change !== 0 && <Icon icon={item.change > 0 ? "mdi:arrow-up" : "mdi:arrow-down"} />}
-              <span>{item.change ? item.change.toFixed(2) : 0}%</span>
+              <span>{item.change ? Math.abs(item.change).toFixed(2) : 0}%</span>
             </div>
           </Chip>
         </div>
@@ -68,7 +68,7 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
 
     case "chart":
       return (
-        <div className="flex justify-start items-center h-12">
+        <div className="flex justify-end items-center h-12">
           <MiniChart change={item.change} tokenId={item.id} />
         </div>
       );

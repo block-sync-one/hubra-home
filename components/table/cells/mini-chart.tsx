@@ -2,8 +2,6 @@
 
 import React, { useMemo } from "react";
 
-import { usePriceHistory } from "@/lib/hooks/usePriceHistory";
-
 interface MiniChartProps {
   tokenId: string;
   change: number;
@@ -11,22 +9,8 @@ interface MiniChartProps {
   height?: number;
 }
 
-/**
- * Mini sparkline chart for table cells
- * Shows 7-day price history with gradient background (matches Figma design)
- */
 export const MiniChart: React.FC<MiniChartProps> = ({ tokenId, change, width = 133, height = 48 }) => {
-  // Use existing price history hook
-  const { chartData: historyData } = usePriceHistory(tokenId, 7);
-
-  // Extract prices from chart data or use fallback
-  const chartData = useMemo(() => {
-    if (historyData && historyData.length > 0) {
-      return historyData.map((item) => item.price);
-    }
-
-    return generateTrendData(change, 7);
-  }, [historyData, change]);
+  const chartData = useMemo(() => generateTrendData(change, 7), [change]);
 
   if (chartData.length === 0) {
     return <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">-</div>;
