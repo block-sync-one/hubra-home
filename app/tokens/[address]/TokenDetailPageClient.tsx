@@ -106,7 +106,7 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
   };
 
   const handleSwap = () => {
-    console.log("Swap clicked");
+    window.open("https://hubra.app/convert", "_blank");
   };
 
   const handleWebsiteClick = () => {

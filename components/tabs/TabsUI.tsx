@@ -52,7 +52,7 @@ export const TabsUI = React.memo(({ selectedTab, onTabChange, tabsData, classNam
       const color = isSelected ? "primary" : "default";
 
       return (
-        <DropdownItem key={tab.id} color={color} textValue={tab.label}>
+        <DropdownItem key={tab.id} className="text-white hover:bg-white/10" color={color} textValue={tab.label}>
           <div className="flex items-center gap-2">
             {tab.icon && <Icon icon={tab.icon} width={16} />} {tab.label}
             {tab.itemCount && (
@@ -84,21 +84,30 @@ export const TabsUI = React.memo(({ selectedTab, onTabChange, tabsData, classNam
         {tabsData.map(renderTab)}
       </Tabs>
       {!shouldKeepTabOnSmallScreen && (
-        <Dropdown placement="bottom-end">
-          <DropdownTrigger className="mb-4 lg:hidden bg-card">
-            <Button className="min-w-fit capitalize bg-card flex items-center gap-1.5 font-semibold" radius="full" size="md" variant="flat">
+        <Dropdown
+          classNames={{
+            content: "border-none shadow-none",
+          }}
+          placement="bottom-end">
+          <DropdownTrigger className="mb-4 lg:hidden">
+            <Button
+              className="min-w-fit capitalize bg-white/5 backdrop-blur-md text-white flex items-center gap-1.5 font-semibold"
+              radius="full"
+              size="md"
+              variant="flat">
               {selectedTabData?.icon && <Icon icon={selectedTabData.icon} width={16} />} {selectedTabData?.label}
               {selectedTabData?.itemCount && (
                 <Chip className="hidden lg:block" color="primary" size="sm" variant="flat">
                   {selectedTabData.itemCount}
                 </Chip>
               )}
-              <Icon color="gray" icon="lucide:chevron-down" width={16} />
+              <Icon className="text-gray-400" icon="lucide:chevron-down" width={16} />
             </Button>
           </DropdownTrigger>
           <DropdownMenu
             disallowEmptySelection
             aria-label="Single selection"
+            className="bg-black/90 backdrop-blur-md border-none"
             selectedKeys={[selectedTab]}
             selectionMode="single"
             variant="flat"

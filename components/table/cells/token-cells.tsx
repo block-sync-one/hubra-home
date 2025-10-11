@@ -20,7 +20,16 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
           <Image alt={item.symbol} fallbackSrc="/logo.svg" height={32} src={item.imgUrl || "/logo.svg"} width={32} />
           <div className="flex flex-col min-w-0 flex-1 text-left">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-foreground truncate">{item.name || "Unknown"}</span>
+              <span className="text-sm font-semibold text-foreground truncate">
+                {item.name && item.name.length > 12 ? (
+                  <>
+                    <span className="lg:hidden">{item.name.slice(0, 12)}...</span>
+                    <span className="hidden lg:inline">{item.name}</span>
+                  </>
+                ) : (
+                  item.name || "Unknown"
+                )}
+              </span>
             </div>
             <span className="text-xs text-gray-500 dark:text-gray-400 uppercase font-medium tracking-wider">
               {item.symbol || "Unknown"}
@@ -76,9 +85,15 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
     case "action":
       return (
         <div className="flex justify-end">
-          <span className="px-4 py-2 bg-orange-500/10 text-orange-500 rounded-lg text-sm font-medium cursor-pointer hover:bg-orange-500/20">
+          <button
+            className="px-4 py-2 bg-orange-500/10 text-orange-500 rounded-lg text-sm font-medium cursor-pointer hover:bg-orange-500/20 transition-colors"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open("https://hubra.app/convert", "_blank");
+            }}>
             Buy/Sell
-          </span>
+          </button>
         </div>
       );
 

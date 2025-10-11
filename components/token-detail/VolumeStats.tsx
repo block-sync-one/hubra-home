@@ -16,21 +16,23 @@ interface VolumeStatsProps {
 }
 
 // Reusable components to eliminate duplication
-const VolumeBar = ({ label, volume, percentage, color }: { label: string; volume: string; percentage: number; color: string }) => (
-  <div>
-    <div className="flex items-center justify-between mb-2">
-      <span className="text-sm font-medium text-white">{label}</span>
-      <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-white">{volume}</span>
-        <span className="text-base font-medium text-gray-400">({formatBigNumbers(percentage)}%)</span>
+const VolumeBar = ({ label, volume, percentage, isBuy }: { label: string; volume: string; percentage: number; isBuy: boolean }) => {
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-medium text-white">{label}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-white">{volume}</span>
+          <span className="text-base font-medium text-gray-400">({formatBigNumbers(percentage)}%)</span>
+        </div>
+      </div>
+      <div className="flex gap-1">
+        <div className={`h-1 ${isBuy ? "bg-success-500" : "bg-error-500"} rounded`} style={{ width: `${percentage}%` }} />
+        <div className="h-1 bg-white/10 rounded" style={{ width: `${100 - percentage}%` }} />
       </div>
     </div>
-    <div className="flex gap-1">
-      <div className={`h-1 ${color} rounded`} style={{ width: `${percentage}%` }} />
-      <div className="h-1 bg-white/10 rounded" style={{ width: `${100 - percentage}%` }} />
-    </div>
-  </div>
-);
+  );
+};
 
 const VolumeSection = ({
   buyVolume,
@@ -44,8 +46,8 @@ const VolumeSection = ({
   sellVolumePercent: number;
 }) => (
   <div className="space-y-6">
-    <VolumeBar color="bg-success-500" label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
-    <VolumeBar color="bg-error-500" label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
+    <VolumeBar isBuy={true} label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
+    <VolumeBar isBuy={false} label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
   </div>
 );
 
@@ -143,10 +145,10 @@ export function VolumeStats({
         <CardBody className="space-y-6 p-5">
           <div className="flex gap-6">
             <div className="flex-1">
-              <VolumeBar color="bg-success-500" label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
+              <VolumeBar isBuy={true} label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
             </div>
             <div className="flex-1">
-              <VolumeBar color="bg-error-500" label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
+              <VolumeBar isBuy={false} label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
             </div>
           </div>
           <TokenInfo exchangeRate={exchangeRate} holders={holders} tokenAddress={tokenAddress} tradesCount={tradesCount} />
