@@ -3,7 +3,6 @@
 import React from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Icon } from "@iconify/react";
 
 import { TokenCard } from "./TokenCard";
@@ -40,6 +39,9 @@ export const HotTokensContent = () => {
       imgUrl: token.imgUrl,
       price: token.price,
       change: token.change,
+      volume: token.volume || "N/A",
+      rawVolume: token.rawVolume || 0,
+      marketCap: token.marketCap || 0,
     });
 
     // Navigate with token address directly
@@ -112,7 +114,14 @@ export const HotTokensContent = () => {
             {/* Token Info */}
             <div className="flex-1 flex items-center gap-3">
               <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
-                <Image alt={token.name} className="w-full h-full object-cover" height={24} src={token.imgUrl || "/logo.svg"} width={24} />
+                <img
+                  alt={token.name}
+                  className="w-full h-full object-cover"
+                  src={token.imgUrl || "/logo.svg"}
+                  onError={(e) => {
+                    e.currentTarget.src = "/logo.svg";
+                  }}
+                />
               </div>
               <div className="flex items-center">
                 <span className="text-sm font-semibold text-white">{token.name}</span>

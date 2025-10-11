@@ -1,8 +1,8 @@
 import type { TableConfiguration } from "../types";
 
-import { Token } from "@/lib/models/token";
-
 import { TokenCell } from "../cells";
+
+import { Token } from "@/lib/types/token";
 
 export const tokensTableConfig: TableConfiguration<Token> = {
   columns: [
@@ -11,7 +11,7 @@ export const tokensTableConfig: TableConfiguration<Token> = {
       label: "Token",
       sortable: false,
       align: "left",
-      render: (item: Token) => <TokenCell columnKey="token" earnOpportunity={item.earnOpportunity} item={item} />,
+      render: (item: Token) => <TokenCell columnKey="token" item={item} />,
     },
     {
       key: "price",
@@ -22,11 +22,19 @@ export const tokensTableConfig: TableConfiguration<Token> = {
       render: (item: Token) => <TokenCell columnKey="price" item={item} />,
     },
     {
-      key: "balance",
-      label: "Balance",
+      key: "marketCap",
+      label: "Market Cap",
       sortable: true,
       align: "right",
-      render: (item: Token) => <TokenCell columnKey="balance" item={item} />,
+      render: (item: Token) => <TokenCell columnKey="marketCap" item={item} />,
+    },
+    {
+      key: "volume",
+      label: "Volume 24h",
+      sortable: true,
+      align: "right",
+      hiddenOnMobile: true,
+      render: (item: Token) => <TokenCell columnKey="volume" item={item} />,
     },
     {
       key: "priceChange24hPct",
@@ -38,8 +46,8 @@ export const tokensTableConfig: TableConfiguration<Token> = {
     },
   ],
   defaultSort: {
-    column: "value",
-    direction: "descending",
+    column: "", // Empty to preserve pre-sorted order from API
+    direction: "ascending",
   },
   searchFields: ["asset.symbol", "asset.name"],
   rowsPerPage: 100,

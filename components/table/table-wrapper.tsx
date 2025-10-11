@@ -8,13 +8,11 @@ import UnifiedTable from "./unified-table";
 import { tokensTableConfig } from "./configurations";
 
 import { TabId, TabIdType } from "@/lib/models";
-import { newlyListed } from "@/lib/constants/tabs-data";
 import { TabsUI } from "@/components/tabs";
 
 const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAssetClick }) => {
   // State
   const [filterValue, setFilterValue] = useState("");
-  const [summaryValue, setSummaryValue] = useState(0);
   const [tab, setTab] = useState<TabIdType>(tabs[0]?.id || TabId.allAssets);
 
   // Memoized table data per tab
@@ -34,14 +32,12 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
 
   // Update tableDataMap when data or tab changes
   useEffect(() => {
-    if (data && data.aggregated && tab) {
-      const newData = data.aggregated[tab] ?? [];
+    if (data && tab) {
+      const newData = data[tab] ?? [];
 
       setTableDataMap((prev) => {
         return { ...prev, [tab]: newData };
       });
-
-      setSummaryValue(data.summary.aggregated[tab + "Value"] ?? 0);
     }
   }, [data, tab]);
 
@@ -50,20 +46,9 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
     setFilterValue("");
   }, [tab]);
 
-  // Get current configuration based on tab
-  const currentConfiguration = useMemo(() => {
-    switch (tab) {
-      case TabId.tradable:
-        return tokensTableConfig;
-      default:
-        return newlyListed;
-    }
-  }, [tab]);
-
   // Callbacks
   const handleAssetClick = useCallback(
     (asset: any) => {
-      alert("navigate to asset page");
       onAssetClick?.(asset);
     },
     [onAssetClick, tab]
@@ -113,7 +98,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
         </div>
       </div>
     ),
-    [tab, tabs, filterValue, handleFilterChange, handleFilterClear, summaryValue]
+    [tab, tabs, filterValue, handleFilterChange, handleFilterClear]
   );
 
   return (
@@ -121,7 +106,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
       {topContent}
 
       <UnifiedTable
-        configuration={currentConfiguration as any}
+        configuration={tokensTableConfig as any}
         data={currentData}
         filterValue={filterValue}
         isLoading={isLoading}

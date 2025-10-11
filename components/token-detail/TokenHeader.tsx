@@ -2,6 +2,8 @@ import React from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 
+import { formatBigNumbers } from "@/lib/utils";
+
 interface TokenHeaderProps {
   name: string;
   symbol: string;
@@ -39,7 +41,9 @@ function StatCard({
               className={`h-3 w-3 ${isPositive ? "text-success-500" : "text-error-500"} ${!isPositive ? "rotate-180" : ""}`}
               icon="mdi:arrow-up"
             />
-            <span className={`text-xs font-medium ${isPositive ? "text-success-500" : "text-error-500"}`}>{Math.abs(change)}%</span>
+            <span className={`text-xs font-medium ${isPositive ? "text-success-500" : "text-error-500"}`}>
+              {formatBigNumbers(Math.abs(change))}%
+            </span>
           </div>
         )}
       </div>

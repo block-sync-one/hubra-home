@@ -1,29 +1,21 @@
-"use client";
+import AllTokensClient from "./AllTokensClient";
 
-import React, { useMemo } from "react";
+import { fetchMarketData } from "@/lib/data/market-data";
+import { TokenFilter } from "@/lib/helpers/token";
 
-import { tradable, allAssets, gainers, losers, newlyListed } from "@/lib/constants/tabs-data";
-import { TableWrapper } from "@/components/table";
+/**
+ * Server Component - Fetches market data server-side
+ * Uses shared Birdeye service for data fetching
+ * Returns raw data; client component formats with user's currency preference
+ */
+export default async function AllTokens() {
+  // Fetch 200 tokens server-side using shared Birdeye service
+  const tokens = await fetchMarketData(200, 0, { revalidate: 120 });
 
-export default function AllTokens() {
-  const data = [] as any[];
-  const isLoading = false;
-  const tableTabData = [tradable, allAssets, gainers, losers, newlyListed];
+  // Use TokenFilter helper for consistent sorting logic (count = array length to show all)
+  const allAssetsSorted = TokenFilter.byMarketCap(tokens, tokens.length);
+  const gainersSorted = TokenFilter.gainers(tokens, tokens.length);
+  const losersSorted = TokenFilter.losers(tokens, tokens.length);
 
-  const tabTableData = useMemo(() => {
-    if (!data) return tableTabData;
-
-    return tableTabData.map((item: any) => ({
-      id: item.id,
-      label: item.label,
-    }));
-  }, [data]);
-
-  return (
-    <div className="flex flex-col gap-6">
-      <h2 className="text-2xl font-medium text-white">All Tokens</h2>
-
-      <TableWrapper data={data} isLoading={isLoading} tabs={tabTableData} />
-    </div>
-  );
+  return <AllTokensClient initialAllTokens={allAssetsSorted} initialGainers={gainersSorted} initialLosers={losersSorted} />;
 }

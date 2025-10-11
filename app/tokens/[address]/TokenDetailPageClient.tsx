@@ -16,6 +16,7 @@ import {
   TokenDescriptionSkeleton,
 } from "@/components/token-detail/TokenDetailSkeleton";
 import { BirdEyeTokenOverview } from "@/lib/types/birdeye";
+import { fixedNumber } from "@/lib/utils";
 
 // Type for the data portion of BirdEyeTokenOverview
 type TokenOverviewData = BirdEyeTokenOverview["data"];
@@ -178,7 +179,7 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
           {/* Token Stats - Mobile only */}
           <div className="md:hidden">
             <TokenStats
-              change={apiTokenData.priceChange24hPercent?.toFixed(2) || "0"}
+              change={fixedNumber(apiTokenData.priceChange24hPercent) || "0"}
               marketCap={formatNumber(apiTokenData.marketCap)}
               marketCapChange={apiTokenData.priceChange24hPercent || 0}
               supply={formatBigNumber(apiTokenData.totalSupply)}

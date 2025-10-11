@@ -2,6 +2,8 @@ import React from "react";
 import { Card, CardBody, CardHeader } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
+import { formatBigNumbers } from "@/lib/utils";
+
 interface VolumeStatsProps {
   buyVolume: string;
   buyVolumePercent: number;
@@ -20,7 +22,7 @@ const VolumeBar = ({ label, volume, percentage, color }: { label: string; volume
       <span className="text-sm font-medium text-white">{label}</span>
       <div className="flex items-center gap-2">
         <span className="text-sm font-medium text-white">{volume}</span>
-        <span className="text-base font-medium text-gray-400">({percentage}%)</span>
+        <span className="text-base font-medium text-gray-400">({formatBigNumbers(percentage)}%)</span>
       </div>
     </div>
     <div className="flex gap-1">

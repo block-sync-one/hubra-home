@@ -1,22 +1,12 @@
 "use client";
 
+import type { Token } from "@/lib/types/token";
+
 import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
 
-/**
- * Token data interface
- */
-export interface TokenData {
-  id: string; // Solana address
-  name: string;
-  symbol: string;
-  imgUrl?: string;
-  price?: string | number;
-  change?: number;
-}
-
 interface CurrentTokenContextType {
-  currentToken: TokenData | null;
-  setCurrentToken: (token: TokenData | null) => void;
+  currentToken: Token | null;
+  setCurrentToken: (token: Token | null) => void;
   clearCurrentToken: () => void;
 }
 
@@ -26,9 +16,9 @@ const CurrentTokenContext = createContext<CurrentTokenContextType | undefined>(u
  * Provider component for current token context
  */
 export function CurrentTokenProvider({ children }: { children: ReactNode }) {
-  const [currentToken, setCurrentTokenState] = useState<TokenData | null>(null);
+  const [currentToken, setCurrentTokenState] = useState<Token | null>(null);
 
-  const setCurrentToken = useCallback((token: TokenData | null) => {
+  const setCurrentToken = useCallback((token: Token | null) => {
     setCurrentTokenState(token);
 
     // Store in sessionStorage for persistence across page reloads

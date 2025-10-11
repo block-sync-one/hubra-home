@@ -40,7 +40,7 @@ export async function fetchTokenData(tokenAddress: string, options?: { revalidat
       tokenData.name = "Solana";
     }
 
-    console.log("Token data fetched successfully:", tokenData.symbol);
+    console.log("Token data fetched successfully:", tokenData.symbol, tokenData);
 
     return tokenData;
   } catch (error) {

@@ -145,43 +145,93 @@ function transformBirdeyeToken(token: BirdeyeToken, index: number) {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const limit = Math.min(parseInt(searchParams.get("limit") || "100", 10), 100);
-    const order = searchParams.get("order") || "market_cap_desc";
+    const requestedLimit = parseInt(searchParams.get("limit") || "100", 10);
+    const limit = Math.min(requestedLimit, 200); // Allow up to 200 tokens
+    const offset = parseInt(searchParams.get("offset") || "0", 10);
+    const order = searchParams.get("order") || "price_change_desc"; // Default to price change
     const chain = searchParams.get("chain") || DEFAULT_CHAIN;
 
-    console.log(`Fetching ${limit} tokens from Birdeye API (chain: ${chain})`);
+    console.log(`Fetching ${limit} tokens from Birdeye API (chain: ${chain}, offset: ${offset})`);
 
-    // Fetch token list from Birdeye
-    // Note: Token list returns top tokens by default (no sort parameters accepted)
-    const response = await fetchBirdeyeData<{ data: { items: BirdeyeToken[] }; success: boolean }>(
-      "/defi/v3/token/list",
-      {
-        offset: "0",
-        limit: limit.toString(),
-        // chain parameter will be auto-added by buildBirdeyeUrl
-        // Note: sort_by/sort_type parameters cause 400 error - removed
-      },
-      {
-        next: {
-          revalidate: 300, // Cache for 5 minutes (300 seconds)
+    // Birdeye API has a max limit of 100 per request
+    // If more than 100 is requested, make multiple parallel requests
+    const BIRDEYE_MAX_LIMIT = 100;
+    let allItems: BirdeyeToken[] = [];
+
+    if (limit <= BIRDEYE_MAX_LIMIT) {
+      // Single request for 100 or fewer tokens
+      const response = await fetchBirdeyeData<{ data: { items: BirdeyeToken[] }; success: boolean }>(
+        "/defi/v3/token/list",
+        {
+          offset: offset.toString(),
+          limit: limit.toString(),
         },
+        {
+          next: {
+            revalidate: 300, // Cache for 5 minutes (300 seconds)
+          },
+        }
+      );
+
+      if (!response.success || !response.data?.items) {
+        console.warn("Invalid response from Birdeye API - Serving fallback data");
+
+        return NextResponse.json(FALLBACK_MARKETS_DATA, {
+          headers: {
+            "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+            "X-Fallback-Data": "true",
+          },
+        });
       }
-    );
 
-    if (!response.success || !response.data?.items) {
-      console.warn("Invalid response from Birdeye API - Serving fallback data");
+      allItems = response.data.items;
+    } else {
+      // Multiple parallel requests for more than 100 tokens
+      const numRequests = Math.ceil(limit / BIRDEYE_MAX_LIMIT);
+      const requests = [];
 
-      return NextResponse.json(FALLBACK_MARKETS_DATA, {
-        headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-          "X-Fallback-Data": "true",
-        },
-      });
+      for (let i = 0; i < numRequests; i++) {
+        const batchOffset = offset + i * BIRDEYE_MAX_LIMIT;
+        const batchLimit = Math.min(BIRDEYE_MAX_LIMIT, limit - i * BIRDEYE_MAX_LIMIT);
+
+        requests.push(
+          fetchBirdeyeData<{ data: { items: BirdeyeToken[] }; success: boolean }>(
+            "/defi/v3/token/list",
+            {
+              offset: batchOffset.toString(),
+              limit: batchLimit.toString(),
+            },
+            {
+              next: {
+                revalidate: 300,
+              },
+            }
+          )
+        );
+      }
+
+      const responses = await Promise.all(requests);
+
+      // Combine all results
+      for (const response of responses) {
+        if (response.success && response.data?.items) {
+          allItems.push(...response.data.items);
+        }
+      }
+
+      if (allItems.length === 0) {
+        console.warn("No tokens returned from Birdeye API - Serving fallback data");
+
+        return NextResponse.json(FALLBACK_MARKETS_DATA, {
+          headers: {
+            "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+            "X-Fallback-Data": "true",
+          },
+        });
+      }
     }
 
-    const items = response.data.items;
-
-    if (items.length === 0) {
+    if (allItems.length === 0) {
       console.warn("No tokens returned from Birdeye API - Serving fallback data");
 
       return NextResponse.json(FALLBACK_MARKETS_DATA, {
@@ -193,7 +243,19 @@ export async function GET(request: Request) {
     }
 
     // Transform Birdeye data to CoinGecko-compatible format
-    const transformedData = items.map((token, index) => transformBirdeyeToken(token, index));
+    const transformedData = allItems.map((token, index) => transformBirdeyeToken(token, offset + index));
+
+    // Sort by the requested order (default: market_cap_desc)
+    if (order === "volume_desc") {
+      transformedData.sort((a, b) => b.total_volume - a.total_volume);
+    } else if (order === "price_change_desc") {
+      transformedData.sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h);
+    } else if (order === "price_change_asc") {
+      transformedData.sort((a, b) => a.price_change_percentage_24h - b.price_change_percentage_24h);
+    } else {
+      // Default: market_cap_desc
+      transformedData.sort((a, b) => b.market_cap - a.market_cap);
+    }
 
     console.log(`Successfully fetched ${transformedData.length} tokens from Birdeye API`);
 

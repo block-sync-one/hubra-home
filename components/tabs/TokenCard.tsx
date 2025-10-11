@@ -112,8 +112,11 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
       name: name,
       symbol: symbol || "",
       imgUrl: imgUrl,
-      price: price,
-      change: change,
+      price: price || "0",
+      change: change || 0,
+      volume: "N/A", // Not available in TokenCard
+      rawVolume: 0,
+      marketCap: 0,
     });
 
     // Navigate with token address directly

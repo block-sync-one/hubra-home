@@ -42,7 +42,7 @@ export function useCryptoData(): UseCryptoDataReturn {
       setLoading(true);
       setError(null);
 
-      // Fetch from Birdeye markets endpoint (supports 100+ tokens)
+      // Fetch from Birdeye markets endpoint (fetch 100 tokens for filtering)
       const response = await fetch("/api/crypto/markets?limit=100", {
         next: { revalidate: 120 }, // Next.js caches for 2 minutes
       });
@@ -70,14 +70,15 @@ export function useCryptoData(): UseCryptoDataReturn {
           change: token.price_change_percentage_24h || 0,
           volume: formatBigNumbers(rawVolume),
           rawVolume,
+          marketCap: token.market_cap || 0,
         };
       });
 
-      // Filter into tabs using simple helper class
-      setHotTokens(TokenFilter.hot(allTokens));
-      setGainers(TokenFilter.gainers(allTokens));
-      setLosers(TokenFilter.losers(allTokens));
-      setVolume(TokenFilter.byVolume(allTokens));
+      // Filter into tabs using simple helper class (limit to 4 tokens for HotTokens page)
+      setHotTokens(TokenFilter.hot(allTokens, 4));
+      setGainers(TokenFilter.gainers(allTokens, 4));
+      setLosers(TokenFilter.losers(allTokens, 4));
+      setVolume(TokenFilter.byVolume(allTokens, 4));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load data");
       console.error("useCryptoData error:", err);
