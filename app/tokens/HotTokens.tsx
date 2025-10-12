@@ -29,7 +29,7 @@ export default function HotTokens() {
   };
 
   return (
-    <div className="relative w-full py-8 md:py-12">
+    <div className="relative w-full py-8 md:py-20">
       {/* Full Width Background - breaks out of container */}
       <div
         className="absolute inset-0 w-screen bg-cover bg-center bg-no-repeat"
@@ -44,7 +44,7 @@ export default function HotTokens() {
       />
 
       {/* Content */}
-      <div className="relative z-20 w-full">
+      <div className="relative z-20 w-full flex flex-col items-start justify-center">
         <TabsUI className="mb-4 border-b border-gray-30" selectedTab={selectedTab} tabsData={tableTabData} onTabChange={setSelectedTab} />
         <TokenListView error={error} loading={loading} tokens={getTokensForTab()} onRetry={retry} />
       </div>

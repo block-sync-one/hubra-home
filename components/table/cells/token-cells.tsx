@@ -1,5 +1,6 @@
 import React from "react";
-import { Image, Chip } from "@heroui/react";
+import { Chip } from "@heroui/react";
+import Image from "next/image";
 import { Icon } from "@iconify/react";
 
 import { MiniChart } from "./mini-chart";
@@ -17,7 +18,15 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
     case "token":
       return (
         <div className="flex items-center gap-2">
-          <Image alt={item.symbol} fallbackSrc="/logo.svg" height={32} src={item.imgUrl || "/logo.svg"} width={32} />
+          <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
+            <Image
+              alt={`${item.name} (${item.symbol}) logo`}
+              className="w-full h-full object-cover"
+              height={32}
+              src={item.imgUrl || "/logo.svg"}
+              width={32}
+            />
+          </div>
           <div className="flex flex-col min-w-0 flex-1 text-left">
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-foreground truncate">

@@ -10,7 +10,7 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    // Allow all HTTPS images for maximum flexibility with Birdeye token logos
+    // Allow all image sources for maximum flexibility
     remotePatterns: [
       {
         protocol: "https",
@@ -18,7 +18,17 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "http",
+        hostname: "**",
+        port: "",
+        pathname: "/**",
+      },
     ],
+    // Disable image optimization for problematic domains
+    unoptimized: false,
+    // Allow all domains
+    domains: [],
   },
 
   // Enable compression

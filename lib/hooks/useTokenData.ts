@@ -58,8 +58,6 @@ export function useTokenData(): UseTokenDataReturn {
 
       const [trendingData, marketsData] = await Promise.all([trendingResponse.json(), marketsResponse.json()]);
 
-      console.warn("Trending Data:", marketsData);
-
       if (!trendingData || !marketsData) {
         throw new Error("No token data available");
       }

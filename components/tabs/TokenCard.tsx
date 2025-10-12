@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { Card, cn, Chip } from "@heroui/react";
 import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
@@ -135,11 +136,14 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0">
-            <img
-              alt={name}
+            <Image
+              alt={`${name} (${symbol}) logo`}
               className="w-full h-full object-cover"
+              height={20}
               src={imgUrl || "/logo.svg"}
+              width={20}
               onError={(e) => {
+                // Fallback to default logo on error
                 e.currentTarget.src = "/logo.svg";
               }}
             />

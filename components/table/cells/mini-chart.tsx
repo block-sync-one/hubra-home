@@ -9,7 +9,7 @@ interface MiniChartProps {
   height?: number;
 }
 
-export const MiniChart: React.FC<MiniChartProps> = ({ tokenId, change, width = 133, height = 48 }) => {
+export const MiniChart: React.FC<MiniChartProps> = ({ tokenId, change, width = 120, height = 28 }) => {
   const chartData = useMemo(() => generateTrendData(change, 7), [change]);
 
   if (chartData.length === 0) {

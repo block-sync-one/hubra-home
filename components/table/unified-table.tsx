@@ -4,6 +4,9 @@ import type { TableProps } from "./types";
 
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { SortDescriptor, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@heroui/react";
+import { useMediaQuery } from "usehooks-ts";
+import Image from "next/image";
+import { Icon } from "@iconify/react";
 
 // Simple get function to replace lodash
 const get = (obj: any, path: string) => {
@@ -13,6 +16,7 @@ const get = (obj: any, path: string) => {
 import TableSkeleton from "./skeleton/table-skeleton";
 
 import { generateUUID } from "@/lib/utils/helper";
+import { BREAKPOINTS } from "@/lib/constants";
 
 const ROWS_PER_PAGE = 100;
 
@@ -231,6 +235,9 @@ const UnifiedTable = <T extends Record<string, any>>({
     );
   }, [page, pages, onPreviousPage, onNextPage, sortedItems.length, rowsPerPage]);
 
+  // Check if mobile
+  const isMobile = useMediaQuery(BREAKPOINTS.MOBILE);
+
   // Render a fallback message if the configuration is invalid
   if (invalidConfig) {
     console.warn("ReusableTable: Invalid configuration provided");
@@ -238,6 +245,69 @@ const UnifiedTable = <T extends Record<string, any>>({
     return <div className="p-4 text-center text-gray-500">Table configuration error</div>;
   }
 
+  // Mobile List View
+  if (isMobile) {
+    return (
+      <div className="bg-card rounded-lg overflow-hidden">
+        {isLoading ? (
+          <TableSkeleton columns={1} rows={5} />
+        ) : paginatedItems.length === 0 ? (
+          <div className="py-6 text-center text-gray-500">No data available</div>
+        ) : (
+          paginatedItems.map((item: any) => {
+            const tokenData = item;
+
+            return (
+              <div
+                key={item.key || item.id || item.asset?.mint || item._index}
+                aria-label="Token details"
+                className="flex items-center justify-between p-3 hover:bg-white/5 transition-colors cursor-pointer"
+                role="button"
+                onClick={() => handleRowClick(item)}>
+                {/* Left Column: Image, Name, Symbol */}
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
+                    <Image
+                      alt={`${tokenData.name} (${tokenData.symbol}) logo`}
+                      className="w-full h-full object-cover"
+                      height={32}
+                      src={tokenData.imgUrl || "/logo.svg"}
+                      width={32}
+                    />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-semibold text-foreground truncate">{tokenData.name}</span>
+                    <span className="text-xs text-gray-400 uppercase font-medium">{tokenData.symbol}</span>
+                  </div>
+                </div>
+
+                {/* Right Column: Price and Price Change */}
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-sm font-medium text-foreground">{tokenData.price}</span>
+                  <div
+                    className={`flex items-center gap-1 text-xs font-semibold ${
+                      tokenData.change && tokenData.change > 0
+                        ? "text-success"
+                        : tokenData.change && tokenData.change < 0
+                          ? "text-danger"
+                          : "text-gray-400"
+                    }`}>
+                    {tokenData.change !== undefined && tokenData.change !== 0 && (
+                      <Icon icon={tokenData.change > 0 ? "mdi:arrow-up" : "mdi:arrow-down"} width={12} />
+                    )}
+                    <span>{tokenData.change ? Math.abs(tokenData.change).toFixed(2) : 0}%</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+        {bottomContent}
+      </div>
+    );
+  }
+
+  // Desktop Table View
   return (
     <>
       <Table
@@ -256,13 +326,8 @@ const UnifiedTable = <T extends Record<string, any>>({
               allowsSorting={column.sortable}
               className={`
                 bg-gray-30  
-                text-gray-400 
-                ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"}
+                text-gray-400 ${column.align === "left" ? "text-left" : "text-right"}
                 ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
-                ${column.key === "rank" ? "pl-3" : ""} 
-                px-0
-                [&>div]:flex [&>div]:items-center [&>div]:gap-1
-                ${column.align === "center" ? "[&>div]:justify-center" : column.align === "right" ? "[&>div]:justify-end" : ""}
               `}>
               {column.label}
             </TableColumn>
@@ -275,7 +340,7 @@ const UnifiedTable = <T extends Record<string, any>>({
           {paginatedItems.map((item: any) => (
             <TableRow
               key={item.key || item.id || item.asset?.mint || item._index}
-              className="cursor-pointer hover:bg-transparent border-none"
+              className="cursor-pointer transition-colors duration-150 border-none"
               onClick={() => handleRowClick(item)}>
               {configuration.columns.map((column) => (
                 <TableCell
