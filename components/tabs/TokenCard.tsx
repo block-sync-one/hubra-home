@@ -2,14 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { Card, cn, Chip } from "@heroui/react";
 import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
 
 import {
   CHART_TIME_PERIODS,
-  CHART_DIMENSIONS,
   CHART_DATA_POINTS,
   CHART_COLORS,
   GRADIENT_OPACITY,
@@ -137,12 +135,13 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0">
-            <Image
+            <img
               alt={name}
               className="w-full h-full object-cover"
-              height={CHART_DIMENSIONS.TOKEN_ICON_HEIGHT}
               src={imgUrl || "/logo.svg"}
-              width={CHART_DIMENSIONS.TOKEN_ICON_WIDTH}
+              onError={(e) => {
+                e.currentTarget.src = "/logo.svg";
+              }}
             />
           </div>
           <div className="flex items-center gap-2 flex-1 min-w-0">

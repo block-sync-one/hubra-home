@@ -4,10 +4,10 @@ import React from "react";
 
 import { TokenListView } from "./TokenListView";
 
-import { useCryptoData } from "@/lib/hooks/useCryptoData";
+import { useTokenData } from "@/lib/hooks/useTokenData";
 
 export const VolumeContent = () => {
-  const { volume, loading, error, retry } = useCryptoData();
+  const { volume, loading, error, retry } = useTokenData();
 
   return <TokenListView error={error} loading={loading} tokens={volume} onRetry={retry} />;
 };

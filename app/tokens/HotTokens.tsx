@@ -5,13 +5,13 @@ import React, { useState } from "react";
 import { gainers, losers, hotTokens, volume } from "@/lib/constants/tabs-data";
 import { TabId, TabIdType } from "@/lib/models";
 import { TabsUI, TokenListView } from "@/components/tabs";
-import { useCryptoData } from "@/lib/hooks/useCryptoData";
+import { useTokenData } from "@/lib/hooks/useTokenData";
 
 export default function HotTokens() {
   const tableTabData = [hotTokens, losers, gainers, volume];
   const [selectedTab, setSelectedTab] = useState<TabIdType>(TabId.hotTokens);
 
-  const { hotTokens: hotData, gainers: gainersData, losers: losersData, volume: volumeData, loading, error, retry } = useCryptoData();
+  const { hotTokens: hotData, gainers: gainersData, losers: losersData, volume: volumeData, loading, error, retry } = useTokenData();
 
   const getTokensForTab = () => {
     switch (selectedTab) {

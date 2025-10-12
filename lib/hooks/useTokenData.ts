@@ -1,5 +1,5 @@
 /**
- * Simplified useCryptoData Hook
+ * Simplified useTokenData Hook
  * Clean, easy-to-understand data fetching for token tabs
  */
 
@@ -13,7 +13,7 @@ import { TokenFilter } from "@/lib/helpers/token";
 import { formatBigNumbers } from "@/lib/utils";
 import { INTERVALS } from "@/lib/constants";
 
-interface UseCryptoDataReturn {
+interface UseTokenDataReturn {
   hotTokens: Token[];
   gainers: Token[];
   losers: Token[];
@@ -24,10 +24,10 @@ interface UseCryptoDataReturn {
 }
 
 /**
- * Fetch and manage crypto token data for all tabs
- * Simplified version - one fetch, client-side filtering
+ * Fetch and manage token data for all tabs
+ * Fetches trending tokens and market data concurrently
  */
-export function useCryptoData(): UseCryptoDataReturn {
+export function useTokenData(): UseTokenDataReturn {
   const { formatPrice } = useCurrency();
 
   const [hotTokens, setHotTokens] = useState<Token[]>([]);
@@ -57,6 +57,8 @@ export function useCryptoData(): UseCryptoDataReturn {
       }
 
       const [trendingData, marketsData] = await Promise.all([trendingResponse.json(), marketsResponse.json()]);
+
+      console.warn("Trending Data:", marketsData);
 
       if (!trendingData || !marketsData) {
         throw new Error("No token data available");
@@ -106,7 +108,7 @@ export function useCryptoData(): UseCryptoDataReturn {
       setVolume(TokenFilter.byVolume(marketTokens, 4)); // From markets (top 4 by volume)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load data");
-      console.error("useCryptoData error:", err);
+      console.error("useTokenData error:", err);
     } finally {
       setLoading(false);
     }
