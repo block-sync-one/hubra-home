@@ -41,7 +41,7 @@ export function TokenDescription({ description, onTwitterClick, onWebsiteClick }
   const cleanedDescription = useMemo(() => cleanDescription(description), [description]);
 
   return (
-    <Card className="bg-gray-950 border-white/10 rounded-2xl">
+    <Card className="bg-card rounded-2xl">
       <CardHeader className="p-5">
         <h3 className="text-sm font-medium text-white">About</h3>
       </CardHeader>

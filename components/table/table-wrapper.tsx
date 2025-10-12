@@ -52,7 +52,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
     () => (
       <div className="w-full lg:bg-card lg:px-4 lg:pt-4 pb-0 rounded-t-lg">
         <div className="w-full relative mb-4">
-          <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-30" />
+          <div className="absolute bottom-0 left-0 w-full h-[1px] hidden md:block bg-gray-30" />
           <div className="flex flex-row items-center justify-between">
             <div className="hidden lg:flex">
               <TabsUI

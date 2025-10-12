@@ -12,60 +12,57 @@ interface TradingSectionProps {
   onSwap: () => void;
 }
 
+interface TradingInputProps {
+  tokenSymbol: string;
+  tokenName: string;
+  tokenImgUrl: string;
+  amount: string;
+  estimatedValue: string;
+}
+
+/**
+ * Reusable Trading Input Component
+ */
+const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tokenImgUrl, amount, estimatedValue }) => {
+  return (
+    <div className="flex items-center justify-between p-6 bg-background rounded-xl">
+      <div className="flex items-center gap-3">
+        <Image alt={`${tokenName} token`} className="rounded-full" height={32} loading="lazy" sizes="32px" src={tokenImgUrl} width={32} />
+        <div>
+          <div className="text-lg font-medium text-white">{tokenSymbol}</div>
+          <div className="text-sm text-gray-400">{tokenName}</div>
+        </div>
+      </div>
+      <div className="text-right">
+        <div className="text-lg font-medium text-white">{amount}</div>
+        <div className="text-sm text-gray-400">{estimatedValue}</div>
+      </div>
+    </div>
+  );
+};
+
 export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPrice, onSwap }: TradingSectionProps) {
   return (
-    <Card className="bg-[#191a2c] border-white/10 rounded-2xl">
+    <Card className="bg-card rounded-2xl">
       <CardBody className="p-6">
         <div className="space-y-4">
           {/* Token Input */}
-          <div className="flex items-center justify-between p-6 border border-white/10 rounded-xl">
-            <div className="flex items-center gap-3">
-              <Image
-                alt={`${tokenName} token`}
-                className="rounded-full"
-                height={32}
-                loading="lazy"
-                sizes="32px"
-                src={tokenImgUrl}
-                width={32}
-              />
-              <div>
-                <div className="text-lg font-medium text-white">{tokenSymbol}</div>
-                <div className="text-sm text-gray-400">{tokenName}</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-lg font-medium text-white">1</div>
-              <div className="text-sm text-gray-400">
-                ≈ ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
-              </div>
-            </div>
-          </div>
+          <TradingInput
+            amount="1"
+            estimatedValue={`≈ $${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`}
+            tokenImgUrl={tokenImgUrl}
+            tokenName={tokenName}
+            tokenSymbol={tokenSymbol}
+          />
 
           {/* USDC Output */}
-          <div className="flex items-center justify-between p-6 border border-white/10 rounded-xl">
-            <div className="flex items-center gap-3">
-              <Image
-                alt="USDC token"
-                className="rounded-full"
-                height={32}
-                loading="lazy"
-                sizes="32px"
-                src="https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png"
-                width={32}
-              />
-              <div>
-                <div className="text-lg font-medium text-white">USDC</div>
-                <div className="text-sm text-gray-400">USD Coin</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-lg font-medium text-white">
-                {currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
-              </div>
-              <div className="text-sm text-gray-400">≈ 1 {tokenSymbol}</div>
-            </div>
-          </div>
+          <TradingInput
+            amount={currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
+            estimatedValue={`≈ 1 ${tokenSymbol}`}
+            tokenImgUrl="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png"
+            tokenName="USD Coin"
+            tokenSymbol="USDC"
+          />
 
           {/* Swap Button */}
           <Button

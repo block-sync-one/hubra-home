@@ -48,7 +48,7 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
   // Loading state
   if (loading) {
     return (
-      <Card className="bg-gray-950/50 border border-white/10 backdrop-blur-sm">
+      <Card className="bg-card backdrop-blur-sm">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -88,7 +88,7 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
   // Error state
   if (error) {
     return (
-      <Card className="bg-gray-950/50 border border-white/10 backdrop-blur-sm">
+      <Card className="bg-card backdrop-blur-sm">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -111,7 +111,7 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
   }));
 
   return (
-    <Card className="bg-gray-950/50 border border-white/10 backdrop-blur-sm">
+    <Card className="bg-card backdrop-blur-sm">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">

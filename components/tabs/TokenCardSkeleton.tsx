@@ -8,7 +8,7 @@ import { Card } from "@heroui/react";
  */
 export function TokenCardSkeleton() {
   return (
-    <Card className="bg-white/5 backdrop-blur-[10px] border border-white/10 rounded-2xl overflow-hidden p-4 hover:bg-white/10 transition-colors">
+    <Card className="bg-card rounded-2xl overflow-hidden p-4 hover:bg-white/10 transition-colors">
       <div className="flex flex-col gap-3">
         {/* Header: Token info */}
         <div className="flex items-center gap-3">

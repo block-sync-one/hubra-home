@@ -7,7 +7,7 @@ import React from "react";
  */
 export function StatsCardSkeleton() {
   return (
-    <div className="bg-white/5 backdrop-blur-[10px] border border-white/10 rounded-2xl p-6">
+    <div className="bg-card rounded-2xl p-6">
       <div className="flex flex-col gap-3">
         {/* Title skeleton */}
         <div className="h-4 w-32 bg-gray-700/50 animate-pulse rounded" />

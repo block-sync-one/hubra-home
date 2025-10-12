@@ -49,7 +49,7 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ tokens, loading, e
 
   if (isMobile) {
     return (
-      <div className="bg-white/5 backdrop-blur-[10px] border border-white/10 rounded-2xl overflow-hidden">
+      <div className="bg-card rounded-2xl overflow-hidden">
         <div>
           {tokens.map((token, index) => (
             <TokenListItem key={token.id} rank={index + 1} token={token} onClick={handleTokenClick} />

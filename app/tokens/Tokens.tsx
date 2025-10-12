@@ -43,14 +43,10 @@ interface StatCardProps {
 const StatCard = memo(function StatCard({ title, value, change, isPositive, className = "" }: StatCardProps) {
   return (
     <div className={`flex flex-col gap-1.5 h-[91px] justify-center px-4 relative md:flex-1 w-full ${className}`}>
-      {/* Border separator */}
-      <div className="absolute border-r border-white/10 right-0 top-0 bottom-0" />
-
       <p className="text-sm font-medium text-gray-400 whitespace-nowrap">{title}</p>
 
       <div className="flex items-center gap-1">
         <p className="text-lg font-medium whitespace-nowrap text-white">{value}</p>
-
         {change !== undefined && <ChangeIndicator value={change} />}
       </div>
     </div>
@@ -74,7 +70,7 @@ const StatsGrid = memo(function StatsGrid({ children }: StatsGridProps) {
       const hasOnlyOneItem = rowItems.length === 1;
 
       rows.push(
-        <div key={`mobile-row-${i}`} className={`flex ${!isLastRow ? "border-b border-white/10" : ""}`}>
+        <div key={`mobile-row-${i}`} className="flex">
           {rowItems.map((child, index) => (
             <div key={`mobile-item-${i + index}`} className={hasOnlyOneItem ? "w-full" : "w-1/2"}>
               {child}
@@ -88,7 +84,7 @@ const StatsGrid = memo(function StatsGrid({ children }: StatsGridProps) {
   }, [childrenArray]);
 
   return (
-    <div className="relative rounded-xl border border-white/10 overflow-hidden">
+    <div className="relative rounded-xl bg-card overflow-hidden">
       {/* Desktop: 5 columns in a row - each section has equal width */}
       <div className="hidden md:flex">{children}</div>
 

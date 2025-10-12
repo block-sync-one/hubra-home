@@ -30,7 +30,7 @@ export default function HotTokens() {
 
   return (
     <section className="py-12">
-      <TabsUI className="mb-4" selectedTab={selectedTab} tabsData={tableTabData} onTabChange={setSelectedTab} />
+      <TabsUI className="mb-4 border-b border-gray-30" selectedTab={selectedTab} tabsData={tableTabData} onTabChange={setSelectedTab} />
       <TokenListView error={error} loading={loading} tokens={getTokensForTab()} onRetry={retry} />
     </section>
   );

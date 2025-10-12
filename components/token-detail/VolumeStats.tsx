@@ -138,7 +138,7 @@ export function VolumeStats({
   return (
     <div className="space-y-6">
       {/* Desktop - Single Card */}
-      <Card className="hidden md:block bg-gray-950 border-white/10 rounded-2xl">
+      <Card className="hidden md:block bg-card rounded-2xl">
         <CardHeader className="p-5">
           <h3 className="text-sm font-medium text-gray-400">Volume:</h3>
         </CardHeader>
@@ -157,7 +157,7 @@ export function VolumeStats({
 
       {/* Mobile - Two Separate Cards */}
       <div className="md:hidden space-y-4">
-        <Card className="bg-gray-950 border-white/10 rounded-2xl">
+        <Card className="bg-card rounded-2xl">
           <CardBody className="p-5">
             <VolumeSection
               buyVolume={buyVolume}
@@ -168,7 +168,7 @@ export function VolumeStats({
           </CardBody>
         </Card>
 
-        <Card className="bg-gray-950 border-white/10 rounded-2xl">
+        <Card className="bg-card rounded-2xl">
           <MobileTokenInfo exchangeRate={exchangeRate} holders={holders} tokenAddress={tokenAddress} tradesCount={tradesCount} />
         </Card>
       </div>

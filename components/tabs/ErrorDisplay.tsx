@@ -10,7 +10,7 @@ interface ErrorDisplayProps {
 
 export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ error, onRetry }) => {
   return (
-    <div className="bg-white/5 backdrop-blur-[10px] border border-white/10 rounded-2xl overflow-hidden p-6">
+    <div className="bg-card rounded-2xl overflow-hidden p-6">
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <Icon className="w-12 h-12 text-red-500 mx-auto mb-4" icon="mdi:alert-circle" />
