@@ -113,22 +113,6 @@ export async function fetchBirdeyeData<T>(endpoint: string, params?: Record<stri
 }
 
 /**
- * Map sort order from CoinGecko format to Birdeye format
- */
-export function mapSortOrder(order: string): string {
-  const orderMap: Record<string, string> = {
-    market_cap_desc: "market_cap",
-    market_cap_asc: "market_cap",
-    volume_desc: "volume",
-    volume_asc: "volume",
-    price_desc: "price",
-    price_asc: "price",
-  };
-
-  return orderMap[order] || "market_cap";
-}
-
-/**
  * Map time range to Birdeye OHLCV type
  * @note Birdeye OHLCV valid types: 1m, 3m, 5m, 15m, 30m, 1H, 2H, 4H, 6H, 8H, 12H, 1D, 3D, 1W, 1M
  * @note Type determines the candle interval, not the time range (use time_from/time_to for range)

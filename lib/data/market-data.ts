@@ -66,6 +66,13 @@ function transformBirdeyeToken(token: BirdeyeToken): Token {
  * @returns Array of transformed tokens
  */
 export async function fetchMarketData(limit: number = 100, offset: number = 0, options?: { revalidate?: number }): Promise<Token[]> {
+  const queryParam = {
+    sort_type: "desc",
+    min_holder: "10",
+    min_volume_24h_usd: "10",
+    min_trade_24h_count: "10",
+  };
+
   try {
     console.log(`Fetching ${limit} tokens from Birdeye (offset: ${offset})`);
 
@@ -80,6 +87,7 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0, o
         {
           offset: offset.toString(),
           limit: limit.toString(),
+          ...queryParam,
         },
         {
           next: { revalidate: options?.revalidate || 300 },
@@ -108,6 +116,7 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0, o
             {
               offset: batchOffset.toString(),
               limit: batchLimit.toString(),
+              ...queryParam,
             },
             {
               next: { revalidate: options?.revalidate || 300 },
