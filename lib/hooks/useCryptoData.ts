@@ -42,23 +42,48 @@ export function useCryptoData(): UseCryptoDataReturn {
       setLoading(true);
       setError(null);
 
-      // Fetch from Birdeye markets endpoint (fetch 100 tokens for filtering)
-      const response = await fetch("/api/crypto/markets?limit=100", {
-        next: { revalidate: 120 }, // Next.js caches for 2 minutes
-      });
+      // Fetch both endpoints concurrently for better performance
+      const [trendingResponse, marketsResponse] = await Promise.all([
+        fetch("/api/crypto/trending?limit=4", {
+          next: { revalidate: 120 },
+        }),
+        fetch("/api/crypto/markets?limit=100", {
+          next: { revalidate: 120 },
+        }),
+      ]);
 
-      if (!response.ok) {
+      if (!trendingResponse.ok || !marketsResponse.ok) {
         throw new Error("Failed to fetch token data");
       }
 
-      const data = await response.json();
+      const [trendingData, marketsData] = await Promise.all([trendingResponse.json(), marketsResponse.json()]);
 
-      if (!data || data.length === 0) {
+      if (!trendingData || !marketsData) {
         throw new Error("No token data available");
       }
 
-      // Transform API data to simple Token type
-      const allTokens: Token[] = data.map((token: any) => {
+      // Transform trending tokens (for Hot Tokens tab)
+      const hotTokensData: Token[] = trendingData.coins.map((data: any) => {
+        const token = data.item;
+        const rawVolume = token.volume_24h_usd || 0;
+        const rawPrice = token.data.price || 0;
+
+        return {
+          id: token.coin_id,
+          name: token.name === "Wrapped SOL" ? "Solana" : token.name,
+          symbol: token.symbol.toUpperCase(),
+          imgUrl: token.small || "/logo.svg",
+          price: formatPrice(rawPrice),
+          change: token.data.price_change_percentage_24h.usd || 0,
+          volume: formatBigNumbers(rawVolume),
+          rawVolume,
+          rawPrice: token.data.price,
+          marketCap: token.data.market_cap || 0,
+        };
+      });
+
+      // Transform market tokens (for Gainers, Losers, Volume tabs)
+      const marketTokens: Token[] = marketsData.map((token: any) => {
         const rawVolume = token.total_volume || 0;
 
         return {
@@ -74,11 +99,11 @@ export function useCryptoData(): UseCryptoDataReturn {
         };
       });
 
-      // Filter into tabs using simple helper class (limit to 4 tokens for HotTokens page)
-      setHotTokens(TokenFilter.hot(allTokens, 4));
-      setGainers(TokenFilter.gainers(allTokens, 4));
-      setLosers(TokenFilter.losers(allTokens, 4));
-      setVolume(TokenFilter.byVolume(allTokens, 4));
+      // Set data for each category
+      setHotTokens(hotTokensData); // From trending endpoint (4 tokens)
+      setGainers(TokenFilter.gainers(marketTokens, 4)); // From markets (top 4 gainers)
+      setLosers(TokenFilter.losers(marketTokens, 4)); // From markets (top 4 losers)
+      setVolume(TokenFilter.byVolume(marketTokens, 4)); // From markets (top 4 by volume)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load data");
       console.error("useCryptoData error:", err);
