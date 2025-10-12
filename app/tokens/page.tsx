@@ -63,10 +63,16 @@ export const metadata: Metadata = {
 
 export default function TokensPage() {
   return (
-    <main className="flex flex-col gap-12 md:max-w-7xl mx-auto">
-      <Tokens />
-      <HotTokens />
-      <AllTokens />
+    <main className="flex flex-col gap-12">
+      <div className="md:max-w-7xl mx-auto w-full">
+        <Tokens />
+      </div>
+      <div className="md:max-w-7xl mx-auto w-full">
+        <HotTokens />
+      </div>
+      <div className="md:max-w-7xl mx-auto w-full">
+        <AllTokens />
+      </div>
     </main>
   );
 }

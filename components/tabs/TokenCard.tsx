@@ -126,7 +126,11 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
   const color = isPositive ? "success" : "danger";
 
   return (
-    <Card isPressable className="bg-card hover:bg-white/10 transition-all cursor-pointer" onClick={handleClick} onMouseEnter={onMouseEnter}>
+    <Card
+      isPressable
+      className="bg-card backdrop-blur-sm hover:bg-white/10 transition-all cursor-pointer"
+      onMouseEnter={onMouseEnter}
+      onPress={handleClick}>
       <div className="p-4">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">

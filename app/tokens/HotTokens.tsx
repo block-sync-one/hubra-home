@@ -29,9 +29,25 @@ export default function HotTokens() {
   };
 
   return (
-    <section className="py-12">
-      <TabsUI className="mb-4 border-b border-gray-30" selectedTab={selectedTab} tabsData={tableTabData} onTabChange={setSelectedTab} />
-      <TokenListView error={error} loading={loading} tokens={getTokensForTab()} onRetry={retry} />
-    </section>
+    <div className="relative w-full py-8 md:py-12">
+      {/* Full Width Background - breaks out of container */}
+      <div
+        className="absolute inset-0 w-screen bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/image/hot-tokens-bg.png')",
+          left: "50%",
+          right: "50%",
+          marginLeft: "-50vw",
+          marginRight: "-50vw",
+          zIndex: 0,
+        }}
+      />
+
+      {/* Content */}
+      <div className="relative z-20 w-full">
+        <TabsUI className="mb-4 border-b border-gray-30" selectedTab={selectedTab} tabsData={tableTabData} onTabChange={setSelectedTab} />
+        <TokenListView error={error} loading={loading} tokens={getTokensForTab()} onRetry={retry} />
+      </div>
+    </div>
   );
 }
