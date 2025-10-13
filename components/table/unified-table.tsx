@@ -257,7 +257,7 @@ const UnifiedTable = <T extends Record<string, any>>({
               <div
                 key={item.key || item.id || item.asset?.mint || item._index}
                 aria-label="Token details"
-                className="flex items-center justify-between p-3 hover:bg-white/5 transition-colors cursor-pointer"
+                className="flex items-center justify-between px-3 py-2 hover:bg-white/5 transition-colors cursor-pointer"
                 role="button"
                 onClick={() => handleRowClick(item)}>
                 {/* Left Column: Image, Name, Symbol */}
@@ -316,12 +316,14 @@ const UnifiedTable = <T extends Record<string, any>>({
             {headerColumns?.map((column, index) => (
               <TableColumn
                 key={column.key}
+                align={column.align === "left" ? "start" : column.align === "right" ? "end" : "center"}
                 allowsSorting={column.sortable}
                 className={`
                 bg-gray-30  
-                text-gray-400 ${column.align === "left" ? "text-left" : "text-right"}
+                text-gray-400
                 ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
-              `}>
+              `}
+                style={column.width ? { width: column.width } : undefined}>
                 {column.label}
               </TableColumn>
             ))}
@@ -338,7 +340,7 @@ const UnifiedTable = <T extends Record<string, any>>({
                 {configuration.columns.map((column) => (
                   <TableCell
                     key={column.key}
-                    className={`border-none h-[40px] lg:h-[80px] ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"} lg:p-auto px-0 pb-4
+                    className={`border-none h-[36px] lg:h-[60px] ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"} lg:p-auto px-0 pb-3
                     ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
                   `}>
                     {(() => {

@@ -11,9 +11,7 @@ import { PriceDisplay } from "@/components/price";
 export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnKey: string }) => {
   switch (columnKey) {
     case "rank":
-      return (
-        <div className="text-left text-sm text-gray-400 pl-3">{(item as any)._index !== undefined ? (item as any)._index + 1 : "-"}</div>
-      );
+      return <div className="text-center text-sm text-gray-400">{(item as any)._index !== undefined ? (item as any)._index + 1 : "-"}</div>;
 
     case "token":
       return (
@@ -86,14 +84,16 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
 
     case "chart":
       return (
-        <div className="flex justify-end items-center h-12 w-full min-w-[80px]">
-          <MiniChart change={item.change} tokenId={item.id} />
+        <div className="flex justify-end items-center w-full">
+          <div className="w-[120px] h-[28px]">
+            <MiniChart key={`chart-${item.id}`} change={item.change} tokenId={item.id} />
+          </div>
         </div>
       );
 
     case "action":
       return (
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <button
             className="px-4 py-2 bg-orange-500/10 text-orange-500 rounded-lg text-sm font-medium cursor-pointer hover:bg-orange-500/20 transition-colors"
             type="button"
