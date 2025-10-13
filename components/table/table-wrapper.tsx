@@ -6,13 +6,13 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import UnifiedTable from "./unified-table";
 import { tokensTableConfig } from "./configurations";
+import { SearchInput } from "./search-input";
 
 import { TabId, TabIdType } from "@/lib/models";
 import { TabsUI } from "@/components/tabs";
 
 const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAssetClick }) => {
   // State
-  const [filterValue, setFilterValue] = useState("");
   const [tab, setTab] = useState<TabIdType>(tabs[0]?.id || TabId.allAssets);
 
   const currentData = useMemo(() => {
@@ -26,11 +26,6 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
     }
   }, [tabs, tab]);
 
-  // Reset filter and selected asset when tab changes
-  useEffect(() => {
-    setFilterValue("");
-  }, [tab]);
-
   // Callbacks
   const handleAssetClick = useCallback(
     (asset: any) => {
@@ -39,21 +34,13 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
     [onAssetClick, tab]
   );
 
-  const handleFilterChange = useCallback((value: string) => {
-    setFilterValue(value);
-  }, []);
-
-  const handleFilterClear = useCallback(() => {
-    setFilterValue("");
-  }, []);
-
   // Memoized top content
   const topContent = useMemo(
     () => (
       <div className="w-full lg:bg-card lg:px-4 lg:pt-4 pb-0 rounded-t-lg">
         <div className="w-full relative mb-4">
           <div className="absolute bottom-0 left-0 w-full h-[1px] hidden md:block bg-gray-30" />
-          <div className="flex flex-row items-center justify-between">
+          <div className="flex flex-row items-center justify-between gap-4">
             <div className="hidden lg:flex">
               <TabsUI
                 selectedTab={tab}
@@ -65,12 +52,12 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
                 onTabChange={setTab}
               />
             </div>
-            {/* <Button className=" lg:flex mb-3" color="primary" size="sm" variant="flat">
-              <Icon icon="carbon:clean" width={18} /> Clean your wallet
-            </Button> */}
+            <div className="flex-1 max-w-xs">
+              <SearchInput />
+            </div>
           </div>
         </div>
-        <div className=" lg:hidden">
+        <div className="lg:hidden mb-4">
           <TabsUI
             selectedTab={tab}
             tabsData={tabs.map((t) => ({
@@ -83,7 +70,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
         </div>
       </div>
     ),
-    [tab, tabs, filterValue, handleFilterChange, handleFilterClear]
+    [tab, tabs]
   );
 
   return (
@@ -93,7 +80,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
       <UnifiedTable
         configuration={tokensTableConfig as any}
         data={currentData}
-        filterValue={filterValue}
+        filterValue=""
         isLoading={isLoading}
         selectedTab={tab}
         onRowClick={handleAssetClick}

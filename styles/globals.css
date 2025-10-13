@@ -29,3 +29,16 @@ svg {
 .recharts-wrapper:focus {
   outline: none;
 }
+
+/* Remove focus outline and ring from search input */
+[data-slot="input-wrapper"]:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  ring: none !important;
+}
+
+[data-slot="input"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  ring: none !important;
+}

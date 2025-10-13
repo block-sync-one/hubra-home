@@ -68,6 +68,8 @@ export function buildBirdeyeUrl(endpoint: string, params?: Record<string, string
     ...(params?.chain === undefined && { chain: DEFAULT_CHAIN }),
   };
 
+  console.log("Building Birdeye URL - All params:", allParams);
+
   if (allParams) {
     Object.entries(allParams).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
@@ -76,7 +78,11 @@ export function buildBirdeyeUrl(endpoint: string, params?: Record<string, string
     });
   }
 
-  return url.toString();
+  const finalUrl = url.toString();
+
+  console.log("Final Birdeye URL:", finalUrl);
+
+  return finalUrl;
 }
 
 /**

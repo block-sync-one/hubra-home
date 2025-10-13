@@ -21,6 +21,7 @@ const config = {
       colors: {
         // Base colors
         card: "#1B1C2E",
+        tableHeader: "252537",
         base: "#FFFFFF",
         background: "#0D0E21",
         foreground: "#FFFFFF",
