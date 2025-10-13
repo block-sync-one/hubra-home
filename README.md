@@ -38,6 +38,32 @@ npm install
 npm run dev
 ```
 
+### Code Quality & Formatting
+
+This project uses automated code quality tools:
+
+```bash
+# Format all files with Prettier
+npm run format
+
+# Lint and fix all files with ESLint
+npm run lint
+
+# Strict linting (fail on warnings) - use before push/PR
+npm run lint:strict
+
+# Check formatting without changing files
+npm run format:check
+
+# Check linting without fixing
+npm run lint:check
+
+# Type checking
+npm run type-check
+```
+
+**Pre-commit Hook**: Prettier and ESLint run automatically on staged files before each commit. See [CODE_QUALITY.md](./CODE_QUALITY.md) for details.
+
 ### Setup pnpm (optional)
 
 If you are using `pnpm`, you need to add the following code to your `.npmrc` file:

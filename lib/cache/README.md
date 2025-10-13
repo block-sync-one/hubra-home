@@ -25,6 +25,7 @@ docker run -d --name redis -p 6379:6379 redis:latest
 ```
 
 Or install Redis:
+
 ```bash
 # macOS
 brew install redis
@@ -160,6 +161,7 @@ Cache entries automatically expire based on their TTL.
 ## Performance
 
 **Benefits:**
+
 - Reduces API calls by ~80-90% for popular searches
 - Response time: <10ms (cache hit) vs 200-500ms (API call)
 - Lower costs for metered APIs
@@ -200,6 +202,7 @@ redis-cli info
 ### Debug Logging
 
 The client logs connection events to console:
+
 - "Redis Client Connected"
 - "Redis Client Ready"
 - "Redis Client Error"
@@ -222,7 +225,7 @@ Previous Next.js `revalidate` has been replaced with Redis:
 
 ```typescript
 // Before (Next.js cache)
-fetch(url, { next: { revalidate: 60 } })
+fetch(url, { next: { revalidate: 60 } });
 
 // After (Redis cache)
 const cached = await redis.get(key);
@@ -241,4 +244,3 @@ Monitor these metrics in production:
 - Redis memory usage
 - Connection pool statistics
 - Error rate
-
