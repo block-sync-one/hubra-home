@@ -27,7 +27,6 @@ export const TabsUI = React.memo(({ selectedTab, onTabChange, tabsData, classNam
       return (
         <Tab
           key={tab.id}
-          className="w-full"
           title={
             <div className="flex items-center gap-2">
               {tab.icon && <Icon icon={tab.icon} width={16} />} {tab.label}
@@ -73,8 +72,8 @@ export const TabsUI = React.memo(({ selectedTab, onTabChange, tabsData, classNam
         className={`w-full ${shouldKeepTabOnSmallScreen ? "" : "hidden lg:block"} ${className ?? ""}`}
         classNames={{
           tabList: "gap-2 w-full relative rounded-none py-0",
-          cursor: "w-full bg-primary",
-          tab: "h-[40px] w-full",
+          cursor: "bg-primary",
+          tab: "h-[40px]",
           tabContent:
             "px-4 text-gray-400 font-medium group-data-[selected=true]:text-base transition-colors duration-150 mb-[12px] group-data-[selected=true]:font-bold",
         }}

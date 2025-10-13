@@ -203,7 +203,7 @@ export default function Tokens() {
     return (
       <div className="flex flex-col gap-6">
         <h2 className="text-2xl font-medium text-white">Tokens</h2>
-        <StatsGridSkeleton count={4} />
+        <StatsGridSkeleton count={5} />
       </div>
     );
   }

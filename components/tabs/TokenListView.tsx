@@ -3,17 +3,16 @@
 import type { Token } from "@/lib/types/token";
 
 import React, { useEffect } from "react";
-import { useMediaQuery } from "usehooks-ts";
 import { useRouter } from "next/navigation";
 
 import { TokenCard } from "./TokenCard";
-import { TokenCardSkeletonGrid, TokenCardSkeletonStack } from "./TokenCardSkeleton";
+import { TokenCardSkeletonGrid } from "./TokenCardSkeleton";
+import { TokenListViewSkeleton } from "./TokenListViewSkeleton";
 import { TokenListItem } from "./TokenListItem";
 import { ErrorDisplay } from "./ErrorDisplay";
 
 import { useCurrentToken } from "@/lib/context/current-token-context";
 import { useBatchPrefetch } from "@/lib/hooks/usePrefetch";
-import { BREAKPOINTS } from "@/lib/constants";
 
 interface TokenListViewProps {
   tokens: Token[];
@@ -23,7 +22,6 @@ interface TokenListViewProps {
 }
 
 export const TokenListView: React.FC<TokenListViewProps> = ({ tokens, loading, error, onRetry }) => {
-  const isMobile = useMediaQuery(BREAKPOINTS.MOBILE);
   const router = useRouter();
   const { setCurrentToken } = useCurrentToken();
   const { prefetchTokens } = useBatchPrefetch();
@@ -40,39 +38,48 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ tokens, loading, e
   };
 
   if (loading) {
-    return isMobile ? <TokenCardSkeletonStack count={4} /> : <TokenCardSkeletonGrid count={4} />;
+    return (
+      <>
+        <div className="md:hidden w-full">
+          <TokenListViewSkeleton count={4} />
+        </div>
+        <div className="hidden md:block w-full">
+          <TokenCardSkeletonGrid count={4} />
+        </div>
+      </>
+    );
   }
 
   if (error) {
     return <ErrorDisplay error={error} onRetry={onRetry} />;
   }
 
-  if (isMobile) {
-    return (
-      <div className="bg-card/50 backdrop-blur-sm rounded-2xl overflow-hidden w-full">
+  return (
+    <>
+      {/* Mobile List View */}
+      <div className="md:hidden bg-card/50 backdrop-blur-sm rounded-2xl overflow-hidden w-full">
         <div>
           {tokens.map((token, index) => (
             <TokenListItem key={token.id} rank={index + 1} token={token} onClick={handleTokenClick} />
           ))}
         </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-      {tokens.map((token) => (
-        <TokenCard
-          key={token.id}
-          change={token.change}
-          coinId={token.id}
-          imgUrl={token.imgUrl}
-          name={token.name}
-          price={token.price}
-          symbol={token.symbol}
-          volume={token.volume}
-        />
-      ))}
-    </div>
+      {/* Desktop Card Grid */}
+      <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+        {tokens.map((token) => (
+          <TokenCard
+            key={token.id}
+            change={token.change}
+            coinId={token.id}
+            imgUrl={token.imgUrl}
+            name={token.name}
+            price={token.price}
+            symbol={token.symbol}
+            volume={token.volume}
+          />
+        ))}
+      </div>
+    </>
   );
 };
