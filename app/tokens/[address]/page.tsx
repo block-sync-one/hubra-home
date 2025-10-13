@@ -74,7 +74,7 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
 // Fetch token data server-side with smart caching
 // Uses shared data fetching function - no HTTP request needed!
 async function getTokenData(tokenAddress: string) {
-  return await fetchTokenData(tokenAddress, { revalidate: 120 });
+  return await fetchTokenData(tokenAddress);
 }
 
 /**

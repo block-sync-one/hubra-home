@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
+import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 
 /**
  * Fallback trending data
@@ -10,7 +11,7 @@ const FALLBACK_TRENDING_DATA = {
 };
 
 /**
- * API route to fetch trending tokens
+ * API route to fetch trending tokens with Redis caching
  *
  * @description Fetches trending token list from Birdeye API
  * showing tokens with high trading activity and volume.
@@ -27,10 +28,28 @@ const FALLBACK_TRENDING_DATA = {
  */
 export async function GET() {
   try {
+    const limit = 4;
+    const cacheKey = cacheKeys.trending(limit);
+
     console.log("Fetching trending tokens from Birdeye API");
 
+    // Try Redis cache first
+    const cachedData = await redis.get<any>(cacheKey);
+
+    if (cachedData) {
+      console.log("Cache HIT for trending tokens");
+
+      return NextResponse.json(cachedData, {
+        headers: {
+          "X-Cache": "HIT",
+          "Cache-Control": "public, max-age=180",
+        },
+      });
+    }
+
+    console.log("Cache MISS for trending tokens");
+
     // Fetch trending tokens from Birdeye using the official trending endpoint
-    // Already sorted by volume, limited to top 4
     const response = await fetchBirdeyeData<{
       data: {
         tokens: Array<{
@@ -50,17 +69,10 @@ export async function GET() {
         }>;
       };
       success: boolean;
-    }>(
-      "/defi/token_trending",
-      {
-        offset: "0",
-        limit: "4", // Return only top 4
-        // No sort parameters needed - endpoint returns trending tokens by default
-      },
-      {
-        cache: "no-store", // Fresh data for trending
-      }
-    );
+    }>("/defi/token_trending", {
+      offset: "0",
+      limit: limit.toString(),
+    });
 
     if (!response.success || !response.data?.tokens) {
       console.warn("Invalid response from Birdeye API - Serving fallback data");
@@ -98,7 +110,7 @@ export async function GET() {
         small: token.logoURI || "",
         large: token.logoURI || "",
         slug: token.symbol.toLowerCase(),
-        price_btc: 0, // Not provided by Birdeye
+        price_btc: 0,
         score: 0,
         data: {
           price: token.price || 0,
@@ -123,12 +135,15 @@ export async function GET() {
       coins: transformedCoins,
     };
 
-    console.log(`Successfully fetched ${transformedCoins.length} trending tokens from Birdeye API (sorted by 24h volume)`);
+    console.log(`Successfully fetched ${transformedCoins.length} trending tokens from Birdeye API`);
+
+    // Store in Redis cache
+    await redis.set(cacheKey, transformedData, CACHE_TTL.TRENDING);
 
     return NextResponse.json(transformedData, {
       headers: {
-        // Cache for 2 minutes on CDN/server
-        "Cache-Control": "public, s-maxage=120, stale-while-revalidate=240",
+        "X-Cache": "MISS",
+        "Cache-Control": "public, max-age=180",
       },
     });
   } catch (error) {

@@ -59,13 +59,13 @@ function transformBirdeyeToken(token: BirdeyeToken): Token {
  * Fetch market data from Birdeye API
  * This function can be called from both server components and API routes
  * The API key is protected as this only runs on the server
+ * Note: Caching is handled at the API route level with Redis
  *
  * @param limit - Number of tokens to fetch (max 200)
  * @param offset - Offset for pagination
- * @param options - Fetch options including revalidate time
  * @returns Array of transformed tokens
  */
-export async function fetchMarketData(limit: number = 100, offset: number = 0, options?: { revalidate?: number }): Promise<Token[]> {
+export async function fetchMarketData(limit: number = 100, offset: number = 0): Promise<Token[]> {
   const queryParam = {
     sort_type: "desc",
     min_holder: "10",
@@ -82,17 +82,11 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0, o
 
     if (limit <= BIRDEYE_MAX_LIMIT) {
       // Single request for 100 or fewer tokens
-      const response = await fetchBirdeyeData<BirdeyeTokenListResponse>(
-        "/defi/v3/token/list",
-        {
-          offset: offset.toString(),
-          limit: limit.toString(),
-          ...queryParam,
-        },
-        {
-          next: { revalidate: options?.revalidate || 300 },
-        }
-      );
+      const response = await fetchBirdeyeData<BirdeyeTokenListResponse>("/defi/v3/token/list", {
+        offset: offset.toString(),
+        limit: limit.toString(),
+        ...queryParam,
+      });
 
       if (!response.success || !response.data?.items) {
         console.warn("Invalid response from Birdeye API");
@@ -111,17 +105,11 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0, o
         const batchLimit = Math.min(BIRDEYE_MAX_LIMIT, limit - i * BIRDEYE_MAX_LIMIT);
 
         requests.push(
-          fetchBirdeyeData<BirdeyeTokenListResponse>(
-            "/defi/v3/token/list",
-            {
-              offset: batchOffset.toString(),
-              limit: batchLimit.toString(),
-              ...queryParam,
-            },
-            {
-              next: { revalidate: options?.revalidate || 300 },
-            }
-          )
+          fetchBirdeyeData<BirdeyeTokenListResponse>("/defi/v3/token/list", {
+            offset: batchOffset.toString(),
+            limit: batchLimit.toString(),
+            ...queryParam,
+          })
         );
       }
 

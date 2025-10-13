@@ -15,7 +15,7 @@ export const SearchInput: React.FC = () => {
   const router = useRouter();
   const { formatPrice } = useCurrency();
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Token[]>([]);
+  const [rawSearchResults, setRawSearchResults] = useState<Token[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,46 +24,64 @@ export const SearchInput: React.FC = () => {
   // Search function calling server-side API
   useEffect(() => {
     if (!searchQuery.trim()) {
-      setSearchResults([]);
+      setRawSearchResults([]);
       setIsDropdownOpen(false);
 
       return;
     }
 
+    let isCancelled = false;
+
     const timeoutId = setTimeout(async () => {
+      if (isCancelled) return;
+
       setIsLoading(true);
       setIsDropdownOpen(true);
 
       try {
         const response = await fetch(`/api/crypto/search?keyword=${encodeURIComponent(searchQuery)}`);
 
+        // Check if search was cancelled during fetch
+        if (isCancelled) return;
+
         if (!response.ok) {
           console.error("Search API error:", response.status);
-          setSearchResults([]);
+          setRawSearchResults([]);
 
           return;
         }
 
         const result = await response.json();
 
-        // API returns Token[] format already - just format prices
-        const tokens: Token[] = (result.data || []).map((token: Token) => ({
-          ...token,
-          price: formatPrice(token.rawPrice || 0),
-          volume: formatBigNumbers(token.rawVolume || 0),
-        }));
+        // Final check before updating state
+        if (isCancelled) return;
 
-        setSearchResults(tokens);
+        // Store raw results - format on render to avoid re-fetching when currency changes
+        setRawSearchResults(result.data || []);
       } catch (error) {
-        console.error("Search error:", error);
-        setSearchResults([]);
+        if (!isCancelled) {
+          console.error("Search error:", error);
+          setRawSearchResults([]);
+        }
       } finally {
-        setIsLoading(false);
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
       }
     }, 500);
 
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery, formatPrice, formatBigNumbers]);
+    return () => {
+      isCancelled = true;
+      clearTimeout(timeoutId);
+    };
+  }, [searchQuery]);
+
+  // Format results on render - prevents re-fetch when currency changes
+  const searchResults = rawSearchResults.map((token) => ({
+    ...token,
+    price: formatPrice(token.rawPrice || 0),
+    volume: formatBigNumbers(token.rawVolume || 0),
+  }));
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -81,7 +99,7 @@ export const SearchInput: React.FC = () => {
   const handleResultClick = (token: Token) => {
     setSearchQuery("");
     setIsDropdownOpen(false);
-    setSearchResults([]);
+    setRawSearchResults([]);
     router.push(`/tokens/${token.id}`);
   };
 

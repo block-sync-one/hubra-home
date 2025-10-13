@@ -4,7 +4,8 @@ import { searchTokens } from "@/lib/data/search-token";
 
 /**
  * GET /api/crypto/search
- * Search for tokens using Birdeye API (target=token, search_by=name)
+ * Search for tokens using Birdeye API
+ * Note: No caching - search queries are user-specific and diverse
  * @query keyword - Search term (required)
  * @returns { data: Token[], success: boolean }
  */
@@ -17,17 +18,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ data: [], success: true }, { status: 200 });
     }
 
-    console.log(`Searching for: ${keyword}`);
+    const normalizedKeyword = keyword.toLowerCase().trim();
 
-    // Call the search function from lib/data - returns Token[] format
-    const tokens = await searchTokens(keyword?.toLowerCase());
+    console.log(`Searching for: ${normalizedKeyword}`);
+
+    // Fetch from API directly (no cache - each search is unique)
+    const tokens = await searchTokens(normalizedKeyword);
 
     return NextResponse.json(
       { data: tokens, success: true },
       {
         status: 200,
         headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+          "Cache-Control": "no-store", // Don't cache user-specific searches
         },
       }
     );

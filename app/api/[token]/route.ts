@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { fetchTokenData } from "@/lib/data/token-data";
+import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 
 /**
  * API route to fetch detailed token information by address
@@ -30,8 +31,26 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Token address is required" }, { status: 400 });
     }
 
+    const cacheKey = cacheKeys.tokenDetail(token);
+
+    // Try Redis cache first
+    const cachedData = await redis.get<any>(cacheKey);
+
+    if (cachedData) {
+      console.log(`Cache HIT for token: ${token}`);
+
+      return NextResponse.json(cachedData, {
+        headers: {
+          "X-Cache": "HIT",
+          "Cache-Control": "public, max-age=120",
+        },
+      });
+    }
+
+    console.log(`Cache MISS for token: ${token}`);
+
     // Use shared data fetching function
-    const tokenData = await fetchTokenData(token, { revalidate: 0 }); // No cache for API route
+    const tokenData = await fetchTokenData(token);
 
     if (!tokenData) {
       console.warn(`Token not found: ${token}`);
@@ -41,10 +60,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     console.log("API route - token data fetched:", tokenData.symbol);
 
+    // Store in Redis cache
+    await redis.set(cacheKey, tokenData, CACHE_TTL.TOKEN_DETAIL);
+
     return NextResponse.json(tokenData, {
       headers: {
-        "Cache-Control": "public, s-maxage=120, stale-while-revalidate=240",
-        "X-Fallback-Data": "false",
+        "X-Cache": "MISS",
+        "Cache-Control": "public, max-age=120",
       },
     });
   } catch (error) {

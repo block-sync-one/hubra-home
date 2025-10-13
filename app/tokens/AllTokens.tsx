@@ -10,7 +10,8 @@ import { TokenFilter } from "@/lib/helpers/token";
  */
 export default async function AllTokens() {
   // Fetch 200 tokens server-side using shared Birdeye service
-  const tokens = await fetchMarketData(200, 0, { revalidate: 120 });
+  // Note: Caching is now handled by Redis at the API route level
+  const tokens = await fetchMarketData(200, 0);
 
   // Use TokenFilter helper for consistent sorting logic (count = array length to show all)
   const allAssetsSorted = TokenFilter.byMarketCap(tokens, tokens.length);

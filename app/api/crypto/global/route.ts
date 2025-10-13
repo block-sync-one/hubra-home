@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
+import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 
 /**
  * Fallback global market data
@@ -51,7 +52,25 @@ const FALLBACK_GLOBAL_DATA = {
  */
 export async function GET() {
   try {
+    const cacheKey = cacheKeys.globalStats();
+
     console.log("Fetching global market data from Birdeye API");
+
+    // Try Redis cache first
+    const cachedData = await redis.get<any>(cacheKey);
+
+    if (cachedData) {
+      console.log("Cache HIT for global stats");
+
+      return NextResponse.json(cachedData, {
+        headers: {
+          "X-Cache": "HIT",
+          "Cache-Control": "public, max-age=300",
+        },
+      });
+    }
+
+    console.log("Cache MISS for global stats");
 
     // Fetch top tokens to aggregate market data
     const response = await fetchBirdeyeData<{
@@ -70,18 +89,10 @@ export async function GET() {
         }>;
       };
       success: boolean;
-    }>(
-      "/defi/v3/token/list",
-      {
-        offset: "0",
-        limit: "100", // Fetch top 100 tokens for aggregation
-      },
-      {
-        next: {
-          revalidate: 300, // Cache for 5 minutes
-        },
-      }
-    );
+    }>("/defi/v3/token/list", {
+      offset: "0",
+      limit: "100",
+    });
 
     if (!response.success || !response.data?.items) {
       console.warn("Invalid response from Birdeye API - Serving fallback data");
@@ -177,10 +188,13 @@ export async function GET() {
       stablecoinsAvgChange,
     });
 
+    // Store in Redis cache
+    await redis.set(cacheKey, transformedData, CACHE_TTL.GLOBAL_STATS);
+
     return NextResponse.json(transformedData, {
       headers: {
-        // Cache for 2 minutes on CDN/server
-        "Cache-Control": "public, s-maxage=120, stale-while-revalidate=240",
+        "X-Cache": "MISS",
+        "Cache-Control": "public, max-age=300",
       },
     });
   } catch (error) {

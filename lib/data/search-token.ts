@@ -89,11 +89,7 @@ export async function searchTokens(keyword: string): Promise<Token[]> {
       verify: "true",
     };
 
-    const data = await fetchBirdeyeData<BirdeyeSearchResponse>("/defi/v3/search", params, {
-      next: {
-        revalidate: 60,
-      },
-    });
+    const data = await fetchBirdeyeData<BirdeyeSearchResponse>("/defi/v3/search", params);
 
     console.log("Search response:", data);
 

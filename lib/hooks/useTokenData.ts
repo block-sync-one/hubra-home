@@ -44,12 +44,8 @@ export function useTokenData(): UseTokenDataReturn {
 
       // Fetch both endpoints concurrently for better performance
       const [trendingResponse, marketsResponse] = await Promise.all([
-        fetch("/api/crypto/trending?limit=4", {
-          next: { revalidate: 120 },
-        }),
-        fetch("/api/crypto/markets?limit=100", {
-          next: { revalidate: 120 },
-        }),
+        fetch("/api/crypto/trending?limit=4"),
+        fetch("/api/crypto/markets?limit=100"),
       ]);
 
       if (!trendingResponse.ok || !marketsResponse.ok) {
@@ -118,12 +114,28 @@ export function useTokenData(): UseTokenDataReturn {
   }, [fetchData]);
 
   useEffect(() => {
-    fetchData();
+    let isMounted = true;
+
+    const runFetch = async () => {
+      if (isMounted) {
+        await fetchData();
+      }
+    };
+
+    // Initial fetch
+    runFetch();
 
     // Auto-refresh every 2 minutes
-    const interval = setInterval(fetchData, INTERVALS.REFRESH_DATA);
+    const interval = setInterval(() => {
+      if (isMounted) {
+        runFetch();
+      }
+    }, INTERVALS.REFRESH_DATA);
 
-    return () => clearInterval(interval);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [fetchData]);
 
   return { hotTokens, gainers, losers, volume, loading, error, retry };

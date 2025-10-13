@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { fetchBirdeyeData, DEFAULT_CHAIN } from "@/lib/services/birdeye";
+import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 
 /**
  * Fallback cryptocurrency market data for when Birdeye API fails
@@ -151,7 +152,26 @@ export async function GET(request: Request) {
     const order = searchParams.get("order") || "price_change_desc"; // Default to price change
     const chain = searchParams.get("chain") || DEFAULT_CHAIN;
 
+    // Generate cache key
+    const cacheKey = cacheKeys.marketData(limit, offset);
+
     console.log(`Fetching ${limit} tokens from Birdeye API (chain: ${chain}, offset: ${offset})`);
+
+    // Try Redis cache first
+    const cachedData = await redis.get<any[]>(cacheKey);
+
+    if (cachedData) {
+      console.log(`Cache HIT for markets: limit=${limit}, offset=${offset}`);
+
+      return NextResponse.json(cachedData, {
+        headers: {
+          "X-Cache": "HIT",
+          "Cache-Control": "public, max-age=120",
+        },
+      });
+    }
+
+    console.log(`Cache MISS for markets: limit=${limit}, offset=${offset}`);
 
     // Birdeye API has a max limit of 100 per request
     // If more than 100 is requested, make multiple parallel requests
@@ -160,18 +180,10 @@ export async function GET(request: Request) {
 
     if (limit <= BIRDEYE_MAX_LIMIT) {
       // Single request for 100 or fewer tokens
-      const response = await fetchBirdeyeData<{ data: { items: BirdeyeToken[] }; success: boolean }>(
-        "/defi/v3/token/list",
-        {
-          offset: offset.toString(),
-          limit: limit.toString(),
-        },
-        {
-          next: {
-            revalidate: 300, // Cache for 5 minutes (300 seconds)
-          },
-        }
-      );
+      const response = await fetchBirdeyeData<{ data: { items: BirdeyeToken[] }; success: boolean }>("/defi/v3/token/list", {
+        offset: offset.toString(),
+        limit: limit.toString(),
+      });
 
       if (!response.success || !response.data?.items) {
         console.warn("Invalid response from Birdeye API - Serving fallback data");
@@ -195,18 +207,10 @@ export async function GET(request: Request) {
         const batchLimit = Math.min(BIRDEYE_MAX_LIMIT, limit - i * BIRDEYE_MAX_LIMIT);
 
         requests.push(
-          fetchBirdeyeData<{ data: { items: BirdeyeToken[] }; success: boolean }>(
-            "/defi/v3/token/list",
-            {
-              offset: batchOffset.toString(),
-              limit: batchLimit.toString(),
-            },
-            {
-              next: {
-                revalidate: 300,
-              },
-            }
-          )
+          fetchBirdeyeData<{ data: { items: BirdeyeToken[] }; success: boolean }>("/defi/v3/token/list", {
+            offset: batchOffset.toString(),
+            limit: batchLimit.toString(),
+          })
         );
       }
 
@@ -259,10 +263,13 @@ export async function GET(request: Request) {
 
     console.log(`Successfully fetched ${transformedData.length} tokens from Birdeye API`);
 
+    // Store in Redis cache
+    await redis.set(cacheKey, transformedData, CACHE_TTL.MARKET_DATA);
+
     return NextResponse.json(transformedData, {
       headers: {
-        // Cache for 2 minutes on CDN/server
-        "Cache-Control": "public, s-maxage=120, stale-while-revalidate=240",
+        "X-Cache": "MISS",
+        "Cache-Control": "public, max-age=120",
       },
     });
   } catch (error) {

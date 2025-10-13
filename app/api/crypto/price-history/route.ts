@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { fetchBirdeyeData, mapTimeRange } from "@/lib/services/birdeye";
+import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 
 /**
  * Fallback price history data (Birdeye-native format)
@@ -50,46 +51,56 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Invalid token address format" }, { status: 400 });
     }
 
+    const cacheKey = cacheKeys.priceHistory(tokenAddress, days);
+
     console.log(`Fetching price history for ${tokenAddress} (${days} days) from Birdeye API`);
+
+    // Try Redis cache first
+    const cachedData = await redis.get<any>(cacheKey);
+
+    if (cachedData) {
+      console.log(`Cache HIT for price history: ${tokenAddress} (${days} days)`);
+
+      return NextResponse.json(cachedData, {
+        headers: {
+          "X-Cache": "HIT",
+          "Cache-Control": "public, max-age=300",
+        },
+      });
+    }
+
+    console.log(`Cache MISS for price history: ${tokenAddress} (${days} days)`);
 
     // Map days to Birdeye time range
     const timeType = mapTimeRange(days === "max" ? "max" : parseInt(days, 10));
 
     // Calculate time range
-    const now = Math.floor(Date.now() / 1000); // Current time in seconds
+    const now = Math.floor(Date.now() / 1000);
     const daysNum = days === "max" ? 365 : parseInt(days, 10);
-    const timeFrom = now - daysNum * 24 * 60 * 60; // X days ago
+    const timeFrom = now - daysNum * 24 * 60 * 60;
 
-    // Fetch OHLCV data from Birdeye (Solana network)
-    // Note: Using OHLCV endpoint (available in free tier)
+    // Fetch OHLCV data from Birdeye
     const response = await fetchBirdeyeData<{
       data: {
         items: Array<{
           unixTime: number;
-          o: number; // open
-          h: number; // high
-          l: number; // low
-          c: number; // close
-          v: number; // volume
+          o: number;
+          h: number;
+          l: number;
+          c: number;
+          v: number;
           address: string;
           type: string;
           currency: string;
         }>;
       };
       success: boolean;
-    }>(
-      "/defi/ohlcv",
-      {
-        address: tokenAddress,
-        type: timeType,
-        time_from: timeFrom.toString(),
-        time_to: now.toString(),
-        // chain parameter will be auto-added by buildBirdeyeUrl
-      },
-      {
-        cache: "no-store", // Disable cache for fresh data
-      }
-    );
+    }>("/defi/ohlcv", {
+      address: tokenAddress,
+      type: timeType,
+      time_from: timeFrom.toString(),
+      time_to: now.toString(),
+    });
 
     if (!response.success || !response.data?.items) {
       console.warn("Invalid response from Birdeye API", {
@@ -152,10 +163,13 @@ export async function GET(request: Request) {
 
     console.log(`Successfully fetched ${items.length} OHLCV data points for ${tokenAddress}`);
 
+    // Store in Redis cache
+    await redis.set(cacheKey, transformedData, CACHE_TTL.PRICE_HISTORY);
+
     return NextResponse.json(transformedData, {
       headers: {
-        // Cache for 2 minutes on CDN/server
-        "Cache-Control": "public, s-maxage=120, stale-while-revalidate=240",
+        "X-Cache": "MISS",
+        "Cache-Control": "public, max-age=300",
       },
     });
   } catch (error) {

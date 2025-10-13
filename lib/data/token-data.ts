@@ -10,22 +10,17 @@ import { BirdEyeTokenOverview } from "@/lib/types/birdeye";
  * Fetch token data from Birdeye API
  * This function can be called from both server components and API routes
  * The API key is protected as this only runs on the server
+ * Note: Caching is handled at the API route level with Redis
  */
-export async function fetchTokenData(tokenAddress: string, options?: { revalidate?: number }) {
+export async function fetchTokenData(tokenAddress: string) {
   try {
     console.log("Fetching token data for:", tokenAddress);
 
     // Fetch token overview from Birdeye (Solana network)
-    const overviewResponse = await fetchBirdeyeData<BirdEyeTokenOverview>(
-      "/defi/token_overview",
-      {
-        address: tokenAddress,
-        ui_amount_mode: "scaled",
-      },
-      {
-        next: { revalidate: options?.revalidate || 120 },
-      }
-    );
+    const overviewResponse = await fetchBirdeyeData<BirdEyeTokenOverview>("/defi/token_overview", {
+      address: tokenAddress,
+      ui_amount_mode: "scaled",
+    });
 
     if (!overviewResponse.success || !overviewResponse.data) {
       console.warn(`Token not found: ${tokenAddress}`);
