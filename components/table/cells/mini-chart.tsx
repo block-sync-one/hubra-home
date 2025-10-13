@@ -10,7 +10,7 @@ interface MiniChartProps {
 }
 
 export const MiniChart: React.FC<MiniChartProps> = ({ tokenId, change, width = 120, height = 28 }) => {
-  const chartData = useMemo(() => generateTrendData(change, 7), [change]);
+  const chartData = useMemo(() => generateTrendData(tokenId, change, 7), [tokenId, change]);
 
   if (chartData.length === 0) {
     return <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">-</div>;
@@ -57,10 +57,29 @@ export const MiniChart: React.FC<MiniChartProps> = ({ tokenId, change, width = 1
 };
 
 /**
- * Generate trend data based on price change for 7 days
- * Creates a realistic-looking curve
+ * Simple seeded random number generator for deterministic results
+ * This ensures server and client render the same values
  */
-function generateTrendData(change: number, days: number = 7): number[] {
+function seededRandom(seed: string, index: number): number {
+  const combined = seed + index.toString();
+  let hash = 0;
+
+  for (let i = 0; i < combined.length; i++) {
+    const char = combined.charCodeAt(i);
+
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+
+  // Convert to 0-1 range
+  return (Math.abs(Math.sin(hash)) * 10000) % 1;
+}
+
+/**
+ * Generate trend data based on price change for 7 days
+ * Creates a realistic-looking curve with deterministic randomness
+ */
+function generateTrendData(tokenId: string, change: number, days: number = 7): number[] {
   const points = days * 4; // 4 data points per day
   const data: number[] = [];
   const startValue = 100;
@@ -68,8 +87,8 @@ function generateTrendData(change: number, days: number = 7): number[] {
 
   for (let i = 0; i < points; i++) {
     const progress = i / (points - 1);
-    // Add some randomness for realistic look
-    const noise = (Math.random() - 0.5) * (Math.abs(change) * 0.15);
+    // Add deterministic "randomness" for realistic look using seeded random
+    const noise = (seededRandom(tokenId, i) - 0.5) * (Math.abs(change) * 0.15);
     const value = startValue + (endValue - startValue) * progress + noise;
 
     data.push(Math.max(0, value)); // Ensure no negative values

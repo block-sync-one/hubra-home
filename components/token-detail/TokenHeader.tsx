@@ -31,7 +31,7 @@ function StatCard({
   roundedClass: string;
 }) {
   return (
-    <div className={`border border-white/10 ${roundedClass} p-4 md:border-none md:p-0`}>
+    <div className={`${roundedClass} p-4 md:p-0`}>
       <p className="text-sm font-medium text-gray-400 mb-1">{label}:</p>
       <div className="flex items-center gap-2">
         <p className="text-lg font-medium text-white">{value}</p>
@@ -99,7 +99,7 @@ export function TokenStats({
 
   return (
     <div className="w-full md:w-auto">
-      <div className="grid grid-cols-2 md:flex md:gap-12">
+      <div className="bg-card rounded-xl md:bg-transparent grid grid-cols-2 md:flex md:gap-12">
         {stats.map((stat, index) => (
           <StatCard
             key={index}

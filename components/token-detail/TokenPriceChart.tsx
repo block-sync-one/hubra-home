@@ -112,9 +112,10 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
 
   return (
     <Card className="bg-card backdrop-blur-sm">
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          {/* Price and Change */}
           <div className="flex items-center gap-4">
             <div>
               <p className="text-sm font-medium text-gray-400 mb-1">Price</p>
@@ -146,8 +147,8 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
             </Chip>
           </div>
 
-          {/* Period Selector */}
-          <div className="flex gap-1 bg-white/5 rounded-xl p-1">
+          {/* Period Selector - Desktop */}
+          <div className="hidden md:flex gap-1 bg-white/5 rounded-xl p-1">
             {periods.map((period) => (
               <button
                 key={period}
@@ -164,7 +165,7 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
         </div>
 
         {/* Chart */}
-        <div className="h-48 w-full select-none" style={{ WebkitTapHighlightColor: "transparent" }}>
+        <div className="h-48 w-full select-none mb-6" style={{ WebkitTapHighlightColor: "transparent" }}>
           <ResponsiveContainer height="100%" width="100%">
             <AreaChart data={transformedChartData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
               <defs>
@@ -207,6 +208,22 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
               />
             </AreaChart>
           </ResponsiveContainer>
+        </div>
+
+        {/* Period Selector - Mobile (Full Width Below Chart) */}
+        <div className="md:hidden flex gap-1 bg-white/5 rounded-xl p-1 w-full">
+          {periods.map((period) => (
+            <button
+              key={period}
+              className={cn(
+                "flex-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
+                selectedPeriod === period ? "bg-white/10 text-white" : "text-gray-400 hover:text-white hover:bg-white/5"
+              )}
+              type="button"
+              onClick={() => onPeriodChange(period)}>
+              {period}
+            </button>
+          ))}
         </div>
       </div>
     </Card>

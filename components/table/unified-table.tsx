@@ -4,7 +4,6 @@ import type { TableProps } from "./types";
 
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { SortDescriptor, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@heroui/react";
-import { useMediaQuery } from "usehooks-ts";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 
@@ -14,9 +13,6 @@ const get = (obj: any, path: string) => {
 };
 
 import TableSkeleton from "./skeleton/table-skeleton";
-
-import { generateUUID } from "@/lib/utils/helper";
-import { BREAKPOINTS } from "@/lib/constants";
 
 const ROWS_PER_PAGE = 100;
 
@@ -73,9 +69,12 @@ const UnifiedTable = <T extends Record<string, any>>({
           return null;
         }
 
+        // Use stable key based on actual data properties to avoid hydration mismatch
+        const stableKey = item.id || item.key || item.address || `item-${index}`;
+
         return {
           ...item,
-          key: generateUUID(),
+          key: stableKey,
           _index: index,
         };
       })
@@ -235,9 +234,6 @@ const UnifiedTable = <T extends Record<string, any>>({
     );
   }, [page, pages, onPreviousPage, onNextPage, sortedItems.length, rowsPerPage]);
 
-  // Check if mobile
-  const isMobile = useMediaQuery(BREAKPOINTS.MOBILE);
-
   // Render a fallback message if the configuration is invalid
   if (invalidConfig) {
     console.warn("ReusableTable: Invalid configuration provided");
@@ -245,10 +241,10 @@ const UnifiedTable = <T extends Record<string, any>>({
     return <div className="p-4 text-center text-gray-500">Table configuration error</div>;
   }
 
-  // Mobile List View
-  if (isMobile) {
-    return (
-      <div className="bg-card rounded-lg overflow-hidden">
+  return (
+    <>
+      {/* Mobile List View */}
+      <div className="md:hidden bg-card rounded-lg overflow-hidden">
         {isLoading ? (
           <TableSkeleton columns={1} rows={5} />
         ) : paginatedItems.length === 0 ? (
@@ -304,77 +300,75 @@ const UnifiedTable = <T extends Record<string, any>>({
         )}
         {bottomContent}
       </div>
-    );
-  }
 
-  // Desktop Table View
-  return (
-    <>
-      <Table
-        aria-label="Data table"
-        className="min-w-full shadow-none border-none [&>div]:border-none [&>div]:shadow-none p-0 [&_th_svg]:opacity-100"
-        classNames={{
-          wrapper: "bg-transparent rounded-t-none lg:bg-card p-0 lg:p-4",
-          th: "[&>div>svg]:opacity-100 [&>div>svg]:visible",
-        }}
-        sortDescriptor={sortDescriptor}
-        onSortChange={handleSortChange}>
-        <TableHeader className="">
-          {headerColumns?.map((column, index) => (
-            <TableColumn
-              key={column.key}
-              allowsSorting={column.sortable}
-              className={`
+      {/* Desktop Table View */}
+      <div className="hidden md:block">
+        <Table
+          aria-label="Data table"
+          className="min-w-full shadow-none border-none [&>div]:border-none [&>div]:shadow-none p-0 [&_th_svg]:opacity-100"
+          classNames={{
+            wrapper: "bg-transparent rounded-t-none lg:bg-card p-0 lg:p-4",
+            th: "[&>div>svg]:opacity-100 [&>div>svg]:visible",
+          }}
+          sortDescriptor={sortDescriptor}
+          onSortChange={handleSortChange}>
+          <TableHeader className="">
+            {headerColumns?.map((column, index) => (
+              <TableColumn
+                key={column.key}
+                allowsSorting={column.sortable}
+                className={`
                 bg-gray-30  
                 text-gray-400 ${column.align === "left" ? "text-left" : "text-right"}
                 ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
               `}>
-              {column.label}
-            </TableColumn>
-          ))}
-        </TableHeader>
-        <TableBody
-          emptyContent={<div className="py-6 text-center text-gray-500 w-full">No data available</div>}
-          isLoading={isLoading}
-          loadingContent={<TableSkeleton columns={configuration.columns.length} rows={2} />}>
-          {paginatedItems.map((item: any) => (
-            <TableRow
-              key={item.key || item.id || item.asset?.mint || item._index}
-              className="cursor-pointer transition-colors duration-150 border-none"
-              onClick={() => handleRowClick(item)}>
-              {configuration.columns.map((column) => (
-                <TableCell
-                  key={column.key}
-                  className={`border-none h-[40px] lg:h-[80px] ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"} lg:p-auto px-0 pb-4
+                {column.label}
+              </TableColumn>
+            ))}
+          </TableHeader>
+          <TableBody
+            emptyContent={<div className="py-6 text-center text-gray-500 w-full">No data available</div>}
+            isLoading={isLoading}
+            loadingContent={<TableSkeleton columns={configuration.columns.length} rows={2} />}>
+            {paginatedItems.map((item: any) => (
+              <TableRow
+                key={item.key || item.id || item.asset?.mint || item._index}
+                className="cursor-pointer transition-colors duration-150 border-none"
+                onClick={() => handleRowClick(item)}>
+                {configuration.columns.map((column) => (
+                  <TableCell
+                    key={column.key}
+                    className={`border-none h-[40px] lg:h-[80px] ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"} lg:p-auto px-0 pb-4
                     ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
                   `}>
-                  {(() => {
-                    try {
-                      if (column.render) {
-                        const rendered = column.render(item, get(item, String(column.key)));
+                    {(() => {
+                      try {
+                        if (column.render) {
+                          const rendered = column.render(item, get(item, String(column.key)));
 
-                        return rendered || null;
-                      } else {
-                        const value = get(item, String(column.key));
+                          return rendered || null;
+                        } else {
+                          const value = get(item, String(column.key));
 
-                        return value !== null && value !== undefined ? String(value) : "-";
+                          return value !== null && value !== undefined ? String(value) : "-";
+                        }
+                      } catch (error) {
+                        console.error("Error rendering cell:", error, {
+                          item,
+                          column: column.key,
+                        });
+
+                        return "-";
                       }
-                    } catch (error) {
-                      console.error("Error rendering cell:", error, {
-                        item,
-                        column: column.key,
-                      });
-
-                      return "-";
-                    }
-                  })()}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {bottomContent}
+                    })()}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {bottomContent}
+      </div>
     </>
   );
 };
