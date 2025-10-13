@@ -1,22 +1,5 @@
-/**
- * Birdeye API Client Configuration
- *
- * @description Provides utilities and configuration for Birdeye API integration.
- * Birdeye is a real-time blockchain data provider for Solana and other chains.
- *
- * @see {@link https://docs.birdeye.so} Birdeye API Documentation
- * @since 1.0.0
- * @version 1.0.0
- */
-
-/**
- * Birdeye API base URL
- */
 export const BIRDEYE_API_BASE_URL = "https://public-api.birdeye.so";
 
-/**
- * Supported blockchain networks
- */
 export const SUPPORTED_CHAINS = {
   SOLANA: "solana",
   ETHEREUM: "ethereum",
@@ -32,18 +15,8 @@ export const SUPPORTED_CHAINS = {
 
 export type SupportedChain = (typeof SUPPORTED_CHAINS)[keyof typeof SUPPORTED_CHAINS];
 
-/**
- * Get Birdeye API headers
- *
- * @returns Headers object with API key and content type
- * @note Uses x-api-key header (lowercase) for authentication
- */
 export function getBirdeyeHeaders(): HeadersInit {
   const apiKey = process.env.BIRDEYE_API_KEY;
-
-  if (!apiKey) {
-    console.warn("BIRDEYE_API_KEY not set - API requests will fail (401 Unauthorized)");
-  }
 
   return {
     "Accept": "application/json",
@@ -52,13 +25,6 @@ export function getBirdeyeHeaders(): HeadersInit {
   };
 }
 
-/**
- * Build Birdeye API URL
- *
- * @param endpoint - API endpoint path
- * @param params - Query parameters
- * @returns Complete API URL with query parameters
- */
 export function buildBirdeyeUrl(endpoint: string, params?: Record<string, string>): string {
   const url = new URL(`${BIRDEYE_API_BASE_URL}${endpoint}`);
 
@@ -68,8 +34,6 @@ export function buildBirdeyeUrl(endpoint: string, params?: Record<string, string
     ...(params?.chain === undefined && { chain: DEFAULT_CHAIN }),
   };
 
-  console.log("Building Birdeye URL - All params:", allParams);
-
   if (allParams) {
     Object.entries(allParams).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
@@ -78,11 +42,7 @@ export function buildBirdeyeUrl(endpoint: string, params?: Record<string, string
     });
   }
 
-  const finalUrl = url.toString();
-
-  console.log("Final Birdeye URL:", finalUrl);
-
-  return finalUrl;
+  return url.toString();
 }
 
 /**

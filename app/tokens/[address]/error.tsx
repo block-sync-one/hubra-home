@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { Button } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
@@ -10,13 +9,8 @@ interface ErrorProps {
 }
 
 export default function TokenError({ error, reset }: ErrorProps) {
-  useEffect(() => {
-    // Log the error to an error reporting service
-    console.error("Token page error:", error);
-  }, [error]);
-
   return (
-    <div className="min-h-screen bg-[#0d0e21] flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center max-w-md mx-auto px-6">
         <div className="mb-6">
           <Icon className="h-16 w-16 text-red-400 mx-auto mb-4" icon="lucide:alert-triangle" />

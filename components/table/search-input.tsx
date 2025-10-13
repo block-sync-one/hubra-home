@@ -45,7 +45,6 @@ export const SearchInput: React.FC = () => {
         if (isCancelled) return;
 
         if (!response.ok) {
-          console.error("Search API error:", response.status);
           setRawSearchResults([]);
 
           return;
@@ -56,11 +55,9 @@ export const SearchInput: React.FC = () => {
         // Final check before updating state
         if (isCancelled) return;
 
-        // Store raw results - format on render to avoid re-fetching when currency changes
         setRawSearchResults(result.data || []);
       } catch (error) {
         if (!isCancelled) {
-          console.error("Search error:", error);
           setRawSearchResults([]);
         }
       } finally {
@@ -108,12 +105,12 @@ export const SearchInput: React.FC = () => {
       <Input
         ref={inputRef}
         classNames={{
-          inputWrapper: "bg-background hover:bg-white/10 h-10",
-          input: "text-sm",
+          inputWrapper: "bg-card md:bg-background hover:bg-gray-800 focus-within:bg-gray-900 h-10 w-full",
+          input: "text-sm text-white placeholder:text-gray-500 w-full",
         }}
         placeholder="Search tokens..."
         size="sm"
-        startContent={<Icon className="text-default-400" icon="solar:magnifer-linear" width={20} />}
+        startContent={<Icon className="text-gray-500" icon="solar:magnifer-linear" width={20} />}
         type="text"
         value={searchQuery}
         variant="flat"
@@ -123,18 +120,20 @@ export const SearchInput: React.FC = () => {
 
       {/* Search Results Dropdown */}
       {isDropdownOpen && (
-        <div className="absolute top-full mt-2 left-0 right-0 bg-card rounded-lg shadow-lg border border-default-200 z-50 max-h-[400px] overflow-y-auto">
+        <div
+          className="absolute top-full mt-2 left-0 right-0 bg-card rounded-xl z-50 max-h-[400px] overflow-y-auto backdrop-blur-sm transition-all"
+          style={{ boxShadow: "0 20px 50px rgba(0, 0, 0, 0.5)" }}>
           {isLoading && (
             <div className="p-4 text-center">
-              <Icon className="animate-spin text-default-400 mx-auto mb-2" icon="solar:refresh-linear" width={24} />
-              <p className="text-sm text-default-500">Searching...</p>
+              <Icon className="animate-spin text-gray-500 mx-auto mb-2" icon="solar:refresh-linear" width={24} />
+              <p className="text-xs text-gray-400">Searching...</p>
             </div>
           )}
 
           {!isLoading && searchResults.length === 0 && searchQuery && (
             <div className="p-4 text-center">
-              <Icon className="text-default-400 mx-auto mb-2" icon="solar:search-linear" width={24} />
-              <p className="text-sm text-default-500">No results found</p>
+              <Icon className="text-gray-500 mx-auto mb-2" icon="solar:search-linear" width={24} />
+              <p className="text-xs text-gray-400">No results found</p>
             </div>
           )}
 
@@ -143,32 +142,29 @@ export const SearchInput: React.FC = () => {
               {searchResults.slice(0, 10).map((token, index) => (
                 <button
                   key={`${token.id}-${index}`}
-                  className="w-full flex items-center justify-between p-3 hover:bg-default-100 cursor-pointer transition-colors text-left"
+                  className="w-full flex items-center justify-between p-3 hover:bg-gray-900 cursor-pointer transition-colors text-left"
                   type="button"
                   onClick={() => handleResultClick(token)}>
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <Avatar className="flex-shrink-0" name={token.symbol} size="sm" src={token.imgUrl} />
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-semibold text-sm truncate">{token.symbol}</h4>
-                        <span className="text-xs text-default-500 truncate">{token.name}</span>
-                      </div>
-                      <p className="text-xs text-default-400 font-mono truncate">
+                      <h4 className="font-semibold text-xs truncate">{token.symbol}</h4>
+                      <p className="text-xs text-gray-500 font-mono truncate">
                         {token.id.slice(0, 4)}...{token.id.slice(-4)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 flex-shrink-0">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     {token.marketCap && token.marketCap > 0 && (
                       <div className="text-right">
-                        <p className="text-xs text-default-500">MCap</p>
-                        <p className="text-xs font-medium">
+                        <p className="text-xs text-gray-500">MCap</p>
+                        <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
                           <PriceDisplay value={token.marketCap} />
                         </p>
                       </div>
                     )}
-                    <Icon className="text-default-400" icon="solar:arrow-right-linear" width={16} />
+                    <Icon className="text-gray-500" icon="solar:arrow-right-linear" width={16} />
                   </div>
                 </button>
               ))}

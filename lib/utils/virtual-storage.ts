@@ -1,3 +1,5 @@
+import { logger } from "@/lib/utils/logger";
+
 export class VirtualStorageService {
   constructor() {}
 
@@ -57,7 +59,8 @@ export class VirtualStorageService {
         try {
           storage.setItem(key, value);
         } catch (error) {
-          console.log(error);
+          // Silent fail
+          logger.error("virtual-storage", error);
         }
       }
     },
@@ -69,7 +72,7 @@ export class VirtualStorageService {
         try {
           return storage.getItem(key);
         } catch (error) {
-          console.log(error);
+          logger.error("virtual-storage", error);
 
           return null;
         }
@@ -128,7 +131,7 @@ export class VirtualStorageService {
           transaction.oncomplete = () => db.close();
         });
       } catch (error) {
-        console.error("IndexedDB saveData error:", error);
+        logger.error("IndexedDB saveData error:", error);
         throw error;
       }
     },
@@ -148,7 +151,7 @@ export class VirtualStorageService {
           transaction.oncomplete = () => db.close();
         });
       } catch (error) {
-        console.error("IndexedDB getData error:", error);
+        logger.error("IndexedDB saveData error:", error);
 
         return null;
       }
@@ -156,7 +159,6 @@ export class VirtualStorageService {
 
     async removeData(dbName: string, key: string) {
       try {
-        console.log("dbName", dbName);
         const db = await this.openDB(dbName);
 
         return new Promise<void>((resolve, reject) => {
@@ -170,7 +172,6 @@ export class VirtualStorageService {
           transaction.oncomplete = () => db.close();
         });
       } catch (error) {
-        console.error("IndexedDB removeData error:", error);
         throw error;
       }
     },
@@ -190,7 +191,7 @@ export class VirtualStorageService {
           transaction.oncomplete = () => db.close();
         });
       } catch (error) {
-        console.error("IndexedDB clearData error:", error);
+        logger.error("IndexedDB saveData error:", error);
         throw error;
       }
     },

@@ -87,15 +87,7 @@ MiniChartComponent.displayName = "MiniChart";
 
 export const MiniChart = React.memo(MiniChartComponent);
 
-/**
- * Generate realistic prognostic chart data based on 24h price change
- * Uses deterministic seeded random for hydration consistency
- * Creates distinctive patterns based on change magnitude
- *
- * @param tokenId - Unique token identifier for seeding
- * @param change - 24h price change percentage
- * @returns Array of price values representing 7-day trend
- */
+// Generate prognostic chart from price change (deterministic for SSR)
 function generatePrognosticData(tokenId: string, change: number): number[] {
   const points = 28; // 4 data points per day for 7 days
   const data: number[] = [];
@@ -104,9 +96,8 @@ function generatePrognosticData(tokenId: string, change: number): number[] {
 
   // Determine change magnitude and characteristics
   const absChange = Math.abs(change);
-  const isLargeChange = absChange > 20; // Large moves (>20%)
-  const isMediumChange = absChange > 5 && absChange <= 20; // Medium moves (5-20%)
-  const isSmallChange = absChange <= 5; // Small moves (<=5%)
+  const isLargeChange = absChange > 20;
+  const isMediumChange = absChange > 5 && absChange <= 20;
 
   // Adjust curve steepness based on magnitude
   const steepness = isLargeChange ? 12 : isMediumChange ? 8 : 5;
@@ -162,9 +153,6 @@ function generatePrognosticData(tokenId: string, change: number): number[] {
   return data;
 }
 
-/**
- * Simple hash function to convert token ID to a numeric seed
- */
 function hashCode(str: string): number {
   let hash = 0;
 

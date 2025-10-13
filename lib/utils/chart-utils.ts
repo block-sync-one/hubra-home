@@ -29,8 +29,6 @@ export interface TimeRangeConfig {
 
 /**
  * Calculate time range for Birdeye API based on selected range
- * @param range - The selected time range (24H, 1W, 1M, 3M, ALL)
- * @returns Object with type, timeFrom, and timeTo for Birdeye API
  */
 export function calculateTimeRange(range: string): TimeRangeConfig {
   const now = Math.floor(Date.now() / 1000); // Current time in seconds
@@ -78,9 +76,6 @@ export function calculateTimeRange(range: string): TimeRangeConfig {
 
 /**
  * Transform Birdeye chart data to match the expected format
- * @param chartData - Raw Birdeye API response
- * @param range - Selected time range for label formatting
- * @returns Transformed data with labels, values, and timestamps
  */
 export function transformBirdeyeChartData(
   chartData: BirdeyeChartData,
@@ -106,9 +101,6 @@ export function transformBirdeyeChartData(
 
 /**
  * Format timestamp for display based on selected range
- * @param timestamp - Timestamp in milliseconds
- * @param range - Selected time range
- * @returns Formatted label string
  */
 function formatLabel(timestamp: number, range: string): string {
   const date = new Date(timestamp);
@@ -141,8 +133,6 @@ function formatLabel(timestamp: number, range: string): string {
 
 /**
  * Calculate price change percentage from chart data
- * @param values - Array of price values
- * @returns Price change percentage
  */
 export function calculatePriceChange(values: number[]): number {
   if (values.length < 2) return 0;

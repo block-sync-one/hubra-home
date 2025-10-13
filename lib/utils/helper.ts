@@ -65,9 +65,6 @@ Number.prototype.toFixedNoRounding = function (n: number) {
 
 /**
  * Formats large numbers with K, M, B, T suffixes for better readability
- * @param n Number to format
- * @param decimals Number of decimal places for small numbers
- * @returns Formatted string representation of the number
  */
 export function formatBigNumbers(n: number, decimals = 2): string {
   if (n < 1e3) return n.toFixedNoRounding(decimals);

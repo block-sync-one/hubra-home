@@ -40,7 +40,7 @@ interface StatCardProps {
   className?: string;
 }
 
-const StatCard = memo(function StatCard({ title, value, change, isPositive, className = "" }: StatCardProps) {
+const StatCard = memo(function StatCard({ title, value, change, className = "" }: StatCardProps) {
   return (
     <div className={`flex flex-col gap-1.5 h-[91px] justify-center px-4 relative md:flex-1 w-full ${className}`}>
       <p className="text-sm font-medium text-gray-400 whitespace-nowrap">{title}</p>
@@ -66,7 +66,6 @@ const StatsGrid = memo(function StatsGrid({ children }: StatsGridProps) {
 
     for (let i = 0; i < childrenArray.length; i += 2) {
       const rowItems = childrenArray.slice(i, i + 2);
-      const isLastRow = i + 2 >= childrenArray.length;
       const hasOnlyOneItem = rowItems.length === 1;
 
       rows.push(
@@ -137,8 +136,7 @@ export default function Tokens() {
         const data = await response.json();
 
         setGlobalData(data);
-      } catch (err) {
-        console.error("Error fetching global data:", err);
+      } catch {
         setError("Failed to fetch global data");
       } finally {
         setLoading(false);
@@ -157,13 +155,6 @@ export default function Tokens() {
     if (!globalData?.data) return [];
 
     const { data } = globalData;
-
-    console.log("Stats Data:", {
-      sol_tvl: data.sol_tvl,
-      sol_tvl_change: data.sol_tvl_change,
-      stablecoins_tvl: data.stablecoins_tvl,
-      stablecoins_tvl_change: data.stablecoins_tvl_change,
-    });
 
     return [
       {

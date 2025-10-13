@@ -75,11 +75,6 @@ const RectangularOrbit = ({
 }) => {
   // Use a dynamic radius for best appearance
   const radius = Math.min(width, height) / 4;
-
-  // Debug: log radius
-  console.log("RectangularOrbit radius:", radius);
-
-  // Calculate the total path length for a rounded rectangle
   const straightSides = 2 * (width + height - 4 * radius);
   const cornerArcs = 2 * Math.PI * radius;
   const pathLength = straightSides + cornerArcs;

@@ -3,10 +3,6 @@ import { NextResponse } from "next/server";
 import { fetchMarketData } from "@/lib/data/market-data";
 import { loggers } from "@/lib/utils/logger";
 
-/**
- * Fallback cryptocurrency market data for when Birdeye API fails
- * Provides sample Solana tokens with zero values to maintain data structure
- */
 const FALLBACK_MARKETS_DATA = [
   {
     id: "solana",
@@ -38,53 +34,6 @@ const FALLBACK_MARKETS_DATA = [
   },
 ];
 
-/**
- * Cryptocurrency market data endpoint
- *
- * Fetches detailed market information for cryptocurrencies including:
- * - Current prices and market capitalization
- * - 24-hour price changes and volume
- * - Market rankings and supply information
- * - Token metadata and logos
- *
- * @description This endpoint provides real-time cryptocurrency market data
- * from Birdeye API with 5-minute caching and fallback data support.
- * Supports filtering, sorting, and pagination.
- *
- * @param {Request} request - The incoming HTTP request
- * @param {string} request.url - The request URL containing query parameters
- *
- * @returns {Promise<NextResponse>} JSON response containing array of cryptocurrency market data
- *
- * @example
- * ```typescript
- * // Fetch top 10 cryptocurrencies by market cap
- * const response = await fetch('/api/crypto/markets?limit=10');
- * const data = await response.json();
- *
- * console.log(data[0].name); // Solana
- * console.log(data[0].current_price); // Current price in USD
- * console.log(data[0].price_change_percentage_24h); // 24h change %
- * ```
- *
- * @example
- * ```typescript
- * // Fetch cryptocurrencies ordered by volume
- * const response = await fetch('/api/crypto/markets?limit=50&order=volume_desc');
- * const data = await response.json();
- * ```
- *
- * @param {string} [limit=100] - Number of cryptocurrencies to return (1-100)
- * @param {string} [order=market_cap_desc] - Sort order (market_cap_desc, volume_desc, etc.)
- * @param {string} [chain=solana] - Blockchain network to query
- *
- * @throws {Error} When Birdeye API is unavailable, returns fallback data with 200 status
- *
- * @since 1.0.0
- * @version 2.0.0
- *
- * @see {@link https://docs.birdeye.so/reference/get-defi-v3-token-list} Birdeye Token List API Documentation
- */
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -99,25 +48,17 @@ export async function GET(request: Request) {
       loggers.api.warn("No market data available - Serving fallback data");
 
       return NextResponse.json(FALLBACK_MARKETS_DATA, {
-        headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-          "X-Fallback-Data": "true",
-        },
+        headers: { "X-Fallback-Data": "true" },
       });
     }
 
-    return NextResponse.json(marketData, {
-      headers: {
-        "Cache-Control": "public, max-age=120",
-      },
-    });
+    return NextResponse.json(marketData);
   } catch (error) {
     loggers.api.error("Error fetching market data:", error);
 
     return NextResponse.json(FALLBACK_MARKETS_DATA, {
-      status: 200, // Return 200 with fallback data instead of 500
+      status: 200,
       headers: {
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
         "X-Fallback-Data": "true",
         "X-Error": error instanceof Error ? error.message : "Unknown error",
       },

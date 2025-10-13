@@ -1,10 +1,6 @@
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { Token } from "@/lib/types/token";
 
-/**
- * Birdeye Search API Response Item
- * Based on actual API response structure
- */
 export interface BirdeyeSearchItem {
   name: string;
   symbol: string;
@@ -45,14 +41,9 @@ interface BirdeyeSearchResponse {
   success: boolean;
 }
 
-/**
- * Transform Birdeye search item to our Token format
- */
 function transformSearchItemToToken(item: BirdeyeSearchItem): Token {
   const rawVolume = item.volume_24h_usd || 0;
   const rawPrice = item.price || 0;
-
-  console.log(item);
 
   return {
     id: item.address,
@@ -68,12 +59,6 @@ function transformSearchItemToToken(item: BirdeyeSearchItem): Token {
   };
 }
 
-/**
- * Search for tokens using Birdeye API
- * Searches by token name with target=token
- * @param keyword - Search keyword (token name)
- * @returns Array of tokens in our standard Token format
- */
 export async function searchTokens(keyword: string): Promise<Token[]> {
   if (!keyword || keyword.trim().length === 0) {
     return [];
@@ -91,18 +76,11 @@ export async function searchTokens(keyword: string): Promise<Token[]> {
 
     const data = await fetchBirdeyeData<BirdeyeSearchResponse>("/defi/v3/search", params);
 
-    console.log("Search response:", data);
-
-    // Birdeye v3 search returns: { data: { items: [{ result: [...] }] }, success: true }
-    // Extract the actual token results
     const searchItems: BirdeyeSearchItem[] = data?.data?.items?.[0]?.result || [];
-
-    // Transform to our Token format
     const tokens = searchItems.map(transformSearchItemToToken);
 
     return tokens;
   } catch (error) {
-    console.error("Error searching tokens:", error);
     throw error;
   }
 }

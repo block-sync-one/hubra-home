@@ -18,9 +18,8 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
   const tableTabData = [hotTokens, losers, gainers, volume];
   const [selectedTab, setSelectedTab] = useState<TabIdType>(TabId.hotTokens);
 
-  // Use trending data for Hot Tokens tab, market data for others
   const [hotData, setHotData] = useState<Token[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch trending tokens only for Hot Tokens tab

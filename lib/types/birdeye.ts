@@ -1,11 +1,8 @@
 /**
  * BirdEye API Response Type Definitions
  *
- * @description Type definitions for all BirdEye API responses used in the application.
  * These interfaces represent the raw data structure from BirdEye API.
  *
- * @see {@link https://docs.birdeye.so/reference} BirdEye API Documentation
- * @since 2.0.0
  */
 
 /**

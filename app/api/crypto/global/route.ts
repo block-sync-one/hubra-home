@@ -2,10 +2,8 @@ import { NextResponse } from "next/server";
 
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
+import { loggers } from "@/lib/utils/logger";
 
-/**
- * Fallback global market data
- */
 const FALLBACK_GLOBAL_DATA = {
   data: {
     active_cryptocurrencies: 0,
@@ -33,44 +31,21 @@ const FALLBACK_GLOBAL_DATA = {
   },
 };
 
-/**
- * API route to fetch global cryptocurrency market data
- *
- * @description Fetches aggregated global market statistics from Birdeye API
- * including total market cap, volume, and market dominance data.
- * Note: Birdeye focuses on specific chains, so this aggregates Solana ecosystem data.
- *
- * @returns JSON response with global market data
- *
- * @example
- * GET /api/crypto/global
- *
- * @throws {Error} When API request fails, returns fallback data
- * @since 1.0.0
- * @version 2.0.0
- * @see {@link https://docs.birdeye.so/reference/get-defi-v3-token-list} Birdeye Token List API Documentation
- */
 export async function GET() {
   try {
     const cacheKey = cacheKeys.globalStats();
 
-    console.log("Fetching global market data from Birdeye API");
-
-    // Try Redis cache first
     const cachedData = await redis.get<any>(cacheKey);
 
     if (cachedData) {
-      console.log("Cache HIT for global stats");
+      loggers.cache.debug("HIT: global stats");
 
       return NextResponse.json(cachedData, {
-        headers: {
-          "X-Cache": "HIT",
-          "Cache-Control": "public, max-age=300",
-        },
+        headers: { "X-Cache": "HIT" },
       });
     }
 
-    console.log("Cache MISS for global stats");
+    loggers.cache.debug("MISS: global stats");
 
     // Fetch top tokens to aggregate market data
     const response = await fetchBirdeyeData<{
@@ -95,26 +70,20 @@ export async function GET() {
     });
 
     if (!response.success || !response.data?.items) {
-      console.warn("Invalid response from Birdeye API - Serving fallback data");
+      loggers.data.warn("Invalid Birdeye response - using fallback");
 
       return NextResponse.json(FALLBACK_GLOBAL_DATA, {
-        headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-          "X-Fallback-Data": "true",
-        },
+        headers: { "X-Fallback-Data": "true" },
       });
     }
 
     const items = response.data.items;
 
     if (items.length === 0) {
-      console.warn("No tokens returned from Birdeye API - Serving fallback data");
+      loggers.data.warn("No tokens from Birdeye - using fallback");
 
       return NextResponse.json(FALLBACK_GLOBAL_DATA, {
-        headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-          "X-Fallback-Data": "true",
-        },
+        headers: { "X-Fallback-Data": "true" },
       });
     }
 
@@ -177,33 +146,24 @@ export async function GET() {
       },
     };
 
-    console.log(`Successfully fetched global market data:`, {
+    loggers.data.debug("Fetched global market data", {
       totalMarketCap,
-      totalMarketCapChange,
       totalVolume,
       newTokens,
-      solTVL,
-      solTVLChange,
-      stablecoinsTVL,
-      stablecoinsAvgChange,
     });
 
     // Store in Redis cache
     await redis.set(cacheKey, transformedData, CACHE_TTL.GLOBAL_STATS);
 
     return NextResponse.json(transformedData, {
-      headers: {
-        "X-Cache": "MISS",
-        "Cache-Control": "public, max-age=300",
-      },
+      headers: { "X-Cache": "MISS" },
     });
   } catch (error) {
-    console.error("Error fetching global data from Birdeye:", error);
+    loggers.api.error("Failed to fetch global data", error);
 
     return NextResponse.json(FALLBACK_GLOBAL_DATA, {
       status: 200,
       headers: {
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
         "X-Fallback-Data": "true",
         "X-Error": error instanceof Error ? error.message : "Unknown error",
       },

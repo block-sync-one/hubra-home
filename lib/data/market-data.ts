@@ -1,17 +1,8 @@
-/**
- * Shared market data fetching logic with Redis caching
- * Can be used by both API routes and server components
- */
-
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { Token } from "@/lib/types/token";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 import { loggers } from "@/lib/utils/logger";
 
-/**
- * Birdeye Token Interface
- * Based on actual API response structure (snake_case fields)
- */
 interface BirdeyeToken {
   address: string;
   decimals: number;
@@ -27,9 +18,6 @@ interface BirdeyeToken {
   holder?: number;
 }
 
-/**
- * Birdeye API Response
- */
 interface BirdeyeTokenListResponse {
   data: {
     items: BirdeyeToken[];
@@ -37,9 +25,6 @@ interface BirdeyeTokenListResponse {
   success: boolean;
 }
 
-/**
- * Transform Birdeye token to our Token type
- */
 function transformBirdeyeToken(token: BirdeyeToken): Token {
   const rawVolume = token.volume_24h_usd || 0;
 
@@ -67,9 +52,6 @@ function transformBirdeyeToken(token: BirdeyeToken): Token {
  * - TTL: 2 minutes (market data changes frequently)
  * - Shared cache between server components and API routes
  *
- * @param limit - Number of tokens to fetch (max 200)
- * @param offset - Offset for pagination
- * @returns Array of transformed tokens
  */
 export async function fetchMarketData(limit: number = 100, offset: number = 0): Promise<Token[]> {
   const cacheKey = cacheKeys.marketData(limit, offset);

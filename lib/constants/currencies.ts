@@ -71,17 +71,9 @@ export const currencies: Record<CurrencyIdType, Currency> = {
  * Returns the corresponding `Currency` object for the given currency ID.
  * If the provided ID is unknown returns USD as a fallback.
  *
- * @param {string} currencyId - The ID of the currency to look up.
- * @returns {Currency} The matching `Currency` object, or USD if unknown.
  */
 export function getCurrencyById(currencyId: string): Currency {
   const currency = currencies[currencyId as CurrencyIdType];
 
-  if (!currency) {
-    console.error(`Unknown currency id: ${currencyId}`);
-
-    return currencies[CurrencyId.USD];
-  }
-
-  return currency;
+  return currency || currencies[CurrencyId.USD];
 }

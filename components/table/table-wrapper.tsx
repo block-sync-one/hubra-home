@@ -40,7 +40,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
       <div className="w-full lg:bg-card lg:px-4 lg:pt-4 pb-0 rounded-t-lg">
         <div className="w-full relative mb-4">
           <div className="absolute bottom-0 left-0 w-full h-[1px] hidden md:block bg-gray-30" />
-          <div className="flex flex-row items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-between gap-4">
             <div className="hidden lg:flex">
               <TabsUI
                 selectedTab={tab}
@@ -52,7 +52,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
                 onTabChange={setTab}
               />
             </div>
-            <div className="flex-1 max-w-xs">
+            <div className="w-full md:flex-1 md:max-w-xs">
               <SearchInput />
             </div>
           </div>

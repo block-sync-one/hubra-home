@@ -20,10 +20,10 @@ const config = {
       // Color System
       colors: {
         // Base colors
-        card: "#1B1C2E",
+        card: "#1b1c2e",
         tableHeader: "252537",
         base: "#FFFFFF",
-        background: "#0D0E21",
+        background: "#0d0e21",
         foreground: "#FFFFFF",
         primary: {
           25: "#FCFBF6",

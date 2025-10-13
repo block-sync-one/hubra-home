@@ -17,7 +17,6 @@ interface CurrencyContextType {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined);
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
-  console.log("=== CurrencyProvider", new Date().toISOString()); // local storage service
   const vrs = new VirtualStorageService();
   const [currency, setCurrency] = useState<Currency>(() => {
     const savedCurrencyId = vrs.localStorage.getData("preferredCurrency") ?? currencies[CurrencyId.USD].id;
@@ -63,7 +62,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 
         setExchangeRates(rates);
       } catch (error) {
-        console.error("Error fetching exchange rates:", error);
+        // Silently fail - not critical
       } finally {
         if (isMounted) {
           setIsLoading(false);

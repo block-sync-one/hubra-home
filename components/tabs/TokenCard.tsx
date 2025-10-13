@@ -47,7 +47,6 @@ const usePriceHistory = (coinId: string) => {
 
         setPriceHistory(result.data || []);
       } catch (error) {
-        console.error("Error fetching price history:", error);
         setPriceHistory(null);
       } finally {
         setLoading(false);

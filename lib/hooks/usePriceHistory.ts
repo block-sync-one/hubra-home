@@ -1,44 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
 
-/**
- * Interface for Birdeye OHLCV data point
- *
- * @description Represents a single OHLCV data point from Birdeye API
- *
- * @interface BirdeyeOHLCVPoint
- * @since 2.0.0
- */
 export interface BirdeyeOHLCVPoint {
-  /** Timestamp in milliseconds */
   timestamp: number;
-  /** Close price */
   price: number;
-  /** Open price */
   open: number;
-  /** High price */
   high: number;
-  /** Low price */
   low: number;
-  /** Volume */
   volume: number;
 }
 
-/**
- * Interface for Birdeye price history response
- *
- * @description Represents the complete price history data from Birdeye API
- *
- * @interface BirdeyePriceHistoryData
- * @since 2.0.0
- */
 export interface BirdeyePriceHistoryData {
-  /** Array of OHLCV data points */
   data: BirdeyeOHLCVPoint[];
-  /** Success status */
   success: boolean;
-  /** Token address */
   tokenAddress?: string;
-  /** Time range information */
   timeRange?: {
     from: number;
     to: number;
@@ -47,29 +21,9 @@ export interface BirdeyePriceHistoryData {
 }
 
 /**
- * Custom hook to fetch price history data for a given token and time period
- *
- * @description Fetches historical OHLCV data from Birdeye API based on token address and time period.
- * Transforms the data into a format suitable for Recharts visualization.
- *
- * @param tokenId - The Solana token address (e.g., 'So11111111111111111111111111111111111111112')
- * @param days - Number of days or 'max' for the time period
- * @returns Object containing chart data, loading state, error state, and retry function
- *
- * @example
- * ```typescript
- * const { chartData, loading, error, retry } = usePriceHistory('So11111111111111111111111111111111111111112', 1);
- *
- * if (loading) return <div>Loading chart...</div>;
- * if (error) return <div>Error: {error}</div>;
- *
- * return <LineChart data={chartData} />;
- * ```
- *
- * @throws {Error} When API request fails or data transformation fails
- * @since 2.0.0
- * @version 2.0.0
- * @see {@link /api/crypto/price-history}
+ * Fetches price history data for a token
+ * @param tokenId - Token address
+ * @param days - Number of days (1, 7, 30, 90, 365, or "max")
  */
 export function usePriceHistory(tokenId: string, days: number | "max") {
   const [chartData, setChartData] = useState<Array<{ month: string; price: number }>>([]);
@@ -139,26 +93,6 @@ export function usePriceHistory(tokenId: string, days: number | "max") {
   };
 }
 
-/**
- * Transforms Birdeye OHLCV data into chart format
- *
- * @description Converts Birdeye OHLCV data into Recharts-compatible format
- * with proper date formatting for optimal chart display.
- *
- * @param data - OHLCV data from Birdeye API
- * @param days - Number of days or 'max' for the time period
- * @returns Transformed data array for chart display
- *
- * @example
- * ```typescript
- * const rawData = [
- *   { timestamp: 1640995200000, price: 47000, open: 46500, high: 47500, low: 46000, volume: 1000 },
- *   { timestamp: 1641081600000, price: 48000, open: 47000, high: 48500, low: 47000, volume: 1200 }
- * ];
- * const chartData = transformBirdeyeData(rawData, 1);
- * // Returns: [{ month: "15:00", price: 47000 }, { month: "11:00", price: 48000 }]
- * ```
- */
 function transformBirdeyeData(data: BirdeyeOHLCVPoint[], days: number | "max"): Array<{ month: string; price: number }> {
   if (!data || data.length === 0) {
     return [];

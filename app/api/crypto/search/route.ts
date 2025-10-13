@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { searchTokens } from "@/lib/data/search-token";
+import { loggers } from "@/lib/utils/logger";
 
-/**
- * GET /api/crypto/search
- * Search for tokens using Birdeye API
- * Note: No caching - search queries are user-specific and diverse
- * @query keyword - Search term (required)
- * @returns { data: Token[], success: boolean }
- */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -20,22 +14,14 @@ export async function GET(request: NextRequest) {
 
     const normalizedKeyword = keyword.toLowerCase().trim();
 
-    console.log(`Searching for: ${normalizedKeyword}`);
+    loggers.api.debug("Search query", normalizedKeyword);
 
     // Fetch from API directly (no cache - each search is unique)
     const tokens = await searchTokens(normalizedKeyword);
 
-    return NextResponse.json(
-      { data: tokens, success: true },
-      {
-        status: 200,
-        headers: {
-          "Cache-Control": "no-store", // Don't cache user-specific searches
-        },
-      }
-    );
+    return NextResponse.json({ data: tokens, success: true }, { status: 200 });
   } catch (error) {
-    console.error("Error in search API:", error);
+    loggers.api.error("Search API failed", error);
 
     return NextResponse.json({ error: "Failed to search tokens", success: false }, { status: 500 });
   }

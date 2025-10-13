@@ -1,6 +1,5 @@
 /**
  * Chart Configuration Constants
- * @description Centralized constants for chart styling, dimensions, and behavior
  */
 
 // Chart Time Periods

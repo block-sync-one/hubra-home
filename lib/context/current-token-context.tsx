@@ -42,7 +42,6 @@ export function CurrentTokenProvider({ children }: { children: ReactNode }) {
       try {
         setCurrentTokenState(JSON.parse(stored));
       } catch (error) {
-        console.error("Failed to parse stored token:", error);
         sessionStorage.removeItem("currentToken");
       }
     }

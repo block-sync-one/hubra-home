@@ -1,29 +1,10 @@
-/**
- * Shared token data fetching logic with Redis caching
- * Can be used by both API routes and server components
- */
-
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { BirdEyeTokenOverview } from "@/lib/types/birdeye";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 import { loggers } from "@/lib/utils/logger";
 
-// Type for the actual token data (not the full API response)
 type TokenData = BirdEyeTokenOverview["data"];
 
-/**
- * Fetch token data from Birdeye API with Redis caching
- * This function can be called from both server components and API routes
- * The API key is protected as this only runs on the server
- *
- * Caching strategy:
- * 1. Check Redis cache first
- * 2. If miss, fetch from Birdeye API
- * 3. Store in Redis for future requests
- * 4. Returns same data for both server and client (consistent!)
- *
- * @returns The token data object (not the full API response wrapper)
- */
 export async function fetchTokenData(tokenAddress: string): Promise<TokenData | null> {
   try {
     const cacheKey = cacheKeys.tokenDetail(tokenAddress);

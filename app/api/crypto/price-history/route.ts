@@ -2,38 +2,14 @@ import { NextResponse } from "next/server";
 
 import { fetchBirdeyeData, mapTimeRange } from "@/lib/services/birdeye";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
+import { loggers } from "@/lib/utils/logger";
 
-/**
- * Fallback price history data (Birdeye-native format)
- * Returns empty array to let client handle gracefully
- */
 const FALLBACK_PRICE_HISTORY = {
   data: [],
   success: true,
   error: "Unable to fetch price history data",
 };
 
-/**
- * API route to fetch historical price data for a token
- *
- * @description Fetches price history data from Birdeye OHLCV API
- * for chart visualization. Supports multiple time ranges.
- *
- * @param request - The incoming request object
- * @returns JSON response with price history data
- *
- * @example
- * GET /api/crypto/price-history?id=So11111111111111111111111111111111111111112&days=7
- * GET /api/crypto/price-history?id=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&days=30
- *
- * @param {string} id - Token address
- * @param {string|number} days - Number of days or 'max' for all available data
- *
- * @throws {Error} When API request fails, returns fallback data
- * @since 1.0.0
- * @version 2.0.0
- * @see {@link https://docs.birdeye.so/reference/get_defi_ohlcv} Birdeye OHLCV API Documentation
- */
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -44,30 +20,25 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Token address is required" }, { status: 400 });
     }
 
-    // Validate token address format (Solana addresses are 32-44 characters)
     if (tokenAddress.length < 32 || tokenAddress.length > 44) {
-      console.error(`Invalid token address format: ${tokenAddress} (length: ${tokenAddress.length})`);
+      loggers.api.warn("Invalid token address", tokenAddress);
 
       return NextResponse.json({ error: "Invalid token address format" }, { status: 400 });
     }
 
     const cacheKey = cacheKeys.priceHistory(tokenAddress, days);
 
-    // Try Redis cache first
     const cachedData = await redis.get<any>(cacheKey);
 
     if (cachedData) {
-      console.log(`Cache HIT for price history: ${tokenAddress} (${days} days)`);
+      loggers.cache.debug(`HIT: price history ${tokenAddress}`);
 
       return NextResponse.json(cachedData, {
-        headers: {
-          "X-Cache": "HIT",
-          "Cache-Control": "public, max-age=300",
-        },
+        headers: { "X-Cache": "HIT" },
       });
     }
 
-    console.log(`Cache MISS for price history: ${tokenAddress} (${days} days)`);
+    loggers.cache.debug(`MISS: price history ${tokenAddress}`);
 
     // Map days to Birdeye time range
     const timeType = mapTimeRange(days === "max" ? "max" : parseInt(days, 10));
@@ -101,10 +72,9 @@ export async function GET(request: Request) {
     });
 
     if (!response.success || !response.data?.items) {
-      console.warn("Invalid response from Birdeye API", {
+      loggers.data.warn("Invalid Birdeye response", {
         success: response.success,
         hasData: !!response.data,
-        hasItems: !!response.data?.items,
       });
 
       return NextResponse.json(
@@ -113,10 +83,7 @@ export async function GET(request: Request) {
           error: "Invalid response from Birdeye API",
         },
         {
-          headers: {
-            "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-            "X-Fallback-Data": "true",
-          },
+          headers: { "X-Fallback-Data": "true" },
         }
       );
     }
@@ -124,7 +91,7 @@ export async function GET(request: Request) {
     const items = response.data.items;
 
     if (items.length === 0) {
-      console.warn("No price history data from Birdeye API for token:", tokenAddress);
+      loggers.data.warn("No price history data", tokenAddress);
 
       return NextResponse.json(
         {
@@ -132,10 +99,7 @@ export async function GET(request: Request) {
           error: "No price history data available for this token",
         },
         {
-          headers: {
-            "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
-            "X-Fallback-Data": "true",
-          },
+          headers: { "X-Fallback-Data": "true" },
         }
       );
     }
@@ -159,22 +123,16 @@ export async function GET(request: Request) {
       },
     };
 
-    console.log(`Successfully fetched ${items.length} OHLCV data points for ${tokenAddress}`);
+    loggers.data.debug(`Fetched ${items.length} OHLCV points`, tokenAddress);
 
     // Store in Redis cache
     await redis.set(cacheKey, transformedData, CACHE_TTL.PRICE_HISTORY);
 
     return NextResponse.json(transformedData, {
-      headers: {
-        "X-Cache": "MISS",
-        "Cache-Control": "public, max-age=300",
-      },
+      headers: { "X-Cache": "MISS" },
     });
   } catch (error) {
-    console.error("Error fetching price history from Birdeye:", {
-      error,
-      message: error instanceof Error ? error.message : "Unknown error",
-    });
+    loggers.api.error("Failed to fetch price history", error);
 
     return NextResponse.json(
       {
@@ -184,7 +142,6 @@ export async function GET(request: Request) {
       {
         status: 200,
         headers: {
-          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
           "X-Fallback-Data": "true",
           "X-Error": error instanceof Error ? error.message : "Unknown error",
         },

@@ -34,42 +34,19 @@ const UnifiedTable = <T extends Record<string, any>>({
   const [page, setPage] = useState(1);
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>(configuration.defaultSort || { column: "", direction: "ascending" });
 
-  // Fallback safely if configuration is invalid
   const rowsPerPage = configuration?.rowsPerPage || ROWS_PER_PAGE;
 
-  // Reset page when tab changes
   useEffect(() => {
     setPage(1);
   }, [selectedTab]);
 
-  // Debug logging
-  // React.useEffect(() => {
-  //   console.log('ReusableTable received data:', {
-  //     // data,
-  //     // isArray: Array.isArray(data),
-  //     // length: Array.isArray(data) ? data.length : 'not array',
-  //     // configuration: configuration?.columns?.length || 0,
-  //     isLoading
-  //   });
-  // }, [data, configuration, isLoading]);
-
-  // Process data to ensure HeroUI compatibility
   const processedData = useMemo(() => {
-    if (!Array.isArray(data)) {
-      console.warn("Table data is not an array:", data);
-
-      return [];
-    }
+    if (!Array.isArray(data)) return [];
 
     return data
       .map((item, index) => {
-        if (!item || typeof item !== "object") {
-          console.warn("Invalid item in data:", item);
+        if (!item || typeof item !== "object") return null;
 
-          return null;
-        }
-
-        // Use stable key based on actual data properties to avoid hydration mismatch
         const stableKey = item.id || item.key || item.address || `item-${index}`;
 
         return {
@@ -81,14 +58,8 @@ const UnifiedTable = <T extends Record<string, any>>({
       .filter(Boolean);
   }, [data]);
 
-  // Memoized filtered data
   const filteredItems = useMemo(() => {
-    // Safety check: ensure data is an array
-    if (!Array.isArray(processedData)) {
-      console.warn("Table data is not an array:", processedData);
-
-      return [];
-    }
+    if (!Array.isArray(processedData)) return [];
 
     if (!filterValue || !configuration.searchFields) return processedData;
 
@@ -105,29 +76,15 @@ const UnifiedTable = <T extends Record<string, any>>({
     });
   }, [processedData, filterValue, configuration.searchFields]);
 
-  // Memoized sorted data
   const sortedItems = useMemo(() => {
-    // Safety check: ensure filteredItems is an array
-    if (!Array.isArray(filteredItems)) {
-      console.warn("Filtered items is not an array:", filteredItems);
-
-      return [];
-    }
+    if (!Array.isArray(filteredItems)) return [];
 
     if (!sortDescriptor.column) return filteredItems;
 
     return [...filteredItems].sort((a, b) => {
-      // Safety check for valid items
-      if (!a || !b || typeof a !== "object" || typeof b !== "object") {
-        return 0;
-      }
+      if (!a || !b || typeof a !== "object" || typeof b !== "object") return 0;
 
-      const getValue = (item: T) => {
-        // Handle nested paths
-        const value = get(item, String(sortDescriptor.column));
-
-        return value;
-      };
+      const getValue = (item: T) => get(item, String(sortDescriptor.column));
 
       const first = getValue(a);
       const second = getValue(b);
@@ -136,21 +93,18 @@ const UnifiedTable = <T extends Record<string, any>>({
         return sortDescriptor.direction === "descending" ? -1 : 1;
       }
 
-      // Handle numeric sorting
       if (typeof first === "number" && typeof second === "number") {
         const cmp = first - second;
 
         return sortDescriptor.direction === "descending" ? -cmp : cmp;
       }
 
-      // Handle string sorting
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [filteredItems, sortDescriptor]);
 
-  // Memoized paginated data
   const paginatedItems = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
@@ -160,9 +114,7 @@ const UnifiedTable = <T extends Record<string, any>>({
 
   const pages = Math.ceil(sortedItems.length / rowsPerPage);
 
-  // Memoized header columns
   const headerColumns = useMemo(() => {
-    // Use empty array if configuration is invalid to prevent runtime errors
     const cols = configuration?.columns ?? [];
 
     return cols.map((column) => ({
@@ -171,7 +123,6 @@ const UnifiedTable = <T extends Record<string, any>>({
     }));
   }, [configuration.columns, sortDescriptor]);
 
-  // Callbacks
   const onNextPage = useCallback(() => {
     if (page < pages) {
       setPage(page + 1);
@@ -196,12 +147,10 @@ const UnifiedTable = <T extends Record<string, any>>({
     setPage(1); // Reset to first page when sorting
   }, []);
 
-  // Reset page when filter changes
   useEffect(() => {
     setPage(1);
   }, [filterValue]);
 
-  // Memoized bottom content
   const bottomContent = useMemo(() => {
     if (sortedItems.length <= rowsPerPage) return null;
 
@@ -234,10 +183,7 @@ const UnifiedTable = <T extends Record<string, any>>({
     );
   }, [page, pages, onPreviousPage, onNextPage, sortedItems.length, rowsPerPage]);
 
-  // Render a fallback message if the configuration is invalid
   if (invalidConfig) {
-    console.warn("ReusableTable: Invalid configuration provided");
-
     return <div className="p-4 text-center text-gray-500">Table configuration error</div>;
   }
 
@@ -313,7 +259,7 @@ const UnifiedTable = <T extends Record<string, any>>({
           sortDescriptor={sortDescriptor}
           onSortChange={handleSortChange}>
           <TableHeader className="">
-            {headerColumns?.map((column, index) => (
+            {headerColumns?.map((column) => (
               <TableColumn
                 key={column.key}
                 align={column.align === "left" ? "start" : column.align === "right" ? "end" : "center"}
@@ -346,20 +292,12 @@ const UnifiedTable = <T extends Record<string, any>>({
                     {(() => {
                       try {
                         if (column.render) {
-                          const rendered = column.render(item, get(item, String(column.key)));
-
-                          return rendered || null;
-                        } else {
-                          const value = get(item, String(column.key));
-
-                          return value !== null && value !== undefined ? String(value) : "-";
+                          return column.render(item, get(item, String(column.key))) || null;
                         }
-                      } catch (error) {
-                        console.error("Error rendering cell:", error, {
-                          item,
-                          column: column.key,
-                        });
+                        const value = get(item, String(column.key));
 
+                        return value !== null && value !== undefined ? String(value) : "-";
+                      } catch {
                         return "-";
                       }
                     })()}

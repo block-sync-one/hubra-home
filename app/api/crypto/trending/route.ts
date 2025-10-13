@@ -4,29 +4,10 @@ import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 import { loggers } from "@/lib/utils/logger";
 
-/**
- * Fallback trending data
- */
 const FALLBACK_TRENDING_DATA = {
   coins: [],
 };
 
-/**
- * API route to fetch trending tokens with Redis caching
- *
- * @description Fetches trending token list from Birdeye API
- * showing tokens with high trading activity and volume.
- *
- * @returns JSON response with trending tokens data
- *
- * @example
- * GET /api/crypto/trending
- *
- * @throws {Error} When API request fails, returns fallback data
- * @since 1.0.0
- * @version 2.0.0
- * @see {@link https://docs.birdeye.so/reference/get-defi-v3-token-trending} Birdeye Trending API Documentation
- */
 export async function GET() {
   try {
     const limit = 4;
@@ -39,10 +20,7 @@ export async function GET() {
       loggers.cache.debug("HIT: trending tokens");
 
       return NextResponse.json(cachedData, {
-        headers: {
-          "X-Cache": "HIT",
-          "Cache-Control": "public, max-age=180",
-        },
+        headers: { "X-Cache": "HIT" },
       });
     }
 
@@ -77,10 +55,7 @@ export async function GET() {
       loggers.api.warn("Invalid response from Birdeye API - Serving fallback data");
 
       return NextResponse.json(FALLBACK_TRENDING_DATA, {
-        headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate",
-          "X-Fallback-Data": "true",
-        },
+        headers: { "X-Fallback-Data": "true" },
       });
     }
 
@@ -90,10 +65,7 @@ export async function GET() {
       loggers.api.warn("No trending tokens from Birdeye API - Serving fallback data");
 
       return NextResponse.json(FALLBACK_TRENDING_DATA, {
-        headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate",
-          "X-Fallback-Data": "true",
-        },
+        headers: { "X-Fallback-Data": "true" },
       });
     }
 
@@ -140,10 +112,7 @@ export async function GET() {
     await redis.set(cacheKey, transformedData, CACHE_TTL.TRENDING);
 
     return NextResponse.json(transformedData, {
-      headers: {
-        "X-Cache": "MISS",
-        "Cache-Control": "public, max-age=180",
-      },
+      headers: { "X-Cache": "MISS" },
     });
   } catch (error) {
     loggers.api.error("Error fetching trending data from Birdeye:", error);
@@ -151,7 +120,6 @@ export async function GET() {
     return NextResponse.json(FALLBACK_TRENDING_DATA, {
       status: 200,
       headers: {
-        "Cache-Control": "no-store, no-cache, must-revalidate",
         "X-Fallback-Data": "true",
         "X-Error": error instanceof Error ? error.message : "Unknown error",
       },
