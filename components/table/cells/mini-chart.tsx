@@ -2,6 +2,8 @@
 
 import React, { useMemo } from "react";
 
+import { seededRandom } from "@/lib/utils/random";
+
 interface MiniChartProps {
   tokenId: string;
   change: number;
@@ -16,6 +18,10 @@ export const MiniChart: React.FC<MiniChartProps> = ({ tokenId, change, width = 1
     return <div className="w-full h-full flex items-center justify-center text-xs text-gray-500">-</div>;
   }
 
+  // Ensure minimum dimensions to prevent Recharts warning
+  const safeWidth = Math.max(width, 1);
+  const safeHeight = Math.max(height, 1);
+
   // Calculate min/max for scaling
   const min = Math.min(...chartData);
   const max = Math.max(...chartData);
@@ -23,8 +29,8 @@ export const MiniChart: React.FC<MiniChartProps> = ({ tokenId, change, width = 1
 
   // Generate SVG path points
   const points = chartData.map((value, index) => {
-    const x = (index / (chartData.length - 1)) * width;
-    const y = height - ((value - min) / range) * height;
+    const x = (index / (chartData.length - 1)) * safeWidth;
+    const y = safeHeight - ((value - min) / range) * safeHeight;
 
     return `${x},${y}`;
   });
@@ -36,8 +42,8 @@ export const MiniChart: React.FC<MiniChartProps> = ({ tokenId, change, width = 1
   const gradientId = `gradient-${tokenId.slice(0, 8)}`;
 
   return (
-    <div className="relative" style={{ width, height }}>
-      <svg className="absolute inset-0" height={height} preserveAspectRatio="none" viewBox={`0 0 ${width} ${height}`} width={width}>
+    <div className="relative w-full h-full min-w-[80px] min-h-[28px]">
+      <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox={`0 0 ${safeWidth} ${safeHeight}`}>
         {/* Gradient Definition */}
         <defs>
           <linearGradient id={gradientId} x1="0%" x2="0%" y1="0%" y2="100%">
@@ -47,7 +53,7 @@ export const MiniChart: React.FC<MiniChartProps> = ({ tokenId, change, width = 1
         </defs>
 
         {/* Gradient fill area */}
-        <path d={`${pathData} L ${width},${height} L 0,${height} Z`} fill={`url(#${gradientId})`} />
+        <path d={`${pathData} L ${safeWidth},${safeHeight} L 0,${safeHeight} Z`} fill={`url(#${gradientId})`} />
 
         {/* Line */}
         <path d={pathData} fill="none" stroke={lineColor} strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
@@ -55,25 +61,6 @@ export const MiniChart: React.FC<MiniChartProps> = ({ tokenId, change, width = 1
     </div>
   );
 };
-
-/**
- * Simple seeded random number generator for deterministic results
- * This ensures server and client render the same values
- */
-function seededRandom(seed: string, index: number): number {
-  const combined = seed + index.toString();
-  let hash = 0;
-
-  for (let i = 0; i < combined.length; i++) {
-    const char = combined.charCodeAt(i);
-
-    hash = (hash << 5) - hash + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-
-  // Convert to 0-1 range
-  return (Math.abs(Math.sin(hash)) * 10000) % 1;
-}
 
 /**
  * Generate trend data based on price change for 7 days

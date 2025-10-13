@@ -85,15 +85,8 @@ export default async function TokenDetailPage({ params }: TokenDetailPageProps) 
   const { address } = await params;
 
   // address is the token address (e.g., "So111...112")
-  const tokenAddress = address;
-
   // Prefetch token data on server (SSR - NO LOADING SPINNER!)
-  const apiTokenData = await getTokenData(tokenAddress);
-
-  console.log("TokenDetailPage server-side:", {
-    tokenAddress,
-    hasData: !!apiTokenData,
-  });
+  const apiTokenData = await getTokenData(address);
 
   // Generate JSON-LD structured data for SEO
   const jsonLd = apiTokenData

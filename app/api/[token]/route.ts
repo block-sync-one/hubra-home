@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { fetchTokenData } from "@/lib/data/token-data";
-import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
+import { loggers } from "@/lib/utils/logger";
 
 /**
  * API route to fetch detailed token information by address
  *
- * @description Fetches comprehensive token data from Birdeye API including
- * current price, market data, volume, and token metadata.
+ * @description Fetches comprehensive token data with Redis caching.
+ * Caching is now handled in fetchTokenData() for consistency
+ * between server components and API routes.
  *
  * @param request - The incoming request object
  * @param params - Route parameters containing the token address
@@ -25,52 +26,24 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const { token } = await params;
 
-    console.log("API route - fetching token:", token);
-
     if (!token) {
       return NextResponse.json({ error: "Token address is required" }, { status: 400 });
     }
 
-    const cacheKey = cacheKeys.tokenDetail(token);
-
-    // Try Redis cache first
-    const cachedData = await redis.get<any>(cacheKey);
-
-    if (cachedData) {
-      console.log(`Cache HIT for token: ${token}`);
-
-      return NextResponse.json(cachedData, {
-        headers: {
-          "X-Cache": "HIT",
-          "Cache-Control": "public, max-age=120",
-        },
-      });
-    }
-
-    console.log(`Cache MISS for token: ${token}`);
-
-    // Use shared data fetching function
+    // Use shared data fetching function (includes Redis caching)
     const tokenData = await fetchTokenData(token);
 
     if (!tokenData) {
-      console.warn(`Token not found: ${token}`);
-
       return NextResponse.json({ error: "Token not found" }, { status: 404 });
     }
 
-    console.log("API route - token data fetched:", tokenData.symbol);
-
-    // Store in Redis cache
-    await redis.set(cacheKey, tokenData, CACHE_TTL.TOKEN_DETAIL);
-
     return NextResponse.json(tokenData, {
       headers: {
-        "X-Cache": "MISS",
         "Cache-Control": "public, max-age=120",
       },
     });
   } catch (error) {
-    console.error("Error fetching token data from Birdeye:", error);
+    loggers.api.error("Error fetching token data:", error);
 
     return NextResponse.json(
       { error: "Failed to fetch token data" },

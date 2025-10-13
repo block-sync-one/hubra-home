@@ -1,10 +1,12 @@
 /**
- * Shared market data fetching logic
+ * Shared market data fetching logic with Redis caching
  * Can be used by both API routes and server components
  */
 
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { Token } from "@/lib/types/token";
+import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
+import { loggers } from "@/lib/utils/logger";
 
 /**
  * Birdeye Token Interface
@@ -56,25 +58,40 @@ function transformBirdeyeToken(token: BirdeyeToken): Token {
 }
 
 /**
- * Fetch market data from Birdeye API
+ * Fetch market data from Birdeye API with Redis caching
  * This function can be called from both server components and API routes
  * The API key is protected as this only runs on the server
- * Note: Caching is handled at the API route level with Redis
+ *
+ * Caching strategy:
+ * - Cache key includes limit and offset for pagination support
+ * - TTL: 2 minutes (market data changes frequently)
+ * - Shared cache between server components and API routes
  *
  * @param limit - Number of tokens to fetch (max 200)
  * @param offset - Offset for pagination
  * @returns Array of transformed tokens
  */
 export async function fetchMarketData(limit: number = 100, offset: number = 0): Promise<Token[]> {
-  const queryParam = {
-    sort_type: "desc",
-    min_holder: "10",
-    min_volume_24h_usd: "10",
-    min_trade_24h_count: "10",
-  };
+  const cacheKey = cacheKeys.marketData(limit, offset);
 
   try {
-    console.log(`Fetching ${limit} tokens from Birdeye (offset: ${offset})`);
+    // Try Redis cache first
+    const cachedData = await redis.get<Token[]>(cacheKey);
+
+    if (cachedData) {
+      loggers.cache.debug(`HIT: ${limit} tokens (offset: ${offset})`);
+
+      return cachedData;
+    }
+
+    loggers.cache.debug(`MISS: Fetching ${limit} tokens from Birdeye (offset: ${offset})`);
+
+    const queryParam = {
+      sort_type: "desc",
+      min_holder: "10",
+      min_volume_24h_usd: "10",
+      min_trade_24h_count: "10",
+    };
 
     // Birdeye API has a max limit of 100 per request
     const BIRDEYE_MAX_LIMIT = 100;
@@ -89,7 +106,7 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0): 
       });
 
       if (!response.success || !response.data?.items) {
-        console.warn("Invalid response from Birdeye API");
+        loggers.data.warn("Invalid response from Birdeye API");
 
         return [];
       }
@@ -124,21 +141,24 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0): 
     }
 
     if (allItems.length === 0) {
-      console.warn("No tokens returned from Birdeye API");
+      loggers.data.warn("No tokens returned from Birdeye API");
 
       return [];
     }
 
-    console.warn(allItems[0]);
-
     // Transform Birdeye data to our Token type
     const transformedTokens = allItems.map(transformBirdeyeToken);
 
-    console.log(`Successfully fetched ${transformedTokens.length} tokens`);
+    // Store in Redis cache asynchronously (don't block response)
+    redis.set(cacheKey, transformedTokens, CACHE_TTL.MARKET_DATA).catch((err) => {
+      loggers.cache.error(`SET failed: ${err.message}`);
+    });
+
+    loggers.cache.debug(`Caching ${transformedTokens.length} tokens (async)`);
 
     return transformedTokens;
   } catch (error) {
-    console.error("Error fetching market data:", error);
+    loggers.data.error("Error fetching market data:", error);
 
     return [];
   }

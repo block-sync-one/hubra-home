@@ -18,7 +18,7 @@ import {
   COMPONENT_SIZES,
 } from "@/lib/constants";
 import { useCurrentToken } from "@/lib/context/current-token-context";
-import { usePrefetch } from "@/lib/hooks/usePrefetch";
+import { seededRandom } from "@/lib/utils/random";
 
 interface TokenCardProps {
   name: string;
@@ -69,21 +69,26 @@ const parsePrice = (price: string | number | undefined): number => {
 };
 
 // Transform price history for mini chart - use actual data
-const transformPriceData = (priceHistory: Array<{ timestamp: number; price: number }> | null, currentPrice: number, change: number) => {
+const transformPriceData = (
+  priceHistory: Array<{ timestamp: number; price: number }> | null,
+  currentPrice: number,
+  change: number,
+  coinId: string
+) => {
   // Always use real price history data if available
   if (priceHistory && priceHistory.length > 0) {
     // Use all data points for accurate chart representation
     return priceHistory.map((item) => ({ value: item.price }));
   }
 
-  // Fallback only when no data: generate trend based on change
+  // Fallback only when no data: generate trend based on change with deterministic randomness
   const data = [];
   const startPrice = currentPrice / (1 + change / PRICE_CHANGE.PERCENTAGE_DIVISOR);
 
   for (let i = 0; i < CHART_DATA_POINTS.FALLBACK_POINTS; i++) {
     const progress = i / CHART_DATA_POINTS.FALLBACK_MAX_INDEX;
     const trendValue = startPrice + (currentPrice - startPrice) * progress;
-    const noise = (Math.random() - 0.5) * currentPrice * PRICE_CHANGE.NOISE_MULTIPLIER;
+    const noise = (seededRandom(coinId, i) - 0.5) * currentPrice * PRICE_CHANGE.NOISE_MULTIPLIER;
 
     data.push({ value: trendValue + noise });
   }
@@ -95,14 +100,6 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
   const router = useRouter();
   const { priceHistory } = usePriceHistory(coinId || "");
   const { setCurrentToken } = useCurrentToken();
-
-  // Prefetch token details on hover for instant navigation
-  const { onMouseEnter } = usePrefetch({
-    tokenAddress: coinId || "",
-    tokenName: name,
-    immediate: false, // Don't prefetch immediately
-    onHover: true, // Prefetch on hover
-  });
 
   const handleClick = () => {
     // Store token data in context before navigation
@@ -122,20 +119,16 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
     router.push(`/tokens/${coinId}`);
   };
 
-  const chartData = transformPriceData(priceHistory, parsePrice(price), change || 0);
+  const chartData = transformPriceData(priceHistory, parsePrice(price), change || 0, coinId || "");
   const isPositive = (change || 0) >= 0;
   const color = isPositive ? "success" : "danger";
 
   return (
-    <Card
-      isPressable
-      className="bg-card backdrop-blur-sm hover:bg-white/10 transition-all cursor-pointer"
-      onMouseEnter={onMouseEnter}
-      onPress={handleClick}>
+    <Card isPressable className="bg-card backdrop-blur-sm hover:bg-white/10 transition-all cursor-pointer" onPress={handleClick}>
       <div className="p-4">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-5 h-5 rounded-full overflow-hidden flex-shrink-0">
+          <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
             <Image
               alt={`${name} (${symbol}) logo`}
               className="w-full h-full object-cover"

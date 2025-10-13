@@ -1,22 +1,18 @@
 import AllTokensClient from "./AllTokensClient";
 
-import { fetchMarketData } from "@/lib/data/market-data";
-import { TokenFilter } from "@/lib/helpers/token";
+import { Token } from "@/lib/types/token";
+
+interface AllTokensProps {
+  initialAllTokens: Token[];
+  initialGainers: Token[];
+  initialLosers: Token[];
+}
 
 /**
- * Server Component - Fetches market data server-side
- * Uses shared Birdeye service for data fetching
- * Returns raw data; client component formats with user's currency preference
+ * Server Component - Receives pre-fetched market data from parent
+ * Data is fetched once at the page level and shared between HotTokens and AllTokens
+ * This ensures both sections use the same data source
  */
-export default async function AllTokens() {
-  // Fetch 200 tokens server-side using shared Birdeye service
-  // Note: Caching is now handled by Redis at the API route level
-  const tokens = await fetchMarketData(200, 0);
-
-  // Use TokenFilter helper for consistent sorting logic (count = array length to show all)
-  const allAssetsSorted = TokenFilter.byMarketCap(tokens, tokens.length);
-  const gainersSorted = TokenFilter.gainers(tokens, tokens.length);
-  const losersSorted = TokenFilter.losers(tokens, tokens.length);
-
-  return <AllTokensClient initialAllTokens={allAssetsSorted} initialGainers={gainersSorted} initialLosers={losersSorted} />;
+export default function AllTokens({ initialAllTokens, initialGainers, initialLosers }: AllTokensProps) {
+  return <AllTokensClient initialAllTokens={initialAllTokens} initialGainers={initialGainers} initialLosers={initialLosers} />;
 }

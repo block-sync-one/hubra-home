@@ -86,12 +86,6 @@ export function usePriceHistory(tokenId: string, days: number | "max") {
 
       const response = await fetch(`/api/crypto/price-history?id=${tokenId}&days=${days === "max" ? "max" : days}`);
 
-      // Log response details for debugging
-      console.log(`Fetching price history for ${tokenId} (${days} days)`, {
-        status: response.status,
-        ok: response.ok,
-      });
-
       const result: BirdeyePriceHistoryData = await response.json();
 
       if (!response.ok) {
@@ -114,26 +108,11 @@ export function usePriceHistory(tokenId: string, days: number | "max") {
       // Transform the Birdeye data for the chart
       const transformedData = transformBirdeyeData(result.data || [], days);
 
-      console.log(`Price history for ${tokenId} (${days} days):`, {
-        rawDataPoints: result.data?.length || 0,
-        transformedDataPoints: transformedData.length,
-        firstPoint: transformedData[0],
-        lastPoint: transformedData[transformedData.length - 1],
-        timeRange: result.timeRange,
-        isFallback,
-      });
-
       setChartData(transformedData);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch price history";
 
       setError(errorMessage);
-      console.error("Price history fetch error:", {
-        error: err,
-        tokenId,
-        days,
-        message: errorMessage,
-      });
 
       // Set empty chart data on error
       setChartData([]);

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
+import { loggers } from "@/lib/utils/logger";
 
 /**
  * Fallback trending data
@@ -31,13 +32,11 @@ export async function GET() {
     const limit = 4;
     const cacheKey = cacheKeys.trending(limit);
 
-    console.log("Fetching trending tokens from Birdeye API");
-
     // Try Redis cache first
     const cachedData = await redis.get<any>(cacheKey);
 
     if (cachedData) {
-      console.log("Cache HIT for trending tokens");
+      loggers.cache.debug("HIT: trending tokens");
 
       return NextResponse.json(cachedData, {
         headers: {
@@ -47,7 +46,7 @@ export async function GET() {
       });
     }
 
-    console.log("Cache MISS for trending tokens");
+    loggers.cache.debug("MISS: trending tokens - Fetching from Birdeye");
 
     // Fetch trending tokens from Birdeye using the official trending endpoint
     const response = await fetchBirdeyeData<{
@@ -75,7 +74,7 @@ export async function GET() {
     });
 
     if (!response.success || !response.data?.tokens) {
-      console.warn("Invalid response from Birdeye API - Serving fallback data");
+      loggers.api.warn("Invalid response from Birdeye API - Serving fallback data");
 
       return NextResponse.json(FALLBACK_TRENDING_DATA, {
         headers: {
@@ -88,7 +87,7 @@ export async function GET() {
     const tokens = response.data.tokens;
 
     if (tokens.length === 0) {
-      console.warn("No trending tokens from Birdeye API - Serving fallback data");
+      loggers.api.warn("No trending tokens from Birdeye API - Serving fallback data");
 
       return NextResponse.json(FALLBACK_TRENDING_DATA, {
         headers: {
@@ -135,7 +134,7 @@ export async function GET() {
       coins: transformedCoins,
     };
 
-    console.log(`Successfully fetched ${transformedCoins.length} trending tokens from Birdeye API`);
+    loggers.cache.debug(`Caching ${transformedCoins.length} trending tokens`);
 
     // Store in Redis cache
     await redis.set(cacheKey, transformedData, CACHE_TTL.TRENDING);
@@ -147,7 +146,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("Error fetching trending data from Birdeye:", error);
+    loggers.api.error("Error fetching trending data from Birdeye:", error);
 
     return NextResponse.json(FALLBACK_TRENDING_DATA, {
       status: 200,

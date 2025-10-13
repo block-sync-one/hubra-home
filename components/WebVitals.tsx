@@ -1,7 +1,48 @@
 "use client";
 
+import type { Metric } from "web-vitals";
+
 import { useEffect } from "react";
 import { onCLS, onFCP, onLCP, onTTFB, onINP } from "web-vitals";
+
+/**
+ * Send metric to analytics if available
+ */
+function sendToAnalytics(metric: Metric) {
+  if (typeof window !== "undefined" && (window as any).va) {
+    (window as any).va("event", {
+      name: `web_vitals_${metric.name.toLowerCase()}`,
+      data: { value: metric.value, rating: metric.rating },
+    });
+  }
+}
+
+/**
+ * Log metric to console with proper formatting
+ */
+function logMetric(metric: Metric) {
+  const formattedValue = metric.name === "CLS" ? metric.value.toFixed(4) : `${metric.value.toFixed(2)}ms`;
+
+  console.log(`[Web Vitals] ${metric.name}:`, {
+    value: formattedValue,
+    rating: metric.rating,
+    name: metric.name,
+  });
+
+  // Special warning for poor LCP
+  if (metric.name === "LCP" && metric.rating === "poor") {
+    console.warn(`⚠️ Poor LCP: ${metric.value.toFixed(2)}ms (target: <2500ms)`);
+  }
+}
+
+/**
+ * Handle web vital metric
+ * DRY helper that logs and sends to analytics
+ */
+function handleMetric(metric: Metric) {
+  logMetric(metric);
+  sendToAnalytics(metric);
+}
 
 /**
  * Web Vitals tracking component
@@ -9,87 +50,12 @@ import { onCLS, onFCP, onLCP, onTTFB, onINP } from "web-vitals";
  */
 export function WebVitals() {
   useEffect(() => {
-    // Track all Core Web Vitals
-    onCLS((metric) => {
-      console.log("[Web Vitals] CLS:", {
-        value: metric.value.toFixed(4),
-        rating: metric.rating,
-        name: metric.name,
-      });
-
-      // Send to analytics if available
-      if (typeof window !== "undefined" && (window as any).va) {
-        (window as any).va("event", {
-          name: "web_vitals_cls",
-          data: { value: metric.value, rating: metric.rating },
-        });
-      }
-    });
-
-    onFCP((metric) => {
-      console.log("[Web Vitals] FCP:", {
-        value: `${metric.value.toFixed(2)}ms`,
-        rating: metric.rating,
-        name: metric.name,
-      });
-
-      if (typeof window !== "undefined" && (window as any).va) {
-        (window as any).va("event", {
-          name: "web_vitals_fcp",
-          data: { value: metric.value, rating: metric.rating },
-        });
-      }
-    });
-
-    onLCP((metric) => {
-      console.log("[Web Vitals] LCP:", {
-        value: `${metric.value.toFixed(2)}ms`,
-        rating: metric.rating,
-        name: metric.name,
-      });
-
-      if (typeof window !== "undefined" && (window as any).va) {
-        (window as any).va("event", {
-          name: "web_vitals_lcp",
-          data: { value: metric.value, rating: metric.rating },
-        });
-      }
-
-      // Warn if poor
-      if (metric.rating === "poor") {
-        console.warn(`⚠️ Poor LCP: ${metric.value.toFixed(2)}ms (target: <2500ms)`);
-      }
-    });
-
-    onTTFB((metric) => {
-      console.log("[Web Vitals] TTFB:", {
-        value: `${metric.value.toFixed(2)}ms`,
-        rating: metric.rating,
-        name: metric.name,
-      });
-
-      if (typeof window !== "undefined" && (window as any).va) {
-        (window as any).va("event", {
-          name: "web_vitals_ttfb",
-          data: { value: metric.value, rating: metric.rating },
-        });
-      }
-    });
-
-    onINP((metric) => {
-      console.log("[Web Vitals] INP:", {
-        value: `${metric.value.toFixed(2)}ms`,
-        rating: metric.rating,
-        name: metric.name,
-      });
-
-      if (typeof window !== "undefined" && (window as any).va) {
-        (window as any).va("event", {
-          name: "web_vitals_inp",
-          data: { value: metric.value, rating: metric.rating },
-        });
-      }
-    });
+    // Track all Core Web Vitals with unified handler
+    onCLS(handleMetric);
+    onFCP(handleMetric);
+    onLCP(handleMetric);
+    onTTFB(handleMetric);
+    onINP(handleMetric);
   }, []);
 
   // This component doesn't render anything

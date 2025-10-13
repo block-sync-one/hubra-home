@@ -53,8 +53,6 @@ export async function GET(request: Request) {
 
     const cacheKey = cacheKeys.priceHistory(tokenAddress, days);
 
-    console.log(`Fetching price history for ${tokenAddress} (${days} days) from Birdeye API`);
-
     // Try Redis cache first
     const cachedData = await redis.get<any>(cacheKey);
 

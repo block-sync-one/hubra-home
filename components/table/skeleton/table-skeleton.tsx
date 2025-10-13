@@ -1,6 +1,5 @@
 import React from "react";
 import { TableRow, TableCell, Table, TableHeader, TableColumn, TableBody, Skeleton } from "@heroui/react";
-import { useMediaQuery } from "usehooks-ts";
 
 interface TableSkeletonProps {
   columns: number;
@@ -8,10 +7,6 @@ interface TableSkeletonProps {
 }
 
 const TableSkeleton: React.FC<TableSkeletonProps> = ({ columns, rows = 3 }) => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
-
-  isMobile ? (columns = 2) : columns;
-
   return (
     <Table className=" [&>div]:border-none [&>div]:shadow-none [&>div]:bg-transparent">
       <TableHeader>

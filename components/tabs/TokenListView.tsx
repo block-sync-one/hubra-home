@@ -2,7 +2,7 @@
 
 import type { Token } from "@/lib/types/token";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 
 import { TokenCard } from "./TokenCard";
@@ -12,7 +12,7 @@ import { TokenListItem } from "./TokenListItem";
 import { ErrorDisplay } from "./ErrorDisplay";
 
 import { useCurrentToken } from "@/lib/context/current-token-context";
-import { useBatchPrefetch } from "@/lib/hooks/usePrefetch";
+import { useFormatTokens } from "@/lib/hooks/useFormatTokens";
 
 interface TokenListViewProps {
   tokens: Token[];
@@ -24,13 +24,9 @@ interface TokenListViewProps {
 export const TokenListView: React.FC<TokenListViewProps> = ({ tokens, loading, error, onRetry }) => {
   const router = useRouter();
   const { setCurrentToken } = useCurrentToken();
-  const { prefetchTokens } = useBatchPrefetch();
 
-  useEffect(() => {
-    if (tokens && tokens.length > 0) {
-      prefetchTokens(tokens);
-    }
-  }, [tokens, prefetchTokens]);
+  // Format tokens with user's currency preference (shared hook)
+  const formattedTokens = useFormatTokens(tokens);
 
   const handleTokenClick = (token: Token) => {
     setCurrentToken(token);
@@ -59,7 +55,7 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ tokens, loading, e
       {/* Mobile List View */}
       <div className="md:hidden bg-card/50 backdrop-blur-sm rounded-2xl overflow-hidden w-full">
         <div>
-          {tokens.map((token, index) => (
+          {formattedTokens.map((token, index) => (
             <TokenListItem key={token.id} rank={index + 1} token={token} onClick={handleTokenClick} />
           ))}
         </div>
@@ -67,7 +63,7 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ tokens, loading, e
 
       {/* Desktop Card Grid */}
       <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-        {tokens.map((token) => (
+        {formattedTokens.map((token) => (
           <TokenCard
             key={token.id}
             change={token.change}

@@ -4,6 +4,8 @@ import { Metadata } from "next";
 import Tokens from "@/app/tokens/Tokens";
 import AllTokens from "@/app/tokens/AllTokens";
 import HotTokens from "@/app/tokens/HotTokens";
+import { fetchMarketData } from "@/lib/data/market-data";
+import { TokenFilter } from "@/lib/helpers/token";
 
 export const metadata: Metadata = {
   title: "Cryptocurrency Prices | Live Solana Token Market Data | Hubra",
@@ -61,17 +63,36 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TokensPage() {
+/**
+ * Server Component - Fetches all data once and distributes to child components
+ * This ensures HotTokens and AllTokens use the same data source
+ */
+export default async function TokensPage() {
+  // Fetch market data once server-side (200 tokens with Redis caching)
+  const marketTokens = await fetchMarketData(200, 0);
+
+  // Sort data for different views (reuse same data)
+  const allAssetsSorted = TokenFilter.byMarketCap(marketTokens, marketTokens.length);
+  const gainersSorted = TokenFilter.gainers(marketTokens, marketTokens.length);
+  const losersSorted = TokenFilter.losers(marketTokens, marketTokens.length);
+  const volumeSorted = TokenFilter.byVolume(marketTokens, marketTokens.length);
+
   return (
     <main className="flex flex-col gap-12">
       <div className="md:max-w-7xl mx-auto w-full">
         <Tokens />
       </div>
       <div className="md:max-w-7xl mx-auto w-full">
-        <HotTokens />
+        {/* Pass top 4 from each category to HotTokens */}
+        <HotTokens
+          initialGainers={gainersSorted.slice(0, 4)}
+          initialLosers={losersSorted.slice(0, 4)}
+          initialVolume={volumeSorted.slice(0, 4)}
+        />
       </div>
       <div className="md:max-w-7xl mx-auto w-full">
-        <AllTokens />
+        {/* Pass full sorted data to AllTokens */}
+        <AllTokens initialAllTokens={allAssetsSorted} initialGainers={gainersSorted} initialLosers={losersSorted} />
       </div>
     </main>
   );

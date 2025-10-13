@@ -2,15 +2,15 @@
 
 import type { Token } from "@/lib/types/token";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import { allAssets, gainers, losers, newlyListed } from "@/lib/constants/tabs-data";
 import { TableWrapper } from "@/components/table";
 import { useCurrentToken } from "@/lib/context/current-token-context";
-import { useCurrency } from "@/lib/context";
-import { formatBigNumbers } from "@/lib/utils";
 import { TabId } from "@/lib/models";
+import { useEagerPrefetch } from "@/lib/hooks/useEagerPrefetch";
+import { useFormatTokens } from "@/lib/hooks/useFormatTokens";
 
 interface AllTokensClientProps {
   initialAllTokens: Token[];
@@ -21,24 +21,17 @@ interface AllTokensClientProps {
 export default function AllTokensClient({ initialAllTokens, initialGainers, initialLosers }: AllTokensClientProps) {
   const router = useRouter();
   const { setCurrentToken } = useCurrentToken();
-  const { formatPrice } = useCurrency();
 
   const tableTabData = [allAssets, losers, gainers, newlyListed];
 
-  // Format tokens with user's currency preference (client-side)
-  const formatTokens = useCallback(
-    (tokens: Token[]) =>
-      tokens.map((token) => ({
-        ...token,
-        price: token.rawPrice ? formatPrice(token.rawPrice) : "N/A",
-        volume: formatBigNumbers(token.rawVolume),
-      })),
-    [formatPrice]
-  );
+  // Eagerly prefetch top 30 tokens (visible in initial viewport)
+  // This warms up Redis cache for instant navigation
+  useEagerPrefetch(initialAllTokens, { limit: 30 });
 
-  const formattedAllTokens = useMemo(() => formatTokens(initialAllTokens), [initialAllTokens, formatTokens]);
-  const formattedGainers = useMemo(() => formatTokens(initialGainers), [initialGainers, formatTokens]);
-  const formattedLosers = useMemo(() => formatTokens(initialLosers), [initialLosers, formatTokens]);
+  // Format tokens with user's currency preference (shared hook)
+  const formattedAllTokens = useFormatTokens(initialAllTokens);
+  const formattedGainers = useFormatTokens(initialGainers);
+  const formattedLosers = useFormatTokens(initialLosers);
 
   // Handle token row click - navigate to token details page
   const handleTokenClick = useCallback(

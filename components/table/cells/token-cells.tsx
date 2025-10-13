@@ -86,7 +86,7 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
 
     case "chart":
       return (
-        <div className="flex justify-end items-center h-12">
+        <div className="flex justify-end items-center h-12 w-full min-w-[80px]">
           <MiniChart change={item.change} tokenId={item.id} />
         </div>
       );
