@@ -42,12 +42,16 @@ interface StatCardProps {
 
 const StatCard = memo(function StatCard({ title, value, change, className = "" }: StatCardProps) {
   return (
-    <div className={`flex flex-col gap-1.5 h-[91px] justify-center px-4 relative md:flex-1 w-full ${className}`}>
-      <p className="text-sm font-medium text-gray-400 whitespace-nowrap">{title}</p>
+    <div className={`flex flex-col gap-1.5 h-[91px] justify-center px-4 md:items-center relative md:flex-1 w-full ${className}`}>
+      {/* Vertical separator - centered and doesn't take full height */}
+      <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-12 bg-gray-850" />
+      <div className="text-left">
+        <p className="text-sm font-medium text-gray-400 whitespace-nowrap">{title}</p>
 
-      <div className="flex items-center gap-1">
-        <p className="text-lg font-medium whitespace-nowrap text-white">{value}</p>
-        {change !== undefined && <ChangeIndicator value={change} />}
+        <div className="flex items-center gap-1 mt-1">
+          <p className="text-lg font-medium whitespace-nowrap text-white">{value}</p>
+          {change !== undefined && <ChangeIndicator value={change} />}
+        </div>
       </div>
     </div>
   );
@@ -84,8 +88,8 @@ const StatsGrid = memo(function StatsGrid({ children }: StatsGridProps) {
 
   return (
     <div className="relative rounded-xl bg-card overflow-hidden">
-      {/* Desktop: 5 columns in a row - each section has equal width */}
-      <div className="hidden md:flex">{children}</div>
+      {/* Desktop: 5 columns with custom vertical separators */}
+      <div className="hidden md:flex flex-wrap">{children}</div>
 
       {/* Mobile: Dynamic grid based on number of items */}
       <div className="md:hidden">{mobileRows}</div>
@@ -187,7 +191,13 @@ export default function Tokens() {
     ];
   }, [globalData, formatPrice]);
 
-  const statsCards = useMemo(() => statsData.map((stat, index) => <StatCard key={`stat-${index}`} {...stat} />), [statsData]);
+  const statsCards = useMemo(
+    () =>
+      statsData.map((stat, index) => (
+        <StatCard key={`stat-${index}`} {...stat} className={index === 0 ? "[&>div:first-child]:hidden" : ""} />
+      )),
+    [statsData]
+  );
 
   // Enhanced loading state with skeleton
   if (loading) {
