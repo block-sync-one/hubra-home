@@ -105,8 +105,8 @@ export const SearchInput: React.FC = () => {
       <Input
         ref={inputRef}
         classNames={{
-          inputWrapper: "bg-card md:bg-background  h-10 w-full",
-          input: "text-sm text-white placeholder:text-gray-500 w-full",
+          inputWrapper: "bg-card md:bg-background h-10 w-full border-none",
+          input: "text-sm text-white placeholder:text-gray-500 w-full bg-transparent",
         }}
         placeholder="Search tokens..."
         size="sm"

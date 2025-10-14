@@ -115,7 +115,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} id="website-jsonld" type="application/ld+json" />
       </head>
-      <body className={clsx("min-h-screen text-foreground font-sans antialiased")}>
+      <body className={clsx("min-h-screen text-foreground font-sans antialiased overflow-x-hidden")}>
         <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col items-center">
             <Navbar />
