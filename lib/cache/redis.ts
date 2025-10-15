@@ -1,12 +1,12 @@
 import Redis, { RedisOptions } from "ioredis";
 
 export const CACHE_TTL = {
-  MARKET_DATA: 120,
-  TOKEN_DETAIL: 120,
-  PRICE_HISTORY: 300,
-  TRENDING: 180,
-  GLOBAL_STATS: 300,
-  SEARCH: 60,
+  MARKET_DATA: 960, // 15 minutes - matches cron frequency
+  TOKEN_DETAIL: 960, // 15 minutes - matches cron frequency
+  PRICE_HISTORY: 960, // 15 minutes
+  TRENDING: 300, // 15 minutes
+  GLOBAL_STATS: 900, // 15 minutes
+  SEARCH: 300, // 5 minutes
 } as const;
 
 class RedisClient {

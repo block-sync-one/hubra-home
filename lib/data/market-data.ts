@@ -1,3 +1,5 @@
+import { setUnifiedToken, UnifiedTokenData } from "./unified-token-cache";
+
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { Token } from "@/lib/types/token";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
@@ -40,6 +42,53 @@ function transformBirdeyeToken(token: BirdeyeToken): Token {
     marketCap: token.market_cap || 0,
     rawPrice: token.price || 0, // Store raw price for formatting
   };
+}
+
+/**
+ * Cache individual tokens in unified cache (optimized)
+ * This ensures consistency between list and details pages
+ *
+ * PERFORMANCE: Uses batch operations and doesn't block response
+ */
+function cacheIndividualTokensAsync(tokens: BirdeyeToken[]): void {
+  // Fire and forget - don't block the response
+  (async () => {
+    try {
+      // Build batch data without reading existing cache
+      // List data is source of truth, so we can overwrite
+      const batch = tokens.map((token) => ({
+        address: token.address,
+        data: {
+          address: token.address,
+          symbol: token.symbol.toUpperCase(),
+          name: token.name === "Wrapped SOL" ? "Solana" : token.name,
+          logoURI: token.logo_uri || "/logo.svg",
+          price: token.price || 0,
+          priceChange24hPercent: token.price_change_24h_percent || 0,
+          v24hUSD: token.volume_24h_usd || 0,
+          marketCap: token.market_cap || 0,
+          liquidity: token.liquidity,
+          holder: token.holder,
+          decimals: token.decimals,
+          lastUpdated: Date.now(),
+          dataSource: "list" as const,
+        } as UnifiedTokenData,
+      }));
+
+      // Write in smaller chunks to avoid overwhelming Redis
+      const CHUNK_SIZE = 50;
+
+      for (let i = 0; i < batch.length; i += CHUNK_SIZE) {
+        const chunk = batch.slice(i, i + CHUNK_SIZE);
+
+        await Promise.all(chunk.map(({ address, data }) => setUnifiedToken(address, data, CACHE_TTL.TOKEN_DETAIL)));
+      }
+
+      loggers.cache.debug(`✓ Cached ${tokens.length} individual tokens (async)`);
+    } catch (error) {
+      loggers.cache.error("Failed to cache individual tokens:", error);
+    }
+  })();
 }
 
 /**
@@ -131,12 +180,15 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0): 
     // Transform Birdeye data to our Token type
     const transformedTokens = allItems.map(transformBirdeyeToken);
 
-    // Store in Redis cache asynchronously (don't block response)
+    // Cache the list (blocks response - quick operation)
     redis.set(cacheKey, transformedTokens, CACHE_TTL.MARKET_DATA).catch((err) => {
-      loggers.cache.error(`SET failed: ${err.message}`);
+      loggers.cache.error(`List cache failed: ${err.message}`);
     });
 
-    loggers.cache.debug(`Caching ${transformedTokens.length} tokens (async)`);
+    // Cache individual tokens asynchronously (doesn't block response)
+    cacheIndividualTokensAsync(allItems);
+
+    loggers.cache.debug(`✓ Returning ${transformedTokens.length} tokens (caching in background)`);
 
     return transformedTokens;
   } catch (error) {
