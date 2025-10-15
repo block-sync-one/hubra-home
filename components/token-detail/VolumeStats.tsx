@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, CardBody, CardHeader } from "@heroui/react";
+import { Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
 import { formatBigNumbers } from "@/lib/utils";
@@ -139,18 +139,19 @@ export function VolumeStats({
     <div className="space-y-6">
       {/* Desktop - Single Card */}
       <Card className="hidden md:block bg-card rounded-2xl">
-        <CardHeader className="p-5">
-          <h3 className="text-sm font-medium text-gray-400">Volume:</h3>
-        </CardHeader>
         <CardBody className="space-y-6 p-5">
-          <div className="flex gap-6">
-            <div className="flex-1">
-              <VolumeBar isBuy={true} label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
-            </div>
-            <div className="flex-1">
-              <VolumeBar isBuy={false} label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
+          <div>
+            <h3 className="text-sm font-medium text-gray-400">Volume:</h3>
+            <div className="flex gap-6">
+              <div className="flex-1">
+                <VolumeBar isBuy={true} label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
+              </div>
+              <div className="flex-1">
+                <VolumeBar isBuy={false} label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
+              </div>
             </div>
           </div>
+
           <TokenInfo exchangeRate={exchangeRate} holders={holders} tokenAddress={tokenAddress} tradesCount={tradesCount} />
         </CardBody>
       </Card>

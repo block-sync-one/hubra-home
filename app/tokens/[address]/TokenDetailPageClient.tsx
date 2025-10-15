@@ -170,7 +170,7 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
           <TokenPriceChart
             change={apiTokenData.priceChange24hPercent?.toFixed(2) || "0"}
             periods={periods}
-            price={formatPrice(apiTokenData.price || 0, true)}
+            price={formatPrice(apiTokenData.price || 0)}
             selectedPeriod={selectedPeriod}
             tokenId={apiTokenData.address}
             onPeriodChange={setSelectedPeriod}

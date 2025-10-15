@@ -1,12 +1,10 @@
 import React from "react";
-import { Chip } from "@heroui/react";
 import Image from "next/image";
-import { Icon } from "@iconify/react";
 
 import { MiniChart } from "./mini-chart";
 
 import { Token } from "@/lib/types/token";
-import { PriceDisplay } from "@/components/price";
+import { PriceChangeChip, PriceDisplay } from "@/components/price";
 
 export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnKey: string }) => {
   switch (columnKey) {
@@ -69,16 +67,7 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
     case "priceChange24hPct":
       return (
         <div className="flex justify-end">
-          <Chip
-            className="py-1 h-[30px]"
-            color={item.change && item.change > 0 ? "success" : item.change && item.change < 0 ? "danger" : "default"}
-            size="sm"
-            variant="flat">
-            <div className="flex items-center font-bold gap-1">
-              {item.change !== undefined && item.change !== 0 && <Icon icon={item.change > 0 ? "mdi:arrow-up" : "mdi:arrow-down"} />}
-              <span>{item.change ? Math.abs(item.change).toFixed(2) : 0}%</span>
-            </div>
-          </Chip>
+          <PriceChangeChip changePercent={item.change} />
         </div>
       );
 

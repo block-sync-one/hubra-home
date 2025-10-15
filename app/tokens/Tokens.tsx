@@ -3,34 +3,9 @@
 import React, { memo, useMemo, useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 
-import { fixedNumber } from "@/lib/utils";
 import { useCurrency } from "@/lib/context/currency-format";
 import { StatsGridSkeleton } from "@/components/StatsCardSkeleton";
-
-const getChangeConfig = (value: number) => {
-  const isPositive = value >= 0;
-
-  return {
-    isPositive,
-    icon: isPositive ? "mdi:arrow-up" : "mdi:arrow-down",
-    bgColor: isPositive ? "bg-green-500/20" : "bg-red-500/20",
-    textColor: isPositive ? "text-success-500" : "text-danger-500",
-    iconColor: isPositive ? "text-success-500" : "text-danger-500",
-  };
-};
-
-const ChangeIndicator = React.memo(({ value }: { value: number }) => {
-  const config = getChangeConfig(value);
-
-  return (
-    <div className="flex items-center gap-0.5">
-      <Icon className={`w-3 h-3 ${config.iconColor}`} icon={config.icon} />
-      <span className={`text-xs font-medium ${config.textColor}`}>{fixedNumber(Math.abs(value))}%</span>
-    </div>
-  );
-});
-
-ChangeIndicator.displayName = "ChangeIndicator";
+import { PriceChangeChip } from "@/components/price";
 
 interface StatCardProps {
   title: string;
@@ -42,15 +17,15 @@ interface StatCardProps {
 
 const StatCard = memo(function StatCard({ title, value, change, className = "" }: StatCardProps) {
   return (
-    <div className={`flex flex-col gap-1.5 h-[91px] justify-center px-4 md:items-center relative md:flex-1 w-full ${className}`}>
+    <div className={`flex flex-col gap-1.5 h-[91px] justify-center px-4 relative md:flex-1 w-full ${className}`}>
       {/* Vertical separator - centered and doesn't take full height */}
-      <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-12 bg-gray-850" />
+      <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-14 bg-gray-850" />
       <div className="text-left">
         <p className="text-sm font-medium text-gray-400 whitespace-nowrap">{title}</p>
 
-        <div className="flex items-center gap-1 mt-1">
+        <div className="flex items-center mt-1">
           <p className="text-lg font-medium whitespace-nowrap text-white">{value}</p>
-          {change !== undefined && <ChangeIndicator value={change} />}
+          {change !== undefined && <PriceChangeChip changePercent={change} className={"bg-transparent"} />}
         </div>
       </div>
     </div>

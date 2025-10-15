@@ -26,16 +26,14 @@ interface TradingInputProps {
 const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tokenImgUrl, amount, estimatedValue }) => {
   return (
     <div className="flex items-center justify-between p-6 bg-background rounded-xl">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <Image alt={`${tokenName} token`} className="rounded-full" height={32} loading="lazy" sizes="32px" src={tokenImgUrl} width={32} />
         <div>
           <div className="text-lg font-medium text-white">{tokenSymbol}</div>
-          <div className="text-sm text-gray-400">{tokenName}</div>
         </div>
       </div>
       <div className="text-right">
         <div className="text-lg font-medium text-white">{amount}</div>
-        <div className="text-sm text-gray-400">{estimatedValue}</div>
       </div>
     </div>
   );
@@ -44,7 +42,7 @@ const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tok
 export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPrice, onSwap }: TradingSectionProps) {
   return (
     <Card className="bg-card rounded-2xl">
-      <CardBody className="p-6">
+      <CardBody className="p-4">
         <div className="space-y-4">
           {/* Token Input */}
           <TradingInput
@@ -66,7 +64,7 @@ export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPri
 
           {/* Swap Button */}
           <Button
-            className="w-full bg-[#feaa01] text-white font-semibold hover:bg-[#feaa01]/90 rounded-lg py-3 transition-colors"
+            className="w-full bg-[#feaa01] text-white font-semibold hover:bg-[#feaa01]/90 rounded-lg py-4 transition-colors"
             onPress={onSwap}>
             Swap on Hubra
             <Icon className="h-4 w-4" icon="lucide:chevron-right" />

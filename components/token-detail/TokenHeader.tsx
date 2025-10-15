@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 
-import { formatBigNumbers } from "@/lib/utils";
+import { fixedNumber } from "@/lib/utils";
 
 interface TokenHeaderProps {
   name: string;
@@ -23,27 +23,27 @@ function StatCard({
   change,
   isPositive,
   roundedClass,
+  valueClass,
 }: {
   label: string;
   value: string;
   change?: number;
   isPositive?: boolean;
   roundedClass: string;
+  valueClass?: string;
 }) {
   return (
     <div className={`${roundedClass} p-4 md:p-0`}>
-      <p className="text-sm font-medium text-gray-400 mb-1">{label}:</p>
+      <p className={`text-sm font-medium text-gray-400 mb-1`}>{label}:</p>
       <div className="flex items-center gap-2">
-        <p className="text-lg font-medium text-white">{value}</p>
+        <p className={`text-lg font-medium ${valueClass}`}>{value}</p>
         {change && (
           <div className="flex items-center gap-0.5">
             <Icon
               className={`h-3 w-3 ${isPositive ? "text-success-500" : "text-error-500"} ${!isPositive ? "rotate-180" : ""}`}
               icon="mdi:arrow-up"
             />
-            <span className={`text-xs font-medium ${isPositive ? "text-success-500" : "text-error-500"}`}>
-              {formatBigNumbers(Math.abs(change))}%
-            </span>
+            <span className={`text-xs font-medium ${isPositive ? "text-success-500" : "text-error-500"}`}>{fixedNumber(change)}%</span>
           </div>
         )}
       </div>
@@ -90,10 +90,22 @@ export function TokenStats({
   volume24hChange: number;
   supply: string;
 }) {
+  const changeValue = parseFloat(change);
   const stats = [
-    { label: "Change", value: `${change}%`, roundedClass: "rounded-tl-lg" },
-    { label: "Market Cap", value: marketCap, change: marketCapChange, isPositive: true, roundedClass: "rounded-tr-lg" },
-    { label: "24 Hour Trading Vol", value: volume24h, change: volume24hChange, isPositive: false, roundedClass: "rounded-bl-lg" },
+    {
+      label: "Change",
+      value: `${fixedNumber(changeValue)}%`,
+      valueClass: `${changeValue > 0 ? "text-success-500" : "text-error-500"}`,
+      roundedClass: "rounded-tl-lg",
+    },
+    { label: "Market Cap", value: marketCap, roundedClass: "rounded-tr-lg" },
+    {
+      label: "24 Hour Trading Vol",
+      value: volume24h,
+      change: volume24hChange,
+      isPositive: volume24hChange > 0,
+      roundedClass: "rounded-bl-lg",
+    },
     { label: "Supply", value: supply, roundedClass: "rounded-br-lg" },
   ];
 
@@ -108,6 +120,7 @@ export function TokenStats({
             label={stat.label}
             roundedClass={stat.roundedClass}
             value={stat.value}
+            valueClass={stat.valueClass}
           />
         ))}
       </div>

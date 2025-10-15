@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Icon } from "@iconify/react";
-import { Card, cn, Chip } from "@heroui/react";
+import { Card } from "@heroui/react";
 import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
 
 import {
@@ -15,10 +14,10 @@ import {
   CHART_STROKE,
   CHART_MARGINS,
   PRICE_CHANGE,
-  COMPONENT_SIZES,
 } from "@/lib/constants";
 import { useCurrentToken } from "@/lib/context/current-token-context";
 import { seededRandom } from "@/lib/utils/random";
+import { PriceChangeChip } from "@/components/price";
 
 interface TokenCardProps {
   name: string;
@@ -147,34 +146,9 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
         </div>
 
         {/* Price and Change */}
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center mb-2">
           <p className="text-lg font-semibold text-white">{price}</p>
-          {change !== undefined && (
-            <Chip
-              className={cn("h-6", {
-                "border-success-500/20 bg-success-500/10": isPositive,
-                "border-danger-500/20 bg-danger-500/10": !isPositive,
-              })}
-              size={COMPONENT_SIZES.CHIP_SIZE}
-              startContent={
-                <Icon
-                  className={cn("text-sm", {
-                    "text-success-500": isPositive,
-                    "text-danger-500": !isPositive,
-                  })}
-                  icon={isPositive ? "solar:alt-arrow-up-linear" : "solar:alt-arrow-down-linear"}
-                />
-              }
-              variant="bordered">
-              <span
-                className={cn("text-xs font-semibold", {
-                  "text-success-500": isPositive,
-                  "text-danger-500": !isPositive,
-                })}>
-                {Math.abs(change).toFixed(PRICE_CHANGE.DECIMAL_PLACES)}%
-              </span>
-            </Chip>
-          )}
+          <PriceChangeChip changePercent={change ?? 0} className={"bg-transparent"} />
         </div>
 
         {/* Mini Chart */}

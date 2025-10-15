@@ -72,10 +72,10 @@ export const TabsUI = React.memo(({ selectedTab, onTabChange, tabsData, classNam
         className={`w-full ${shouldKeepTabOnSmallScreen ? "" : "hidden lg:block"} ${className ?? ""}`}
         classNames={{
           tabList: "gap-2 w-full relative rounded-none py-0",
-          cursor: "bg-primary",
-          tab: "h-[40px]",
+          cursor: "bg-primary w-full",
+          tab: "h-8",
           tabContent:
-            "px-4 text-gray-400 font-medium group-data-[selected=true]:text-base transition-colors duration-150 mb-[12px] group-data-[selected=true]:font-bold",
+            "text-gray-400 font-medium group-data-[selected=true]:text-base transition-colors duration-150 mb-4 group-data-[selected=true]:font-bold",
         }}
         selectedKey={selectedTab}
         variant="underlined"

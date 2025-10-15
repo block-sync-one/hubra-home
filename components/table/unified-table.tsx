@@ -14,6 +14,8 @@ const get = (obj: any, path: string) => {
 
 import TableSkeleton from "./skeleton/table-skeleton";
 
+import { fixedNumber } from "@/lib/utils";
+
 const ROWS_PER_PAGE = 100;
 
 interface ReusableTableProps<T> extends TableProps<T> {
@@ -190,7 +192,7 @@ const UnifiedTable = <T extends Record<string, any>>({
   return (
     <>
       {/* Mobile List View */}
-      <div className="md:hidden bg-card rounded-lg overflow-hidden">
+      <div className="md:hidden rounded-lg overflow-hidden">
         {isLoading ? (
           <TableSkeleton columns={1} rows={5} />
         ) : paginatedItems.length === 0 ? (
@@ -203,7 +205,7 @@ const UnifiedTable = <T extends Record<string, any>>({
               <div
                 key={item.key || item.id || item.asset?.mint || item._index}
                 aria-label="Token details"
-                className="flex items-center justify-between px-3 py-2 hover:bg-white/5 transition-colors cursor-pointer"
+                className="flex items-center justify-between py-2 hover:bg-white/5 transition-colors cursor-pointer"
                 role="button"
                 onClick={() => handleRowClick(item)}>
                 {/* Left Column: Image, Name, Symbol */}
@@ -224,7 +226,7 @@ const UnifiedTable = <T extends Record<string, any>>({
                 </div>
 
                 {/* Right Column: Price and Price Change */}
-                <div className="flex flex-col items-end gap-1">
+                <div className="flex flex-col items-end">
                   <span className="text-sm font-medium text-foreground">{tokenData.price}</span>
                   <div
                     className={`flex items-center gap-1 text-xs font-semibold ${
@@ -237,7 +239,7 @@ const UnifiedTable = <T extends Record<string, any>>({
                     {tokenData.change !== undefined && tokenData.change !== 0 && (
                       <Icon icon={tokenData.change > 0 ? "mdi:arrow-up" : "mdi:arrow-down"} width={12} />
                     )}
-                    <span>{tokenData.change ? Math.abs(tokenData.change).toFixed(2) : 0}%</span>
+                    <span>{tokenData.change ? fixedNumber(Math.abs(tokenData.change)) : 0}%</span>
                   </div>
                 </div>
               </div>

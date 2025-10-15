@@ -47,7 +47,7 @@ export const Navbar = () => {
       position="sticky"
       onMenuOpenChange={setIsMenuOpen}>
       {/* Brand/Logo */}
-      <NavbarBrand as="li" className="gap-3 max-w-fit">
+      <NavbarBrand as="li" className="gap-3 max-w-fit md:mr-16">
         <NextLink className="flex justify-start items-center gap-2" href="/">
           <Image alt="Hubra" className="rounded-none w-[22px] h-[22px] md:w-6 md:h-6" src="/logo.png" />
           <p className="font-bold text-white text-lg">Hubra</p>
@@ -55,14 +55,14 @@ export const Navbar = () => {
       </NavbarBrand>
 
       {/* Desktop Navigation */}
-      <NavbarContent className="hidden lg:flex gap-6" justify="center">
+      <NavbarContent className="hidden lg:flex " justify="center">
         {navItems.map((item) => (
           <NavbarItem key={item.label}>
             {item.navItems ? (
               <Dropdown>
                 <DropdownTrigger>
                   <Button
-                    className="text-gray-300 hover:text-white transition-colors duration-200"
+                    className="text-[#797B92] hover:text-white transition-colors duration-200"
                     endContent={<Icon icon="mdi:chevron-down" width={16} />}
                     variant="light">
                     {item.label}
@@ -82,7 +82,7 @@ export const Navbar = () => {
               </Dropdown>
             ) : (
               <NextLink href={item.href}>
-                <Button className="text-gray-300 hover:text-white transition-colors duration-200" variant="light">
+                <Button className="text-[#797B92] font-medium text-sm hover:text-white transition-colors duration-200" variant="light">
                   {item.label}
                 </Button>
               </NextLink>

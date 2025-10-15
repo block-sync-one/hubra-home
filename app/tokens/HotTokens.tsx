@@ -108,7 +108,7 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
 
       {/* Content */}
       <div className="relative z-20 w-full flex flex-col items-start justify-center">
-        <TabsUI className="mb-4 border-b border-gray-30" selectedTab={selectedTab} tabsData={tableTabData} onTabChange={setSelectedTab} />
+        <TabsUI className="mb-8 border-b border-gray-30" selectedTab={selectedTab} tabsData={tableTabData} onTabChange={setSelectedTab} />
         <TokenListView error={error} loading={loading} tokens={getTokensForTab()} onRetry={retry} />
       </div>
     </div>

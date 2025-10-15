@@ -1,9 +1,8 @@
 "use client";
 
 import React from "react";
-import { Card, cn, Chip } from "@heroui/react";
+import { Card, cn } from "@heroui/react";
 import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import { Icon } from "@iconify/react";
 
 import { usePriceHistory } from "@/lib/hooks/usePriceHistory";
 
@@ -112,7 +111,7 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
 
   return (
     <Card className="bg-card backdrop-blur-sm">
-      <div className="p-4 md:p-6">
+      <div className="p-4 md:p-6 md:pb-2">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           {/* Price and Change */}
@@ -121,30 +120,6 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
               <p className="text-sm font-medium text-gray-400 mb-1">Price</p>
               <p className="text-2xl font-semibold text-white">{price}</p>
             </div>
-            <Chip
-              className={cn({
-                "border-success-500/20 bg-success-500/10": isPositive,
-                "border-danger-500/20 bg-danger-500/10": !isPositive,
-              })}
-              size="sm"
-              startContent={
-                <Icon
-                  className={cn("text-base", {
-                    "text-success-500": isPositive,
-                    "text-danger-500": !isPositive,
-                  })}
-                  icon={isPositive ? "solar:alt-arrow-up-linear" : "solar:alt-arrow-down-linear"}
-                />
-              }
-              variant="bordered">
-              <span
-                className={cn("text-xs font-semibold", {
-                  "text-success-500": isPositive,
-                  "text-danger-500": !isPositive,
-                })}>
-                {change}%
-              </span>
-            </Chip>
           </div>
 
           {/* Period Selector - Desktop */}
