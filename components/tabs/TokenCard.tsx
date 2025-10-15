@@ -15,7 +15,6 @@ import {
   CHART_MARGINS,
   PRICE_CHANGE,
 } from "@/lib/constants";
-import { useCurrentToken } from "@/lib/context/current-token-context";
 import { seededRandom } from "@/lib/utils/random";
 import { PriceChangeChip } from "@/components/price";
 
@@ -97,23 +96,8 @@ const transformPriceData = (
 export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId }: TokenCardProps) {
   const router = useRouter();
   const { priceHistory } = usePriceHistory(coinId || "");
-  const { setCurrentToken } = useCurrentToken();
 
   const handleClick = () => {
-    // Store token data in context before navigation
-    setCurrentToken({
-      id: coinId || "",
-      name: name,
-      symbol: symbol || "",
-      imgUrl: imgUrl || "/logo.svg",
-      price: price || "0",
-      change: change || 0,
-      volume: "N/A", // Not available in TokenCard
-      rawVolume: 0,
-      marketCap: 0,
-    });
-
-    // Navigate with token address directly
     router.push(`/tokens/${coinId}`);
   };
 

@@ -11,7 +11,6 @@ import { TokenListViewSkeleton } from "./TokenListViewSkeleton";
 import { TokenListItem } from "./TokenListItem";
 import { ErrorDisplay } from "./ErrorDisplay";
 
-import { useCurrentToken } from "@/lib/context/current-token-context";
 import { useFormatTokens } from "@/lib/hooks/useFormatTokens";
 
 interface TokenListViewProps {
@@ -23,13 +22,11 @@ interface TokenListViewProps {
 
 export const TokenListView: React.FC<TokenListViewProps> = ({ tokens, loading, error, onRetry }) => {
   const router = useRouter();
-  const { setCurrentToken } = useCurrentToken();
 
   // Format tokens with user's currency preference (shared hook)
   const formattedTokens = useFormatTokens(tokens);
 
   const handleTokenClick = (token: Token) => {
-    setCurrentToken(token);
     router.push(`/tokens/${token.id}`);
   };
 
