@@ -1,4 +1,4 @@
-import { setUnifiedToken, UnifiedTokenData } from "./unified-token-cache";
+import { setUnifiedToken, toUnifiedTokenData } from "./unified-token-cache";
 
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { Token } from "@/lib/types/token";
@@ -45,43 +45,22 @@ function transformBirdeyeToken(token: BirdeyeToken): Token {
 }
 
 /**
- * Cache individual tokens in unified cache (optimized)
- * This ensures consistency between list and details pages
+ * This ONLY caches basic list data (price, volume, market cap)
+ * Full token overview data is fetched ON-DEMAND when user visits token detail page
  *
- * PERFORMANCE: Uses batch operations and doesn't block response
+ * This prevents 200+ unnecessary API calls to /defi/token_overview
+ *
  */
 function cacheIndividualTokensAsync(tokens: BirdeyeToken[]): void {
   // Fire and forget - don't block the response
   (async () => {
     try {
-      // Build batch data without reading existing cache
-      // List data is source of truth, so we can overwrite
-      const batch = tokens.map((token) => ({
-        address: token.address,
-        data: {
-          address: token.address,
-          symbol: token.symbol.toUpperCase(),
-          name: token.name === "Wrapped SOL" ? "Solana" : token.name,
-          logoURI: token.logo_uri || "/logo.svg",
-          price: token.price || 0,
-          priceChange24hPercent: token.price_change_24h_percent || 0,
-          v24hUSD: token.volume_24h_usd || 0,
-          marketCap: token.market_cap || 0,
-          liquidity: token.liquidity,
-          holder: token.holder,
-          decimals: token.decimals,
-          lastUpdated: Date.now(),
-          dataSource: "list" as const,
-        } as UnifiedTokenData,
-      }));
-
-      // Write in smaller chunks to avoid overwhelming Redis
       const CHUNK_SIZE = 50;
 
-      for (let i = 0; i < batch.length; i += CHUNK_SIZE) {
-        const chunk = batch.slice(i, i + CHUNK_SIZE);
+      for (let i = 0; i < tokens.length; i += CHUNK_SIZE) {
+        const chunk = tokens.slice(i, i + CHUNK_SIZE);
 
-        await Promise.all(chunk.map(({ address, data }) => setUnifiedToken(address, data, CACHE_TTL.TOKEN_DETAIL)));
+        await Promise.all(chunk.map((token) => setUnifiedToken(token.address, toUnifiedTokenData(token, "list"), CACHE_TTL.TOKEN_DETAIL)));
       }
 
       loggers.cache.debug(`✓ Cached ${tokens.length} individual tokens (async)`);

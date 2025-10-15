@@ -7,6 +7,9 @@ import HotTokens from "@/app/tokens/HotTokens";
 import { fetchMarketData } from "@/lib/data/market-data";
 import { TokenFilter } from "@/lib/helpers/token";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Cryptocurrency Prices | Live Solana Token Market Data | Hubra",
   description:

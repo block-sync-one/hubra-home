@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import { gainers, losers, hotTokens, volume } from "@/lib/constants/tabs-data";
 import { TabId, TabIdType } from "@/lib/models";
 import { TabsUI, TokenListView } from "@/components/tabs";
-import { useEagerPrefetch } from "@/lib/hooks/useEagerPrefetch";
 import { Token } from "@/lib/types/token";
 
 interface HotTokensProps {
@@ -65,8 +64,18 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
     }
   }, [selectedTab]);
 
-  // Eagerly prefetch all visible tokens
-  useEagerPrefetch(initialGainers.concat(initialLosers, initialVolume, hotData), { limit: 12 });
+  React.useEffect(() => {
+    const currentTokens = getTokensForTab();
+
+    if (currentTokens.length === 0) return;
+
+    currentTokens.forEach((token) => {
+      fetch(`/api/crypto/price-history?id=${token.id}&days=7`, {
+        method: "GET",
+        priority: "low",
+      } as any).catch(() => {});
+    });
+  }, [selectedTab, hotData, initialGainers, initialLosers, initialVolume]);
 
   const getTokensForTab = () => {
     switch (selectedTab) {

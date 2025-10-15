@@ -8,8 +8,15 @@ import { loggers } from "@/lib/utils/logger";
 type TokenData = BirdEyeTokenOverview["data"];
 
 /**
- * Fetch token data using unified cache
- * This ensures price consistency with the token list page
+ * Fetch token data using unified cache with ON-DEMAND overview fetching
+ *
+ * STRATEGY:
+ * 1. Check cache for existing data
+ * 2. If full overview exists → return it
+ * 3. If only list data exists → fetch full overview (1 API call)
+ * 4. If no cache → fetch full overview (1 API call)
+ *
+ * Overview is only fetched when a user visits a specific token detail page.
  */
 export async function fetchTokenData(tokenAddress: string): Promise<TokenData | null> {
   try {
@@ -19,18 +26,18 @@ export async function fetchTokenData(tokenAddress: string): Promise<TokenData | 
     if (cachedUnified) {
       loggers.cache.debug(`✓ Unified cache HIT: ${cachedUnified.symbol}`);
 
-      // If we have full overview data, return it
+      // If we have full overview data, return it (no API call needed)
       if (cachedUnified.dataSource === "overview" || cachedUnified.dataSource === "merged") {
         return transformUnifiedToTokenData(cachedUnified);
       }
 
-      // We have list data, fetch full overview but preserve prices
+      // We only have basic list data, upgrade to full overview
       loggers.cache.debug(`→ Upgrading list data to full overview: ${cachedUnified.symbol}`);
     }
 
     loggers.cache.debug(`→ Fetching overview from Birdeye: ${tokenAddress}`);
 
-    // Fetch token overview from Birdeye
+    // Fetch token overview from Birdeye (ON-DEMAND - only when user visits this token)
     const overviewResponse = await fetchBirdeyeData<BirdEyeTokenOverview>("/defi/token_overview", {
       address: tokenAddress,
       ui_amount_mode: "scaled",

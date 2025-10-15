@@ -23,7 +23,6 @@ interface TokenListViewProps {
 export const TokenListView: React.FC<TokenListViewProps> = ({ tokens, loading, error, onRetry }) => {
   const router = useRouter();
 
-  // Format tokens with user's currency preference (shared hook)
   const formattedTokens = useFormatTokens(tokens);
 
   const handleTokenClick = (token: Token) => {

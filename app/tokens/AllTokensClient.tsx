@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 import { allAssets, gainers, losers, newlyListed } from "@/lib/constants/tabs-data";
 import { TableWrapper } from "@/components/table";
 import { TabId } from "@/lib/models";
-import { useEagerPrefetch } from "@/lib/hooks/useEagerPrefetch";
 import { useFormatTokens } from "@/lib/hooks/useFormatTokens";
 
 interface AllTokensClientProps {
@@ -21,10 +20,6 @@ export default function AllTokensClient({ initialAllTokens, initialGainers, init
   const router = useRouter();
   const tableTabData = [allAssets, losers, gainers, newlyListed];
 
-  // Eagerly prefetch top 30 tokens (visible in initial viewport)
-  useEagerPrefetch(initialAllTokens, { limit: 30 });
-
-  // Format tokens with user's currency preference (shared hook)
   const formattedAllTokens = useFormatTokens(initialAllTokens);
   const formattedGainers = useFormatTokens(initialGainers);
   const formattedLosers = useFormatTokens(initialLosers);

@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import { TokenDetailPageClient } from "./TokenDetailPageClient";
 
 import { fetchTokenData } from "@/lib/data/token-data";
+import { fetchPriceHistory } from "@/lib/data/price-history";
 
 interface TokenDetailPageProps {
   params: Promise<{ address: string }>;
@@ -71,22 +72,23 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
   };
 }
 
-// Fetch token data server-side with smart caching
-// Uses shared data fetching function - no HTTP request needed!
 async function getTokenData(tokenAddress: string) {
   return await fetchTokenData(tokenAddress);
 }
 
-/**
- * Server component - SSR with token data prefetching
- * Expects address to be a Solana address
- */
+async function getTokenDataWithHistory(tokenAddress: string) {
+  const [tokenData, priceHistory] = await Promise.allSettled([fetchTokenData(tokenAddress), fetchPriceHistory(tokenAddress, "7")]);
+
+  return {
+    tokenData: tokenData.status === "fulfilled" ? tokenData.value : null,
+    priceHistory: priceHistory.status === "fulfilled" ? priceHistory.value : null,
+  };
+}
+
 export default async function TokenDetailPage({ params }: TokenDetailPageProps) {
   const { address } = await params;
 
-  // address is the token address (e.g., "So111...112")
-  // Prefetch token data on server (SSR - NO LOADING SPINNER!)
-  const apiTokenData = await getTokenData(address);
+  const { tokenData: apiTokenData } = await getTokenDataWithHistory(address);
 
   // Generate JSON-LD structured data for SEO
   const jsonLd = apiTokenData

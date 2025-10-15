@@ -41,6 +41,15 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: "/api/crypto/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "s-maxage=300, stale-while-revalidate=600",
+          },
+        ],
+      },
+      {
         source: "/(.*)",
         headers: [
           {
