@@ -61,22 +61,8 @@ export function TokenStatsSkeleton() {
  */
 export function TokenPriceChartSkeleton() {
   return (
-    <Card className="bg-gray-950/50 border border-white/10 backdrop-blur-sm mb-8">
+    <Card className="bg-gray-950/50  backdrop-blur-sm mb-8">
       <div className="p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="space-y-2">
-            <div className="h-4 w-16 bg-gray-700/50 animate-pulse rounded" />
-            <div className="h-8 w-32 bg-gray-700/50 animate-pulse rounded" />
-          </div>
-          {/* Period selector */}
-          <div className="flex gap-2">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-8 w-12 bg-gray-700/50 animate-pulse rounded" />
-            ))}
-          </div>
-        </div>
-
         {/* Chart skeleton */}
         <div className="h-64 relative overflow-hidden rounded">
           <div className="absolute inset-0 bg-gradient-to-t from-gray-800/30 to-gray-800/10" />

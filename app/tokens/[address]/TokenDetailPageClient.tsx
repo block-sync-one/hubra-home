@@ -3,18 +3,13 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
-import dynamic from "next/dynamic";
 
 import { useCurrency } from "@/lib/context/currency-format";
-import {
-  TokenHeaderSkeleton,
-  TokenInfoSkeleton,
-  TokenStatsSkeleton,
-  TokenPriceChartSkeleton,
-  VolumeStatsSkeleton,
-  TradingSectionSkeleton,
-  TokenDescriptionSkeleton,
-} from "@/components/token-detail/TokenDetailSkeleton";
+import { TokenHeader, TokenInfo, TokenStats } from "@/components/token-detail/TokenHeader";
+import { VolumeStats } from "@/components/token-detail/VolumeStats";
+import { TradingSection } from "@/components/token-detail/TradingSection";
+import { TokenDescription } from "@/components/token-detail/TokenDescription";
+import { TokenPriceChart } from "@/components/token-detail/TokenPriceChart";
 import { fixedNumber, formatBigNumbers } from "@/lib/utils";
 
 type TokenOverviewData = {
@@ -44,39 +39,6 @@ type TokenOverviewData = {
     coingeckoId?: string;
   };
 };
-
-// Lazy load components with proper skeletons
-const TokenHeader = dynamic(() => import("@/components/token-detail/TokenHeader").then((mod) => ({ default: mod.TokenHeader })), {
-  loading: () => <TokenHeaderSkeleton />,
-});
-
-const TokenInfo = dynamic(() => import("@/components/token-detail/TokenHeader").then((mod) => ({ default: mod.TokenInfo })), {
-  loading: () => <TokenInfoSkeleton />,
-});
-
-const TokenStats = dynamic(() => import("@/components/token-detail/TokenHeader").then((mod) => ({ default: mod.TokenStats })), {
-  loading: () => <TokenStatsSkeleton />,
-});
-
-const TokenPriceChart = dynamic(
-  () => import("@/components/token-detail/TokenPriceChart").then((mod) => ({ default: mod.TokenPriceChart })),
-  {
-    loading: () => <TokenPriceChartSkeleton />,
-  }
-);
-
-const VolumeStats = dynamic(() => import("@/components/token-detail/VolumeStats").then((mod) => ({ default: mod.VolumeStats })), {
-  loading: () => <VolumeStatsSkeleton />,
-});
-
-const TradingSection = dynamic(() => import("@/components/token-detail/TradingSection").then((mod) => ({ default: mod.TradingSection })), {
-  loading: () => <TradingSectionSkeleton />,
-});
-
-const TokenDescription = dynamic(
-  () => import("@/components/token-detail/TokenDescription").then((mod) => ({ default: mod.TokenDescription })),
-  { loading: () => <TokenDescriptionSkeleton /> }
-);
 
 interface TokenDetailPageClientProps {
   apiTokenData: TokenOverviewData | null;
@@ -192,7 +154,7 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
         </div>
 
         {/* Right Column - Trading and Description */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           <TradingSection
             currentPrice={apiTokenData.price || 0}
             tokenImgUrl={apiTokenData.logoURI || "/logo.svg"}

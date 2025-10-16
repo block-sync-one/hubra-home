@@ -39,7 +39,7 @@ VolumeBar.displayName = "VolumeBar";
 
 const AddressActions = React.memo(({ tokenAddress }: { tokenAddress: string }) => (
   <div className="flex flex-row items-center gap-2">
-    <CopyText copyText={tokenAddress} copyValue={tokenAddress}>
+    <CopyText className="text-primary" copyText={tokenAddress} copyValue={tokenAddress}>
       {addrUtil(tokenAddress)?.addrShort}
     </CopyText>
     <Link href={`https://solscan.io/token/${tokenAddress}`} rel="noopener noreferrer" target="_blank" onClick={(e) => e.stopPropagation()}>
@@ -51,7 +51,7 @@ const AddressActions = React.memo(({ tokenAddress }: { tokenAddress: string }) =
 AddressActions.displayName = "AddressActions";
 
 const InfoRow = React.memo(({ label, value, isLast = false }: { label: string; value: React.ReactNode; isLast?: boolean }) => (
-  <div className={`${isLast ? "" : "border-b border-white/10"} p-5 flex items-center justify-between`}>
+  <div className={`${isLast ? "" : "border-b border-white/10"} p-4 flex items-center justify-between`}>
     <p className="text-sm font-medium text-gray-400">{label}</p>
     <div className="text-sm font-medium text-white">{value}</div>
   </div>
@@ -67,27 +67,6 @@ const InfoGrid = React.memo(({ label, value }: { label: string; value: React.Rea
 ));
 
 InfoGrid.displayName = "InfoGrid";
-
-const VolumeBars = React.memo(
-  ({
-    buyVolume,
-    buyPercent,
-    sellVolume,
-    sellPercent,
-  }: {
-    buyVolume: string;
-    buyPercent: number;
-    sellVolume: string;
-    sellPercent: number;
-  }) => (
-    <>
-      <VolumeBar isBuy label="Buy vol" percentage={buyPercent} volume={buyVolume} />
-      <VolumeBar isBuy={false} label="Sell vol" percentage={sellPercent} volume={sellVolume} />
-    </>
-  )
-);
-
-VolumeBars.displayName = "VolumeBars";
 
 export function VolumeStats({
   buyVolume,
@@ -126,10 +105,9 @@ export function VolumeStats({
       </Card>
 
       <div className="md:hidden space-y-4">
-        <Card className="bg-card rounded-2xl">
-          <CardBody className="p-5 space-y-6">
-            <VolumeBars buyPercent={buyVolumePercent} buyVolume={buyVolume} sellPercent={sellVolumePercent} sellVolume={sellVolume} />
-          </CardBody>
+        <Card className="bg-card rounded-2xl gap-4 p-4">
+          <VolumeBar isBuy label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
+          <VolumeBar isBuy={false} label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
         </Card>
 
         <Card className="bg-card rounded-2xl">

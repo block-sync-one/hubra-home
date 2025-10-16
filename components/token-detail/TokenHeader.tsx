@@ -111,7 +111,7 @@ export function TokenStats({
 
   return (
     <div className="w-full md:w-auto">
-      <div className="bg-card rounded-xl md:bg-transparent grid grid-cols-2 md:flex md:gap-12">
+      <div className="bg-card rounded-xl md:bg-transparent grid grid-cols-2 md:flex gap:4 md:gap-12">
         {stats.map((stat, index) => (
           <StatCard
             key={index}

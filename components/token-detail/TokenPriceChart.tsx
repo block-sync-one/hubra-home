@@ -45,56 +45,55 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
   const color = isPositive ? "success" : "danger";
 
   // Loading state
-  if (loading) {
+  if (loading || error) {
     return (
-      <Card className="bg-card backdrop-blur-sm">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
+      <Card className="bg-transparent shadow-none md:shadow-card md:bg-card md:backdrop-blur-sm overflow-visible">
+        <div className="md:p-5">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between md:mb-4 gap-4">
             <div>
-              <p className="text-sm font-medium text-gray-400 mb-1">Price</p>
+              <p className="text-sm font-medium text-gray-400 mb-2">Price</p>
               <p className="text-2xl font-semibold text-white">{price}</p>
             </div>
-          </div>
-          <div className="h-48 relative overflow-hidden rounded">
-            {/* Simulated chart skeleton */}
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-800/30 to-gray-800/10" />
-            <svg className="w-full h-full opacity-20 animate-pulse" preserveAspectRatio="none" viewBox="0 0 400 200">
-              <path
-                className="text-gray-500"
-                d="M0,150 Q40,120 80,130 T160,110 Q200,100 240,120 T320,100 Q360,110 400,90"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              />
-              <path
-                d="M0,150 Q40,120 80,130 T160,110 Q200,100 240,120 T320,100 Q360,110 400,90 L400,200 L0,200 Z"
-                fill="url(#skeletonGradient)"
-                opacity="0.3"
-              />
-              <defs>
-                <linearGradient id="skeletonGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
-        </div>
-      </Card>
-    );
-  }
 
-  // Error state
-  if (error) {
-    return (
-      <Card className="bg-card backdrop-blur-sm">
-        <div className="p-6">
-          <div>
-            <p className="text-sm font-medium text-gray-400 mb-1">Price</p>
-            <p className="text-2xl font-semibold text-white">{price}</p>
+            <div className="hidden md:flex gap-1 bg0none md:bg-white/5 rounded-xl p-1">
+              {periods.map((period) => (
+                <button
+                  key={period}
+                  disabled
+                  className={cn(
+                    "px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
+                    selectedPeriod === period ? "bg-background text-white" : "text-gray-400"
+                  )}
+                  type="button">
+                  {period}
+                </button>
+              ))}
+            </div>
           </div>
+
           <div className="h-48 flex items-center justify-center">
-            <p className="text-gray-400">Failed to load chart</p>
+            {loading ? (
+              <div className="w-full h-full relative overflow-hidden rounded animate-pulse">
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-800/30 to-gray-800/10" />
+              </div>
+            ) : (
+              <p className="text-gray-400">Failed to load chart</p>
+            )}
+          </div>
+
+          <div className="md:hidden flex gap-1 rounded-xl pt-4 w-full">
+            {periods.map((period) => (
+              <button
+                key={period}
+                disabled
+                className={cn(
+                  "flex-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
+                  selectedPeriod === period ? "bg-card text-white" : "text-gray-400"
+                )}
+                type="button">
+                {period}
+              </button>
+            ))}
           </div>
         </div>
       </Card>
