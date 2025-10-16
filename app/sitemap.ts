@@ -1,22 +1,34 @@
 import { MetadataRoute } from "next";
 
 import { siteConfig } from "@/config/site";
+import { fetchMarketData } from "@/lib/data/market-data";
 
-/**
- * Sitemap for search engine indexing
- * Includes main pages - token pages are dynamically discovered via crawling
- */
-export default function sitemap(): MetadataRoute.Sitemap {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteConfig.url;
   const currentDate = new Date();
 
-  // Main pages
-  const routes = ["", "/tokens", "/defi", "/blog", "/stats"];
+  const mainPages = [
+    { url: `${baseUrl}`, lastModified: currentDate, changeFrequency: "daily" as const, priority: 1.0 },
+    { url: `${baseUrl}/tokens`, lastModified: currentDate, changeFrequency: "hourly" as const, priority: 0.9 },
+    { url: `${baseUrl}/defi`, lastModified: currentDate, changeFrequency: "weekly" as const, priority: 0.8 },
+    { url: `${baseUrl}/stats`, lastModified: currentDate, changeFrequency: "daily" as const, priority: 0.8 },
+    { url: `${baseUrl}/blog`, lastModified: currentDate, changeFrequency: "weekly" as const, priority: 0.7 },
+  ];
 
-  return routes.map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: currentDate,
-    changeFrequency: route === "" ? ("daily" as const) : ("weekly" as const),
-    priority: route === "" ? 1 : 0.8,
-  }));
+  try {
+    const tokens = await fetchMarketData(50, 0);
+
+    const tokenPages = tokens.slice(0, 50).map((token) => ({
+      url: `${baseUrl}/tokens/${token.id}`,
+      lastModified: currentDate,
+      changeFrequency: "hourly" as const,
+      priority: 0.7,
+    }));
+
+    return [...mainPages, ...tokenPages];
+  } catch (error) {
+    return mainPages;
+  }
 }

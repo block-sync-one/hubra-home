@@ -44,6 +44,7 @@ const usePriceHistory = (coinId: string) => {
         const result = await response.json();
 
         setPriceHistory(result.data || []);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setPriceHistory(null);
       } finally {
@@ -93,7 +94,7 @@ const transformPriceData = (
   return data;
 };
 
-export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId }: TokenCardProps) {
+export function TokenCard({ name, symbol, imgUrl, price, change, coinId }: TokenCardProps) {
   const router = useRouter();
   const { priceHistory } = usePriceHistory(coinId || "");
 
@@ -106,7 +107,14 @@ export function TokenCard({ name, symbol, imgUrl, price, change, volume, coinId 
   const color = isPositive ? "success" : "danger";
 
   return (
-    <Card isPressable className="bg-card backdrop-blur-sm hover:bg-white/10 transition-all cursor-pointer" onPress={handleClick}>
+    <Card
+      isPressable
+      aria-label={`View ${name} details`}
+      className="bg-card backdrop-blur-sm hover:bg-white/10 transition-all cursor-pointer"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e: any) => e.key === "Enter" && handleClick()}
+      onPress={handleClick}>
       <div className="p-4">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">

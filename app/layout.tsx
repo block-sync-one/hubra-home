@@ -116,10 +116,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} id="website-jsonld" type="application/ld+json" />
       </head>
       <body className={clsx("min-h-screen text-foreground font-sans antialiased overflow-x-hidden")}>
+        <a
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-white focus:text-black focus:rounded-md focus:font-medium"
+          href="#main">
+          Skip to content
+        </a>
         <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col items-center">
             <Navbar />
-            <main className="w-full px-6 md:px-10 flex flex-col">{children}</main>
+            <main className="w-full px-6 md:px-10 flex flex-col scroll-mt-24" id="main" tabIndex={-1}>
+              {children}
+            </main>
           </div>
         </Providers>
         <WebVitals />

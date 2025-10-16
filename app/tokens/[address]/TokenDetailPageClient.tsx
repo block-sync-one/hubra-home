@@ -3,14 +3,20 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react";
+import dynamic from "next/dynamic";
 
 import { useCurrency } from "@/lib/context/currency-format";
 import { TokenHeader, TokenInfo, TokenStats } from "@/components/token-detail/TokenHeader";
-import { VolumeStats } from "@/components/token-detail/VolumeStats";
-import { TradingSection } from "@/components/token-detail/TradingSection";
-import { TokenDescription } from "@/components/token-detail/TokenDescription";
-import { TokenPriceChart } from "@/components/token-detail/TokenPriceChart";
 import { fixedNumber, formatBigNumbers } from "@/lib/utils";
+
+const VolumeStats = dynamic(() => import("@/components/token-detail/VolumeStats").then((mod) => ({ default: mod.VolumeStats })));
+const TradingSection = dynamic(() => import("@/components/token-detail/TradingSection").then((mod) => ({ default: mod.TradingSection })));
+const TokenDescription = dynamic(() =>
+  import("@/components/token-detail/TokenDescription").then((mod) => ({ default: mod.TokenDescription }))
+);
+const TokenPriceChart = dynamic(() =>
+  import("@/components/token-detail/TokenPriceChart").then((mod) => ({ default: mod.TokenPriceChart }))
+);
 
 type TokenOverviewData = {
   address: string;
@@ -83,16 +89,17 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
   return (
     <div className="min-h-screen text-white md:max-w-7xl mx-auto">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm mb-8 text-gray-400">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm mb-8 text-gray-400">
         <button
+          aria-label="Back to tokens list"
           className="cursor-pointer hover:text-white transition-colors bg-transparent border-none p-0 text-gray-400 text-sm"
           type="button"
           onClick={() => router.push("/tokens")}>
           Tokens
         </button>
-        <Icon className="h-4 w-4" icon="lucide:chevron-right" />
+        <Icon aria-hidden="true" className="h-4 w-4" icon="lucide:chevron-right" />
         <span className="text-white">{apiTokenData.name}</span>
-      </div>
+      </nav>
 
       {/* Token Header - Desktop only */}
       <div className="hidden md:block">

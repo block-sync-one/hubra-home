@@ -51,16 +51,24 @@ export function TokenDescription({ description, twitter, website }: TokenDescrip
         <div className="flex gap-4">
           {twitter && (
             <Icon
+              aria-label="View Twitter profile"
               className="h-5 w-5 text-gray-400 cursor-pointer hover:text-white transition-colors"
               icon="lucide:twitter"
+              role="button"
+              tabIndex={0}
               onClick={() => window.open(twitter, "_blank")}
+              onKeyDown={(e) => e.key === "Enter" && window.open(twitter, "_blank")}
             />
           )}
           {website && (
             <Icon
+              aria-label="Visit website"
               className="h-5 w-5 text-gray-400 cursor-pointer hover:text-white transition-colors"
               icon="lucide:globe"
+              role="button"
+              tabIndex={0}
               onClick={() => window.open(website, "_blank")}
+              onKeyDown={(e) => e.key === "Enter" && window.open(website, "_blank")}
             />
           )}
         </div>

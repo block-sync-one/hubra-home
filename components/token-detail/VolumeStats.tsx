@@ -42,7 +42,12 @@ const AddressActions = React.memo(({ tokenAddress }: { tokenAddress: string }) =
     <CopyText className="text-primary" copyText={tokenAddress} copyValue={tokenAddress}>
       {addrUtil(tokenAddress)?.addrShort}
     </CopyText>
-    <Link href={`https://solscan.io/token/${tokenAddress}`} rel="noopener noreferrer" target="_blank" onClick={(e) => e.stopPropagation()}>
+    <Link
+      aria-label="View token on Solscan"
+      href={`https://solscan.io/token/${tokenAddress}`}
+      rel="noopener noreferrer"
+      target="_blank"
+      onClick={(e) => e.stopPropagation()}>
       <Icon className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" icon="lucide:external-link" />
     </Link>
   </div>
