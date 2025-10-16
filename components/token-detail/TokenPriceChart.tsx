@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Card, cn } from "@heroui/react";
-import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 
 import { usePriceHistory } from "@/lib/hooks/usePriceHistory";
 
@@ -89,11 +89,9 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
     return (
       <Card className="bg-card backdrop-blur-sm">
         <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <p className="text-sm font-medium text-gray-400 mb-1">Price</p>
-              <p className="text-2xl font-semibold text-white">{price}</p>
-            </div>
+          <div>
+            <p className="text-sm font-medium text-gray-400 mb-1">Price</p>
+            <p className="text-2xl font-semibold text-white">{price}</p>
           </div>
           <div className="h-48 flex items-center justify-center">
             <p className="text-gray-400">Failed to load chart</p>
@@ -110,26 +108,24 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
   }));
 
   return (
-    <Card className="bg-card backdrop-blur-sm">
-      <div className="p-4 md:p-6 md:pb-2">
+    <Card className="bg-transparent shadow-none md:shadow-card md:bg-card md:backdrop-blur-sm overflow-visible">
+      <div className="md:p-5">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between md:mb-4 gap-4">
           {/* Price and Change */}
-          <div className="flex items-center gap-4">
-            <div>
-              <p className="text-sm font-medium text-gray-400 mb-1">Price</p>
-              <p className="text-2xl font-semibold text-white">{price}</p>
-            </div>
+          <div>
+            <p className="text-sm font-medium text-gray-400 mb-2">Price</p>
+            <p className="text-2xl font-semibold text-white">{price}</p>
           </div>
 
           {/* Period Selector - Desktop */}
-          <div className="hidden md:flex gap-1 bg-white/5 rounded-xl p-1">
+          <div className="hidden md:flex gap-1 bg0none md:bg-white/5 rounded-xl p-1">
             {periods.map((period) => (
               <button
                 key={period}
                 className={cn(
                   "px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
-                  selectedPeriod === period ? "bg-white/10 text-white" : "text-gray-400 hover:text-white hover:bg-white/5"
+                  selectedPeriod === period ? "bg-background text-white" : "text-gray-400 hover:text-white hover:bg-white/5"
                 )}
                 type="button"
                 onClick={() => onPeriodChange(period)}>
@@ -140,16 +136,16 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
         </div>
 
         {/* Chart */}
-        <div className="h-48 w-full select-none mb-6" style={{ WebkitTapHighlightColor: "transparent" }}>
+        <div className="h-48 w-full select-none" style={{ WebkitTapHighlightColor: "transparent" }}>
           <ResponsiveContainer height="100%" width="100%">
-            <AreaChart data={transformedChartData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+            <AreaChart data={transformedChartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id={`gradient-${color}`} x1="0" x2="0" y1="0" y2="1">
                   <stop offset="0%" stopColor={color === "success" ? "rgb(21 183 158)" : "rgb(246 61 104)"} stopOpacity={0.3} />
                   <stop offset="100%" stopColor={color === "success" ? "rgb(21 183 158)" : "rgb(246 61 104)"} stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid stroke="rgb(255 255 255 / 0.05)" strokeDasharray="3 3" vertical={false} />
+              {/* <CartesianGrid stroke="rgb(255 255 255 / 0.05)" strokeDasharray="3 3" vertical={false} />*/}
               <XAxis
                 axisLine={false}
                 dataKey="month"
@@ -186,13 +182,13 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
         </div>
 
         {/* Period Selector - Mobile (Full Width Below Chart) */}
-        <div className="md:hidden flex gap-1 bg-white/5 rounded-xl p-1 w-full">
+        <div className="md:hidden flex gap-1  rounded-xl pt-4 w-full">
           {periods.map((period) => (
             <button
               key={period}
               className={cn(
                 "flex-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
-                selectedPeriod === period ? "bg-white/10 text-white" : "text-gray-400 hover:text-white hover:bg-white/5"
+                selectedPeriod === period ? "bg-card text-white" : "text-gray-400 hover:text-white hover:bg-white/5"
               )}
               type="button"
               onClick={() => onPeriodChange(period)}>

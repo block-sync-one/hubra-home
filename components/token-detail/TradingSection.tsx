@@ -24,7 +24,7 @@ interface TradingInputProps {
  */
 const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tokenImgUrl, amount, estimatedValue }) => {
   return (
-    <div className="flex items-center justify-between p-6 bg-background rounded-xl">
+    <div className="flex items-center justify-between px-5 py-6 bg-background rounded-xl">
       <div className="flex items-center gap-2">
         <Image alt={`${tokenName} token`} className="rounded-full" height={32} loading="lazy" sizes="32px" src={tokenImgUrl} width={32} />
         <div>
@@ -41,8 +41,8 @@ const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tok
 export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPrice }: TradingSectionProps) {
   return (
     <Card className="bg-card rounded-2xl">
-      <CardBody className="p-4">
-        <div className="space-y-4">
+      <CardBody className="p-3.5">
+        <div className="space-y-2">
           <TradingInput
             amount="1"
             estimatedValue={`≈ $${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`}
@@ -58,14 +58,13 @@ export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPri
             tokenName="USD Coin"
             tokenSymbol="USDC"
           />
-
-          <Button
-            className="w-full bg-[#feaa01] text-white font-semibold hover:bg-[#feaa01]/90 rounded-lg py-4 transition-colors"
-            onPress={() => window.open("https://hubra.app/convert", "_blank")}>
-            Swap on Hubra
-            <Icon className="h-4 w-4" icon="lucide:chevron-right" />
-          </Button>
         </div>
+        <Button
+          className="w-full bg-[#feaa01] text-white font-semibold hover:bg-[#feaa01]/90 rounded-lg mt-3.5 transition-colors"
+          onPress={() => window.open("https://hubra.app/convert", "_blank")}>
+          Swap on Hubra
+          <Icon className="h-4 w-4" icon="lucide:chevron-right" />
+        </Button>
       </CardBody>
     </Card>
   );

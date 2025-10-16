@@ -141,7 +141,7 @@ export function TokenHeader({
   supply,
 }: TokenHeaderProps) {
   return (
-    <div className="mb-8">
+    <div className="mb-5">
       <div className="flex items-center flex-wrap justify-between gap-4">
         <TokenInfo imgUrl={imgUrl} name={name} symbol={symbol} />
         <TokenStats

@@ -61,7 +61,7 @@ InfoRow.displayName = "InfoRow";
 
 const InfoGrid = React.memo(({ label, value }: { label: string; value: React.ReactNode }) => (
   <div>
-    <p className="text-sm font-medium text-gray-400 mb-1">{label}</p>
+    <p className="text-sm font-medium text-gray-400 mb-2.5">{label}</p>
     <div className="text-sm font-medium text-white">{value}</div>
   </div>
 ));
@@ -102,7 +102,7 @@ export function VolumeStats({
   return (
     <div className="space-y-6">
       <Card className="hidden md:block bg-card rounded-2xl">
-        <CardBody className="space-y-6 p-5">
+        <CardBody className="space-y-7 p-5">
           <div>
             <h3 className="text-sm font-medium text-gray-400">Volume:</h3>
             <div className="flex gap-6">
@@ -114,16 +114,13 @@ export function VolumeStats({
               </div>
             </div>
           </div>
-
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <InfoGrid label="Exchange rate:" value={exchangeRate} />
-              <InfoGrid label="Trades count:" value={tradesCount} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <InfoGrid label="Token Address:" value={<AddressActions tokenAddress={tokenAddress} />} />
-              <InfoGrid label="Holders:" value={holders} />
-            </div>
+          <div className="grid grid-cols-2 gap-4">
+            <InfoGrid label="Exchange rate:" value={exchangeRate} />
+            <InfoGrid label="Trades count:" value={tradesCount} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <InfoGrid label="Token Address:" value={<AddressActions tokenAddress={tokenAddress} />} />
+            <InfoGrid label="Holders:" value={holders} />
           </div>
         </CardBody>
       </Card>

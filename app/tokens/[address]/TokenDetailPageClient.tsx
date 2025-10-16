@@ -121,7 +121,7 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
   return (
     <div className="min-h-screen text-white md:max-w-7xl mx-auto">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm mb-6 text-gray-400">
+      <div className="flex items-center gap-2 text-sm mb-8 text-gray-400">
         <button
           className="cursor-pointer hover:text-white transition-colors bg-transparent border-none p-0 text-gray-400 text-sm"
           type="button"
@@ -148,7 +148,7 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
       </div>
 
       {/* Token Info - Mobile only */}
-      <div className="md:hidden mb-8">
+      <div className="md:hidden mb-3">
         <TokenInfo imgUrl={apiTokenData.logoURI || "/logo.svg"} name={apiTokenData.name} symbol={apiTokenData.symbol} />
       </div>
 
