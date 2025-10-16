@@ -6,8 +6,8 @@ import { Icon } from "@iconify/react";
 
 interface TokenDescriptionProps {
   description: string;
-  onTwitterClick?: () => void;
-  onWebsiteClick?: () => void;
+  twitter?: string;
+  website?: string;
 }
 
 // Clean HTML from description and convert to plain text
@@ -37,7 +37,7 @@ function cleanDescription(html: string): string {
   return text || "No description available";
 }
 
-export function TokenDescription({ description, onTwitterClick, onWebsiteClick }: TokenDescriptionProps) {
+export function TokenDescription({ description, twitter, website }: TokenDescriptionProps) {
   const cleanedDescription = useMemo(() => cleanDescription(description), [description]);
 
   return (
@@ -49,18 +49,18 @@ export function TokenDescription({ description, onTwitterClick, onWebsiteClick }
         <p className="text-sm text-gray-400 leading-relaxed mb-4 whitespace-pre-line">{cleanedDescription}</p>
 
         <div className="flex gap-4">
-          {onTwitterClick && (
+          {twitter && (
             <Icon
               className="h-5 w-5 text-gray-400 cursor-pointer hover:text-white transition-colors"
               icon="lucide:twitter"
-              onClick={onTwitterClick}
+              onClick={() => window.open(twitter, "_blank")}
             />
           )}
-          {onWebsiteClick && (
+          {website && (
             <Icon
               className="h-5 w-5 text-gray-400 cursor-pointer hover:text-white transition-colors"
               icon="lucide:globe"
-              onClick={onWebsiteClick}
+              onClick={() => window.open(website, "_blank")}
             />
           )}
         </div>

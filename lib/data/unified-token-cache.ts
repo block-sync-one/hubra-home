@@ -23,10 +23,14 @@ export function toUnifiedTokenData(token: any, dataSource: "list" | "overview" =
     price: token.price || 0,
     priceChange24hPercent: token.priceChange24hPercent || token.price24hChangePercent || token.price_change_24h_percent || 0,
     v24hUSD: token.v24hUSD || token.volume24hUSD || token.volume_24h_usd || 0,
+    v24hChangePercent: token.v24hChangePercent,
+    vBuy24hUSD: token.vBuy24hUSD,
+    vSell24hUSD: token.vSell24hUSD,
     marketCap: token.marketCap || token.marketcap || token.market_cap || 0,
     liquidity: token.liquidity,
     holder: token.holder,
     decimals: token.decimals,
+    extensions: token.extensions,
     lastUpdated: Date.now(),
     dataSource,
   };
@@ -37,21 +41,20 @@ export function toUnifiedTokenData(token: any, dataSource: "list" | "overview" =
  * Contains data from both /token/list and /token_overview endpoints
  */
 export interface UnifiedTokenData {
-  // Core identifiers
   address: string;
   symbol: string;
   name: string;
   logoURI: string;
 
-  // Price data (SOURCE OF TRUTH)
   price: number;
   priceChange24hPercent: number;
 
-  // Volume and market data
   v24hUSD: number;
+  v24hChangePercent?: number;
+  vBuy24hUSD?: number;
+  vSell24hUSD?: number;
   marketCap: number;
 
-  // Additional data from overview endpoint (optional)
   liquidity?: number;
   holder?: number;
   decimals?: number;
@@ -59,13 +62,19 @@ export interface UnifiedTokenData {
   totalSupply?: number;
   circulatingSupply?: number;
 
-  // Trade statistics
   trade24h?: number;
   buy24h?: number;
   sell24h?: number;
   uniqueWallet24h?: number;
 
-  // Metadata
+  extensions?: {
+    twitter?: string;
+    website?: string;
+    description?: string;
+    coingeckoId?: string;
+    discord?: string;
+  };
+
   lastUpdated: number;
   dataSource: "list" | "overview" | "merged";
 }

@@ -46,6 +46,26 @@ export function fixedNumber(value: number): string {
 }
 
 /**
+ * Formats a blockchain address to show first 4 and last 4 characters
+ * @param addr Full blockchain address
+ * @returns Object containing full address and shortened version (e.g., "0x1234...5678")
+ */
+export function addrUtil(addr: string, maxLength = 8): { addr: string; addrShort: string } {
+  if (!addr || typeof addr !== "string") {
+    return { addr: "", addrShort: "" }; // or return null, or a placeholder
+  }
+  // If the address is shorter than or equal to 8 characters,
+  // return it unchanged to avoid awkward truncation like `abc...abc`.
+  if (addr.length <= maxLength) {
+    return { addr, addrShort: addr };
+  }
+
+  return {
+    addr,
+    addrShort: `${addr.substring(0, maxLength / 2)}...${addr.substring(addr.length - maxLength / 2)}`,
+  };
+}
+/**
  * Formats a number to a fixed number of decimal places without rounding
  * @param n Number of decimal places
  */

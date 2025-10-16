@@ -15,11 +15,35 @@ import {
   TradingSectionSkeleton,
   TokenDescriptionSkeleton,
 } from "@/components/token-detail/TokenDetailSkeleton";
-import { BirdEyeTokenOverview } from "@/lib/types/birdeye";
-import { fixedNumber } from "@/lib/utils";
+import { fixedNumber, formatBigNumbers } from "@/lib/utils";
 
-// Type for the data portion of BirdEyeTokenOverview
-type TokenOverviewData = BirdEyeTokenOverview["data"];
+type TokenOverviewData = {
+  address: string;
+  symbol: string;
+  name: string;
+  logoURI: string;
+  price: number;
+  priceChange24hPercent: number;
+  v24hUSD: number;
+  v24hChangePercent?: number;
+  vBuy24hUSD?: number;
+  vSell24hUSD?: number;
+  marketCap: number;
+  liquidity: number;
+  holder: number;
+  decimals: number;
+  fdv: number;
+  totalSupply: number;
+  circulatingSupply: number;
+  trade24h: number;
+  extensions?: {
+    twitter?: string;
+    website?: string;
+    description?: string;
+    discord?: string;
+    coingeckoId?: string;
+  };
+};
 
 // Lazy load components with proper skeletons
 const TokenHeader = dynamic(() => import("@/components/token-detail/TokenHeader").then((mod) => ({ default: mod.TokenHeader })), {
@@ -83,48 +107,14 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
     );
   }
 
-  // Helper functions
-  const shortenAddress = (address: string) => {
-    if (!address || address.length < 10) return "...";
-
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
   const formatNumber = (value: number | undefined, prefix = "") => {
     if (!value) return "N/A";
 
     return prefix + formatPrice(value);
   };
-
-  const formatBigNumber = (value: number | undefined) => {
-    if (!value) return "N/A";
-    if (value >= 1e9) return `${(value / 1e9).toFixed(2)}B`;
-    if (value >= 1e6) return `${(value / 1e6).toFixed(2)}M`;
-    if (value >= 1e3) return `${(value / 1e3).toFixed(2)}K`;
-
-    return value.toFixed(2);
-  };
-
-  const handleSwap = () => {
-    window.open("https://hubra.app/convert", "_blank");
-  };
-
-  const handleWebsiteClick = () => {
-    if (apiTokenData.extensions?.website) {
-      window.open(apiTokenData.extensions.website, "_blank");
-    }
-  };
-
-  const handleTwitterClick = () => {
-    if (apiTokenData.extensions?.twitter) {
-      window.open(apiTokenData.extensions.twitter, "_blank");
-    }
-  };
-
-  // Calculate buy/sell percentages
   const buyVolume = apiTokenData.vBuy24hUSD ?? 0;
   const sellVolume = apiTokenData.vSell24hUSD ?? 0;
-  const totalVolume = buyVolume + sellVolume;
+  const totalVolume = apiTokenData.v24hUSD ?? 1;
   const buyPercent = totalVolume > 0 ? (buyVolume / totalVolume) * 100 : 50;
   const sellPercent = totalVolume > 0 ? (sellVolume / totalVolume) * 100 : 50;
 
@@ -150,7 +140,7 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
           marketCap={formatNumber(apiTokenData.marketCap)}
           marketCapChange={apiTokenData.priceChange24hPercent || 0}
           name={apiTokenData.name}
-          supply={formatBigNumber(apiTokenData.totalSupply)}
+          supply={formatBigNumbers(apiTokenData.totalSupply)}
           symbol={apiTokenData.symbol}
           volume24h={formatNumber(apiTokenData.v24hUSD)}
           volume24hChange={apiTokenData.v24hChangePercent || 0}
@@ -182,7 +172,7 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
               change={fixedNumber(apiTokenData.priceChange24hPercent) || "0"}
               marketCap={formatNumber(apiTokenData.marketCap)}
               marketCapChange={apiTokenData.priceChange24hPercent || 0}
-              supply={formatBigNumber(apiTokenData.totalSupply)}
+              supply={formatBigNumbers(apiTokenData.totalSupply)}
               volume24h={formatNumber(apiTokenData.v24hUSD)}
               volume24hChange={apiTokenData.v24hChangePercent || 0}
             />
@@ -196,29 +186,26 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
             holders={(apiTokenData.holder || 0).toLocaleString()}
             sellVolume={formatNumber(apiTokenData.vSell24hUSD)}
             sellVolumePercent={sellPercent}
-            tokenAddress={shortenAddress(apiTokenData.address)}
+            tokenAddress={apiTokenData.address}
             tradesCount={(apiTokenData.trade24h || 0).toLocaleString()}
           />
         </div>
 
         {/* Right Column - Trading and Description */}
         <div className="space-y-6">
-          {/* Trading Section */}
           <TradingSection
             currentPrice={apiTokenData.price || 0}
             tokenImgUrl={apiTokenData.logoURI || "/logo.svg"}
             tokenName={apiTokenData.name}
             tokenSymbol={apiTokenData.symbol}
-            onSwap={handleSwap}
           />
 
-          {/* Description */}
           <TokenDescription
             description={
               apiTokenData.extensions?.description || `${apiTokenData.name} (${apiTokenData.symbol}) is a token on the Solana blockchain.`
             }
-            onTwitterClick={handleTwitterClick}
-            onWebsiteClick={handleWebsiteClick}
+            twitter={apiTokenData.extensions?.twitter}
+            website={apiTokenData.extensions?.website}
           />
         </div>
       </div>

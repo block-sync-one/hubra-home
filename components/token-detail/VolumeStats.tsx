@@ -1,8 +1,10 @@
 import React from "react";
 import { Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
+import Link from "next/link";
 
-import { formatBigNumbers } from "@/lib/utils";
+import { addrUtil, formatBigNumbers } from "@/lib/utils";
+import { CopyText } from "@/lib/helpers";
 
 interface VolumeStatsProps {
   buyVolume: string;
@@ -15,9 +17,8 @@ interface VolumeStatsProps {
   holders: string;
 }
 
-// Reusable components to eliminate duplication
-const VolumeBar = ({ label, volume, percentage, isBuy }: { label: string; volume: string; percentage: number; isBuy: boolean }) => {
-  return (
+const VolumeBar = React.memo(
+  ({ label, volume, percentage, isBuy }: { label: string; volume: string; percentage: number; isBuy: boolean }) => (
     <div>
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium text-white">{label}</span>
@@ -31,99 +32,62 @@ const VolumeBar = ({ label, volume, percentage, isBuy }: { label: string; volume
         <div className="h-1 bg-white/10 rounded" style={{ width: `${100 - percentage}%` }} />
       </div>
     </div>
-  );
-};
-
-const VolumeSection = ({
-  buyVolume,
-  buyVolumePercent,
-  sellVolume,
-  sellVolumePercent,
-}: {
-  buyVolume: string;
-  buyVolumePercent: number;
-  sellVolume: string;
-  sellVolumePercent: number;
-}) => (
-  <div className="space-y-6">
-    <VolumeBar isBuy={true} label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
-    <VolumeBar isBuy={false} label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
-  </div>
+  )
 );
 
-const TokenInfo = ({
-  exchangeRate,
-  tradesCount,
-  tokenAddress,
-  holders,
-}: {
-  exchangeRate: string;
-  tradesCount: string;
-  tokenAddress: string;
-  holders: string;
-}) => (
-  <div className="space-y-4">
-    <div className="grid grid-cols-2 gap-4">
-      <div>
-        <p className="text-sm font-medium text-gray-400 mb-1">Exchange rate:</p>
-        <p className="text-sm font-medium text-white">{exchangeRate}</p>
-      </div>
-      <div>
-        <p className="text-sm font-medium text-gray-400 mb-1">Trades count:</p>
-        <p className="text-sm font-medium text-white">{tradesCount}</p>
-      </div>
-    </div>
-    <div className="grid grid-cols-2 gap-4">
-      <div>
-        <p className="text-sm font-medium text-gray-400 mb-1">Token Address:</p>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-white">{tokenAddress}</span>
-          <Icon className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" icon="lucide:copy" />
-          <Icon className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" icon="lucide:external-link" />
-        </div>
-      </div>
-      <div>
-        <p className="text-sm font-medium text-gray-400 mb-1">Holders:</p>
-        <p className="text-sm font-medium text-white">{holders}</p>
-      </div>
-    </div>
-  </div>
-);
+VolumeBar.displayName = "VolumeBar";
 
-const MobileTokenInfo = ({
-  exchangeRate,
-  tradesCount,
-  tokenAddress,
-  holders,
-}: {
-  exchangeRate: string;
-  tradesCount: string;
-  tokenAddress: string;
-  holders: string;
-}) => (
+const AddressActions = React.memo(({ tokenAddress }: { tokenAddress: string }) => (
+  <div className="flex flex-row items-center gap-2">
+    <CopyText copyText={tokenAddress} copyValue={tokenAddress}>
+      {addrUtil(tokenAddress)?.addrShort}
+    </CopyText>
+    <Link href={`https://solscan.io/token/${tokenAddress}`} rel="noopener noreferrer" target="_blank" onClick={(e) => e.stopPropagation()}>
+      <Icon className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" icon="lucide:external-link" />
+    </Link>
+  </div>
+));
+
+AddressActions.displayName = "AddressActions";
+
+const InfoRow = React.memo(({ label, value, isLast = false }: { label: string; value: React.ReactNode; isLast?: boolean }) => (
+  <div className={`${isLast ? "" : "border-b border-white/10"} p-5 flex items-center justify-between`}>
+    <p className="text-sm font-medium text-gray-400">{label}</p>
+    <div className="text-sm font-medium text-white">{value}</div>
+  </div>
+));
+
+InfoRow.displayName = "InfoRow";
+
+const InfoGrid = React.memo(({ label, value }: { label: string; value: React.ReactNode }) => (
   <div>
-    <div className="border-b border-white/10 p-5 flex items-center justify-between">
-      <p className="text-sm font-medium text-gray-400">Exchange rate:</p>
-      <p className="text-sm font-medium text-white">{exchangeRate}</p>
-    </div>
-    <div className="border-b border-white/10 p-5 flex items-center justify-between">
-      <p className="text-sm font-medium text-gray-400">Trades count:</p>
-      <p className="text-sm font-medium text-white">{tradesCount}</p>
-    </div>
-    <div className="border-b border-white/10 p-5 flex items-center justify-between">
-      <p className="text-sm font-medium text-gray-400">Token Address:</p>
-      <div className="flex items-center gap-2">
-        <span className="text-sm font-medium text-white">{tokenAddress}</span>
-        <Icon className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" icon="lucide:copy" />
-        <Icon className="h-4 w-4 text-gray-400 cursor-pointer hover:text-white" icon="lucide:external-link" />
-      </div>
-    </div>
-    <div className="p-5 flex items-center justify-between">
-      <p className="text-sm font-medium text-gray-400">Holders:</p>
-      <p className="text-sm font-medium text-white">{holders}</p>
-    </div>
+    <p className="text-sm font-medium text-gray-400 mb-1">{label}</p>
+    <div className="text-sm font-medium text-white">{value}</div>
   </div>
+));
+
+InfoGrid.displayName = "InfoGrid";
+
+const VolumeBars = React.memo(
+  ({
+    buyVolume,
+    buyPercent,
+    sellVolume,
+    sellPercent,
+  }: {
+    buyVolume: string;
+    buyPercent: number;
+    sellVolume: string;
+    sellPercent: number;
+  }) => (
+    <>
+      <VolumeBar isBuy label="Buy vol" percentage={buyPercent} volume={buyVolume} />
+      <VolumeBar isBuy={false} label="Sell vol" percentage={sellPercent} volume={sellVolume} />
+    </>
+  )
 );
+
+VolumeBars.displayName = "VolumeBars";
 
 export function VolumeStats({
   buyVolume,
@@ -137,14 +101,13 @@ export function VolumeStats({
 }: VolumeStatsProps) {
   return (
     <div className="space-y-6">
-      {/* Desktop - Single Card */}
       <Card className="hidden md:block bg-card rounded-2xl">
         <CardBody className="space-y-6 p-5">
           <div>
             <h3 className="text-sm font-medium text-gray-400">Volume:</h3>
             <div className="flex gap-6">
               <div className="flex-1">
-                <VolumeBar isBuy={true} label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
+                <VolumeBar isBuy label="Buy vol" percentage={buyVolumePercent} volume={buyVolume} />
               </div>
               <div className="flex-1">
                 <VolumeBar isBuy={false} label="Sell vol" percentage={sellVolumePercent} volume={sellVolume} />
@@ -152,25 +115,31 @@ export function VolumeStats({
             </div>
           </div>
 
-          <TokenInfo exchangeRate={exchangeRate} holders={holders} tokenAddress={tokenAddress} tradesCount={tradesCount} />
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <InfoGrid label="Exchange rate:" value={exchangeRate} />
+              <InfoGrid label="Trades count:" value={tradesCount} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <InfoGrid label="Token Address:" value={<AddressActions tokenAddress={tokenAddress} />} />
+              <InfoGrid label="Holders:" value={holders} />
+            </div>
+          </div>
         </CardBody>
       </Card>
 
-      {/* Mobile - Two Separate Cards */}
       <div className="md:hidden space-y-4">
         <Card className="bg-card rounded-2xl">
-          <CardBody className="p-5">
-            <VolumeSection
-              buyVolume={buyVolume}
-              buyVolumePercent={buyVolumePercent}
-              sellVolume={sellVolume}
-              sellVolumePercent={sellVolumePercent}
-            />
+          <CardBody className="p-5 space-y-6">
+            <VolumeBars buyPercent={buyVolumePercent} buyVolume={buyVolume} sellPercent={sellVolumePercent} sellVolume={sellVolume} />
           </CardBody>
         </Card>
 
         <Card className="bg-card rounded-2xl">
-          <MobileTokenInfo exchangeRate={exchangeRate} holders={holders} tokenAddress={tokenAddress} tradesCount={tradesCount} />
+          <InfoRow label="Exchange rate:" value={exchangeRate} />
+          <InfoRow label="Trades count:" value={tradesCount} />
+          <InfoRow label="Token Address:" value={<AddressActions tokenAddress={tokenAddress} />} />
+          <InfoRow isLast label="Holders:" value={holders} />
         </Card>
       </div>
     </div>

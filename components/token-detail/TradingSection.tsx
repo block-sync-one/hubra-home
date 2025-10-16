@@ -9,7 +9,6 @@ interface TradingSectionProps {
   tokenSymbol: string;
   tokenImgUrl: string;
   currentPrice: number;
-  onSwap: () => void;
 }
 
 interface TradingInputProps {
@@ -39,12 +38,11 @@ const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tok
   );
 };
 
-export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPrice, onSwap }: TradingSectionProps) {
+export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPrice }: TradingSectionProps) {
   return (
     <Card className="bg-card rounded-2xl">
       <CardBody className="p-4">
         <div className="space-y-4">
-          {/* Token Input */}
           <TradingInput
             amount="1"
             estimatedValue={`≈ $${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`}
@@ -53,7 +51,6 @@ export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPri
             tokenSymbol={tokenSymbol}
           />
 
-          {/* USDC Output */}
           <TradingInput
             amount={currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
             estimatedValue={`≈ 1 ${tokenSymbol}`}
@@ -62,10 +59,9 @@ export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPri
             tokenSymbol="USDC"
           />
 
-          {/* Swap Button */}
           <Button
             className="w-full bg-[#feaa01] text-white font-semibold hover:bg-[#feaa01]/90 rounded-lg py-4 transition-colors"
-            onPress={onSwap}>
+            onPress={() => window.open("https://hubra.app/convert", "_blank")}>
             Swap on Hubra
             <Icon className="h-4 w-4" icon="lucide:chevron-right" />
           </Button>

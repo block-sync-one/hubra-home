@@ -61,7 +61,6 @@ export async function fetchTokenData(tokenAddress: string): Promise<TokenData | 
       tokenData.name = "Solana";
     }
 
-    // Create unified data from overview
     const newUnifiedData: Partial<UnifiedTokenData> = {
       address: tokenData.address,
       symbol: tokenData.symbol,
@@ -70,6 +69,9 @@ export async function fetchTokenData(tokenAddress: string): Promise<TokenData | 
       price: tokenData.price,
       priceChange24hPercent: tokenData.priceChange24hPercent,
       v24hUSD: tokenData.v24hUSD,
+      v24hChangePercent: tokenData.v24hChangePercent,
+      vBuy24hUSD: tokenData.vBuy24hUSD,
+      vSell24hUSD: tokenData.vSell24hUSD,
       marketCap: tokenData.marketCap,
       liquidity: tokenData.liquidity,
       holder: tokenData.holder,
@@ -81,6 +83,7 @@ export async function fetchTokenData(tokenAddress: string): Promise<TokenData | 
       buy24h: tokenData.buy24h,
       sell24h: tokenData.sell24h,
       uniqueWallet24h: tokenData.uniqueWallet24h,
+      extensions: tokenData.extensions,
     };
 
     // Merge with existing cache (list data takes precedence for prices if newer)
@@ -122,18 +125,17 @@ function transformUnifiedToTokenData(unified: UnifiedTokenData): TokenData {
     buy24h: unified.buy24h || 0,
     sell24h: unified.sell24h || 0,
     uniqueWallet24h: unified.uniqueWallet24h || 0,
-    // Add default values for other required fields
     v24h: 0,
     vHistory24h: 0,
     vHistory24hUSD: 0,
-    v24hChangePercent: 0,
+    v24hChangePercent: unified.v24hChangePercent || 0,
     vBuy24h: 0,
-    vBuy24hUSD: 0,
+    vBuy24hUSD: unified.vBuy24hUSD || 0,
     vBuyHistory24h: 0,
     vBuyHistory24hUSD: 0,
     vBuy24hChangePercent: 0,
     vSell24h: 0,
-    vSell24hUSD: 0,
+    vSell24hUSD: unified.vSell24hUSD || 0,
     vSellHistory24h: 0,
     vSellHistory24hUSD: 0,
     vSell24hChangePercent: 0,
@@ -149,7 +151,7 @@ function transformUnifiedToTokenData(unified: UnifiedTokenData): TokenData {
     numberMarkets: 0,
     lastTradeUnixTime: 0,
     lastTradeHumanTime: "",
-    extensions: {
+    extensions: unified.extensions || {
       coingeckoId: "",
       description: "",
       discord: "",
