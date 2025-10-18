@@ -56,51 +56,54 @@ export const Navbar = () => {
 
       {/* Desktop Navigation */}
       <NavbarContent className="hidden lg:flex " justify="center">
-        {navItems.map((item) => (
-          <NavbarItem key={item.label}>
-            {item.navItems ? (
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button
-                    className="text-[#797B92] hover:text-white transition-colors duration-200"
-                    endContent={<Icon icon="mdi:chevron-down" width={16} />}
-                    variant="light">
-                    {item.label}
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu aria-label={`${item.label} menu`} className="bg-black/90 backdrop-blur-md border border-white/10">
-                  {item.navItems.map((child) => (
-                    <DropdownItem
-                      key={child.href}
-                      className="text-white hover:bg-white/10"
-                      href={child.href}
-                      startContent={child.icon && isMounted ? <Icon className="w-4 h-4" icon={child.icon} /> : null}>
-                      {child.label}
-                    </DropdownItem>
-                  ))}
-                </DropdownMenu>
-              </Dropdown>
-            ) : (
-              <NextLink href={item.href}>
-                <Button className="text-[#797B92] font-medium text-sm hover:text-white transition-colors duration-200" variant="light">
-                  {item.label}
-                </Button>
-              </NextLink>
-            )}
-          </NavbarItem>
-        ))}
+        {navItems.map(
+          (item) =>
+            item.show && (
+              <NavbarItem key={item.label}>
+                {item.navItems ? (
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        className="text-[#797B92] hover:text-white transition-colors duration-200"
+                        endContent={<Icon icon="mdi:chevron-down" width={16} />}
+                        variant="light">
+                        {item.label}
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label={`${item.label} menu`} className="bg-black/90 backdrop-blur-md border border-white/10">
+                      {item.navItems.map((child) => (
+                        <DropdownItem
+                          key={child.href}
+                          className="text-white hover:bg-white/10"
+                          href={child.href}
+                          startContent={child.icon && isMounted ? <Icon className="w-4 h-4" icon={child.icon} /> : null}>
+                          {child.label}
+                        </DropdownItem>
+                      ))}
+                    </DropdownMenu>
+                  </Dropdown>
+                ) : (
+                  <NextLink href={item.href}>
+                    <Button className="text-[#797B92] font-medium text-sm hover:text-white transition-colors duration-200" variant="light">
+                      {item.label}
+                    </Button>
+                  </NextLink>
+                )}
+              </NavbarItem>
+            )
+        )}
       </NavbarContent>
 
       {/* Right side content */}
       <NavbarContent justify="end">
         {/* Stats Button - Desktop only */}
-        <NavbarItem className="hidden lg:flex">
+        {/*        <NavbarItem className="hidden lg:flex">
           <NextLink href="/stats">
             <Button className="text-gray-300 hover:text-white transition-colors duration-200" variant="light">
               Stats
             </Button>
           </NextLink>
-        </NavbarItem>
+        </NavbarItem>*/}
 
         {/* Launch App Button - Desktop only */}
         <NavbarItem className="hidden lg:flex">
@@ -133,48 +136,51 @@ export const Navbar = () => {
 
       {/* Mobile Menu */}
       <NavbarMenu className="bg-black/90 backdrop-blur-md border-t border-white/10">
-        <div className="flex flex-col gap-4 py-6">
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item.label}-${index}`}>
-              {item.navItems ? (
-                <div className="space-y-2">
-                  <div className="text-lg font-semibold text-white px-4 py-2">{item.label}</div>
-                  <div className="space-y-1">
-                    {item.navItems.map((child) => (
-                      <NextLink
-                        key={child.href}
-                        className="flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
-                        href={child.href}
-                        onClick={() => setIsMenuOpen(false)}>
-                        {child.icon && isMounted && <Icon className="w-5 h-5" icon={child.icon} />}
-                        {child.label}
-                      </NextLink>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <NextLink
-                  className="block px-4 py-3 text-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
-                  href={item.href}
-                  onClick={() => setIsMenuOpen(false)}>
-                  {item.label}
-                </NextLink>
-              )}
-            </NavbarMenuItem>
-          ))}
+        <div className="flex flex-col">
+          {siteConfig.navMenuItems.map(
+            (item, index) =>
+              item.show && (
+                <NavbarMenuItem key={`${item.label}-${index}`}>
+                  {item.navItems ? (
+                    <div className="space-y-2">
+                      <div className="text-lg font-semibold text-white px-4 py-2">{item.label}</div>
+                      <div className="space-y-1">
+                        {item.navItems.map((child) => (
+                          <NextLink
+                            key={child.href}
+                            className="flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
+                            href={child.href}
+                            onClick={() => setIsMenuOpen(false)}>
+                            {child.icon && isMounted && <Icon className="w-5 h-5" icon={child.icon} />}
+                            {child.label}
+                          </NextLink>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <NextLink
+                      className="block py-3 text-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
+                      href={item.href}
+                      onClick={() => setIsMenuOpen(false)}>
+                      {item.label}
+                    </NextLink>
+                  )}
+                </NavbarMenuItem>
+              )
+          )}
 
           {/* Mobile Stats Button */}
-          <NavbarMenuItem>
+          {/*          <NavbarMenuItem>
             <NextLink
-              className="block px-4 py-3 text-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
+              className="block py-3 text-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
               href="/stats"
               onClick={() => setIsMenuOpen(false)}>
               Stats
             </NextLink>
-          </NavbarMenuItem>
+          </NavbarMenuItem>*/}
 
           {/* Mobile Launch App Button */}
-          <div className="px-4 pt-4">
+          <div className="pt-4">
             <Button
               as={Link}
               className="w-full text-sm font-medium text-black bg-white hover:bg-gray-100 transition-colors duration-200"

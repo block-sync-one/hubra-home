@@ -34,6 +34,7 @@ export const siteConfig = {
     {
       label: "Tokens",
       href: "/tokens",
+      show: true,
     },
     {
       label: "DeFi",
@@ -79,6 +80,7 @@ export const siteConfig = {
     {
       label: "Tokens",
       href: "/tokens",
+      show: true,
     },
     {
       label: "DeFi",
