@@ -1,3 +1,15 @@
+type NavItem = {
+  label: string;
+  href?: string;
+  show?: boolean;
+  description?: string;
+  navItems?: {
+    icon?: string;
+    label: string;
+    href: string;
+  }[];
+};
+
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
@@ -30,7 +42,6 @@ export const siteConfig = {
       label: "Home",
       href: "/",
     },
-
     {
       label: "Tokens",
       href: "/tokens",
@@ -60,7 +71,7 @@ export const siteConfig = {
       label: "Stats",
       href: "/stats",
     },
-  ],
+  ] as NavItem[],
   navMenuItems: [
     {
       label: "Resources",
@@ -90,12 +101,7 @@ export const siteConfig = {
       label: "Stats",
       href: "/stats",
     },
-    // {
-    //   label: "Launch App",
-    //   href: "https://patreon.com/jrgarciadev",
-    //   external: true,
-    // },
-  ],
+  ] as NavItem[],
   links: {
     app: "https://hubra.app",
     github: "https://github.com/block-sync-one/hubra-app",

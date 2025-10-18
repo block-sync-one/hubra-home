@@ -68,18 +68,18 @@ export async function searchTokens(keyword: string): Promise<Token[]> {
     const params = {
       keyword,
       target: "token",
-      search_by: "name",
-      sort_by: "marketcap",
+      search_mode: "fuzzy",
+      search_by: "combination",
+      sort_by: "volume_24h_usd",
+      sort_type: "desc",
       ui_amount_mode: "scaled",
-      verify: "true",
     };
 
     const data = await fetchBirdeyeData<BirdeyeSearchResponse>("/defi/v3/search", params);
 
     const searchItems: BirdeyeSearchItem[] = data?.data?.items?.[0]?.result || [];
-    const tokens = searchItems.map(transformSearchItemToToken);
 
-    return tokens;
+    return searchItems.map(transformSearchItemToToken).filter((t) => t.marketCap && t.marketCap > 100000);
   } catch (error) {
     throw error;
   }

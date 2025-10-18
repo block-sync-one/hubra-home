@@ -83,11 +83,15 @@ export const Navbar = () => {
                     </DropdownMenu>
                   </Dropdown>
                 ) : (
-                  <NextLink href={item.href}>
-                    <Button className="text-[#797B92] font-medium text-sm hover:text-white transition-colors duration-200" variant="light">
-                      {item.label}
-                    </Button>
-                  </NextLink>
+                  item.href && (
+                    <NextLink href={item.href}>
+                      <Button
+                        className="text-[#797B92] font-medium text-sm hover:text-white transition-colors duration-200"
+                        variant="light">
+                        {item.label}
+                      </Button>
+                    </NextLink>
+                  )
                 )}
               </NavbarItem>
             )
@@ -124,7 +128,7 @@ export const Navbar = () => {
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             className="text-white bg-transparent hover:bg-white/10 p-2"
             variant="light"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            onPress={() => setIsMenuOpen(!isMenuOpen)}>
             <div className="flex flex-col gap-1">
               <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-1.5" : ""}`} />
               <div className={`w-5 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""}`} />
@@ -158,12 +162,14 @@ export const Navbar = () => {
                       </div>
                     </div>
                   ) : (
-                    <NextLink
-                      className="block py-3 text-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
-                      href={item.href}
-                      onClick={() => setIsMenuOpen(false)}>
-                      {item.label}
-                    </NextLink>
+                    item.href && (
+                      <NextLink
+                        className="block py-3 text-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
+                        href={item.href}
+                        onClick={() => setIsMenuOpen(false)}>
+                        {item.label}
+                      </NextLink>
+                    )
                   )}
                 </NavbarMenuItem>
               )
