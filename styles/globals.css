@@ -8,10 +8,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
-}
-
 *,
 *::before,
 *::after,
@@ -57,4 +53,23 @@ svg {
   outline: none !important;
   box-shadow: none !important;
   ring: none !important;
+}
+
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+/* Style the track (background of the scrollbar) */
+::-webkit-scrollbar-track {
+  background: transparent; /* No background for the track */
+  border: 4px solid transparent; /* Create space around the thumb */
+  border-radius: 10px; /* Rounded edges */
+  margin-block: 1rem;
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: theme("colors.bgPlaceholder"); /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Rounded edges for the thumb */
+  border: 2px solid theme("colors.card"); /* Optional: adds spacing around thumb */
 }

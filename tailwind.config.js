@@ -21,6 +21,7 @@ const config = {
       colors: {
         // Base colors
         card: "#1b1c2e",
+        bgPlaceholder: "#565764",
         tableHeader: "252537",
         base: "#FFFFFF",
         background: "#0d0e21",
@@ -104,7 +105,10 @@ const config = {
   darkMode: ["class", "class"],
 
   plugins: [
-    heroui(),
+    heroui({
+      addCommonColors: true,
+      defaultTheme: "dark",
+    }),
     require("tailwindcss-animate"),
 
     // Custom utilities and components
