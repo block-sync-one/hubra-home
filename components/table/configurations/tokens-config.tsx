@@ -24,7 +24,7 @@ export const tokensTableConfig: TableConfiguration<Token> = {
       render: (item: Token) => <TokenCell columnKey="token" item={item} />,
     },
     {
-      key: "price",
+      key: "rawPrice",
       label: "Price",
       sortable: true,
       align: "right",
@@ -32,7 +32,7 @@ export const tokensTableConfig: TableConfiguration<Token> = {
       render: (item: Token) => <TokenCell columnKey="price" item={item} />,
     },
     {
-      key: "priceChange24hPct",
+      key: "change",
       label: "Change (24h)",
       sortable: true,
       align: "right",

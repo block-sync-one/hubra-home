@@ -118,3 +118,5 @@ export const TabsUI = React.memo(({ selectedTab, onTabChange, tabsData, classNam
     </>
   );
 });
+
+TabsUI.displayName = "TabsUI";

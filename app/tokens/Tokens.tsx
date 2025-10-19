@@ -17,7 +17,7 @@ interface StatCardProps {
 
 const StatCard = memo(function StatCard({ title, value, change, className = "" }: StatCardProps) {
   return (
-    <div className={`flex flex-col gap-1.5 h-[91px] justify-center px-4 relative md:flex-1 w-full ${className}`}>
+    <div className={`flex flex-col gap-1.5 md:h-[91px] justify-center p-4 relative md:flex-1 w-full ${className}`}>
       {/* Vertical separator - centered and doesn't take full height */}
       <div className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-14 bg-gray-850" />
       <div className="text-left">

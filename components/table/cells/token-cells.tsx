@@ -82,9 +82,9 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
 
     case "action":
       return (
-        <div className="flex justify-center">
+        <div className="flex justify-end">
           <button
-            className="px-4 py-2 bg-orange-500/10 text-orange-500 rounded-lg text-sm font-medium cursor-pointer hover:bg-orange-500/20 transition-colors"
+            className="px-4 py-2 bg-primary-500/15 text-primary-500 rounded-lg text-sm font-medium cursor-pointer hover:bg-primary-500/20 transition-colors"
             type="button"
             onClick={(e) => {
               e.stopPropagation();

@@ -60,7 +60,7 @@ export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPri
           />
         </div>
         <Button
-          className="w-full bg-[#feaa01] text-white font-semibold hover:bg-[#feaa01]/90 rounded-lg mt-3.5 transition-colors"
+          className="w-full bg-primary text-white font-semibold hover:bg-primary/90 rounded-lg mt-3.5 transition-colors"
           onPress={() => window.open("https://hubra.app/convert", "_blank")}>
           Swap on Hubra
           <Icon className="h-4 w-4" icon="lucide:chevron-right" />

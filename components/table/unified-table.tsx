@@ -40,6 +40,8 @@ const UnifiedTable = <T extends Record<string, any>>({
 
   useEffect(() => {
     setPage(1);
+    // Reset sorting to default when switching tabs
+    setSortDescriptor({ column: "", direction: "ascending" });
   }, [selectedTab]);
 
   const processedData = useMemo(() => {
@@ -81,8 +83,10 @@ const UnifiedTable = <T extends Record<string, any>>({
   const sortedItems = useMemo(() => {
     if (!Array.isArray(filteredItems)) return [];
 
+    // No sorting applied - return original order from API
     if (!sortDescriptor.column) return filteredItems;
 
+    // Single-column sorting only (no combined sorts)
     return [...filteredItems].sort((a, b) => {
       if (!a || !b || typeof a !== "object" || typeof b !== "object") return 0;
 
@@ -144,10 +148,20 @@ const UnifiedTable = <T extends Record<string, any>>({
     [onRowClick]
   );
 
-  const handleSortChange = useCallback((descriptor: SortDescriptor) => {
-    setSortDescriptor(descriptor);
-    setPage(1); // Reset to first page when sorting
-  }, []);
+  const handleSortChange = useCallback(
+    (descriptor: SortDescriptor) => {
+      // Clear sorting if clicking the same column in descending order
+      if (descriptor.column === sortDescriptor.column && descriptor.direction === "descending") {
+        // Third click - clear sorting, return to default order
+        setSortDescriptor({ column: "", direction: "ascending" });
+      } else {
+        // Set new sort - only one column at a time
+        setSortDescriptor(descriptor);
+      }
+      setPage(1); // Reset to first page when sorting
+    },
+    [sortDescriptor]
+  );
 
   useEffect(() => {
     setPage(1);
@@ -198,53 +212,45 @@ const UnifiedTable = <T extends Record<string, any>>({
         ) : paginatedItems.length === 0 ? (
           <div className="py-6 text-center text-gray-500">No data available</div>
         ) : (
-          paginatedItems.map((item: any) => {
-            const tokenData = item;
-
-            return (
-              <div
-                key={item.key || item.id || item.asset?.mint || item._index}
-                aria-label="Token details"
-                className="flex items-center justify-between py-2 hover:bg-white/5 transition-colors cursor-pointer"
-                role="button"
-                onClick={() => handleRowClick(item)}>
-                {/* Left Column: Image, Name, Symbol */}
-                <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
-                    <Image
-                      alt={`${tokenData.name} (${tokenData.symbol}) logo`}
-                      className="w-full h-full object-cover"
-                      height={32}
-                      src={tokenData.imgUrl || "/logo.svg"}
-                      width={32}
-                    />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-semibold text-foreground truncate">{tokenData.name}</span>
-                    <span className="text-xs text-gray-400 uppercase font-medium">{tokenData.symbol}</span>
-                  </div>
+          paginatedItems.map((item: any) => (
+            <div
+              key={item.key || item.id || item.asset?.mint || item._index}
+              aria-label="Token details"
+              className="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition-colors cursor-pointer"
+              role="button"
+              onClick={() => handleRowClick(item)}>
+              {/* Left Column: Image, Name, Symbol */}
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
+                  <Image
+                    alt={`${item.name} (${item.symbol}) logo`}
+                    className="w-full h-full object-cover"
+                    height={32}
+                    src={item.imgUrl || "/logo.svg"}
+                    width={32}
+                  />
                 </div>
-
-                {/* Right Column: Price and Price Change */}
-                <div className="flex flex-col items-end">
-                  <span className="text-sm font-medium text-foreground">{tokenData.price}</span>
-                  <div
-                    className={`flex items-center gap-1 text-xs font-semibold ${
-                      tokenData.change && tokenData.change > 0
-                        ? "text-success"
-                        : tokenData.change && tokenData.change < 0
-                          ? "text-danger"
-                          : "text-gray-400"
-                    }`}>
-                    {tokenData.change !== undefined && tokenData.change !== 0 && (
-                      <Icon icon={tokenData.change > 0 ? "mdi:arrow-up" : "mdi:arrow-down"} width={12} />
-                    )}
-                    <span>{tokenData.change ? fixedNumber(Math.abs(tokenData.change)) : 0}%</span>
-                  </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-semibold text-foreground truncate">{item.name}</span>
+                  <span className="text-xs text-gray-400 uppercase font-medium">{item.symbol}</span>
                 </div>
               </div>
-            );
-          })
+
+              {/* Right Column: Price and Price Change */}
+              <div className="flex flex-col items-end">
+                <span className="text-sm font-medium text-foreground">{item.price}</span>
+                <div
+                  className={`flex items-center gap-1 text-xs font-semibold ${
+                    item.change && item.change > 0 ? "text-success" : item.change && item.change < 0 ? "text-danger" : "text-gray-400"
+                  }`}>
+                  {item.change !== undefined && item.change !== 0 && (
+                    <Icon icon={item.change > 0 ? "mdi:arrow-up" : "mdi:arrow-down"} width={12} />
+                  )}
+                  <span>{item.change ? fixedNumber(Math.abs(item.change)) : 0}%</span>
+                </div>
+              </div>
+            </div>
+          ))
         )}
         {bottomContent}
       </div>
@@ -315,4 +321,17 @@ const UnifiedTable = <T extends Record<string, any>>({
   );
 };
 
-export default React.memo(UnifiedTable) as <T extends Record<string, any>>(props: ReusableTableProps<T>) => React.ReactElement;
+UnifiedTable.displayName = "UnifiedTable";
+
+const MemoizedUnifiedTable = React.memo(UnifiedTable, (prevProps, nextProps) => {
+  // Custom comparison for better performance
+  return (
+    prevProps.isLoading === nextProps.isLoading &&
+    prevProps.filterValue === nextProps.filterValue &&
+    prevProps.selectedTab === nextProps.selectedTab &&
+    prevProps.data === nextProps.data &&
+    prevProps.configuration === nextProps.configuration
+  );
+});
+
+export default MemoizedUnifiedTable as <T extends Record<string, any>>(props: ReusableTableProps<T>) => React.ReactElement;

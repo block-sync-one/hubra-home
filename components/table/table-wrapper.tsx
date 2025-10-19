@@ -31,7 +31,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
     (asset: any) => {
       onAssetClick?.(asset);
     },
-    [onAssetClick, tab]
+    [onAssetClick]
   );
 
   // Memoized top content
@@ -89,4 +89,8 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
   );
 };
 
-export default React.memo(TableWrapper);
+const MemoizedTableWrapper = React.memo(TableWrapper);
+
+MemoizedTableWrapper.displayName = "TableWrapper";
+
+export default MemoizedTableWrapper;
