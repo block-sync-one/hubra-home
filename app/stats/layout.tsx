@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description:
     "Real-time Solana blockchain statistics and analytics. Track network performance, transaction volumes, validator data, and ecosystem metrics.",
   keywords: ["Solana stats", "blockchain analytics", "SOL statistics", "network metrics", "validator data", "transaction volume"],
+  alternates: {
+    canonical: `${siteConfig.url}/stats`,
+  },
   openGraph: {
     title: "Stats",
     description:

@@ -72,11 +72,6 @@ public/              # Static assets
 styles/              # Global styles
 ```
 
-## Documentation
-
-- **[Architecture](./ARCHITECTURE.md)** - System design & caching strategy
-- **[API Docs](./ARCHITECTURE.md#api-routes)** - All API endpoints
-
 ## Performance
 
 - LCP: ~1.5s (Target: <2.5s)

@@ -1,3 +1,5 @@
+import "server-only";
+
 import { setUnifiedToken, toUnifiedTokenData } from "./unified-token-cache";
 
 import { fetchBirdeyeData } from "@/lib/services/birdeye";

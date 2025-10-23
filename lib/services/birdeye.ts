@@ -1,3 +1,5 @@
+import "server-only";
+
 export const BIRDEYE_API_BASE_URL = "https://public-api.birdeye.so";
 
 export const SUPPORTED_CHAINS = {

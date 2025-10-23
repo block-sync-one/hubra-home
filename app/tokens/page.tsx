@@ -80,23 +80,46 @@ export default async function TokensPage() {
   const losersSorted = TokenFilter.losers(marketTokens, marketTokens.length);
   const volumeSorted = TokenFilter.byVolume(marketTokens, marketTokens.length);
 
+  // Breadcrumb structured data
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://hubra.app",
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tokens",
+        "item": "https://hubra.app/tokens",
+      },
+    ],
+  };
+
   return (
-    <main className="flex flex-col gap-12">
-      <div className="md:max-w-7xl mx-auto w-full">
-        <Tokens />
-      </div>
-      <div className="md:max-w-7xl mx-auto w-full">
-        {/* Pass top 4 from each category to HotTokens */}
-        <HotTokens
-          initialGainers={gainersSorted.slice(0, 4)}
-          initialLosers={losersSorted.slice(0, 4)}
-          initialVolume={volumeSorted.slice(0, 4)}
-        />
-      </div>
-      <div className="md:max-w-7xl mx-auto w-full">
-        {/* Pass full sorted data to AllTokens */}
-        <AllTokens initialAllTokens={allAssetsSorted} initialGainers={gainersSorted} initialLosers={losersSorted} />
-      </div>
-    </main>
+    <>
+      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
+      <main className="flex flex-col gap-12">
+        <div className="md:max-w-7xl mx-auto w-full">
+          <Tokens />
+        </div>
+        <div className="md:max-w-7xl mx-auto w-full">
+          {/* Pass top 4 from each category to HotTokens */}
+          <HotTokens
+            initialGainers={gainersSorted.slice(0, 4)}
+            initialLosers={losersSorted.slice(0, 4)}
+            initialVolume={volumeSorted.slice(0, 4)}
+          />
+        </div>
+        <div className="md:max-w-7xl mx-auto w-full">
+          {/* Pass full sorted data to AllTokens */}
+          <AllTokens initialAllTokens={allAssetsSorted} initialGainers={gainersSorted} initialLosers={losersSorted} />
+        </div>
+      </main>
+    </>
   );
 }

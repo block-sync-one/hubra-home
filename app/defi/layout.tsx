@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description:
     "Explore the best DeFi protocols on Solana. Access lending, borrowing, yield farming, and decentralized trading opportunities in the Solana ecosystem.",
   keywords: ["DeFi", "Solana DeFi", "decentralized finance", "lending", "borrowing", "yield farming", "liquidity pools", "DEX"],
+  alternates: {
+    canonical: `${siteConfig.url}/defi`,
+  },
   openGraph: {
     title: "DeFi",
     description:

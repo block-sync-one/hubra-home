@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   keywords: siteConfig.keywords,
+  alternates: {
+    canonical: siteConfig.url,
+  },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
@@ -60,6 +63,17 @@ export const metadata: Metadata = {
     images: siteConfig.ogImage ? [siteConfig.ogImage] : [],
     creator: siteConfig.twitter?.handle,
     site: siteConfig.twitter?.site,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      "index": true,
+      "follow": true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -108,6 +122,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html suppressHydrationWarning lang="en">
       <head>
+        {/* Preconnect to external APIs for faster loading */}
+        <link href="https://public-api.birdeye.so" rel="preconnect" />
+        <link href="https://stablecoins.llama.fi" rel="preconnect" />
+        <link href="https://api.llama.fi" rel="preconnect" />
+        <link href="https://public-api.birdeye.so" rel="dns-prefetch" />
+        <link href="https://stablecoins.llama.fi" rel="dns-prefetch" />
+        <link href="https://api.llama.fi" rel="dns-prefetch" />
+
         <script
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
           id="organization-jsonld"

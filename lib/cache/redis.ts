@@ -1,12 +1,16 @@
+import "server-only";
+
 import Redis, { RedisOptions } from "ioredis";
 
 export const CACHE_TTL = {
   MARKET_DATA: 960, // 15 minutes - matches cron frequency
   TOKEN_DETAIL: 960, // 15 minutes - matches cron frequency
   PRICE_HISTORY: 960, // 15 minutes
-  TRENDING: 300, // 15 minutes
+  TRENDING: 300, // 5 minutes
   GLOBAL_STATS: 900, // 15 minutes
-  SEARCH: 300, // 5 minutes
+  SEARCH: 960, // 15 minutes
+  STABLECOIN_DATA: 960, // 15min
+  EXCHANGE_RATES: 3600, // 1 hour - exchange rates change slowly
 } as const;
 
 class RedisClient {
@@ -78,7 +82,7 @@ class RedisClient {
       if (!value) return null;
 
       return JSON.parse(value) as T;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
@@ -91,7 +95,7 @@ class RedisClient {
       await client.setex(key, ttl, serialized);
 
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -103,7 +107,7 @@ class RedisClient {
       await client.del(key);
 
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -118,7 +122,7 @@ class RedisClient {
       const deleted = await client.del(...keys);
 
       return deleted;
-    } catch (error) {
+    } catch {
       return 0;
     }
   }
@@ -129,7 +133,7 @@ class RedisClient {
       const result = await client.exists(key);
 
       return result === 1;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -140,7 +144,7 @@ class RedisClient {
       const result = await client.ttl(key);
 
       return result;
-    } catch (error) {
+    } catch {
       return -1;
     }
   }
@@ -152,7 +156,7 @@ class RedisClient {
       await client.flushall();
 
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -173,4 +177,7 @@ export const cacheKeys = {
   priceHistory: (address: string, days: number | string) => `price:${address}:${days}`,
   trending: (limit: number) => `trending:${limit}`,
   globalStats: () => "global:stats",
+  stablecoinChains: () => "global:stablecoin",
+  globalSolanaTVL: () => "global:totalTVL",
+  exchangeRates: () => "global:exchange-rates",
 } as const;

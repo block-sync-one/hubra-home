@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description:
     "Stay updated with the latest Solana and DeFi news, tutorials, and insights. Learn about blockchain technology, crypto trading, and Web3 developments.",
   keywords: ["Solana blog", "DeFi news", "crypto education", "blockchain tutorials", "Web3 insights", "cryptocurrency news"],
+  alternates: {
+    canonical: `${siteConfig.url}/blog`,
+  },
   openGraph: {
     title: "Blog",
     description:

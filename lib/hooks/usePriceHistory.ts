@@ -99,7 +99,7 @@ function transformBirdeyeData(data: BirdeyeOHLCVPoint[], days: number | "max"): 
   }
 
   // Format dates based on time period
-  const formatDate = (timestamp: number, period: number | "max", index: number, totalPoints: number) => {
+  const formatDate = (timestamp: number, period: number | "max", _index: number, _totalPoints: number) => {
     const date = new Date(timestamp);
 
     if (period === 1) {

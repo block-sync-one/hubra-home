@@ -61,7 +61,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
         };
 
         setExchangeRates(rates);
-      } catch (error) {
+      } catch {
         // Silently fail - not critical
       } finally {
         if (isMounted) {

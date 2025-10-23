@@ -87,8 +87,8 @@ interface GlobalData {
     active_cryptocurrencies: number;
     markets: number;
     new_tokens?: number;
-    sol_tvl?: number;
-    sol_tvl_change?: number;
+    solana_tvl?: number;
+    solana_tvl_change?: number;
     stablecoins_tvl?: number;
     stablecoins_tvl_change?: number;
   };
@@ -101,12 +101,14 @@ export default function Tokens() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchGlobalData = async () => {
+    async function fetchGlobalData() {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch("/api/crypto/global");
+        const response = await fetch("/api/crypto/global", {
+          cache: "no-store",
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch global data");
@@ -120,14 +122,9 @@ export default function Tokens() {
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     fetchGlobalData();
-
-    // Refresh data every 2 minutes
-    const interval = setInterval(fetchGlobalData, 2 * 60 * 1000);
-
-    return () => clearInterval(interval);
   }, []);
 
   const statsData: StatData[] = useMemo(() => {
@@ -152,10 +149,10 @@ export default function Tokens() {
         value: (data.new_tokens || 0).toLocaleString(),
       },
       {
-        title: "SOL TVL",
-        value: formatPrice(data.sol_tvl || 0),
-        change: data.sol_tvl_change,
-        isPositive: (data.sol_tvl_change || 0) >= 0,
+        title: "Solana TVL",
+        value: formatPrice(data.solana_tvl || 0),
+        change: data.solana_tvl_change,
+        isPositive: (data.solana_tvl_change || 0) >= 0,
       },
       {
         title: "Stablecoins TVL",
@@ -195,24 +192,12 @@ export default function Tokens() {
               <Icon className="w-12 h-12 text-red-500 mx-auto mb-4" icon="mdi:alert-circle" />
               <h3 className="text-lg font-medium text-white mb-2">Failed to Load Data</h3>
               <p className="text-gray-400 mb-6">{error}</p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <button
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                  onClick={() => window.location.reload()}>
-                  <Icon className="w-4 h-4 inline mr-2" icon="mdi:refresh" />
-                  Retry
-                </button>
-                <button
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                  onClick={() => {
-                    setGlobalData(null);
-                    setLoading(true);
-                    setError(null);
-                  }}>
-                  <Icon className="w-4 h-4 inline mr-2" icon="mdi:reload" />
-                  Reset
-                </button>
-              </div>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                onClick={() => window.location.reload()}>
+                <Icon className="w-4 h-4 inline mr-2" icon="mdi:refresh" />
+                Retry
+              </button>
             </div>
           </div>
         </div>
