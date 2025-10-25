@@ -64,7 +64,7 @@ export async function GET(request: Request) {
         }>;
       };
       success: boolean;
-    }>("/defi/ohlcv", {
+    }>("/defi/v3/ohlcv", {
       address: tokenAddress,
       type: timeType,
       time_from: timeFrom.toString(),
