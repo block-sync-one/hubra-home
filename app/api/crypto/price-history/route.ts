@@ -48,11 +48,11 @@ export async function GET(request: Request) {
     const daysNum = days === "max" ? 365 : parseInt(days, 10);
     const timeFrom = now - daysNum * 24 * 60 * 60;
 
-    // Fetch OHLCV data from Birdeye
+    // Fetch OHLCV data from Birdeye v3 API
     const response = await fetchBirdeyeData<{
       data: {
         items: Array<{
-          unixTime: number;
+          unix_time: number; // v3 uses snake_case
           o: number;
           h: number;
           l: number;
@@ -107,7 +107,7 @@ export async function GET(request: Request) {
     // Transform to clean Birdeye-native format
     const transformedData = {
       data: items.map((item) => ({
-        timestamp: item.unixTime * 1000, // Convert to milliseconds
+        timestamp: item.unix_time * 1000, // v3 uses snake_case, convert to milliseconds
         price: item.c, // Close price
         open: item.o,
         high: item.h,

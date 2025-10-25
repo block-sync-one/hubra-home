@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
+import { setClientCache } from "@/lib/cache/client-cache";
+
 export interface BirdeyeOHLCVPoint {
   timestamp: number;
   price: number;
@@ -21,11 +23,11 @@ export interface BirdeyePriceHistoryData {
 }
 
 /**
- * Fetches price history data for a token
+ * Fetches price history data for a token with client-side caching
  * @param tokenId - Token address
  * @param days - Number of days (1, 7, 30, 90, 365, or "max")
  */
-export function usePriceHistory(tokenId: string, days: number | "max") {
+export function usePriceHistory(tokenId: string, days: number | "max" = 7) {
   const [chartData, setChartData] = useState<Array<{ month: string; price: number }>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,21 +56,21 @@ export function usePriceHistory(tokenId: string, days: number | "max") {
         throw new Error(errorMsg);
       }
 
-      // Check if we're using fallback data
       const isFallback = response.headers.get("X-Fallback-Data") === "true";
 
       setIsFallbackData(isFallback);
 
-      // Transform the Birdeye data for the chart
       const transformedData = transformBirdeyeData(result.data || [], days);
+
+      const cacheKey = `price-history:${tokenId}:${days}`;
+
+      setClientCache(cacheKey, transformedData);
 
       setChartData(transformedData);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch price history";
 
       setError(errorMessage);
-
-      // Set empty chart data on error
       setChartData([]);
     } finally {
       setLoading(false);
@@ -77,10 +79,12 @@ export function usePriceHistory(tokenId: string, days: number | "max") {
 
   const retry = useCallback(() => {
     setError(null);
+    setChartData([]);
     fetchPriceHistory();
   }, [fetchPriceHistory]);
 
   useEffect(() => {
+    setChartData([]);
     fetchPriceHistory();
   }, [fetchPriceHistory]);
 
@@ -94,62 +98,58 @@ export function usePriceHistory(tokenId: string, days: number | "max") {
 }
 
 function transformBirdeyeData(data: BirdeyeOHLCVPoint[], days: number | "max"): Array<{ month: string; price: number }> {
-  if (!data || data.length === 0) {
-    return [];
-  }
+  if (!data || data.length === 0) return [];
 
-  // Format dates based on time period
   const formatDate = (timestamp: number, period: number | "max", _index: number, _totalPoints: number) => {
     const date = new Date(timestamp);
 
     if (period === 1) {
-      // 24h: Show time (e.g., 15:00, 16:00, 17:00)
-      return date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      });
+      return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
     } else if (period === 7) {
-      // 7d: Show day + time (e.g., Mon 15:00, Tue 09:00)
-      const day = date.toLocaleDateString("en-US", { weekday: "short" });
-      const time = date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      });
-
-      return `${day} ${time}`;
+      return date.toLocaleDateString("en-US", { weekday: "short" });
     } else if (period === 30) {
-      // 1M: Show date (e.g., Oct 1, Oct 2)
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     } else if (period === 90) {
-      // 3M: Show date (e.g., Oct 1, Oct 15, Nov 1)
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     } else if (period === 365) {
-      // 1Y: Show month + year (e.g., Jan 2024, Feb 2024)
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        year: "numeric",
-      });
+      return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
     } else {
-      // All: Show month + year (e.g., Jan 2024, Jun 2024)
-      return date.toLocaleDateString("en-US", {
-        month: "short",
-        year: "numeric",
-      });
+      return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
     }
   };
 
-  // Return all data points for accurate chart visualization
-  // No sampling needed - Birdeye already returns optimized data
-  return data.map((item, index) => ({
-    month: formatDate(item.timestamp, days, index, data.length),
+  const sampleSize = getSampleSize(days);
+  const sampledData = sampleSize >= data.length ? data : sampleEvenly(data, sampleSize);
+
+  return sampledData.map((item, index) => ({
+    month: formatDate(item.timestamp, days, index, sampledData.length),
     price: item.price,
   }));
+}
+
+function getSampleSize(period: number | "max"): number {
+  if (period === 1) return 24;
+  if (period === 7) return 7;
+  if (period === 30) return 15;
+  if (period === 90) return 18;
+  if (period === 365) return 24;
+
+  return 30;
+}
+
+function sampleEvenly(data: BirdeyeOHLCVPoint[], targetSize: number): BirdeyeOHLCVPoint[] {
+  if (data.length <= targetSize) return data;
+
+  const sampled: BirdeyeOHLCVPoint[] = [];
+  const step = data.length / targetSize;
+
+  for (let i = 0; i < targetSize; i++) {
+    const index = Math.floor(i * step);
+
+    sampled.push(data[index]);
+  }
+
+  sampled[sampled.length - 1] = data[data.length - 1];
+
+  return sampled;
 }

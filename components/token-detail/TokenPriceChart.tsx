@@ -39,12 +39,10 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
   const days = getDaysFromPeriod(selectedPeriod);
   const { chartData, loading, error } = usePriceHistory(tokenId, days);
 
-  // Determine color based on change
   const changeValue = parseFloat(change) || 0;
   const isPositive = changeValue >= 0;
   const color = isPositive ? "success" : "danger";
 
-  // Loading state
   if (loading || error) {
     return (
       <Card className="bg-transparent shadow-none md:shadow-card md:bg-card md:backdrop-blur-sm overflow-visible">
@@ -100,7 +98,6 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
     );
   }
 
-  // Transform data for the chart (use "value" instead of "price")
   const transformedChartData = chartData.map((item) => ({
     month: item.month,
     value: item.price,
@@ -109,15 +106,12 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
   return (
     <Card className="bg-transparent shadow-none md:shadow-card md:bg-card md:backdrop-blur-sm overflow-visible">
       <div className="md:p-5">
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-start md:justify-between md:mb-4 gap-4">
-          {/* Price and Change */}
           <div>
             <p className="text-sm font-medium text-gray-400 mb-2">Price</p>
             <p className="text-2xl font-semibold text-white">{price}</p>
           </div>
 
-          {/* Period Selector - Desktop */}
           <div className="hidden md:flex gap-1 bg0none md:bg-white/5 rounded-xl p-1">
             {periods.map((period) => (
               <button
@@ -134,23 +128,26 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
           </div>
         </div>
 
-        {/* Chart */}
         <div className="h-48 w-full select-none" style={{ WebkitTapHighlightColor: "transparent" }}>
           <ResponsiveContainer height="100%" width="100%">
-            <AreaChart data={transformedChartData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+            <AreaChart
+              key={`chart-${selectedPeriod}-${chartData.length}`}
+              data={transformedChartData}
+              margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id={`gradient-${color}`} x1="0" x2="0" y1="0" y2="1">
                   <stop offset="0%" stopColor={color === "success" ? "rgb(21 183 158)" : "rgb(246 61 104)"} stopOpacity={0.3} />
                   <stop offset="100%" stopColor={color === "success" ? "rgb(21 183 158)" : "rgb(246 61 104)"} stopOpacity={0} />
                 </linearGradient>
               </defs>
-              {/* <CartesianGrid stroke="rgb(255 255 255 / 0.05)" strokeDasharray="3 3" vertical={false} />*/}
               <XAxis
                 axisLine={false}
                 dataKey="month"
                 fontSize={12}
                 interval="preserveStartEnd"
+                minTickGap={20}
                 stroke="rgb(156 163 175)"
+                tick={{ fill: "rgb(156 163 175)" }}
                 tickLine={false}
                 tickMargin={10}
               />
@@ -180,7 +177,6 @@ export function TokenPriceChart({ price, change, tokenId, selectedPeriod, period
           </ResponsiveContainer>
         </div>
 
-        {/* Period Selector - Mobile (Full Width Below Chart) */}
         <div className="md:hidden flex gap-1  rounded-xl pt-4 w-full">
           {periods.map((period) => (
             <button

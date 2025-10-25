@@ -21,7 +21,6 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch trending tokens only for Hot Tokens tab
   React.useEffect(() => {
     if (selectedTab === TabId.hotTokens) {
       const fetchTrending = async () => {
@@ -37,15 +36,14 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
           const data = await response.json();
 
           if (data?.coins) {
-            // Transform trending data to match Token interface
             const trendingTokens: Token[] = data.coins.map((item: any) => ({
               id: item.item.coin_id || item.item.address,
               name: item.item.name === "Wrapped SOL" ? "Solana" : item.item.name,
               symbol: item.item.symbol.toUpperCase(),
               imgUrl: item.item.small || item.item.logoURI || "/logo.svg",
-              price: "", // Will be formatted by client
+              price: "",
               change: item.item.data?.price_change_percentage_24h?.usd || 0,
-              volume: "", // Will be formatted by client
+              volume: "",
               rawVolume: item.item.data?.volume_24h_usd || 0,
               rawPrice: item.item.data?.price || 0,
               marketCap: item.item.data?.marketcap || 0,
@@ -64,19 +62,6 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
     }
   }, [selectedTab]);
 
-  React.useEffect(() => {
-    const currentTokens = getTokensForTab();
-
-    if (currentTokens.length === 0) return;
-
-    currentTokens.forEach((token) => {
-      fetch(`/api/crypto/price-history?id=${token.id}&days=7`, {
-        method: "GET",
-        priority: "low",
-      } as any).catch(() => {});
-    });
-  }, [selectedTab, hotData, initialGainers, initialLosers, initialVolume]);
-
   const getTokensForTab = () => {
     switch (selectedTab) {
       case TabId.hotTokens:
@@ -93,7 +78,6 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
   };
 
   const retry = () => {
-    // Trigger re-fetch for hot tokens
     if (selectedTab === TabId.hotTokens) {
       setHotData([]);
       setError(null);
