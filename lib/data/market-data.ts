@@ -99,6 +99,7 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0): 
     loggers.cache.debug(`MISS: Fetching ${limit} tokens from Birdeye (offset: ${offset})`);
 
     const queryParam = {
+      sort_by: "holder",
       sort_type: "desc",
       min_holder: "10",
       min_volume_24h_usd: "10",
@@ -159,7 +160,7 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0): 
     }
 
     // Transform Birdeye data to our Token type
-    const transformedTokens = allItems.map(transformBirdeyeToken);
+    const transformedTokens = allItems.map(transformBirdeyeToken)?.filter((item) => item.marketCap && item.marketCap > 100000);
 
     // Cache the list (blocks response - quick operation)
     redis.set(cacheKey, transformedTokens, CACHE_TTL.MARKET_DATA).catch((err) => {

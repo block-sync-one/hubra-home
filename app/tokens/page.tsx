@@ -72,7 +72,7 @@ export const metadata: Metadata = {
  */
 export default async function TokensPage() {
   // Fetch market data once server-side (200 tokens with Redis caching)
-  const marketTokens = await fetchMarketData(200, 0);
+  const marketTokens = await fetchMarketData(400, 0);
 
   // Sort data for different views (reuse same data)
   const allAssetsSorted = TokenFilter.byMarketCap(marketTokens, marketTokens.length);
