@@ -1,2 +1,3 @@
 export * from "./chart";
-export * from "./ui";
+export * from "./market";
+export * from "./token-detail";

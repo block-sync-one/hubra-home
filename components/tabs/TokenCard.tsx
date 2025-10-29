@@ -20,7 +20,7 @@ import { PriceChangeChip } from "@/components/price";
 interface TokenCardProps {
   name: string;
   symbol?: string;
-  imgUrl?: string;
+  logoURI?: string;
   price?: string;
   change?: number;
   volume?: string;
@@ -93,7 +93,7 @@ const transformPriceData = (
   return data;
 };
 
-export function TokenCard({ name, symbol, imgUrl, price, change, coinId }: TokenCardProps) {
+export function TokenCard({ name, symbol, logoURI, price, change, coinId }: TokenCardProps) {
   const router = useRouter();
   const { priceHistory } = usePriceHistory(coinId || "");
 
@@ -121,7 +121,7 @@ export function TokenCard({ name, symbol, imgUrl, price, change, coinId }: Token
             <img
               alt={`${name} (${symbol}) logo`}
               className="w-full h-full object-cover"
-              src={imgUrl || "/logo.svg"}
+              src={logoURI || "/logo.svg"}
               onError={(e) => {
                 const target = e.currentTarget;
 

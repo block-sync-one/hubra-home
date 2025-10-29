@@ -6,6 +6,7 @@ import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { Token } from "@/lib/types/token";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 import { loggers } from "@/lib/utils/logger";
+import { BIRDEYE_LIMITS, BIRDEYE_QUERY_PRESETS, MARKET_CAP_FILTERS } from "@/lib/constants/market";
 
 export interface MarketDataStats {
   totalMarketCap: number;
@@ -42,39 +43,47 @@ interface BirdeyeTokenListResponse {
   success: boolean;
 }
 
+/**
+ * Transform Birdeye API token to our internal Token type
+ * Normalizes data structure and handles missing values
+ */
 function transformBirdeyeToken(token: BirdeyeToken): Token {
-  const rawVolume = token.volume_24h_usd || 0;
-
   return {
     id: token.address,
     name: token.name === "Wrapped SOL" ? "Solana" : token.name,
     symbol: token.symbol.toUpperCase(),
-    imgUrl: token.logo_uri || "/logo.svg",
-    price: "", // Will be formatted by caller
+    logoURI: token.logo_uri ?? "/logo.svg",
+    price: "", // Will be formatted by caller based on currency preference
     change: token.price_change_24h_percent || 0,
     volume: "", // Will be formatted by caller
-    rawVolume,
+    rawVolume: token.volume_24h_usd || 0,
     fdv: token.fdv || 0,
     marketCap: token.market_cap || 0,
-    rawPrice: token.price || 0, // Store raw price for formatting
+    rawPrice: token.price || 0,
   };
 }
 
 /**
+ * Filter out spam/dead tokens based on market cap threshold
+ */
+function filterViableTokens(tokens: Token[]): Token[] {
+  return tokens.filter((token) => token.marketCap && token.marketCap > MARKET_CAP_FILTERS.MIN_VIABLE);
+}
+
+/**
+ * Cache individual tokens asynchronously for detail page performance
  * This ONLY caches basic list data (price, volume, market cap)
  * Full token overview data is fetched ON-DEMAND when user visits token detail page
  *
  * This prevents 200+ unnecessary API calls to /defi/token_overview
- *
+ * Uses chunking to avoid overwhelming Redis with parallel writes
  */
 function cacheIndividualTokensAsync(tokens: BirdeyeToken[]): void {
   // Fire and forget - don't block the response
   (async () => {
     try {
-      const CHUNK_SIZE = 50;
-
-      for (let i = 0; i < tokens.length; i += CHUNK_SIZE) {
-        const chunk = tokens.slice(i, i + CHUNK_SIZE);
+      for (let i = 0; i < tokens.length; i += BIRDEYE_LIMITS.BATCH_SIZE) {
+        const chunk = tokens.slice(i, i + BIRDEYE_LIMITS.BATCH_SIZE);
 
         await Promise.all(chunk.map((token) => setUnifiedToken(token.address, toUnifiedTokenData(token, "list"), CACHE_TTL.TOKEN_DETAIL)));
       }
@@ -126,19 +135,11 @@ export async function fetchMarketData(
     loggers.cache.debug(`MISS: Fetching ${limit} tokens from Birdeye (offset: ${offset})`);
 
     // Use custom query params if provided, otherwise use default
-    const queryParam = customQueryParams || {
-      sort_by: "holder",
-      sort_type: "desc",
-      min_holder: "10",
-      min_volume_24h_usd: "10",
-      min_trade_24h_count: "10",
-    };
+    const queryParam = customQueryParams || BIRDEYE_QUERY_PRESETS.DEFAULT;
 
-    // Birdeye API has a max limit of 100 per request
-    const BIRDEYE_MAX_LIMIT = 100;
     let allItems: BirdeyeToken[] = [];
 
-    if (limit <= BIRDEYE_MAX_LIMIT) {
+    if (limit <= BIRDEYE_LIMITS.MAX_PER_REQUEST) {
       // Single request for 100 or fewer tokens
       const response = await fetchBirdeyeData<BirdeyeTokenListResponse>("/defi/v3/token/list", {
         offset: offset.toString(),
@@ -163,12 +164,12 @@ export async function fetchMarketData(
       allItems = response.data.items;
     } else {
       // Multiple parallel requests for more than 100 tokens
-      const numRequests = Math.ceil(limit / BIRDEYE_MAX_LIMIT);
+      const numRequests = Math.ceil(limit / BIRDEYE_LIMITS.MAX_PER_REQUEST);
       const requests = [];
 
       for (let i = 0; i < numRequests; i++) {
-        const batchOffset = offset + i * BIRDEYE_MAX_LIMIT;
-        const batchLimit = Math.min(BIRDEYE_MAX_LIMIT, limit - i * BIRDEYE_MAX_LIMIT);
+        const batchOffset = offset + i * BIRDEYE_LIMITS.MAX_PER_REQUEST;
+        const batchLimit = Math.min(BIRDEYE_LIMITS.MAX_PER_REQUEST, limit - i * BIRDEYE_LIMITS.MAX_PER_REQUEST);
 
         requests.push(
           fetchBirdeyeData<BirdeyeTokenListResponse>("/defi/v3/token/list", {
@@ -203,16 +204,19 @@ export async function fetchMarketData(
       };
     }
 
+    // Transform and filter tokens
     const transformedTokens = allItems.map(transformBirdeyeToken);
+    const filteredTokens = filterViableTokens(transformedTokens);
 
-    // Calculate global stats from token data
-    const totalMarketCap = transformedTokens.reduce((sum, t) => sum + (t.marketCap || 0), 0);
-    const totalVolume = transformedTokens.reduce((sum, t) => sum + (t.rawVolume || 0), 0);
-    const totalFDV = transformedTokens.reduce((sum, t) => sum + (t.fdv || 0), 0);
-    const marketCapChange = 0; // TODO: tbd
+    // Calculate global stats from filtered token data
+    const totalMarketCap = filteredTokens.reduce((sum, t) => sum + (t.marketCap || 0), 0);
+    const totalVolume = filteredTokens.reduce((sum, t) => sum + (t.rawVolume || 0), 0);
+    const totalFDV = filteredTokens.reduce((sum, t) => sum + (t.fdv || 0), 0);
+    // TODO: Implement weighted market cap change calculation
+    const marketCapChange = 0;
 
     const result: MarketDataResult = {
-      data: transformedTokens,
+      data: filteredTokens,
       stats: {
         totalMarketCap,
         totalVolume,
@@ -229,7 +233,7 @@ export async function fetchMarketData(
     // Cache individual tokens asynchronously (doesn't block response)
     cacheIndividualTokensAsync(allItems);
 
-    loggers.cache.debug(`✓ Returning ${transformedTokens.length} tokens with stats (caching in background)`);
+    loggers.cache.debug(`✓ Returning ${filteredTokens.length}/${transformedTokens.length} tokens with stats (caching in background)`);
 
     return result;
   } catch (error) {

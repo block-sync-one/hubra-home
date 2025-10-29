@@ -5,8 +5,9 @@ import Tokens from "@/app/tokens/Tokens";
 import AllTokens from "@/app/tokens/AllTokens";
 import HotTokens from "@/app/tokens/HotTokens";
 import { fetchMarketData } from "@/lib/data/market-data";
+import { fetchNewlyListedTokens } from "@/lib/data/newly-listed-tokens";
 import { TokenFilter } from "@/lib/helpers/token";
-import { cacheKeys } from "@/lib/cache";
+import { TOKEN_LIMITS } from "@/lib/constants/market";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -73,28 +74,17 @@ export const metadata: Metadata = {
  * Market stats are calculated server-side and cached in Redis
  */
 export default async function TokensPage() {
-  // Calculate 24 hours ago timestamp (in seconds for Birdeye API)
-  const twentyFourHoursAgo = Math.floor(Date.now() / 1000) - 24 * 60 * 60;
-
-  // Fetch main market data and newly listed tokens in parallel
+  // Fetch main market data and newly listed tokens in parallel for performance
   const [marketDataResult, newlyListedResult] = await Promise.all([
-    fetchMarketData(400, 0),
-    fetchMarketData(
-      400,
-      0,
-      {
-        sort_by: "volume_24h_usd",
-        sort_type: "desc",
-        min_recent_listing_time: twentyFourHoursAgo.toString(),
-      },
-      cacheKeys.newlyListed(400, 0) // Custom cache key for newly listed tokens
-    ),
+    fetchMarketData(TOKEN_LIMITS.TOKENS_PAGE, 0),
+    fetchNewlyListedTokens(TOKEN_LIMITS.TOKENS_PAGE, 0, 24), // Last 24 hours
   ]);
 
+  // Extract data and stats
   const marketTokens = marketDataResult.data;
   const newlyListedTokens = newlyListedResult.data;
   const { totalMarketCap, totalVolume, totalFDV, marketCapChange } = marketDataResult.stats;
-  const newTokensCount = 0; // TODO: tcd
+  const newTokensCount = newlyListedTokens.length;
 
   // Sort data for different views (reuse same data)
   const allAssetsSorted = TokenFilter.byMarketCap(marketTokens, marketTokens.length);
@@ -139,9 +129,9 @@ export default async function TokensPage() {
         <div className="md:max-w-7xl mx-auto w-full">
           {/* Pass top 4 from each category to HotTokens */}
           <HotTokens
-            initialGainers={gainersSorted.slice(0, 4)}
-            initialLosers={losersSorted.slice(0, 4)}
-            initialVolume={volumeSorted.slice(0, 4)}
+            initialGainers={gainersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
+            initialLosers={losersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
+            initialVolume={volumeSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
           />
         </div>
         <div className="md:max-w-7xl mx-auto w-full">

@@ -226,7 +226,7 @@ const UnifiedTable = <T extends Record<string, any>>({
                     alt={`${item.name} (${item.symbol}) logo`}
                     className="w-full h-full object-cover"
                     height={32}
-                    src={item.imgUrl || "/logo.svg"}
+                    src={item.logoURI || "/logo.svg"}
                     width={32}
                   />
                 </div>

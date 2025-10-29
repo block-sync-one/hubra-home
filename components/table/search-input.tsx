@@ -146,7 +146,7 @@ export const SearchInput: React.FC = () => {
                   type="button"
                   onClick={() => handleResultClick(token)}>
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <Avatar className="flex-shrink-0" name={token.symbol} size="sm" src={token.imgUrl} />
+                    <Avatar className="flex-shrink-0" name={token.symbol} size="sm" src={token.logoURI} />
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-xs truncate">{token.symbol}</h4>
                       <p className="text-xs text-gray-500 font-mono truncate">

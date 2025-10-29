@@ -7,7 +7,7 @@ import { fixedNumber } from "@/lib/utils";
 interface TokenHeaderProps {
   name: string;
   symbol: string;
-  imgUrl: string;
+  logoURI: string;
   change: string;
   marketCap: string;
   marketCapChange: number;
@@ -52,7 +52,7 @@ function StatCard({
 }
 
 // Token info component (name, symbol, image)
-export function TokenInfo({ name, symbol, imgUrl }: { name: string; symbol: string; imgUrl: string }) {
+export function TokenInfo({ name, symbol, logoURI }: { name: string; symbol: string; logoURI: string }) {
   return (
     <div className="flex items-center gap-3">
       <div className="w-8 h-8 rounded-full overflow-hidden">
@@ -62,7 +62,7 @@ export function TokenInfo({ name, symbol, imgUrl }: { name: string; symbol: stri
           className="w-full h-full object-cover"
           height={32}
           sizes="32px"
-          src={imgUrl}
+          src={logoURI}
           width={32}
         />
       </div>
@@ -132,7 +132,7 @@ export function TokenStats({
 export function TokenHeader({
   name,
   symbol,
-  imgUrl,
+  logoURI,
   change,
   marketCap,
   marketCapChange,
@@ -143,7 +143,7 @@ export function TokenHeader({
   return (
     <div className="mb-5">
       <div className="flex items-center flex-wrap justify-between gap-4">
-        <TokenInfo imgUrl={imgUrl} name={name} symbol={symbol} />
+        <TokenInfo logoURI={logoURI} name={name} symbol={symbol} />
         <TokenStats
           change={change}
           marketCap={marketCap}
