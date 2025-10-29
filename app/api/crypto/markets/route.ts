@@ -7,7 +7,10 @@ export async function GET(request: Request) {
   const limit = Math.min(parseInt(searchParams.get("limit") || "100"), 200);
   const offset = parseInt(searchParams.get("offset") || "0");
 
-  const tokens = await fetchMarketData(limit, offset);
+  const result = await fetchMarketData(limit, offset);
 
-  return NextResponse.json(tokens);
+  return NextResponse.json({
+    data: result.data,
+    stats: result.stats,
+  });
 }

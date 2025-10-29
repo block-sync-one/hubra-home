@@ -7,6 +7,18 @@ import { Token } from "@/lib/types/token";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 import { loggers } from "@/lib/utils/logger";
 
+export interface MarketDataStats {
+  totalMarketCap: number;
+  totalVolume: number;
+  totalFDV: number;
+  marketCapChange: number;
+}
+
+export interface MarketDataResult {
+  data: Token[];
+  stats: MarketDataStats;
+}
+
 interface BirdeyeToken {
   address: string;
   decimals: number;
@@ -14,6 +26,7 @@ interface BirdeyeToken {
   name: string;
   logo_uri?: string;
   liquidity?: number;
+  fdv?: number;
   volume_24h_usd?: number;
   volume_24h_change_percent?: number;
   price?: number;
@@ -41,6 +54,7 @@ function transformBirdeyeToken(token: BirdeyeToken): Token {
     change: token.price_change_24h_percent || 0,
     volume: "", // Will be formatted by caller
     rawVolume,
+    fdv: token.fdv || 0,
     marketCap: token.market_cap || 0,
     rawPrice: token.price || 0, // Store raw price for formatting
   };
@@ -81,14 +95,15 @@ function cacheIndividualTokensAsync(tokens: BirdeyeToken[]): void {
  * - Cache key includes limit and offset for pagination support
  * - TTL: 2 minutes (market data changes frequently)
  * - Shared cache between server components and API routes
+ * - Returns both token data and calculated stats
  *
  */
-export async function fetchMarketData(limit: number = 100, offset: number = 0): Promise<Token[]> {
+export async function fetchMarketData(limit: number = 100, offset: number = 0): Promise<MarketDataResult> {
   const cacheKey = cacheKeys.marketData(limit, offset);
 
   try {
     // Try Redis cache first
-    const cachedData = await redis.get<Token[]>(cacheKey);
+    const cachedData = await redis.get<MarketDataResult>(cacheKey);
 
     if (cachedData) {
       loggers.cache.debug(`HIT: ${limit} tokens (offset: ${offset})`);
@@ -121,7 +136,15 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0): 
       if (!response.success || !response.data?.items) {
         loggers.data.warn("Invalid response from Birdeye API");
 
-        return [];
+        return {
+          data: [],
+          stats: {
+            totalMarketCap: 0,
+            totalVolume: 0,
+            totalFDV: 0,
+            marketCapChange: 0,
+          },
+        };
       }
 
       allItems = response.data.items;
@@ -156,26 +179,57 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0): 
     if (allItems.length === 0) {
       loggers.data.warn("No tokens returned from Birdeye API");
 
-      return [];
+      return {
+        data: [],
+        stats: {
+          totalMarketCap: 0,
+          totalVolume: 0,
+          totalFDV: 0,
+          marketCapChange: 0,
+        },
+      };
     }
 
-    // Transform Birdeye data to our Token type
-    const transformedTokens = allItems.map(transformBirdeyeToken)?.filter((item) => item.marketCap && item.marketCap > 100000);
+    const transformedTokens = allItems.map(transformBirdeyeToken);
 
-    // Cache the list (blocks response - quick operation)
-    redis.set(cacheKey, transformedTokens, CACHE_TTL.MARKET_DATA).catch((err) => {
-      loggers.cache.error(`List cache failed: ${err.message}`);
+    // Calculate global stats from token data
+    const totalMarketCap = transformedTokens.reduce((sum, t) => sum + (t.marketCap || 0), 0);
+    const totalVolume = transformedTokens.reduce((sum, t) => sum + (t.rawVolume || 0), 0);
+    const totalFDV = transformedTokens.reduce((sum, t) => sum + (t.fdv || 0), 0);
+    const marketCapChange = 0; // TODO: tbd
+
+    const result: MarketDataResult = {
+      data: transformedTokens,
+      stats: {
+        totalMarketCap,
+        totalVolume,
+        totalFDV,
+        marketCapChange,
+      },
+    };
+
+    // Cache the result (blocks response - quick operation)
+    redis.set(cacheKey, result, CACHE_TTL.MARKET_DATA).catch((err) => {
+      loggers.cache.error(`Market data cache failed: ${err.message}`);
     });
 
     // Cache individual tokens asynchronously (doesn't block response)
     cacheIndividualTokensAsync(allItems);
 
-    loggers.cache.debug(`✓ Returning ${transformedTokens.length} tokens (caching in background)`);
+    loggers.cache.debug(`✓ Returning ${transformedTokens.length} tokens with stats (caching in background)`);
 
-    return transformedTokens;
+    return result;
   } catch (error) {
     loggers.data.error("Error fetching market data:", error);
 
-    return [];
+    return {
+      data: [],
+      stats: {
+        totalMarketCap: 0,
+        totalVolume: 0,
+        totalFDV: 0,
+        marketCapChange: 0,
+      },
+    };
   }
 }

@@ -69,10 +69,13 @@ export const metadata: Metadata = {
 /**
  * Server Component - Fetches all data once and distributes to child components
  * This ensures HotTokens and AllTokens use the same data source
+ * Market stats are calculated server-side and cached in Redis
  */
 export default async function TokensPage() {
-  // Fetch market data once server-side (200 tokens with Redis caching)
-  const marketTokens = await fetchMarketData(400, 0);
+  const marketDataResult = await fetchMarketData(400, 0);
+  const marketTokens = marketDataResult.data;
+  const { totalMarketCap, totalVolume, totalFDV, marketCapChange } = marketDataResult.stats;
+  const newTokensCount = 0;
 
   // Sort data for different views (reuse same data)
   const allAssetsSorted = TokenFilter.byMarketCap(marketTokens, marketTokens.length);
@@ -105,7 +108,14 @@ export default async function TokensPage() {
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
       <main className="flex flex-col gap-12">
         <div className="md:max-w-7xl mx-auto w-full">
-          <Tokens />
+          <Tokens
+            marketCapChange={marketCapChange}
+            newTokensCount={newTokensCount}
+            solanaFDV={totalFDV}
+            solanaFDVChange={0}
+            totalMarketCap={totalMarketCap}
+            totalVolume={totalVolume}
+          />
         </div>
         <div className="md:max-w-7xl mx-auto w-full">
           {/* Pass top 4 from each category to HotTokens */}

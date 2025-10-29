@@ -18,7 +18,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    const tokens = await fetchMarketData(50, 0);
+    const marketData = await fetchMarketData(50, 0);
+    const tokens = marketData.data;
 
     const tokenPages = tokens.slice(0, 50).map((token) => ({
       url: `${baseUrl}/tokens/${token.id}`,

@@ -11,6 +11,7 @@ export interface Token {
   name: string;
   symbol: string;
   imgUrl: string;
+  fdv: number;
   price: string; // Formatted price
   change: number; // Price change % (for sorting/filtering)
   volume: string; // Formatted volume

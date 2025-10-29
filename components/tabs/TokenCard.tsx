@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Card } from "@heroui/react";
 import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
 
@@ -118,16 +117,17 @@ export function TokenCard({ name, symbol, imgUrl, price, change, coinId }: Token
       <div className="p-4">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
-            <Image
+          <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
+            <img
               alt={`${name} (${symbol}) logo`}
               className="w-full h-full object-cover"
-              height={20}
               src={imgUrl || "/logo.svg"}
-              width={20}
               onError={(e) => {
-                // Fallback to default logo on error
-                e.currentTarget.src = "/logo.svg";
+                const target = e.currentTarget;
+
+                if (!target.src.includes("logo.svg")) {
+                  target.src = "/logo.svg";
+                }
               }}
             />
           </div>
