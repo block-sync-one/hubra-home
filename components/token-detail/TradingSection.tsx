@@ -1,8 +1,9 @@
 import React from "react";
-import Image from "next/image";
 import { Button } from "@heroui/react";
 import { Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
+
+import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
 
 interface TradingSectionProps {
   tokenName: string;
@@ -26,7 +27,17 @@ const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tok
   return (
     <div className="flex items-center justify-between px-5 py-6 bg-background rounded-xl">
       <div className="flex items-center gap-2">
-        <Image alt={`${tokenName} token`} className="rounded-full" height={32} loading="lazy" sizes="32px" src={tokenlogoURI} width={32} />
+        <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+          <ImageWithSkeleton
+            alt={`${tokenName} token`}
+            className="w-full h-full object-cover"
+            height={32}
+            loading="lazy"
+            sizes="32px"
+            src={tokenlogoURI}
+            width={32}
+          />
+        </div>
         <div>
           <div className="text-lg font-medium text-white">{tokenSymbol}</div>
         </div>

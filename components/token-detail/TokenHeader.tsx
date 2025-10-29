@@ -1,8 +1,8 @@
 import React from "react";
-import Image from "next/image";
 import { Icon } from "@iconify/react";
 
 import { fixedNumber } from "@/lib/utils";
+import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
 
 interface TokenHeaderProps {
   name: string;
@@ -56,7 +56,7 @@ export function TokenInfo({ name, symbol, logoURI }: { name: string; symbol: str
   return (
     <div className="flex items-center gap-3">
       <div className="w-8 h-8 rounded-full overflow-hidden">
-        <Image
+        <ImageWithSkeleton
           priority
           alt={`${name} token logo`}
           className="w-full h-full object-cover"

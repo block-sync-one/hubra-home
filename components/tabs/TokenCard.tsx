@@ -16,6 +16,7 @@ import {
 } from "@/lib/constants";
 import { seededRandom } from "@/lib/utils/random";
 import { PriceChangeChip } from "@/components/price";
+import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
 
 interface TokenCardProps {
   name: string;
@@ -117,18 +118,13 @@ export function TokenCard({ name, symbol, logoURI, price, change, coinId }: Toke
       <div className="p-4">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0 bg-gray-800">
-            <img
+          <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
+            <ImageWithSkeleton
               alt={`${name} (${symbol}) logo`}
               className="w-full h-full object-cover"
+              height={32}
               src={logoURI || "/logo.svg"}
-              onError={(e) => {
-                const target = e.currentTarget;
-
-                if (!target.src.includes("logo.svg")) {
-                  target.src = "/logo.svg";
-                }
-              }}
+              width={32}
             />
           </div>
           <div className="flex items-center gap-2 flex-1 min-w-0">

@@ -1,8 +1,8 @@
 import React from "react";
-import Image from "next/image";
 
 import { MiniChart } from "./mini-chart";
 
+import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
 import { Token } from "@/lib/types/token";
 import { PriceChangeChip, PriceDisplay } from "@/components/price";
 
@@ -15,7 +15,7 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
       return (
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
-            <Image
+            <ImageWithSkeleton
               alt={`${item.name} (${item.symbol}) logo`}
               className="w-full h-full object-cover"
               height={32}
