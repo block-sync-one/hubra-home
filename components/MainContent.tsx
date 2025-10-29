@@ -175,13 +175,13 @@ export const MainContentSection = (): JSX.Element => {
     },
     {
       icon: "ri:rocket-fill",
-      title: "Scalable",
-      description: "Automatically updated with new tokens and pools, ensuring you never miss out.",
+      title: "Accessible Yield Opportunities",
+      description: "Effortlessly tap into yield opportunities, all from a single platform",
     },
     {
-      icon: "mdi:swap-vertical-circle",
-      title: "Onramp & Offramp",
-      description: "Onramp & offramp with creditcard",
+      icon: "mdi:gas-station",
+      title: "Gasless Transactions",
+      description: "No more paying for gas. No more blockers.",
     },
   ];
 
@@ -379,7 +379,7 @@ export const MainContentSection = (): JSX.Element => {
       <div className="flex flex-col w-full items-center justify-center gap-8 md:gap-10 px-4">
         <div className="flex flex-col w-full text-wrap-break-word md:w-[580px] items-center justify-center gap-5">
           <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
-            Introducing sunSOL
+            Introducing raSOL
           </h2>
           <p className="w-[80%] break-words md:w-fit font-geist text-gray-400/70 text-xl text-center">our empowered liquid staked SOL</p>
         </div>
@@ -408,7 +408,7 @@ export const MainContentSection = (): JSX.Element => {
                 />
               </div>
               <div className="z-10">
-                <div className="text-white text-2xl font-semibold">$5M+</div>
+                <div className="text-white text-2xl font-semibold">$3M+</div>
                 <div className="text-gray-400/70 text-body">TVL</div>
               </div>
             </Card>
