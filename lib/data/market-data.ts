@@ -97,23 +97,36 @@ function cacheIndividualTokensAsync(tokens: BirdeyeToken[]): void {
  * - Shared cache between server components and API routes
  * - Returns both token data and calculated stats
  *
+ * @param limit - Number of tokens to fetch
+ * @param offset - Pagination offset
+ * @param customQueryParams - Optional custom query params (e.g., for filtering newly listed tokens)
+ * @param cacheKey - Optional custom cache key (if not provided, auto-generated from params)
  */
-export async function fetchMarketData(limit: number = 100, offset: number = 0): Promise<MarketDataResult> {
-  const cacheKey = cacheKeys.marketData(limit, offset);
+export async function fetchMarketData(
+  limit: number = 100,
+  offset: number = 0,
+  customQueryParams?: Record<string, string>,
+  cacheKey?: string
+): Promise<MarketDataResult> {
+  // Use provided cache key or generate one based on params
+  const finalCacheKey =
+    cacheKey ||
+    (customQueryParams ? `market:${limit}:${offset}:${JSON.stringify(customQueryParams)}` : cacheKeys.marketData(limit, offset));
 
   try {
     // Try Redis cache first
-    const cachedData = await redis.get<MarketDataResult>(cacheKey);
+    const cachedData = await redis.get<MarketDataResult>(finalCacheKey);
 
     if (cachedData) {
-      loggers.cache.debug(`HIT: ${limit} tokens (offset: ${offset})`);
+      loggers.cache.debug(`HIT: ${finalCacheKey}`);
 
       return cachedData;
     }
 
     loggers.cache.debug(`MISS: Fetching ${limit} tokens from Birdeye (offset: ${offset})`);
 
-    const queryParam = {
+    // Use custom query params if provided, otherwise use default
+    const queryParam = customQueryParams || {
       sort_by: "holder",
       sort_type: "desc",
       min_holder: "10",
@@ -209,7 +222,7 @@ export async function fetchMarketData(limit: number = 100, offset: number = 0): 
     };
 
     // Cache the result (blocks response - quick operation)
-    redis.set(cacheKey, result, CACHE_TTL.MARKET_DATA).catch((err) => {
+    redis.set(finalCacheKey, result, CACHE_TTL.MARKET_DATA).catch((err) => {
       loggers.cache.error(`Market data cache failed: ${err.message}`);
     });
 

@@ -6,6 +6,7 @@ import AllTokens from "@/app/tokens/AllTokens";
 import HotTokens from "@/app/tokens/HotTokens";
 import { fetchMarketData } from "@/lib/data/market-data";
 import { TokenFilter } from "@/lib/helpers/token";
+import { cacheKeys } from "@/lib/cache";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -72,10 +73,28 @@ export const metadata: Metadata = {
  * Market stats are calculated server-side and cached in Redis
  */
 export default async function TokensPage() {
-  const marketDataResult = await fetchMarketData(400, 0);
+  // Calculate 24 hours ago timestamp (in seconds for Birdeye API)
+  const twentyFourHoursAgo = Math.floor(Date.now() / 1000) - 24 * 60 * 60;
+
+  // Fetch main market data and newly listed tokens in parallel
+  const [marketDataResult, newlyListedResult] = await Promise.all([
+    fetchMarketData(400, 0),
+    fetchMarketData(
+      400,
+      0,
+      {
+        sort_by: "volume_24h_usd",
+        sort_type: "desc",
+        min_recent_listing_time: twentyFourHoursAgo.toString(),
+      },
+      cacheKeys.newlyListed(400, 0) // Custom cache key for newly listed tokens
+    ),
+  ]);
+
   const marketTokens = marketDataResult.data;
+  const newlyListedTokens = newlyListedResult.data;
   const { totalMarketCap, totalVolume, totalFDV, marketCapChange } = marketDataResult.stats;
-  const newTokensCount = 0;
+  const newTokensCount = 0; // TODO: tcd
 
   // Sort data for different views (reuse same data)
   const allAssetsSorted = TokenFilter.byMarketCap(marketTokens, marketTokens.length);
@@ -127,7 +146,12 @@ export default async function TokensPage() {
         </div>
         <div className="md:max-w-7xl mx-auto w-full">
           {/* Pass full sorted data to AllTokens */}
-          <AllTokens initialAllTokens={allAssetsSorted} initialGainers={gainersSorted} initialLosers={losersSorted} />
+          <AllTokens
+            initialAllTokens={allAssetsSorted}
+            initialGainers={gainersSorted}
+            initialLosers={losersSorted}
+            initialNewlyListed={newlyListedTokens}
+          />
         </div>
       </main>
     </>

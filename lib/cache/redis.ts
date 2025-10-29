@@ -173,6 +173,7 @@ export const redis = RedisClient.getInstance();
 
 export const cacheKeys = {
   marketData: (limit: number, offset: number) => `market:${limit}:${offset}`,
+  newlyListed: (limit: number, offset: number) => `newly-listed:${limit}:${offset}`,
   tokenDetail: (address: string) => `token:${address}`,
   priceHistory: (address: string, days: number | string) => `price:${address}:${days}`,
   trending: (limit: number) => `trending:${limit}`,

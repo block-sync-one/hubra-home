@@ -47,7 +47,6 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
                 tabsData={tabs.map((t) => ({
                   id: t.id,
                   label: t.label,
-                  itemCount: t.itemCount,
                 }))}
                 onTabChange={setTab}
               />
@@ -63,7 +62,6 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
             tabsData={tabs.map((t) => ({
               id: t.id,
               label: t.label,
-              itemCount: t.itemCount,
             }))}
             onTabChange={setTab}
           />
