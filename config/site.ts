@@ -48,6 +48,11 @@ export const siteConfig = {
       show: true,
     },
     {
+      label: "Blog",
+      href: "/blog",
+      show: true,
+    },
+    {
       label: "DeFi",
       href: "/defi",
     },
@@ -64,6 +69,7 @@ export const siteConfig = {
           icon: "mdi:blog",
           label: "Blog",
           href: "/blog",
+          show: true,
         },
       ],
     },
