@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build output
+.next/
+out/
+dist/
+build/
+
+# Testing
+coverage/
+
+# Production
+*.min.js
+*.min.css
+
+# Cache
+.cache
+.turbo
+
+# Vercel
+.vercel
+
+# IDE
+.vscode
+.idea
+.cursor
+
+# Config files that don't need linting
+next-env.d.ts
+postcss.config.js
+tailwind.config.js
+
+# Generated files
+*.generated.ts
+*.generated.tsx
+

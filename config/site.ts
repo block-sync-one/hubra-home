@@ -1,12 +1,25 @@
+type NavItem = {
+  label: string;
+  href?: string;
+  show?: boolean;
+  description?: string;
+  navItems?: {
+    icon?: string;
+    label: string;
+    href: string;
+  }[];
+};
+
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
   name: "Hubra",
   description: "Hubra - the power of CEX, the freedom of DeFi",
-  longDescription: " Hubra is your Solana all-in-one portal to the decentralized world - delivering a seamless, CEX-grade experience without compromising on security, trust, or speed.",
+  longDescription:
+    " Hubra is your Solana all-in-one portal to the decentralized world - delivering a seamless, CEX-grade experience without compromising on security, trust, or speed.",
   keywords: [
     "Solana",
-    "DeFi", 
+    "DeFi",
     "cryptocurrency",
     "blockchain",
     "tokens",
@@ -16,9 +29,9 @@ export const siteConfig = {
     "Solana ecosystem",
     "blockchain analytics",
     "crypto portfolio",
-    "Web3"
+    "Web3",
   ],
-  url: "https://hubra.com",
+  url: "https://hubra.app",
   ogImage: "/hubra-og-image.png",
   twitter: {
     handle: "@hubraApp",
@@ -29,10 +42,10 @@ export const siteConfig = {
       label: "Home",
       href: "/",
     },
-
     {
       label: "Tokens",
       href: "/tokens",
+      show: true,
     },
     {
       label: "DeFi",
@@ -58,7 +71,7 @@ export const siteConfig = {
       label: "Stats",
       href: "/stats",
     },
-  ],
+  ] as NavItem[],
   navMenuItems: [
     {
       label: "Resources",
@@ -78,6 +91,7 @@ export const siteConfig = {
     {
       label: "Tokens",
       href: "/tokens",
+      show: true,
     },
     {
       label: "DeFi",
@@ -87,14 +101,9 @@ export const siteConfig = {
       label: "Stats",
       href: "/stats",
     },
-    // {
-    //   label: "Launch App",
-    //   href: "https://patreon.com/jrgarciadev",
-    //   external: true,
-    // },
-  ],
+  ] as NavItem[],
   links: {
-    app:"https://hubra.app",
+    app: "https://hubra.app",
     github: "https://github.com/block-sync-one/hubra-app",
     twitter: "https://twitter.com/hubrapp",
     docs: "https://docs.hubra.app",

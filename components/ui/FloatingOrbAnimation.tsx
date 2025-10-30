@@ -73,8 +73,7 @@ export const FloatingOrbsAnimation = () => {
               repeat: Infinity,
               repeatType: "reverse",
             },
-          }}
-        >
+          }}>
           <div
             className="w-full h-full rounded-full"
             style={{

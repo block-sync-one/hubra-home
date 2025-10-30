@@ -26,39 +26,13 @@ const AnimatedMiniLine = ({
     <div className="absolute inset-0 overflow-hidden">
       <svg className="absolute inset-0" height={height} width={width}>
         <defs>
-          <linearGradient
-            id={`line-gradient-${uniqueId}`}
-            x1="0%"
-            x2="100%"
-            y1="0%"
-            y2="0%"
-          >
-            <stop
-              offset="0%"
-              stopColor={gradientColors.start}
-              stopOpacity="0"
-            />
+          <linearGradient id={`line-gradient-${uniqueId}`} x1="0%" x2="100%" y1="0%" y2="0%">
+            <stop offset="0%" stopColor={gradientColors.start} stopOpacity="0" />
             <stop offset="50%" stopColor={gradientColors.end} stopOpacity="1" />
-            <stop
-              offset="100%"
-              stopColor={gradientColors.start}
-              stopOpacity="0.3"
-            />
+            <stop offset="100%" stopColor={gradientColors.start} stopOpacity="0.3" />
           </linearGradient>
-          <filter
-            height="200%"
-            id={`glow-${uniqueId}`}
-            width="200%"
-            x="-50%"
-            y="-50%"
-          >
-            <feDropShadow
-              dx="0"
-              dy="0"
-              floodColor={gradientColors.end}
-              floodOpacity="0.8"
-              stdDeviation="3"
-            />
+          <filter height="200%" id={`glow-${uniqueId}`} width="200%" x="-50%" y="-50%">
+            <feDropShadow dx="0" dy="0" floodColor={gradientColors.end} floodOpacity="0.8" stdDeviation="3" />
           </filter>
         </defs>
         <motion.path
@@ -101,11 +75,6 @@ const RectangularOrbit = ({
 }) => {
   // Use a dynamic radius for best appearance
   const radius = Math.min(width, height) / 4;
-
-  // Debug: log radius
-  console.log("RectangularOrbit radius:", radius);
-
-  // Calculate the total path length for a rounded rectangle
   const straightSides = 2 * (width + height - 4 * radius);
   const cornerArcs = 2 * Math.PI * radius;
   const pathLength = straightSides + cornerArcs;
@@ -115,53 +84,21 @@ const RectangularOrbit = ({
       <svg className="absolute inset-0" height={height} width={width}>
         <defs>
           {/* Custom gradient for the trail */}
-          <linearGradient
-            id={`trail-gradient-${width}-${height}`}
-            x1="0%"
-            x2="100%"
-            y1="0%"
-            y2="0%"
-          >
+          <linearGradient id={`trail-gradient-${width}-${height}`} x1="0%" x2="100%" y1="0%" y2="0%">
             <stop offset="0%" stopColor="#000000" stopOpacity="0.8" />
             <stop offset="81%" stopColor={colors.start} stopOpacity="0.3" />
             <stop offset="100%" stopColor={colors.end} stopOpacity="0.5" />
           </linearGradient>
 
           {/* Custom shadow filter */}
-          <filter
-            height="200%"
-            id={`shadow-${width}-${height}`}
-            width="200%"
-            x="-50%"
-            y="-50%"
-          >
-            <feDropShadow
-              dx="0"
-              dy="0"
-              floodColor="#000000"
-              floodOpacity="0.3"
-              stdDeviation="3"
-            />
-            <feDropShadow
-              dx="0"
-              dy="0"
-              floodColor={colors.start}
-              floodOpacity="0.4"
-              stdDeviation="2"
-            />
+          <filter height="200%" id={`shadow-${width}-${height}`} width="200%" x="-50%" y="-50%">
+            <feDropShadow dx="0" dy="0" floodColor="#000000" floodOpacity="0.3" stdDeviation="3" />
+            <feDropShadow dx="0" dy="0" floodColor={colors.start} floodOpacity="0.4" stdDeviation="2" />
           </filter>
         </defs>
 
         {/* Main white border */}
-        <rect
-          fill="none"
-          height={height}
-          rx={radius * 2}
-          ry={radius * 2}
-          width={width}
-          x={0}
-          y={0}
-        />
+        <rect fill="none" height={height} rx={radius * 2} ry={radius * 2} width={width} x={0} y={0} />
         {/* Trail animation */}
         <motion.rect
           animate={{ strokeDashoffset: -pathLength }}
@@ -267,12 +204,7 @@ export function MobileDegenAnimation() {
 
         <div className="flex items-start gap-20 top-11 absolute -rotate-90">
           <div className="relative w-[154px] h-[10px] justify-center items-center rotate-180">
-            <Image
-              alt=""
-              height={10}
-              src="/image/perpetuals_line.svg"
-              width={254}
-            />
+            <Image alt="" height={10} src="/image/perpetuals_line.svg" width={254} />
             <AnimatedMiniLine
               delay={1.5}
               duration={3}
@@ -329,120 +261,43 @@ export function MobileDegenAnimation() {
 const Icons = {
   perpetuals: () => (
     <div className="flex items-center justify-center relative h-[44px] w-[132px] rounded-full overflow-hidden">
-      <Image
-        alt="Perpetuals"
-        height={44}
-        src="/image/perpetuals.svg"
-        width={132}
-      />
-      <RectangularOrbit
-        colors={{ start: "#44D2F6", end: "#44D2F6" }}
-        delay={0}
-        duration={8}
-        height={44}
-        width={132}
-      />
+      <Image alt="Perpetuals" height={44} src="/image/perpetuals.svg" width={132} />
+      <RectangularOrbit colors={{ start: "#44D2F6", end: "#44D2F6" }} delay={0} duration={8} height={44} width={132} />
     </div>
   ),
   middle: () => (
     <div className="flex items-center justify-center relative h-[96px] w-[320px] rounded-full overflow-hidden">
-      <Image
-        alt="LP"
-        className="relative z-10 flex"
-        height={96}
-        src="/image/middle.svg"
-        width={320}
-      />
+      <Image alt="LP" className="relative z-10 flex" height={96} src="/image/middle.svg" width={320} />
     </div>
   ),
   lp: () => (
     <div className="flex items-center justify-center relative h-[42px] w-[72px] rounded-full overflow-hidden">
-      <Image
-        alt="LP"
-        className="relative z-10"
-        height={42}
-        src="/image/lp.svg"
-        width={72}
-      />
-      <RectangularOrbit
-        colors={{ start: "#E6D36A", end: "#E6D36A" }}
-        delay={1}
-        duration={8}
-        height={42}
-        width={72}
-      />
+      <Image alt="LP" className="relative z-10" height={42} src="/image/lp.svg" width={72} />
+      <RectangularOrbit colors={{ start: "#E6D36A", end: "#E6D36A" }} delay={1} duration={8} height={42} width={72} />
     </div>
   ),
   borrow: () => (
     <div className="flex items-center justify-center relative h-[40px] w-[100px] rounded-full overflow-hidden ">
-      <Image
-        alt="Borrow"
-        className="relative z-10"
-        height={40}
-        src="/image/borrow.svg"
-        width={100}
-      />
-      <RectangularOrbit
-        colors={{ start: "#FE6633", end: "#FE6633" }}
-        delay={2}
-        duration={8}
-        height={40}
-        width={100}
-      />
+      <Image alt="Borrow" className="relative z-10" height={40} src="/image/borrow.svg" width={100} />
+      <RectangularOrbit colors={{ start: "#FE6633", end: "#FE6633" }} delay={2} duration={8} height={40} width={100} />
     </div>
   ),
   vault: () => (
     <div className="flex items-center justify-center relative h-[44px] w-[96px] rounded-full overflow-hidden top-1/2">
-      <Image
-        alt="Vault"
-        className="relative z-10"
-        height={44}
-        src="/image/vaultd.svg"
-        width={96}
-      />
-      <RectangularOrbit
-        colors={{ start: "#9545FD", end: "#9545FD" }}
-        delay={3}
-        duration={8}
-        height={44}
-        width={96}
-      />
+      <Image alt="Vault" className="relative z-10" height={44} src="/image/vaultd.svg" width={96} />
+      <RectangularOrbit colors={{ start: "#9545FD", end: "#9545FD" }} delay={3} duration={8} height={44} width={96} />
     </div>
   ),
   lend: () => (
     <div className="flex items-center justify-center relative h-[40px] w-[84px] rounded-full overflow-hidden">
-      <Image
-        alt="Lend"
-        className="relative z-10"
-        height={40}
-        src="/image/lendd.svg"
-        width={84}
-      />
-      <RectangularOrbit
-        colors={{ start: "#3527CA", end: "#3527CA" }}
-        delay={4}
-        duration={8}
-        height={40}
-        width={84}
-      />
+      <Image alt="Lend" className="relative z-10" height={40} src="/image/lendd.svg" width={84} />
+      <RectangularOrbit colors={{ start: "#3527CA", end: "#3527CA" }} delay={4} duration={8} height={40} width={84} />
     </div>
   ),
   convert: () => (
     <div className="flex items-center justify-center relative h-[40px] w-[100px] rounded-full overflow-hidden ">
-      <Image
-        alt="Convert"
-        className="relative z-10"
-        height={40}
-        src="/image/convert.svg"
-        width={100}
-      />
-      <RectangularOrbit
-        colors={{ start: "#31E585", end: "#31E585" }}
-        delay={2}
-        duration={8}
-        height={40}
-        width={100}
-      />
+      <Image alt="Convert" className="relative z-10" height={40} src="/image/convert.svg" width={100} />
+      <RectangularOrbit colors={{ start: "#31E585", end: "#31E585" }} delay={2} duration={8} height={40} width={100} />
     </div>
   ),
 };

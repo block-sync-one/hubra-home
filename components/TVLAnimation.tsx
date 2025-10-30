@@ -45,7 +45,7 @@ export const TVLAnimatedPath = () => {
       {
         threshold: 0.3, // Trigger when 30% of the component is visible
         rootMargin: "0px 0px -50px 0px", // Trigger slightly before fully in view
-      },
+      }
     );
 
     if (containerRef.current) {
@@ -98,21 +98,9 @@ export const TVLAnimatedPath = () => {
   if (!isMounted) {
     return (
       <div ref={containerRef}>
-        <svg
-          fill="none"
-          height={SVG_HEIGHT}
-          style={{ overflow: "visible" }}
-          viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
-          width={SVG_WIDTH}
-        >
+        <svg fill="none" height={SVG_HEIGHT} style={{ overflow: "visible" }} viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`} width={SVG_WIDTH}>
           {/* Static version for SSR */}
-          <path
-            d={PATH_D}
-            fill="none"
-            opacity={0.15}
-            stroke={isMobile ? "#FEC84B" : "#FEC84B"}
-            strokeWidth={3}
-          />
+          <path d={PATH_D} fill="none" opacity={0.15} stroke={isMobile ? "#FEC84B" : "#FEC84B"} strokeWidth={3} />
         </svg>
       </div>
     );
@@ -120,26 +108,14 @@ export const TVLAnimatedPath = () => {
 
   return (
     <div ref={containerRef}>
-      <svg
-        fill="none"
-        height={SVG_HEIGHT}
-        style={{ overflow: "visible" }}
-        viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
-        width={SVG_WIDTH}
-      >
+      <svg fill="none" height={SVG_HEIGHT} style={{ overflow: "visible" }} viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`} width={SVG_WIDTH}>
         <defs>
           <filter height="200%" id="blurOuter" width="200%" x="-50%" y="-50%">
             <feGaussianBlur stdDeviation="12" />
           </filter>
         </defs>
         {/* Background path (faint) */}
-        <path
-          d={PATH_D}
-          fill="none"
-          opacity={0.15}
-          stroke={isMobile ? "#FEC84B" : "#FEC84B"}
-          strokeWidth={3}
-        />
+        <path d={PATH_D} fill="none" opacity={0.15} stroke={isMobile ? "#FEC84B" : "#FEC84B"} strokeWidth={3} />
         {/* Animated path (revealed) */}
         <path
           ref={pathRef}
@@ -155,22 +131,9 @@ export const TVLAnimatedPath = () => {
         {pathRef.current && (
           <>
             {/* Big blurred outer circle */}
-            <circle
-              cx={cx}
-              cy={cy}
-              fill={isMobile ? "#FEC84B" : "#FEC84B"}
-              filter="url(#blurOuter)"
-              opacity={0.12}
-              r={40}
-            />
+            <circle cx={cx} cy={cy} fill={isMobile ? "#FEC84B" : "#FEC84B"} filter="url(#blurOuter)" opacity={0.12} r={40} />
             {/* Outer glow circle */}
-            <circle
-              cx={cx}
-              cy={cy}
-              fill={isMobile ? "#FEC84B" : "#FEC84B"}
-              opacity={0.04}
-              r={28}
-            />
+            <circle cx={cx} cy={cy} fill={isMobile ? "#FEC84B" : "#FEC84B"} opacity={0.04} r={28} />
             {/* Middle circle (main) */}
             <circle
               cx={cx}

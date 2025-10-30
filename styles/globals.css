@@ -1,15 +1,75 @@
 /* Inter from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 /* Geist (if self-hosted or from a CDN, replace the URL if needed) */
-@import url('https://geists.vercel.app/fonts.css'); /* Example CDN */
+@import url("https://geists.vercel.app/fonts.css"); /* Example CDN */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Geist', 'Inter', sans-serif;
-  background-color: #000000;
+*,
+*::before,
+*::after,
+*::selection,
+*::placeholder,
+*::marker,
+*::selection,
+*::selection,
+*:focus {
+  outline: none;
 }
 
+body {
+  font-family: "Geist", "Inter", sans-serif;
+  font-size: 14px;
+  box-sizing: border-box;
+  background-color: #0d0e21;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent selection highlight on charts */
+svg {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Remove focus outline from Recharts elements */
+.recharts-surface:focus,
+.recharts-wrapper:focus {
+  outline: none;
+}
+
+/* Remove focus outline and ring from search input */
+[data-slot="input-wrapper"]:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  ring: none !important;
+}
+
+[data-slot="input"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  ring: none !important;
+}
+
+::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+}
+
+/* Style the track (background of the scrollbar) */
+::-webkit-scrollbar-track {
+  background: transparent; /* No background for the track */
+  border: 4px solid transparent; /* Create space around the thumb */
+  border-radius: 10px; /* Rounded edges */
+  margin-block: 1rem;
+}
+
+/* Style the scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: theme("colors.bgPlaceholder"); /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Rounded edges for the thumb */
+  border: 2px solid theme("colors.card"); /* Optional: adds spacing around thumb */
+}

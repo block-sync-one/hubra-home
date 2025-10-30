@@ -1,0 +1,23 @@
+{
+  "htmlWhitespaceSensitivity": "strict",
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": false,
+  "arrowParens": "always",
+  "printWidth": 140,
+  "useTabs": false,
+  "jsxSingleQuote": false,
+  "endOfLine": "auto",
+  "bracketSameLine": true,
+  "quoteProps": "consistent",
+  "proseWrap": "preserve",
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "html"
+      }
+    }
+  ]
+}

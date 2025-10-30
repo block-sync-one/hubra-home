@@ -40,44 +40,26 @@ export const HeroSection = (): JSX.Element => {
           src="/image/pink-orb1.png"
           width={360}
         />
-        <Image
-          alt="top"
-          className="flex absolute top-0 right-0 opacity-55"
-          height={124}
-          quality={100}
-          src="/image/top-m.png"
-          width={360}
-        />
+        <Image alt="top" className="flex absolute top-0 right-0 opacity-55" height={124} quality={100} src="/image/top-m.png" width={360} />
       </div>
 
       <div
-        className={`${isMobile ? "flex-col h-full" : "flex-row h-4/5"} absolute flex justify-center items-center gap-8 w-full md:top-[10%] py-8 md:py-10 px-4 md:px-14 xl:px-24`}
-      >
+        className={`${isMobile ? "flex-col h-full" : "flex-row h-4/5"} absolute flex justify-center items-center gap-8 w-full md:top-[10%] py-8 md:py-10 px-4 md:px-14 xl:px-24`}>
         {/* Main content text */}
         <div className="flex flex-col w-full md:max-w-lg items-start gap-6 top-4 left-4 main-content-position font-sans">
           <div className="inline-flex items-center justify-end gap-2 px-3 py-2 bg-transparent border border-white/10 rounded-full">
-            <span className="w-fit mt-[-1.00px] text-white text-sm font-sans">
-              Built on
-            </span>
-            <Image
-              alt="Group"
-              height={14.94}
-              src="/image/solana.png"
-              width={20}
-            />
+            <span className="w-fit mt-[-1.00px] text-white text-sm font-sans">Built on</span>
+            <Image alt="Group" height={14.94} src="/image/solana.png" width={20} />
             <span className="w-fit text-white text-sm font-sans">Solana</span>
           </div>
-          <div
-            className={`${isMobile ? "w-full" : "max-w-lg"} gap-6 flex flex-col`}
-          >
+          <div className={`${isMobile ? "w-full" : "max-w-lg"} gap-6 flex flex-col`}>
             <div className="w-full font-sans text-white text-[34px] sm:text-3xl md:text-[34px] lg:text-5xl font-semibold tracking-[-2%] leading-[105%] ">
               The Power Of CEX.
               <br />
               The Freedom Of DeFi.
             </div>
             <p className="sm:max-w-md font-sans text-[#797B92] text-lg md:text-base lg:text-lg tracking-[1%]">
-              Hubra is the first truly all-in-one platform. Manage, Explore,
-              Earn—across any device.
+              Hubra is the first truly all-in-one platform. Manage, Explore, Earn—across any device.
             </p>
           </div>
         </div>
@@ -92,8 +74,7 @@ export const HeroSection = (): JSX.Element => {
               duration: 0.5,
               ease: "easeInOut",
               delay: 0.3,
-            }}
-          >
+            }}>
             {/* Fixed particles matching SVG file positions and sizes */}
             {isMounted && (
               <div className="relative pointer-events-none z-20 hero-container w-full h-full">
@@ -134,9 +115,7 @@ export const HeroSection = (): JSX.Element => {
                 alt="Pink Gradient"
                 className="w-full max-w-[230px] sm:max-w-[320px] top-1 md:max-w-[340px] hero-image absolute z-20 rounded-full md:mt-[6px] ml-[1px]"
                 height={200}
-                src={
-                   "/image/hero-ball.svg"
-                }
+                src={"/image/hero-ball.svg"}
                 width={200}
               />
               <div className="flex w-full h-full items-start p-1 bg-gradient-to-t from-[#FEAA0104] md:from-[#2E2E2E]/5 to-[#FEAA01]/25 md:to-[#2E2E2E]/25 rounded-[9999px_9999px_0px_0px] px-1.5 gap-1 md:gap-4 relative">
@@ -152,13 +131,7 @@ export const HeroSection = (): JSX.Element => {
 
       {/* Bottom large circular gradient with animated satellite */}
       <div className="absolute satellite-position w-[375px] h-[180px] md:w-[660px] md:h-[304px] pointer-events-none select-none z-40">
-        <Image
-          fill
-          alt="Mask group"
-          className="flex w-[400px] h-[300px]"
-          quality={100}
-          src="/image/globe.png"
-        />
+        <Image fill alt="Mask group" className="flex w-[400px] h-[300px]" quality={100} src="/image/globe.png" />
         {/* Animated satellite overlay */}
         <AnimatedSatelliteOrbit />
       </div>

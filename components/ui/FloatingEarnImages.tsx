@@ -100,8 +100,7 @@ export const FloatingEarnImages = () => {
               repeat: Infinity,
               repeatType: "reverse",
             },
-          }}
-        >
+          }}>
           <Image
             alt={image.alt}
             className="w-[145px] h-[58px] sm:w-[192px] sm:h-[76px] md:w-[145px] md:h-[58px] lg:w-[192px] lg:h-[76px]"

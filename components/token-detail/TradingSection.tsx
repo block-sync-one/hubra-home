@@ -1,0 +1,82 @@
+import React from "react";
+import { Button } from "@heroui/react";
+import { Card, CardBody } from "@heroui/react";
+import { Icon } from "@iconify/react";
+
+import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
+
+interface TradingSectionProps {
+  tokenName: string;
+  tokenSymbol: string;
+  tokenlogoURI: string;
+  currentPrice: number;
+}
+
+interface TradingInputProps {
+  tokenSymbol: string;
+  tokenName: string;
+  tokenlogoURI: string;
+  amount: string;
+  estimatedValue: string;
+}
+
+/**
+ * Reusable Trading Input Component
+ */
+const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tokenlogoURI, amount, estimatedValue }) => {
+  return (
+    <div className="flex items-center justify-between px-5 py-6 bg-background rounded-xl">
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+          <ImageWithSkeleton
+            alt={`${tokenName} token`}
+            className="w-full h-full object-cover"
+            height={32}
+            loading="lazy"
+            sizes="32px"
+            src={tokenlogoURI}
+            width={32}
+          />
+        </div>
+        <div>
+          <div className="text-lg font-medium text-white">{tokenSymbol}</div>
+        </div>
+      </div>
+      <div className="text-right">
+        <div className="text-lg font-medium text-white">{amount}</div>
+      </div>
+    </div>
+  );
+};
+
+export function TradingSection({ tokenName, tokenSymbol, tokenlogoURI, currentPrice }: TradingSectionProps) {
+  return (
+    <Card className="bg-card rounded-2xl">
+      <CardBody className="p-3.5">
+        <div className="space-y-2">
+          <TradingInput
+            amount="1"
+            estimatedValue={`≈ $${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`}
+            tokenName={tokenName}
+            tokenSymbol={tokenSymbol}
+            tokenlogoURI={tokenlogoURI}
+          />
+
+          <TradingInput
+            amount={currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
+            estimatedValue={`≈ 1 ${tokenSymbol}`}
+            tokenName="USD Coin"
+            tokenSymbol="USDC"
+            tokenlogoURI="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png"
+          />
+        </div>
+        <Button
+          className="w-full bg-primary text-white font-semibold hover:bg-primary/90 rounded-lg mt-3.5 transition-colors"
+          onPress={() => window.open("https://hubra.app/convert", "_blank")}>
+          Swap on Hubra
+          <Icon className="h-4 w-4" icon="lucide:chevron-right" />
+        </Button>
+      </CardBody>
+    </Card>
+  );
+}
