@@ -1,75 +1,161 @@
-/* Inter from Google Fonts */
+/**
+ * Global Styles
+ * Hubra - Solana DeFi Platform
+ */
+
+/* ============================================
+   Fonts
+   ============================================ */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://geists.vercel.app/fonts.css");
 
-/* Geist (if self-hosted or from a CDN, replace the URL if needed) */
-@import url("https://geists.vercel.app/fonts.css"); /* Example CDN */
-
+/* ============================================
+   Tailwind Directives
+   ============================================ */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-*,
-*::before,
-*::after,
-*::selection,
-*::placeholder,
-*::marker,
-*::selection,
-*::selection,
-*:focus {
-  outline: none;
+/* ============================================
+   Base Styles
+   ============================================ */
+@layer base {
+  /* Reset outlines globally */
+  *,
+  *::before,
+  *::after,
+  *::selection,
+  *::placeholder,
+  *::marker,
+  *:focus {
+    outline: none;
+  }
+
+  /* Body configuration */
+  body {
+    font-family: "Geist", "Inter", sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+    background-color: #0d0e21;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* SVG elements - prevent selection */
+  svg {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
 }
 
-body {
-  font-family: "Geist", "Inter", sans-serif;
-  font-size: 14px;
-  box-sizing: border-box;
-  background-color: #0d0e21;
-  -webkit-tap-highlight-color: transparent;
+/* ============================================
+   Component-Specific Styles
+   ============================================ */
+@layer components {
+  /* Chart components */
+  .recharts-surface:focus,
+  .recharts-wrapper:focus {
+    outline: none;
+  }
+
+  /* Search input overrides */
+  [data-slot="input-wrapper"]:focus-within,
+  [data-slot="input"]:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    ring: none !important;
+  }
+
+  /* Blog tables - responsive scrolling */
+  /* Mobile only - horizontal scroll with full-width separators */
+  @media (max-width: 767px) {
+    .prose table {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .prose thead,
+    .prose tbody {
+      display: table;
+      min-width: 100%;
+      width: max-content;
+    }
+
+    .prose tr {
+      display: table-row;
+      width: 100%;
+    }
+
+    .prose th,
+    .prose td {
+      display: table-cell;
+      white-space: nowrap;
+    }
+
+    /* Scroll shadow indicators */
+    .prose table {
+      background:
+        linear-gradient(90deg, #0d0e21 30%, transparent), linear-gradient(270deg, #0d0e21 30%, transparent),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent), linear-gradient(270deg, rgba(255, 255, 255, 0.1), transparent);
+      background-repeat: no-repeat;
+      background-size:
+        40px 100%,
+        40px 100%,
+        14px 100%,
+        14px 100%;
+      background-position:
+        0 0,
+        100% 0,
+        0 0,
+        100% 0;
+      background-attachment: local, local, scroll, scroll;
+    }
+  }
+
+  /* Desktop - normal table display */
+  @media (min-width: 768px) {
+    .prose table {
+      display: table;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .prose thead,
+    .prose tbody {
+      display: table-row-group;
+    }
+
+    .prose tr {
+      display: table-row;
+    }
+
+    .prose th,
+    .prose td {
+      display: table-cell;
+      white-space: normal;
+    }
+  }
 }
 
-/* Prevent selection highlight on charts */
-svg {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-/* Remove focus outline from Recharts elements */
-.recharts-surface:focus,
-.recharts-wrapper:focus {
-  outline: none;
-}
-
-/* Remove focus outline and ring from search input */
-[data-slot="input-wrapper"]:focus-within {
-  outline: none !important;
-  box-shadow: none !important;
-  ring: none !important;
-}
-
-[data-slot="input"]:focus {
-  outline: none !important;
-  box-shadow: none !important;
-  ring: none !important;
-}
-
+/* ============================================
+   Custom Scrollbar Styles
+   ============================================ */
 ::-webkit-scrollbar {
-  width: 12px; /* Width of the scrollbar */
+  width: 12px;
 }
 
-/* Style the track (background of the scrollbar) */
 ::-webkit-scrollbar-track {
-  background: transparent; /* No background for the track */
-  border: 4px solid transparent; /* Create space around the thumb */
-  border-radius: 10px; /* Rounded edges */
+  background: transparent;
+  border: 4px solid transparent;
+  border-radius: 10px;
   margin-block: 1rem;
 }
 
-/* Style the scrollbar thumb */
 ::-webkit-scrollbar-thumb {
-  background-color: theme("colors.bgPlaceholder"); /* Color of the scrollbar thumb */
-  border-radius: 10px; /* Rounded edges for the thumb */
-  border: 2px solid theme("colors.card"); /* Optional: adds spacing around thumb */
+  background-color: theme("colors.bgPlaceholder");
+  border-radius: 10px;
+  border: 2px solid theme("colors.card");
 }

@@ -162,7 +162,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} id="article-jsonld" type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
 
-      <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 p-4">
+      <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <Link className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors group" href="/blog">
             <Icon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" icon="mdi:arrow-left" />
@@ -246,7 +246,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
               prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:text-gray-400 prose-blockquote:bg-card prose-blockquote:pl-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg prose-blockquote:italic
               prose-img:rounded-xl prose-img:shadow-lg
               prose-hr:border-gray-800 prose-hr:my-8
-              prose-table:border prose-table:border-gray-800 prose-table:rounded-lg
+              prose-table:border prose-table:border-gray-800 prose-table:rounded-lg prose-table:my-8
               prose-th:bg-card prose-th:text-white prose-th:font-semibold prose-th:p-3
               prose-td:text-gray-300 prose-td:p-3 prose-td:border-t prose-td:border-gray-800"
           />

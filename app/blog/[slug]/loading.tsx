@@ -4,7 +4,7 @@
  */
 export default function BlogPostLoading() {
   return (
-    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 p-4">
+    <div className="max-w-7xl mx-auto">
       {/* Back Button Skeleton */}
       <div className="h-6 w-32 bg-gray-800 rounded animate-pulse mb-8" />
 

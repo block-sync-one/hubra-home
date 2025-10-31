@@ -15,7 +15,7 @@ export default function BlogPostError({ error, reset }: { error: Error & { diges
   }, [error]);
 
   return (
-    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 p-4">
+    <div className="max-w-7xl mx-auto">
       <div className="text-center">
         {/* Error Icon */}
         <div className="flex justify-center mb-6">
