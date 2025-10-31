@@ -32,6 +32,7 @@ export const siteConfig = {
     "Web3",
   ],
   url: "https://hubra.app",
+  welcomeUrl: "https://hubra-home.vercel.app/",
   ogImage: "/hubra-og-image.png",
   twitter: {
     handle: "@hubraApp",
@@ -45,6 +46,11 @@ export const siteConfig = {
     {
       label: "Tokens",
       href: "/tokens",
+      show: true,
+    },
+    {
+      label: "Blog",
+      href: "/blog",
       show: true,
     },
     {
@@ -64,6 +70,7 @@ export const siteConfig = {
           icon: "mdi:blog",
           label: "Blog",
           href: "/blog",
+          show: true,
         },
       ],
     },
@@ -91,6 +98,12 @@ export const siteConfig = {
     {
       label: "Tokens",
       href: "/tokens",
+      show: true,
+    },
+    {
+      icon: "mdi:blog",
+      label: "Blog",
+      href: "/blog",
       show: true,
     },
     {
