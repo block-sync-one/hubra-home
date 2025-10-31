@@ -3,9 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 
-import { getAllPosts } from "./lib";
+import { getAllPosts, getAllPostsMeta } from "./lib";
 import { BLOG_CONSTANTS } from "./types";
 
+import { BlogSearch } from "@/components/blog";
 import { siteConfig } from "@/config/site";
 
 export const revalidate = 3600; // 1 hour - listing changes more frequently
@@ -63,6 +64,7 @@ export const metadata: Metadata = {
 
 export default async function BlogPage() {
   const allPosts = await getAllPosts();
+  const allPostsMeta = await getAllPostsMeta(); // For search functionality
 
   // Get the most recent featured post
   const featuredPost = allPosts.find((post) => post.featured);
@@ -124,18 +126,20 @@ export default async function BlogPage() {
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} id="blog-jsonld" type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
 
-      <div className="max-w-7xl mx-auto">
-        <header className="mb-12">
-          <h1 className="text-4xl font-bold mb-4 text-white">Blog</h1>
-          <p className="text-xl text-gray-400">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <header className=" mb-8 sm:mb-10 md:mb-12">
+          <h1 className="text-3xl md:text-4xl font-bold mb-3 text-white lg:w-8/12">
             Stay updated with the latest news, guides, and insights about Solana blockchain, staking, DeFi, and more.
-          </p>
+          </h1>
+          {/* Search Bar */}
+
+          <BlogSearch posts={allPostsMeta} />
         </header>
 
         {featuredPost && (
-          <section className="mb-12">
+          <section className="mb-8 sm:mb-10 md:mb-12">
             <Link href={`/blog/${featuredPost.slug}`}>
-              <div className="relative h-96 rounded-xl overflow-hidden bg-card hover:ring-2 hover:ring-primary-500 transition-all duration-300">
+              <div className="relative h-64 sm:h-80 md:h-96 rounded-lg sm:rounded-xl overflow-hidden bg-card hover:ring-2 hover:ring-primary-500 transition-all duration-300">
                 <Image
                   fill
                   priority
@@ -147,19 +151,19 @@ export default async function BlogPage() {
                   unoptimized={featuredPost?.image?.startsWith("http")}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <h2 className="text-3xl font-bold text-white mb-3">{featuredPost.title}</h2>
-                  <p className="text-gray-300 text-lg">{featuredPost.excerpt}</p>
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8">
+                  <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2 sm:mb-3 line-clamp-2">{featuredPost.title}</h2>
+                  <p className="text-gray-300 text-sm sm:text-base md:text-lg line-clamp-2 sm:line-clamp-3">{featuredPost.excerpt}</p>
                 </div>
               </div>
             </Link>
           </section>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-7 md:gap-8">
           <section className="lg:col-span-2">
-            <h2 className="text-2xl font-bold mb-6 text-white">Latest Articles</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <h2 className="text-xl sm:text-2xl md:text-2xl font-bold mb-4 sm:mb-5 md:mb-6 text-white">Latest Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
               {regularPosts.map((post) => (
                 <Link key={post.slug} href={`/blog/${post.slug}`}>
                   <article className="group bg-card rounded-xl overflow-hidden hover:ring-2 hover:ring-primary-500 transition-all duration-300 h-full">
@@ -186,7 +190,7 @@ export default async function BlogPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold mb-6 text-white">Popular Articles</h2>
+            <h2 className="text-xl sm:text-2xl md:text-2xl font-bold mb-4 sm:mb-5 md:mb-6 text-white">Popular Articles</h2>
             <div className="space-y-6 bg-card rounded-xl p-6">
               {popularPosts.map((post, index) => (
                 <div key={post.slug}>
@@ -196,7 +200,9 @@ export default async function BlogPage() {
                         <Icon className="text-primary-500" icon="mdi:fire" width={20} />
                       </div>
                       <article className="flex-1">
-                        <h3 className="text-lg font-semibold text-white group-hover:text-primary-400 transition-colors">{post.title}</h3>
+                        <h3 className="text-base sm:text-lg font-semibold text-white group-hover:text-primary-400 transition-colors">
+                          {post.title}
+                        </h3>
                       </article>
                     </div>
                   </Link>
