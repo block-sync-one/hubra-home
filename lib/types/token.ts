@@ -10,7 +10,8 @@ export interface Token {
   id: string; // Solana address
   name: string;
   symbol: string;
-  imgUrl: string;
+  logoURI: string;
+  fdv: number;
   price: string; // Formatted price
   change: number; // Price change % (for sorting/filtering)
   volume: string; // Formatted volume
@@ -26,7 +27,7 @@ export interface TokenDetail {
   // Basic
   name: string;
   symbol: string;
-  imgUrl: string;
+  logoURI: string;
   address: string; // Full address
   addressShort: string; // Shortened for display
 

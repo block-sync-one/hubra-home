@@ -12,7 +12,7 @@ interface MiniChartProps {
 }
 
 const MiniChartComponent: React.FC<MiniChartProps> = ({ tokenId, change, width = 120, height = 28 }) => {
-  const { elementRef, priceData, isLoading, isVisible } = useVisibleChart(tokenId);
+  const { elementRef, priceData } = useVisibleChart(tokenId);
 
   const chartConfig = useMemo(() => {
     if (priceData.length === 0) return null;
@@ -46,18 +46,16 @@ const MiniChartComponent: React.FC<MiniChartProps> = ({ tokenId, change, width =
     };
   }, [priceData, width, height, change, tokenId]);
 
-  if (isVisible && isLoading) {
-    return (
-      <div ref={elementRef} className="w-full h-full flex items-center justify-center min-w-[80px] min-h-[28px]">
-        <div className="w-3 h-3 border-2 border-gray-600 border-t-gray-400 rounded-full animate-spin" />
-      </div>
-    );
-  }
-
   if (!chartConfig) {
     return (
-      <div ref={elementRef} className="w-full h-full flex items-center justify-center text-xs text-gray-500 min-w-[80px] min-h-[28px]">
-        {isVisible ? "-" : "···"}
+      <div ref={elementRef} className="relative w-full h-full min-w-[80px] min-h-[28px] overflow-hidden">
+        <svg
+          className="absolute inset-0 w-full h-full opacity-20 animate-pulse"
+          preserveAspectRatio="none"
+          style={{ filter: "drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))" }}
+          viewBox="0 0 120 28">
+          <path className="text-gray-400" d="M0,14 Q30,8 60,10 T120,14" fill="none" stroke="currentColor" strokeWidth="2" />
+        </svg>
       </div>
     );
   }

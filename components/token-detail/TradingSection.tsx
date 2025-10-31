@@ -1,20 +1,21 @@
 import React from "react";
-import Image from "next/image";
 import { Button } from "@heroui/react";
 import { Card, CardBody } from "@heroui/react";
 import { Icon } from "@iconify/react";
 
+import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
+
 interface TradingSectionProps {
   tokenName: string;
   tokenSymbol: string;
-  tokenImgUrl: string;
+  tokenlogoURI: string;
   currentPrice: number;
 }
 
 interface TradingInputProps {
   tokenSymbol: string;
   tokenName: string;
-  tokenImgUrl: string;
+  tokenlogoURI: string;
   amount: string;
   estimatedValue: string;
 }
@@ -22,11 +23,21 @@ interface TradingInputProps {
 /**
  * Reusable Trading Input Component
  */
-const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tokenImgUrl, amount, estimatedValue }) => {
+const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tokenlogoURI, amount, estimatedValue }) => {
   return (
     <div className="flex items-center justify-between px-5 py-6 bg-background rounded-xl">
       <div className="flex items-center gap-2">
-        <Image alt={`${tokenName} token`} className="rounded-full" height={32} loading="lazy" sizes="32px" src={tokenImgUrl} width={32} />
+        <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+          <ImageWithSkeleton
+            alt={`${tokenName} token`}
+            className="w-full h-full object-cover"
+            height={32}
+            loading="lazy"
+            sizes="32px"
+            src={tokenlogoURI}
+            width={32}
+          />
+        </div>
         <div>
           <div className="text-lg font-medium text-white">{tokenSymbol}</div>
         </div>
@@ -38,7 +49,7 @@ const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tok
   );
 };
 
-export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPrice }: TradingSectionProps) {
+export function TradingSection({ tokenName, tokenSymbol, tokenlogoURI, currentPrice }: TradingSectionProps) {
   return (
     <Card className="bg-card rounded-2xl">
       <CardBody className="p-3.5">
@@ -46,17 +57,17 @@ export function TradingSection({ tokenName, tokenSymbol, tokenImgUrl, currentPri
           <TradingInput
             amount="1"
             estimatedValue={`≈ $${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`}
-            tokenImgUrl={tokenImgUrl}
             tokenName={tokenName}
             tokenSymbol={tokenSymbol}
+            tokenlogoURI={tokenlogoURI}
           />
 
           <TradingInput
             amount={currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 })}
             estimatedValue={`≈ 1 ${tokenSymbol}`}
-            tokenImgUrl="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png"
             tokenName="USD Coin"
             tokenSymbol="USDC"
+            tokenlogoURI="https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png"
           />
         </div>
         <Button

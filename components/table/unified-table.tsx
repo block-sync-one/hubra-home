@@ -4,17 +4,17 @@ import type { TableProps } from "./types";
 
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import { SortDescriptor, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@heroui/react";
-import Image from "next/image";
 import { Icon } from "@iconify/react";
+
+import TableSkeleton from "./skeleton/table-skeleton";
+
+import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
+import { fixedNumber } from "@/lib/utils";
 
 // Simple get function to replace lodash
 const get = (obj: any, path: string) => {
   return path.split(".").reduce((current, key) => current?.[key], obj);
 };
-
-import TableSkeleton from "./skeleton/table-skeleton";
-
-import { fixedNumber } from "@/lib/utils";
 
 const ROWS_PER_PAGE = 100;
 
@@ -222,11 +222,11 @@ const UnifiedTable = <T extends Record<string, any>>({
               {/* Left Column: Image, Name, Symbol */}
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
-                  <Image
+                  <ImageWithSkeleton
                     alt={`${item.name} (${item.symbol}) logo`}
                     className="w-full h-full object-cover"
                     height={32}
-                    src={item.imgUrl || "/logo.svg"}
+                    src={item.logoURI || "/logo.svg"}
                     width={32}
                   />
                 </div>

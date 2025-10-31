@@ -3,13 +3,13 @@ import "server-only";
 import Redis, { RedisOptions } from "ioredis";
 
 export const CACHE_TTL = {
-  MARKET_DATA: 960, // 15 minutes - matches cron frequency
-  TOKEN_DETAIL: 960, // 15 minutes - matches cron frequency
-  PRICE_HISTORY: 960, // 15 minutes
+  MARKET_DATA: 300, // 5 minutes - matches cron frequency
+  TOKEN_DETAIL: 300, // 5 minutes - matches cron frequency
+  PRICE_HISTORY: 300, // 5 minutes
   TRENDING: 300, // 5 minutes
   GLOBAL_STATS: 900, // 15 minutes
-  SEARCH: 960, // 15 minutes
-  STABLECOIN_DATA: 960, // 15min
+  SEARCH: 300, // 5 minutes
+  STABLECOIN_DATA: 300, // 15min
   EXCHANGE_RATES: 3600, // 1 hour - exchange rates change slowly
 } as const;
 
@@ -173,6 +173,7 @@ export const redis = RedisClient.getInstance();
 
 export const cacheKeys = {
   marketData: (limit: number, offset: number) => `market:${limit}:${offset}`,
+  newlyListed: (limit: number, offset: number) => `newly-listed:${limit}:${offset}`,
   tokenDetail: (address: string) => `token:${address}`,
   priceHistory: (address: string, days: number | string) => `price:${address}:${days}`,
   trending: (limit: number) => `trending:${limit}`,

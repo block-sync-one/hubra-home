@@ -1,5 +1,6 @@
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { Token } from "@/lib/types/token";
+import { MARKET_CAP_FILTERS } from "@/lib/constants/market";
 
 export interface BirdeyeSearchItem {
   name: string;
@@ -49,24 +50,33 @@ function transformSearchItemToToken(item: BirdeyeSearchItem): Token {
     id: item.address,
     name: item.name === "Wrapped SOL" ? "Solana" : item.name || "Unknown Token",
     symbol: item.symbol?.toUpperCase() || "???",
-    imgUrl: item.logo_uri || "/logo.svg",
+    logoURI: item.logo_uri || "/logo.svg",
     price: "", // Will be formatted by the caller based on currency preference
     change: item.price_change_24h_percent || 0,
     volume: "", // Will be formatted by the caller
     rawVolume,
+    fdv: item.fdv || 0,
     marketCap: item.market_cap || 0,
     rawPrice,
   };
 }
 
+/**
+ * Search for tokens using Birdeye API
+ * Filters out spam tokens with market cap below threshold
+ *
+ * @param keyword - Search term (token name, symbol, or address)
+ * @returns Array of matching tokens sorted by volume
+ */
 export async function searchTokens(keyword: string): Promise<Token[]> {
+  // Return empty array for invalid input
   if (!keyword || keyword.trim().length === 0) {
     return [];
   }
 
   try {
     const params = {
-      keyword,
+      keyword: keyword.trim(),
       target: "token",
       search_mode: "fuzzy",
       search_by: "combination",
@@ -79,8 +89,12 @@ export async function searchTokens(keyword: string): Promise<Token[]> {
 
     const searchItems: BirdeyeSearchItem[] = data?.data?.items?.[0]?.result || [];
 
-    return searchItems.map(transformSearchItemToToken).filter((t) => t.marketCap && t.marketCap > 100000);
+    // Filter out spam/dead tokens using constant threshold
+    return searchItems
+      .map(transformSearchItemToToken)
+      .filter((token) => token.marketCap && token.marketCap > MARKET_CAP_FILTERS.MIN_VIABLE);
   } catch (error) {
+    // Re-throw error to be handled by caller
     throw error;
   }
 }

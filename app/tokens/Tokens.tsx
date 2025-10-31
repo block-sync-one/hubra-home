@@ -25,7 +25,7 @@ const StatCard = memo(function StatCard({ title, value, change, className = "" }
 
         <div className="flex items-center mt-1">
           <p className="text-lg font-medium whitespace-nowrap text-white">{value}</p>
-          {change !== undefined && <PriceChangeChip changePercent={change} className={"bg-transparent"} />}
+          {change !== undefined && change != 0 && <PriceChangeChip changePercent={change} className={"bg-transparent"} />}
         </div>
       </div>
     </div>
@@ -79,29 +79,30 @@ interface StatData {
   isPositive?: boolean;
 }
 
-interface GlobalData {
+interface TokensProps {
+  totalMarketCap: number;
+  totalVolume: number;
+  marketCapChange: number;
+  solanaFDV: number;
+  solanaFDVChange: number;
+  newTokensCount: number;
+}
+
+interface StablecoinData {
   data: {
-    total_market_cap: { usd: number };
-    total_volume: { usd: number };
-    market_cap_change_percentage_24h_usd: number;
-    active_cryptocurrencies: number;
-    markets: number;
-    new_tokens?: number;
-    solana_tvl?: number;
-    solana_tvl_change?: number;
-    stablecoins_tvl?: number;
-    stablecoins_tvl_change?: number;
+    stablecoins_tvl: number;
+    stablecoins_tvl_change: number;
   };
 }
 
-export default function Tokens() {
+export default function Tokens({ totalMarketCap, totalVolume, marketCapChange, solanaFDV, solanaFDVChange, newTokensCount }: TokensProps) {
   const { formatPrice } = useCurrency();
-  const [globalData, setGlobalData] = useState<GlobalData | null>(null);
+  const [stablecoinData, setStablecoinData] = useState<StablecoinData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchGlobalData() {
+    async function fetchStablecoinData() {
       try {
         setLoading(true);
         setError(null);
@@ -111,57 +112,54 @@ export default function Tokens() {
         });
 
         if (!response.ok) {
-          throw new Error("Failed to fetch global data");
+          throw new Error("Failed to fetch stablecoin data");
         }
 
         const data = await response.json();
 
-        setGlobalData(data);
+        setStablecoinData(data);
       } catch {
-        setError("Failed to fetch global data");
+        setError("Failed to fetch stablecoin data");
       } finally {
         setLoading(false);
       }
     }
 
-    fetchGlobalData();
+    fetchStablecoinData();
   }, []);
 
   const statsData: StatData[] = useMemo(() => {
-    if (!globalData?.data) return [];
-
-    const { data } = globalData;
-
+    // Use props for market data and API for stablecoin data
     return [
       {
         title: "Total Market Cap",
-        value: formatPrice(data.total_market_cap.usd),
-        change: data.market_cap_change_percentage_24h_usd,
-        isPositive: (data.market_cap_change_percentage_24h_usd || 0) >= 0,
+        value: formatPrice(totalMarketCap),
+        change: marketCapChange,
+        isPositive: marketCapChange >= 0,
       },
       {
         title: "Trading Vol",
-        value: formatPrice(data.total_volume.usd),
+        value: formatPrice(totalVolume),
         isPositive: true,
       },
-      {
+      /*      {
         title: "New Tokens",
-        value: (data.new_tokens || 0).toLocaleString(),
-      },
+        value: newTokensCount.toLocaleString(),
+      },*/
       {
-        title: "Solana TVL",
-        value: formatPrice(data.solana_tvl || 0),
-        change: data.solana_tvl_change,
-        isPositive: (data.solana_tvl_change || 0) >= 0,
+        title: "Solana FDV",
+        value: formatPrice(solanaFDV),
+        change: solanaFDVChange,
+        isPositive: solanaFDVChange >= 0,
       },
       {
         title: "Stablecoins TVL",
-        value: formatPrice(data.stablecoins_tvl || 0),
-        change: data.stablecoins_tvl_change,
-        isPositive: (data.stablecoins_tvl_change || 0) >= 0,
+        value: formatPrice(stablecoinData?.data?.stablecoins_tvl || 0),
+        change: stablecoinData?.data?.stablecoins_tvl_change,
+        isPositive: (stablecoinData?.data?.stablecoins_tvl_change || 0) >= 0,
       },
     ];
-  }, [globalData, formatPrice]);
+  }, [totalMarketCap, totalVolume, marketCapChange, solanaFDV, solanaFDVChange, newTokensCount, stablecoinData, formatPrice]);
 
   const statsCards = useMemo(
     () =>
@@ -206,7 +204,7 @@ export default function Tokens() {
   }
 
   // Handle no data scenario
-  if (!globalData || !globalData.data) {
+  if (!stablecoinData || !stablecoinData.data) {
     return (
       <div className="flex flex-col gap-6">
         <h2 className="text-2xl font-medium text-white">Tokens</h2>

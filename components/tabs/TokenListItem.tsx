@@ -3,8 +3,9 @@
 import type { Token } from "@/lib/types/token";
 
 import React from "react";
-import Image from "next/image";
 import { Icon } from "@iconify/react";
+
+import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
 
 interface TokenListItemProps {
   token: Token;
@@ -22,11 +23,11 @@ export const TokenListItem: React.FC<TokenListItemProps> = ({ token, rank, onCli
       {/* Left Column: Image, Name, Symbol */}
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
-          <Image
+          <ImageWithSkeleton
             alt={`${token.name} (${token.symbol}) logo`}
             className="w-full h-full object-cover"
             height={32}
-            src={token.imgUrl || "/logo.svg"}
+            src={token.logoURI || "/logo.svg"}
             width={32}
           />
         </div>

@@ -40,7 +40,7 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
               id: item.item.coin_id || item.item.address,
               name: item.item.name === "Wrapped SOL" ? "Solana" : item.item.name,
               symbol: item.item.symbol.toUpperCase(),
-              imgUrl: item.item.small || item.item.logoURI || "/logo.svg",
+              logoURI: item.item.small || item.item.logoURI || "/logo.svg",
               price: "",
               change: item.item.data?.price_change_percentage_24h?.usd || 0,
               volume: "",

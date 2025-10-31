@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Card } from "@heroui/react";
 import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
 
@@ -17,11 +16,12 @@ import {
 } from "@/lib/constants";
 import { seededRandom } from "@/lib/utils/random";
 import { PriceChangeChip } from "@/components/price";
+import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
 
 interface TokenCardProps {
   name: string;
   symbol?: string;
-  imgUrl?: string;
+  logoURI?: string;
   price?: string;
   change?: number;
   volume?: string;
@@ -94,7 +94,7 @@ const transformPriceData = (
   return data;
 };
 
-export function TokenCard({ name, symbol, imgUrl, price, change, coinId }: TokenCardProps) {
+export function TokenCard({ name, symbol, logoURI, price, change, coinId }: TokenCardProps) {
   const router = useRouter();
   const { priceHistory } = usePriceHistory(coinId || "");
 
@@ -119,16 +119,12 @@ export function TokenCard({ name, symbol, imgUrl, price, change, coinId }: Token
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
-            <Image
+            <ImageWithSkeleton
               alt={`${name} (${symbol}) logo`}
               className="w-full h-full object-cover"
-              height={20}
-              src={imgUrl || "/logo.svg"}
-              width={20}
-              onError={(e) => {
-                // Fallback to default logo on error
-                e.currentTarget.src = "/logo.svg";
-              }}
+              height={32}
+              src={logoURI || "/logo.svg"}
+              width={32}
             />
           </div>
           <div className="flex items-center gap-2 flex-1 min-w-0">
