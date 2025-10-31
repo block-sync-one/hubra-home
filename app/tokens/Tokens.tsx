@@ -2,6 +2,7 @@
 
 import React, { memo, useMemo, useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
+import { Button } from "@heroui/react";
 
 import { useCurrency } from "@/lib/context/currency-format";
 import { StatsGridSkeleton } from "@/components/StatsCardSkeleton";
@@ -190,12 +191,12 @@ export default function Tokens({ totalMarketCap, totalVolume, marketCapChange, s
               <Icon className="w-12 h-12 text-red-500 mx-auto mb-4" icon="mdi:alert-circle" />
               <h3 className="text-lg font-medium text-white mb-2">Failed to Load Data</h3>
               <p className="text-gray-400 mb-6">{error}</p>
-              <button
+              <Button
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                 onClick={() => window.location.reload()}>
                 <Icon className="w-4 h-4 inline mr-2" icon="mdi:refresh" />
                 Retry
-              </button>
+              </Button>
             </div>
           </div>
         </div>
