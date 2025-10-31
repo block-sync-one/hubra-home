@@ -59,7 +59,7 @@ export function RelatedPosts({ posts }: RelatedPostsProps) {
                 <p className="text-xs sm:text-sm text-gray-400 line-clamp-3 mb-3 sm:mb-4 flex-1">{post.excerpt}</p>
 
                 {/* Meta Info */}
-                <div className="flex items-center gap-4 text-xs text-gray-500 pt-3 border-t border-gray-800">
+                <div className="flex items-center gap-4 text-xs text-gray-500">
                   <div className="flex items-center gap-1">
                     <Icon className="w-4 h-4" icon="mdi:calendar" />
                     <time dateTime={post.date}>

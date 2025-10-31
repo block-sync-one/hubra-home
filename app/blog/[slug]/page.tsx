@@ -165,7 +165,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} id="article-jsonld" type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-6 sm:mb-7 md:mb-8">
           <Link
             className="inline-flex items-center gap-2 text-sm sm:text-base text-gray-400 hover:text-white transition-colors group"
@@ -256,7 +256,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
               prose-td:text-gray-300 prose-td:p-3 prose-td:border-t prose-td:border-gray-800"
           />
 
-          <footer className="mt-12 sm:mt-14 md:mt-16 pt-6 sm:pt-7 md:pt-8 border-t border-gray-800">
+          <footer>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-5 md:gap-6">
               <div className="flex items-center text-gray-400">
                 <Icon className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-500" icon="mdi:share-variant" />

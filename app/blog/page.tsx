@@ -3,10 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 
-import { getAllPosts, getAllPostsMeta } from "./lib";
+import { getAllPosts } from "./lib";
 import { BLOG_CONSTANTS } from "./types";
 
-import { BlogSearch } from "@/components/blog";
 import { siteConfig } from "@/config/site";
 
 export const revalidate = 3600; // 1 hour - listing changes more frequently
@@ -64,7 +63,6 @@ export const metadata: Metadata = {
 
 export default async function BlogPage() {
   const allPosts = await getAllPosts();
-  const allPostsMeta = await getAllPostsMeta(); // For search functionality
 
   // Get the most recent featured post
   const featuredPost = allPosts.find((post) => post.featured);
@@ -126,15 +124,16 @@ export default async function BlogPage() {
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} id="blog-jsonld" type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <header className=" mb-8 sm:mb-10 md:mb-12">
+      <div className="max-w-7xl mx-auto">
+        {/*        <header className="mb-8 sm:mb-10 md:mb-12">
+
+          <p className="text-base sm:text-lg md:text-xl text-gray-400">
+            Blog
+          </p>
           <h1 className="text-3xl md:text-4xl font-bold mb-3 text-white lg:w-8/12">
             Stay updated with the latest news, guides, and insights about Solana blockchain, staking, DeFi, and more.
           </h1>
-          {/* Search Bar */}
-
-          <BlogSearch posts={allPostsMeta} />
-        </header>
+        </header>*/}
 
         {featuredPost && (
           <section className="mb-8 sm:mb-10 md:mb-12">
