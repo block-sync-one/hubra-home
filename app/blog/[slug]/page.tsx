@@ -4,9 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 
-import { getPostBySlug, getAllBlogSlugs } from "../lib";
+import { getPostBySlug, getAllBlogSlugs, getRelatedPosts } from "../lib";
 
-import { ShareButtons } from "@/components/blog";
+import { ShareButtons, RelatedPosts } from "@/components/blog";
 import { siteConfig } from "@/config/site";
 import { calculateReadingTime, formatReadingTime } from "@/lib/utils/blog-helpers";
 
@@ -101,6 +101,9 @@ export default async function BlogPost({ params }: BlogPostProps) {
   const readingTimeMinutes = post.readingTime || calculateReadingTime(post.content);
   const readingTimeText = formatReadingTime(readingTimeMinutes);
 
+  // Get related posts (3 posts)
+  const relatedPosts = await getRelatedPosts(post, 3);
+
   // Structured data for blog post
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -162,49 +165,51 @@ export default async function BlogPost({ params }: BlogPostProps) {
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} id="article-jsonld" type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
 
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <Link className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors group" href="/blog">
-            <Icon className="w-5 h-5 group-hover:-translate-x-1 transition-transform" icon="mdi:arrow-left" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between mb-6 sm:mb-7 md:mb-8">
+          <Link
+            className="inline-flex items-center gap-2 text-sm sm:text-base text-gray-400 hover:text-white transition-colors group"
+            href="/blog">
+            <Icon className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" icon="mdi:arrow-left" />
             <span>Back to Blog</span>
           </Link>
         </div>
 
         <article className="max-w-7xl mx-auto">
-          <header className="mb-12">
+          <header className="mb-8 sm:mb-10 md:mb-12">
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-6">
+              <div className="flex flex-wrap gap-2 mb-4 sm:mb-5 md:mb-6">
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 text-xs font-medium bg-primary-500/10 text-primary-400 rounded-full uppercase tracking-wider">
+                    className="px-2.5 sm:px-3 py-1 text-xs font-medium bg-primary-500/10 text-primary-400 rounded-full uppercase tracking-wider">
                     {tag}
                   </span>
                 ))}
               </div>
             )}
 
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white leading-tight">{post.title}</h1>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white leading-tight">{post.title}</h1>
 
             {/* Meta Information */}
-            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-8">
-              <div className="flex items-center gap-2">
-                <Icon className="w-5 h-5 text-gray-500" icon="mdi:calendar" />
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-400 mb-6 sm:mb-7 md:mb-8">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" icon="mdi:calendar" />
                 <time dateTime={post.date}>
                   {new Date(post.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                 </time>
               </div>
-              <span className="text-gray-600">•</span>
-              <div className="flex items-center gap-2">
-                <Icon className="w-5 h-5 text-gray-500" icon="mdi:clock-outline" />
+              <span className="text-gray-600 hidden sm:inline">•</span>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" icon="mdi:clock-outline" />
                 <span>{readingTimeText}</span>
               </div>
               {post.author && (
                 <>
-                  <span className="text-gray-600">•</span>
-                  <div className="flex items-center gap-2">
-                    <Icon className="w-5 h-5 text-gray-500" icon="mdi:account" />
+                  <span className="text-gray-600 hidden sm:inline">•</span>
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" icon="mdi:account" />
                     <span>{post.author}</span>
                   </div>
                 </>
@@ -213,7 +218,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
           </header>
 
           {/* Cover Image */}
-          <div className="relative w-full rounded-xl overflow-hidden mb-12 bg-gray-900">
+          <div className="relative w-full rounded-lg sm:rounded-xl overflow-hidden mb-8 sm:mb-10 md:mb-12 bg-gray-900">
             <Image
               priority
               alt={post.title}
@@ -251,16 +256,19 @@ export default async function BlogPost({ params }: BlogPostProps) {
               prose-td:text-gray-300 prose-td:p-3 prose-td:border-t prose-td:border-gray-800"
           />
 
-          <footer className="mt-16 pt-8 border-t border-gray-800">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <footer className="mt-12 sm:mt-14 md:mt-16 pt-6 sm:pt-7 md:pt-8 border-t border-gray-800">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-5 md:gap-6">
               <div className="flex items-center text-gray-400">
-                <Icon className="w-5 h-5 mr-2 text-gray-500" icon="mdi:share-variant" />
-                <span className="text-sm font-medium">Share this article</span>
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-gray-500" icon="mdi:share-variant" />
+                <span className="text-xs sm:text-sm font-medium">Share this article</span>
               </div>
 
               <ShareButtons title={post.title} url={url} />
             </div>
           </footer>
+
+          {/* Related Posts */}
+          <RelatedPosts posts={relatedPosts} />
         </article>
       </div>
     </>
