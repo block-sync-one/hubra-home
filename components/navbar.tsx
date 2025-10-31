@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -21,6 +22,7 @@ import { Icon } from "@iconify/react";
 import { siteConfig } from "@/config/site";
 
 export const Navbar = () => {
+  const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -28,6 +30,28 @@ export const Navbar = () => {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  /**
+   * Check if a path is currently active
+   * @param href - The path to check
+   * @returns true if the path matches the current pathname
+   */
+  const isActive = (href: string): boolean => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+
+    return pathname.startsWith(href);
+  };
+
+  /**
+   * Check if a dropdown menu has any active child items
+   * @param navItems - Array of navigation items
+   * @returns true if any child item is active
+   */
+  const hasActiveChild = (navItems?: Array<{ href: string; label: string; icon?: string }>): boolean => {
+    return navItems?.some((child) => isActive(child.href)) ?? false;
+  };
 
   // Filter navigation items (exclude Home for desktop, Stats will be separate)
   const navItems = siteConfig.navItems.filter((item) => item.label !== "Home" && item.label !== "Stats");
@@ -64,7 +88,11 @@ export const Navbar = () => {
                   <Dropdown>
                     <DropdownTrigger>
                       <Button
-                        className="text-[#797B92] hover:text-white transition-colors duration-200"
+                        className={`font-medium text-sm transition-colors duration-200 ${
+                          hasActiveChild(item.navItems)
+                            ? "text-primary border-b-2 border-primary rounded-none hover:rounded-xl"
+                            : "text-[#797B92] hover:text-white"
+                        }`}
                         endContent={<Icon icon="mdi:chevron-down" width={16} />}
                         variant="light">
                         {item.label}
@@ -74,7 +102,12 @@ export const Navbar = () => {
                       {item.navItems.map((child) => (
                         <DropdownItem
                           key={child.href}
-                          className="text-white hover:bg-white/10"
+                          as={NextLink}
+                          className={`transition-colors duration-200 ${
+                            isActive(child.href)
+                              ? "text-white bg-white/20 font-semibold"
+                              : "text-gray-300 hover:bg-white/10 hover:text-white"
+                          }`}
                           href={child.href}
                           startContent={child.icon && isMounted ? <Icon className="w-4 h-4" icon={child.icon} /> : null}>
                           {child.label}
@@ -84,13 +117,17 @@ export const Navbar = () => {
                   </Dropdown>
                 ) : (
                   item.href && (
-                    <NextLink href={item.href}>
-                      <Button
-                        className="text-[#797B92] font-medium text-sm hover:text-white transition-colors duration-200"
-                        variant="light">
-                        {item.label}
-                      </Button>
-                    </NextLink>
+                    <Button
+                      as={NextLink}
+                      className={`font-medium text-sm transition-colors duration-200 ${
+                        isActive(item.href)
+                          ? "text-primary border-b-2 border-primary rounded-none hover:rounded-xl"
+                          : "text-[#797B92] hover:text-white"
+                      }`}
+                      href={item.href}
+                      variant="light">
+                      {item.label}
+                    </Button>
                   )
                 )}
               </NavbarItem>
@@ -126,7 +163,7 @@ export const Navbar = () => {
         <NavbarItem className="lg:hidden">
           <Button
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            className="text-white bg-transparent hover:bg-white/10 p-2"
+            className="text-primary bg-transparent hover:bg-white/10 p-2"
             variant="light"
             onPress={() => setIsMenuOpen(!isMenuOpen)}>
             <div className="flex flex-col gap-1">
@@ -147,12 +184,18 @@ export const Navbar = () => {
                 <NavbarMenuItem key={`${item.label}-${index}`}>
                   {item.navItems ? (
                     <div className="space-y-2">
-                      <div className="text-lg font-semibold text-white px-4 py-2">{item.label}</div>
+                      <div className={`text-lg font-semibold px-4 py-2 ${hasActiveChild(item.navItems) ? "text-white" : "text-gray-400"}`}>
+                        {item.label}
+                      </div>
                       <div className="space-y-1">
                         {item.navItems.map((child) => (
                           <NextLink
                             key={child.href}
-                            className="flex items-center gap-3 px-6 py-3 text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
+                            className={`flex items-center gap-3 px-6 py-3 transition-colors duration-200 ${
+                              isActive(child.href)
+                                ? "text-white bg-white/20 font-semibold border-l-4 border-white"
+                                : "text-gray-300 hover:text-white hover:bg-white/10"
+                            }`}
                             href={child.href}
                             onClick={() => setIsMenuOpen(false)}>
                             {child.icon && isMounted && <Icon className="w-5 h-5" icon={child.icon} />}
@@ -164,7 +207,11 @@ export const Navbar = () => {
                   ) : (
                     item.href && (
                       <NextLink
-                        className="block py-3 text-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
+                        className={`block py-3 text-lg transition-colors duration-200 ${
+                          isActive(item.href)
+                            ? "text-primary bg-white/20 font-semibold border-l-4 border-primary pl-4"
+                            : "text-gray-300 hover:text-white hover:bg-white/10 pl-4"
+                        }`}
                         href={item.href}
                         onClick={() => setIsMenuOpen(false)}>
                         {item.label}
@@ -178,7 +225,11 @@ export const Navbar = () => {
           {/* Mobile Stats Button */}
           {/*          <NavbarMenuItem>
             <NextLink
-              className="block py-3 text-lg text-gray-300 hover:text-white hover:bg-white/10 transition-colors duration-200"
+              className={`block py-3 text-lg transition-colors duration-200 ${
+                isActive("/stats")
+                  ? "text-white bg-white/20 font-semibold border-l-4 border-white pl-4"
+                  : "text-gray-300 hover:text-white hover:bg-white/10 pl-0"
+              }`}
               href="/stats"
               onClick={() => setIsMenuOpen(false)}>
               Stats

@@ -100,6 +100,12 @@ export const siteConfig = {
       show: true,
     },
     {
+      icon: "mdi:blog",
+      label: "Blog",
+      href: "/blog",
+      show: true,
+    },
+    {
       label: "DeFi",
       href: "/defi",
     },
