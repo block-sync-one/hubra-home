@@ -4,11 +4,11 @@ import Image from "next/image";
 import { Icon } from "@iconify/react";
 
 import { getAllPosts } from "./lib";
-import { DISPLAY_SETTINGS } from "./constants";
+import { BLOG_CONSTANTS } from "./types";
 
 import { siteConfig } from "@/config/site";
 
-export const revalidate = 86400; // 24 hours
+export const revalidate = 3600; // 1 hour - listing changes more frequently
 
 export const metadata: Metadata = {
   title: "Blog | Hubra - Solana News, Guides & DeFi Insights",
@@ -71,7 +71,7 @@ export default async function BlogPage() {
   const regularPosts = allPosts.filter((post, index) => !post.featured || (index > 0 && post.featured));
 
   // Get popular posts for sidebar
-  const popularPosts = allPosts.filter((post) => post.popular).slice(0, DISPLAY_SETTINGS.POPULAR_POSTS_COUNT);
+  const popularPosts = allPosts.filter((post) => post.popular).slice(0, BLOG_CONSTANTS.DISPLAY.POPULAR_COUNT);
 
   // Structured data for blog listing
   const blogJsonLd = {

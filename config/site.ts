@@ -32,6 +32,7 @@ export const siteConfig = {
     "Web3",
   ],
   url: "https://hubra.app",
+  welcomeUrl: "https://hubra-home.vercel.app/",
   ogImage: "/hubra-og-image.png",
   twitter: {
     handle: "@hubraApp",

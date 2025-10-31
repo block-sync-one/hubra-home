@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Icon } from "@iconify/react";
 
 import { getPostBySlug, getAllBlogSlugs } from "../lib";
-import ShareButtons from "../ShareButtons";
 
+import { ShareButtons } from "@/components/blog";
 import { siteConfig } from "@/config/site";
 import { calculateReadingTime, formatReadingTime } from "@/lib/utils/blog-helpers";
 
@@ -95,7 +95,7 @@ export async function generateMetadata({ params }: BlogPostProps): Promise<Metad
 export default async function BlogPost({ params }: BlogPostProps) {
   const resolvedParams = await params;
   const post = await getPostBySlug(resolvedParams.slug);
-  const url = `${siteConfig.url}/blog/${post.slug}`;
+  const url = `${siteConfig.welcomeUrl}/blog/${post.slug}`;
 
   // Calculate reading time if not provided
   const readingTimeMinutes = post.readingTime || calculateReadingTime(post.content);
@@ -258,7 +258,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
                 <span className="text-sm font-medium">Share this article</span>
               </div>
 
-              <ShareButtons url={url} />
+              <ShareButtons title={post.title} url={url} />
             </div>
           </footer>
         </article>
