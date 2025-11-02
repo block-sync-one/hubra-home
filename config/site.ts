@@ -56,6 +56,7 @@ export const siteConfig = {
     {
       label: "DeFi",
       href: "/defi",
+      show: true,
     },
     {
       label: "Resources",
@@ -109,6 +110,7 @@ export const siteConfig = {
     {
       label: "DeFi",
       href: "/defi",
+      show: true,
     },
     {
       label: "Stats",

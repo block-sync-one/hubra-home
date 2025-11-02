@@ -205,3 +205,35 @@ export function getPegBreakdown(chainData: StablecoinChainData) {
     other,
   };
 }
+
+/**
+ * Interface for DeFiLlama protocol data
+ */
+export interface DeFiLlamaProtocol {
+  id: string;
+  name: string;
+  slug: string;
+  logo: string;
+  tvl: number;
+  change_1d?: number;
+  change_7d?: number;
+  change_1m?: number;
+  category?: string;
+  chains?: string[];
+  chain?: string;
+  description?: string;
+  url?: string;
+  twitter?: string;
+  github?: string;
+}
+
+/**
+ * Fetch all protocols with their TVL data
+ *
+ * @returns List of all DeFi protocols
+ */
+export async function fetchTVL(): Promise<{ protocols: DeFiLlamaProtocol[] }> {
+  const protocols = await fetchFromDeFiLlama<DeFiLlamaProtocol[]>(`${DEFILLAMA_API_URL}/protocols`, "DeFiLlama Protocols API error");
+
+  return { protocols };
+}
