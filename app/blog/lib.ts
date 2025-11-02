@@ -1,5 +1,5 @@
 /**
- * Blog Library - Improved
+ * Blog Library
  * Enhanced error handling, validation, and performance optimizations
  */
 
@@ -82,12 +82,9 @@ async function parseMDXFile(slug: string): Promise<Result<BlogPost>> {
     // Try .mdx first, then .md
     let filePath: string | null = null;
     const mdxPath = path.join(CONTENT_DIR, `${slug}.mdx`);
-    const mdPath = path.join(CONTENT_DIR, `${slug}.md`);
 
     if (fs.existsSync(mdxPath)) {
       filePath = mdxPath;
-    } else if (fs.existsSync(mdPath)) {
-      filePath = mdPath;
     }
 
     if (!filePath) {
