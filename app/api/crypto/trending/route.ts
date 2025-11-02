@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 import { loggers } from "@/lib/utils/logger";
-import { setUnifiedToken, toUnifiedTokenData } from "@/lib/data/unified-token-cache";
+import { toUnifiedTokenData, setManyUnifiedTokens } from "@/lib/data/unified-token-cache";
 
 const FALLBACK_TRENDING_DATA = {
   coins: [],
@@ -12,9 +12,18 @@ const FALLBACK_TRENDING_DATA = {
 function cacheIndividualTrendingTokens(tokens: any[]): void {
   (async () => {
     try {
-      await Promise.all(tokens.map((token) => setUnifiedToken(token.address, toUnifiedTokenData(token, "list"), CACHE_TTL.TRENDING)));
+      const startTime = performance.now();
 
-      loggers.cache.debug(`✓ Cached ${tokens.length} individual trending tokens (async)`);
+      const batchData = tokens.map((token) => ({
+        address: token.address,
+        data: toUnifiedTokenData(token, "list"),
+      }));
+
+      await setManyUnifiedTokens(batchData, CACHE_TTL.TRENDING);
+
+      const duration = performance.now() - startTime;
+
+      loggers.cache.debug(`✓ Cached ${tokens.length} individual trending tokens in ${duration.toFixed(0)}ms (batched)`);
     } catch (error) {
       loggers.cache.error("Failed to cache individual trending tokens:", error);
     }

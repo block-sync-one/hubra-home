@@ -74,11 +74,19 @@ export const metadata: Metadata = {
  * Market stats are calculated server-side and cached in Redis
  */
 export default async function TokensPage() {
+  const perfStart = performance.now();
+
   // Fetch main market data and newly listed tokens in parallel for performance
   const [marketDataResult, newlyListedResult] = await Promise.all([
     fetchMarketData(TOKEN_LIMITS.TOKENS_PAGE, 0),
     fetchNewlyListedTokens(TOKEN_LIMITS.TOKENS_PAGE, 0, 24), // Last 24 hours
   ]);
+
+  const perfDuration = performance.now() - perfStart;
+
+  if (process.env.NODE_ENV === "development") {
+    console.log(`📊 Tokens page data fetch: ${perfDuration.toFixed(0)}ms`);
+  }
 
   // Extract data and stats
   const marketTokens = marketDataResult.data;

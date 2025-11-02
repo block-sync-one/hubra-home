@@ -10,6 +10,29 @@ interface ImageWithSkeletonProps extends Omit<ImageProps, "onLoad" | "onError"> 
 }
 
 /**
+ * Validate if a string is a valid URL or path
+ */
+function isValidImageSrc(src: any): boolean {
+  if (!src || src.trim() === "") {
+    return false;
+  }
+
+  // Check if it's a valid path (starts with /)
+  if (src.startsWith("/")) {
+    return true;
+  }
+
+  // Check if it's a valid URL
+  try {
+    new URL(src);
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Image component with loading skeleton and automatic fallback
  *
  * Features:
@@ -17,12 +40,14 @@ interface ImageWithSkeletonProps extends Omit<ImageProps, "onLoad" | "onError"> 
  * - Automatic fallback to default logo on error
  * - Prevents infinite loops
  * - Works with Next.js Image optimization
+ * - Validates URLs before rendering
  */
 export function ImageWithSkeleton({ src, alt, fallbackSrc = "/logo.svg", className = "", ...props }: ImageWithSkeletonProps) {
   const [error, setError] = useState(false);
 
-  // Determine which src to use
-  const imageSrc = error ? fallbackSrc : src;
+  // Validate and determine which src to use
+  const isValidSrc = isValidImageSrc(src);
+  const imageSrc = error || !isValidSrc ? fallbackSrc : src;
 
   const handleError = () => {
     // Prevent infinite loop - only try fallback once
