@@ -76,7 +76,6 @@ export const metadata: Metadata = {
 export default async function TokensPage() {
   const perfStart = performance.now();
 
-  // Fetch main market data and newly listed tokens in parallel for performance
   const [marketDataResult, newlyListedResult] = await Promise.all([
     fetchMarketData(TOKEN_LIMITS.TOKENS_PAGE, 0),
     fetchNewlyListedTokens(TOKEN_LIMITS.TOKENS_PAGE, 0, 24), // Last 24 hours
@@ -91,7 +90,7 @@ export default async function TokensPage() {
   // Extract data and stats
   const marketTokens = marketDataResult.data;
   const newlyListedTokens = newlyListedResult.data;
-  const { totalMarketCap, totalVolume, totalFDV, marketCapChange } = marketDataResult.stats;
+  const { totalFDV, totalVolume, solFDV, totalFDVChange } = marketDataResult.stats;
   const newTokensCount = newlyListedTokens.length;
 
   // Sort data for different views (reuse same data)
@@ -126,11 +125,11 @@ export default async function TokensPage() {
       <main className="flex flex-col gap-12">
         <div className="md:max-w-7xl mx-auto w-full">
           <Tokens
-            marketCapChange={marketCapChange}
+            fdvChange={totalFDVChange}
             newTokensCount={newTokensCount}
-            solanaFDV={totalFDV}
-            solanaFDVChange={0}
-            totalMarketCap={totalMarketCap}
+            solFDV={solFDV}
+            solFDVChange={0}
+            totalFDV={totalFDV}
             totalVolume={totalVolume}
           />
         </div>

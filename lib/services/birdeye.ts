@@ -4,15 +4,6 @@ export const BIRDEYE_API_BASE_URL = "https://public-api.birdeye.so";
 
 export const SUPPORTED_CHAINS = {
   SOLANA: "solana",
-  ETHEREUM: "ethereum",
-  ARBITRUM: "arbitrum",
-  AVALANCHE: "avalanche",
-  BSC: "bsc",
-  OPTIMISM: "optimism",
-  POLYGON: "polygon",
-  BASE: "base",
-  ZKSYNC: "zksync",
-  SUI: "sui",
 } as const;
 
 export type SupportedChain = (typeof SUPPORTED_CHAINS)[keyof typeof SUPPORTED_CHAINS];

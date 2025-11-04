@@ -37,7 +37,6 @@ export async function fetchTokenData(tokenAddress: string): Promise<TokenData | 
 
     loggers.cache.debug(`→ Fetching overview from Birdeye: ${tokenAddress}`);
 
-    // Fetch token overview from Birdeye (ON-DEMAND - only when user visits this token)
     const overviewResponse = await fetchBirdeyeData<BirdEyeTokenOverview>("/defi/token_overview", {
       address: tokenAddress,
       ui_amount_mode: "scaled",

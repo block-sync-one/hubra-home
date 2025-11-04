@@ -80,11 +80,11 @@ interface StatData {
 }
 
 interface TokensProps {
-  totalMarketCap: number;
+  totalFDV: number;
   totalVolume: number;
-  marketCapChange: number;
-  solanaFDV: number;
-  solanaFDVChange: number;
+  fdvChange: number;
+  solFDV: number;
+  solFDVChange: number;
   newTokensCount: number;
 }
 
@@ -95,7 +95,7 @@ interface StablecoinData {
   };
 }
 
-export default function Tokens({ totalMarketCap, totalVolume, marketCapChange, solanaFDV, solanaFDVChange, newTokensCount }: TokensProps) {
+export default function Tokens({ totalFDV, totalVolume, fdvChange, solFDV, solFDVChange, newTokensCount }: TokensProps) {
   const { formatPrice } = useCurrency();
   const [stablecoinData, setStablecoinData] = useState<StablecoinData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -132,10 +132,10 @@ export default function Tokens({ totalMarketCap, totalVolume, marketCapChange, s
     // Use props for market data and API for stablecoin data
     return [
       {
-        title: "Total Market Cap",
-        value: formatPrice(totalMarketCap),
-        change: marketCapChange,
-        isPositive: marketCapChange >= 0,
+        title: "Total FDV",
+        value: formatPrice(totalFDV),
+        change: fdvChange,
+        isPositive: fdvChange >= 0,
       },
       {
         title: "Trading Vol",
@@ -148,9 +148,9 @@ export default function Tokens({ totalMarketCap, totalVolume, marketCapChange, s
       },*/
       {
         title: "Solana FDV",
-        value: formatPrice(solanaFDV),
-        change: solanaFDVChange,
-        isPositive: solanaFDVChange >= 0,
+        value: formatPrice(solFDV),
+        change: solFDVChange,
+        isPositive: solFDVChange >= 0,
       },
       {
         title: "Stablecoins TVL",
@@ -159,7 +159,7 @@ export default function Tokens({ totalMarketCap, totalVolume, marketCapChange, s
         isPositive: (stablecoinData?.data?.stablecoins_tvl_change || 0) >= 0,
       },
     ];
-  }, [totalMarketCap, totalVolume, marketCapChange, solanaFDV, solanaFDVChange, newTokensCount, stablecoinData, formatPrice]);
+  }, [totalFDV, totalVolume, fdvChange, solFDV, solFDVChange, newTokensCount, stablecoinData, formatPrice]);
 
   const statsCards = useMemo(
     () =>

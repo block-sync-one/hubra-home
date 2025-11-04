@@ -84,13 +84,7 @@ export interface UnifiedTokenData {
  */
 export async function getUnifiedToken(address: string): Promise<UnifiedTokenData | null> {
   try {
-    const cached = await redis.get<UnifiedTokenData>(cacheKeys.tokenDetail(address));
-
-    if (cached) {
-      loggers.cache.debug(`✓ Unified token: ${address}`);
-    }
-
-    return cached;
+    return await redis.get<UnifiedTokenData>(cacheKeys.tokenDetail(address));
   } catch (error) {
     loggers.cache.error(`Failed to get unified token ${address}:`, error);
 
