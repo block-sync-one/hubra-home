@@ -53,11 +53,12 @@ export const siteConfig = {
       href: "/blog",
       show: true,
     },
-    {
-      label: "DeFi",
-      href: "/defi",
-      show: true,
-    },
+    // DeFi route excluded (app/_defi)
+    // {
+    //   label: "DeFi",
+    //   href: "/defi",
+    //   show: true,
+    // },
     {
       label: "Resources",
       description: "Learn more about Hubra",
@@ -107,11 +108,12 @@ export const siteConfig = {
       href: "/blog",
       show: true,
     },
-    {
-      label: "DeFi",
-      href: "/defi",
-      show: true,
-    },
+    // DeFi route excluded (app/_defi)
+    // {
+    //   label: "DeFi",
+    //   href: "/defi",
+    //   show: true,
+    // },
     {
       label: "Stats",
       href: "/stats",
