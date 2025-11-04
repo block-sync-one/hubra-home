@@ -89,9 +89,11 @@ export async function fetchTokenData(tokenAddress: string): Promise<TokenData | 
     const merged = mergeTokenData(cachedUnified, newUnifiedData, "overview");
 
     // Store in unified cache
-    await setUnifiedToken(tokenAddress, merged, CACHE_TTL.TOKEN_DETAIL);
+    setUnifiedToken(tokenAddress, merged, CACHE_TTL.TOKEN_DETAIL).catch((err) => {
+      loggers.cache.error(`Failed to cache unified token ${tokenAddress}:`, err);
+    });
 
-    loggers.cache.debug(`✓ Cached unified token: ${merged.symbol} (source: ${merged.dataSource})`);
+    loggers.cache.debug(`✓ Caching unified token: ${merged.symbol} (source: ${merged.dataSource})`);
 
     return transformUnifiedToTokenData(merged);
   } catch (error) {

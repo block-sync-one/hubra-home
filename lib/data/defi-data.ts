@@ -357,8 +357,10 @@ async function getCachedProtocolsData(cacheKey: string): Promise<DefiStatsAggreg
  * Store DeFi statistics in cache
  */
 async function cacheProtocolsData(cacheKey: string, data: DefiStatsAggregate): Promise<void> {
-  await redis.set(cacheKey, data, CACHE_TTL.GLOBAL_STATS);
-  loggers.cache.debug(`✓ Cached: ${cacheKey}`);
+  redis.set(cacheKey, data, CACHE_TTL.GLOBAL_STATS).catch((err) => {
+    loggers.cache.error(`Failed to cache ${cacheKey}:`, err);
+  });
+  loggers.cache.debug(`✓ Caching: ${cacheKey}`);
 }
 
 /**
@@ -485,8 +487,10 @@ export async function fetchProtocolData(slug: string): Promise<ProtocolAggregate
     // Build protocol statistics
     const result = mergeProtocolGroup([protocol]);
 
-    // Cache result
-    await setCachedProtocol(slug, result);
+    // Cache result (non-blocking)
+    setCachedProtocol(slug, result).catch((err) => {
+      loggers.cache.error(`Failed to cache protocol ${slug}:`, err);
+    });
 
     return result;
   } catch (error) {

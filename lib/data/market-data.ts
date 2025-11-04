@@ -191,7 +191,7 @@ export async function fetchMarketData(
     const { tokens, tokensToCache } = processTokens(apiTokens);
 
     // Step 4: Cache fresh tokens (non-blocking)
-    await setCachedTokensBatch(tokensToCache);
+    setCachedTokensBatch(tokensToCache);
 
     // Step 5: Filter and calculate stats
     const filteredTokens = filterViableTokens(tokens);
@@ -203,7 +203,7 @@ export async function fetchMarketData(
     };
 
     // Step 6: Cache complete market data (non-blocking)
-    await setCachedMarketData(finalCacheKey, result);
+    setCachedMarketData(finalCacheKey, result);
 
     // Step 7: Log performance metrics
     const totalDuration = performance.now() - perfStart;

@@ -57,8 +57,11 @@ export async function setCachedProtocol(
   try {
     const cacheKey = getProtocolCacheKey(protocolId);
 
-    await redis.set(cacheKey, data, ttl);
-    loggers.cache.debug(`✓ Cached protocol: ${protocolId}`);
+    redis.set(cacheKey, data, ttl).catch((err) => {
+      loggers.cache.error(`Failed to cache protocol ${protocolId}:`, err);
+    });
+
+    loggers.cache.debug(`✓ Caching protocol: ${protocolId}`);
 
     return true;
   } catch (error) {

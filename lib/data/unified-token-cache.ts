@@ -97,8 +97,12 @@ export async function getUnifiedToken(address: string): Promise<UnifiedTokenData
  */
 export async function setUnifiedToken(address: string, data: UnifiedTokenData, ttl: number = CACHE_TTL.TOKEN_DETAIL): Promise<boolean> {
   try {
-    await redis.set(cacheKeys.tokenDetail(address), data, ttl);
-    loggers.cache.debug(`✓ Cached unified token: ${data.symbol}`);
+    // Cache in background
+    redis.set(cacheKeys.tokenDetail(address), data, ttl).catch((err) => {
+      loggers.cache.error(`Failed to cache unified token ${address}:`, err);
+    });
+
+    loggers.cache.debug(`✓ Caching unified token: ${data.symbol}`);
 
     return true;
   } catch (error) {

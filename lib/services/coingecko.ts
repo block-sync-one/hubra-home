@@ -133,8 +133,8 @@ export async function fetchExchangeRatesWithCache(): Promise<ExchangeRates> {
   loggers.cache.debug("MISS: Exchange rates - fetching from CoinGecko");
   const rates = await fetchExchangeRates();
 
-  // Cache for 1 hour (exchange rates change slowly)
-  await redis.set(cacheKey, rates, CACHE_TTL.EXCHANGE_RATES).catch((err) => {
+  // Cache for 1 hour in background (non-blocking)
+  redis.set(cacheKey, rates, CACHE_TTL.EXCHANGE_RATES).catch((err) => {
     loggers.cache.error("Failed to cache exchange rates:", err);
   });
 
