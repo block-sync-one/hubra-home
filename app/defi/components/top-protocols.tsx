@@ -45,16 +45,16 @@ export function TopProtocols({ protocols }: TopProtocolsProps) {
                   <span className="text-sm font-medium text-foreground">{formatCurrency(protocol.tvl, true)}</span>
                   <div
                     className={`flex items-center gap-1 text-xs font-semibold ${
-                      protocol.change_1d && protocol.change_1d > 0
+                      protocol.change1D && protocol.change1D > 0
                         ? "text-success"
-                        : protocol.change_1d && protocol.change_1d < 0
+                        : protocol.change1D && protocol.change1D < 0
                           ? "text-danger"
                           : "text-gray-400"
                     }`}>
-                    {protocol.change_1d !== undefined && protocol.change_1d !== 0 && (
-                      <Icon icon={protocol.change_1d > 0 ? "mdi:arrow-up" : "mdi:arrow-down"} width={12} />
+                    {protocol.change1D !== undefined && protocol.change1D !== 0 && (
+                      <Icon icon={protocol.change1D > 0 ? "mdi:arrow-up" : "mdi:arrow-down"} width={12} />
                     )}
-                    <span>{protocol.change_1d ? Math.abs(protocol.change_1d).toFixed(2) : 0}%</span>
+                    <span>{protocol.change1D ? Math.abs(protocol.change1D).toFixed(2) : 0}%</span>
                   </div>
                 </div>
               </div>

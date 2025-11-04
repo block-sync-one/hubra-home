@@ -39,7 +39,8 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
     () => (
       <div className="w-full lg:bg-card lg:px-4 lg:pt-4 pb-0 rounded-t-lg">
         <div className="w-full relative mb-4">
-          <div className="flex items-center justify-between gap-40">
+          <div className="flex items-center justify-between gap-4">
+            {/* Tabs - Desktop */}
             <div className="hidden lg:flex">
               <TabsUI
                 className="border-b-1 border-gray-30"
@@ -56,6 +57,8 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
             </div>
           </div>
         </div>
+
+        {/* Tabs - Mobile */}
         <div className="lg:hidden mb-4">
           <TabsUI
             selectedTab={tab}

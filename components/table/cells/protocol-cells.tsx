@@ -42,11 +42,11 @@ export function ProtocolCell({ item, columnKey }: ProtocolCellProps) {
       return <div className="font-medium text-white">{formatCurrency(item.tvl, true)}</div>;
 
     case "change_7d":
-      const isPositive = item.change_7d && item.change_7d >= 0;
+      const isPositive = item.change7D && item.change7D >= 0;
 
       return (
         <div className={`font-medium ${isPositive ? "text-success" : "text-danger"}`}>
-          {item.change_7d ? `${item.change_7d > 0 ? "+" : ""}${item.change_7d.toFixed(2)}%` : "N/A"}
+          {item.change7D ? `${item.change7D > 0 ? "+" : ""}${item.change7D.toFixed(2)}%` : "N/A"}
         </div>
       );
 

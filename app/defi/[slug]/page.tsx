@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react";
 
 import { StatsGrid } from "../components/stats-grid";
 
-import { DefiStatsAggrigate } from "@/lib/types/defi-stats";
+import { fetchProtocolData } from "@/lib/data/defi-data";
 import ChartPnl, { Chart } from "@/components/chart";
 import { formatCurrency } from "@/lib/utils/helper";
 
@@ -16,7 +16,8 @@ type PageParams = {
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { slug } = await params;
-  const protocol = await getProtocol(slug);
+  const protocol = await fetchProtocolData(slug);
+  const firstInBreakDown = protocol && protocol.breakdown[0];
 
   if (!protocol) {
     return {
@@ -26,81 +27,48 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   }
 
   return {
-    title: `${protocol.name || "Protocol"} | SolanaHub`,
-    description: protocol.description || "",
+    title: `${protocol.name || "Protocol"} | Hubra`,
+    description: firstInBreakDown?.description || "",
     openGraph: {
-      title: `${protocol.name || "Protocol"} | SolanaHub`,
-      description: protocol.description || "",
+      title: `${protocol.name || "Protocol"} | Hubra`,
+      description: firstInBreakDown?.description || "",
       images: protocol.logo ? [protocol.logo] : [],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${protocol.name || "Protocol"} | SolanaHub`,
-      description: protocol.description || "",
+      title: `${protocol.name || "Protocol"} | Hubra`,
+      description: firstInBreakDown?.description || "",
       images: protocol.logo ? [protocol.logo] : [],
     },
   };
 }
 
-async function getProtocol(slug: string): Promise<DefiStatsAggrigate | null> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    const response = await fetch(`${baseUrl}/api/defi/${slug}`, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
-    });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const data = await response.json();
-
-    return data;
-  } catch (error) {
-    console.error("Error fetching protocol:", error);
-
-    return null;
-  }
-}
-
 export default async function Page({ params }: { params: Promise<PageParams> }) {
   const { slug } = await params;
-  const protocol = await getProtocol(slug);
+  const protocolAggregate = await fetchProtocolData(slug);
 
-  if (!protocol) {
+  if (!protocolAggregate) {
     notFound();
   }
+
+  // Get first protocol from breakdown for detailed info (description, social links, etc.)
+  const protocolDetail = protocolAggregate.breakdown?.[0];
+
   const chartData: Chart[] = [
     {
       key: "tvl",
       title: "TVL",
-      value: protocol.tvl || 0,
+      value: protocolAggregate.tvl || 0,
       suffix: "$",
       type: "number",
       tooltipType: "number-string",
       toolTipTitle: "TVL",
       toolTip2Title: "",
-      change: `${protocol.change_1d?.toFixed(2) || "0.00"}%`,
-      changeType: (protocol.change_1d || 0) >= 0 ? "positive" : "negative",
-      chartData: protocol.chartData || [],
+      change: `${protocolAggregate.change1D?.toFixed(2) || "0.00"}%`,
+      changeType: (protocolAggregate.change1D || 0) >= 0 ? "positive" : "negative",
+      chartData: [], // TODO: Add historical chart data
     },
   ];
-
-  if (protocol.inflows.chartData.length > 0) {
-    chartData.push({
-      key: "inflows",
-      title: "Inflows",
-      value: protocol.inflows?.chartData[protocol.inflows.chartData.length - 1]?.value || 0,
-      suffix: "$",
-      type: "number",
-      tooltipType: "number-string",
-      toolTipTitle: "fees",
-      toolTip2Title: "revenue",
-      change: `${protocol.inflows?.change_1d?.toFixed(2) || "0.00"}%`,
-      changeType: (protocol.inflows?.change_1d || 0) >= 0 ? "positive" : "negative",
-      chartData: protocol.inflows?.chartData || [],
-    });
-  }
 
   // Define StatItem type to match the one in StatsGrid
   type StatItem = {
@@ -117,36 +85,32 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
   const statsData: StatItem[] = [
     {
       name: "TVL",
-      value: formatCurrency(protocol.tvl || 0),
+      value: formatCurrency(protocolAggregate.tvl || 0, true),
       icon: "solar:lock-bold",
-      change: `${protocol.change_1d?.toFixed(2) || "0.00"}%`,
-      changeType: (protocol.change_1d || 0) >= 0 ? "positive" : "negative",
+      change: `${protocolAggregate.change1D?.toFixed(2) || "0.00"}%`,
+      changeType: (protocolAggregate.change1D || 0) >= 0 ? "positive" : "negative",
     },
     {
-      name: "Inflows (24h)",
-      value:
-        protocol.inflows?.chartData.length > 0
-          ? formatCurrency(protocol.inflows?.chartData[protocol.inflows.chartData.length - 1]?.value || 0)
-          : "$0",
-      icon: "solar:money-bag-bold",
-      change: `${protocol.inflows?.change_1d?.toFixed(2) || "0.00"}%`,
-      changeType: (protocol.inflows?.change_1d || 0) >= 0 ? "positive" : "negative",
+      name: "7d Change",
+      value: `${protocolAggregate.change7D?.toFixed(2) || "0.00"}%`,
+      icon: "solar:chart-bold",
+      changeType: (protocolAggregate.change7D || 0) >= 0 ? "positive" : "negative",
     },
   ];
 
-  // Social links and other external metrics
+  // Social links and other external metrics (from breakdown detail)
   const socialLinks: StatItem[] = [];
 
   // Add Twitter if available
-  if (protocol.twitter) {
+  if (protocolDetail?.twitter) {
     try {
-      const twitterHandle = protocol.twitter.replace("https://twitter.com/", "").replace("@", "");
+      const twitterHandle = protocolDetail.twitter.replace("https://twitter.com/", "").replace("@", "");
 
       socialLinks.push({
         name: "Twitter",
         value: twitterHandle,
         icon: "mdi:twitter",
-        url: protocol.twitter.startsWith("http") ? protocol.twitter : `https://twitter.com/${twitterHandle}`,
+        url: protocolDetail.twitter.startsWith("http") ? protocolDetail.twitter : `https://twitter.com/${twitterHandle}`,
         isExternal: true,
       });
     } catch (e) {
@@ -155,9 +119,9 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
   }
 
   // Add Website if available
-  if (protocol.url) {
+  if (protocolDetail?.url) {
     try {
-      const urlObj = new URL(protocol.url.startsWith("http") ? protocol.url : `https://${protocol.url}`);
+      const urlObj = new URL(protocolDetail.url.startsWith("http") ? protocolDetail.url : `https://${protocolDetail.url}`);
       const hostname = urlObj.hostname.replace("www.", "");
 
       socialLinks.push({
@@ -171,18 +135,18 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       // Fallback if URL is invalid
       socialLinks.push({
         name: "Website",
-        value: protocol.url.replace("https://", "").replace("http://", "").replace("www.", ""),
+        value: protocolDetail.url.replace("https://", "").replace("http://", "").replace("www.", ""),
         icon: "solar:link-circle-bold",
-        url: protocol.url.startsWith("http") ? protocol.url : `https://${protocol.url}`,
+        url: protocolDetail.url.startsWith("http") ? protocolDetail.url : `https://${protocolDetail.url}`,
         isExternal: true,
       });
     }
   }
 
   // Add GitHub if available
-  const protocolAny = protocol as any;
+  const protocolAny = protocolDetail as any;
 
-  if (protocolAny.github) {
+  if (protocolAny?.github) {
     try {
       let githubUrl = "";
 
@@ -222,18 +186,18 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
           <div className="flex-shrink-0 h-14 w-14 overflow-hidden rounded-full bg-transparent flex items-center justify-center">
             <Image
-              alt={protocol.name || "Protocol logo"}
+              alt={protocolAggregate.name || "Protocol logo"}
               className="h-full w-full object-cover"
               height={56}
-              src={protocol.logo || "/logo.svg"}
+              src={protocolAggregate.logo || "/logo.svg"}
               style={{ aspectRatio: "1/1" }}
               width={56}
             />
           </div>
 
           <div className="flex-1 text-left">
-            <h1 className="text-2xl font-bold mb-1 text-white">{protocol.name}</h1>
-            <p className="text-gray-400 line-clamp-2 max-w-2xl">{protocol.description}</p>
+            <h1 className="text-2xl font-bold mb-1 text-white">{protocolAggregate.name}</h1>
+            <p className="text-gray-400 line-clamp-2 max-w-2xl">{protocolDetail?.description || ""}</p>
 
             {/* Social links in header */}
             {socialLinks.length > 0 && (
@@ -254,15 +218,63 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
           </div>
         </div>
 
-        {/* Chart Section */}
+        {/* Aggregate Chart Section */}
         <div className="mb-6">
-          <ChartPnl charts={chartData} title="Performance" />
+          <ChartPnl charts={chartData} title="Aggregate Performance" />
         </div>
 
-        {/* Statistics and metrics */}
-        <div>
-          <StatsGrid stats={statsData} title="Key Metrics" />
+        {/* Aggregate Statistics */}
+        <div className="mb-8">
+          <StatsGrid stats={statsData} title="Aggregate Metrics" />
         </div>
+
+        {/* Breakdown Section - Show individual protocols */}
+        {protocolAggregate.breakdown && protocolAggregate.breakdown.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-xl font-bold text-white mb-4">Protocol Breakdown</h2>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {protocolAggregate.breakdown.map((individualProtocol, index) => {
+                const protocolStats: StatItem[] = [
+                  {
+                    name: "TVL",
+                    value: formatCurrency(individualProtocol.tvl || 0, true),
+                    icon: "solar:lock-bold",
+                    change: `${individualProtocol.change1D?.toFixed(2) || "0.00"}%`,
+                    changeType: (individualProtocol.change1D || 0) >= 0 ? "positive" : "negative",
+                  },
+                  {
+                    name: "7d Change",
+                    value: `${individualProtocol.change7D?.toFixed(2) || "0.00"}%`,
+                    icon: "solar:chart-bold",
+                    changeType: (individualProtocol.change7D || 0) >= 0 ? "positive" : "negative",
+                  },
+                ];
+
+                return (
+                  <div key={individualProtocol.id || index} className="bg-card backdrop-blur-sm rounded-xl p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                        <Image
+                          alt={individualProtocol.name}
+                          className="w-full h-full object-cover"
+                          height={40}
+                          src={individualProtocol.logo || "/logo.svg"}
+                          width={40}
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">{individualProtocol.name}</h3>
+                        {individualProtocol.category && <p className="text-xs text-gray-400">{individualProtocol.category}</p>}
+                      </div>
+                    </div>
+
+                    <StatsGrid stats={protocolStats} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

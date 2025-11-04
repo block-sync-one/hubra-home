@@ -56,3 +56,10 @@ export function sortProtocols(protocols: Protocol[], sortBy: keyof Protocol, dir
     return 0;
   });
 }
+
+/**
+ * Extract base name from protocol name (first word)
+ */
+export function extractBaseName(protocolName: string): string {
+  return protocolName.toLowerCase().split(" ")[0];
+}

@@ -57,7 +57,7 @@ function CustomTooltip({ active, payload, label, chart }: CustomTooltipProps) {
       <p className="text-sm font-semibold text-white">
         {chart.type === "currency" && "$"}
         {chart.tooltipType === "number-string" || chart.type === "currency"
-          ? Number(payload[0].value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          ? formatCurrency(payload[0].value, true)
           : chart.type === "percentage"
             ? `${payload[0].value.toFixed(2)}%`
             : payload[0].value.toLocaleString()}
@@ -92,7 +92,6 @@ function ChartCard({ chart }: { chart: Chart }) {
                 {chart.type === "currency" && "$"}
                 {chart.type === "number" || chart.type === "currency" ? formatCurrency(chart.value, true) : chart.value.toFixed(2)}
                 {chart.type === "percentage" && "%"}
-                {chart.suffix}
               </p>
               {chart.change && <span className={`text-sm font-medium ${isPositive ? "text-success" : "text-danger"}`}>{chart.change}</span>}
             </div>

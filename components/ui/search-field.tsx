@@ -103,7 +103,7 @@ export function SearchField({
     <Input
       className={className}
       classNames={{
-        inputWrapper: "bg-card md:bg-background h-10 w-full border-none",
+        inputWrapper: "bg-card h-10 w-full border-none",
         input: "text-sm text-white placeholder:text-gray-500 w-full bg-transparent",
       }}
       disabled={disabled}

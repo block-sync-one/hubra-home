@@ -5,8 +5,8 @@
 
 import { ChartData } from "@/components/chart";
 
-export interface DefiStatsAggrigate {
-  change_1d: number;
+export interface DefiStatsAggregate {
+  change1D: number;
   chartData: ChartData[];
   inflows: {
     change_1d: number;
@@ -16,7 +16,7 @@ export interface DefiStatsAggrigate {
       value2: number;
     }[];
   };
-  solanaProtocols: Protocol[];
+  solanaProtocols: ProtocolAggregate[];
   hotProtocols: Protocol[];
   numberOfProtocols: number;
   totalTvl: number;
@@ -31,15 +31,18 @@ export interface DefiStatsAggrigate {
   url?: string;
 }
 
-export interface Protocol {
+export interface BaseProtocol {
   id: string;
   name: string;
   logo: string;
   tvl: number;
-  change_1d?: number;
-  change_7d?: number;
-  change_1m?: number;
+  change1D?: number;
+  change7D?: number;
+  change1H?: number;
   category?: string | string[];
+}
+
+export interface Protocol extends BaseProtocol {
   chains?: string[];
   slug?: string;
   description?: string;
@@ -48,5 +51,7 @@ export interface Protocol {
   github?: string;
 }
 
-export type { DefiStatsAggrigate as defiStatsAggrigate };
-export type { Protocol as protocol };
+export interface ProtocolAggregate extends BaseProtocol {
+  lookup: string[];
+  breakdown: Protocol[];
+}

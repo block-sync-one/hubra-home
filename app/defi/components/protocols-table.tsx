@@ -3,18 +3,18 @@
 /**
  * Protocols Table Component
  * Reuses UnifiedTable component with custom protocols configuration
- * Follows the same pattern as tokens table for consistency
+ * Uses shared UI components for consistency
  */
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import UnifiedTable from "@/components/table/unified-table";
 import { protocolsTableConfig } from "@/components/table/configurations";
-import { ProtocolListView } from "@/components/table/mobile-views/protocol-list-view";
-import { SearchField } from "@/components/ui/search-field";
+import { TableToolbar, MobileListLayout, type MobileListItem } from "@/components/ui";
 import { Protocol } from "@/lib/types/defi-stats";
 import { prepareProtocolsForTable, filterProtocols, sortProtocols } from "@/lib/helpers/protocol";
+import { formatCurrency } from "@/lib/utils/helper";
 
 interface ProtocolsTableProps {
   protocols: Protocol[];
@@ -24,7 +24,7 @@ export function ProtocolsTable({ protocols }: ProtocolsTableProps) {
   const router = useRouter();
   const [filterValue, setFilterValue] = useState("");
 
-  // Filter and sort protocols for mobile view
+  // Filter and sort protocols
   const filteredAndSorted = useMemo(() => {
     let result = protocols;
 
@@ -43,29 +43,42 @@ export function ProtocolsTable({ protocols }: ProtocolsTableProps) {
   const tableData = useMemo(() => prepareProtocolsForTable(filteredAndSorted), [filteredAndSorted]);
 
   // Handle protocol row click
-  const handleProtocolClick = (protocol: Protocol) => {
-    router.push(`/defi/${protocol.id.toLowerCase()}`);
-  };
+  const handleProtocolClick = useCallback(
+    (protocol: Protocol | MobileListItem) => {
+      const protocolId = "id" in protocol ? protocol.id : protocol.key;
 
-  // Custom top content with search
-  const topContent = useMemo(
-    () => (
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <h2 className="text-xl font-bold text-white">All Protocols</h2>
-        <div className="w-full md:max-w-xs">
-          <SearchField placeholder="Search protocols..." value={filterValue} onChange={setFilterValue} onClear={() => setFilterValue("")} />
-        </div>
-      </div>
-    ),
-    [filterValue]
+      router.push(`/defi/${protocolId.toLowerCase()}`);
+    },
+    [router]
   );
+
+  // Convert protocols to mobile list format
+  const mobileListItems = useMemo<MobileListItem[]>(() => {
+    return tableData.map((protocol) => ({
+      key: protocol.id,
+      logo: protocol.logo,
+      name: protocol.name,
+      subtitle: Array.isArray(protocol.category) ? protocol.category[0] : protocol.category || "DeFi",
+      primaryValue: formatCurrency(protocol.tvl, true),
+      change: protocol.change7D,
+      secondaryValue: protocol.change7D ? `${Math.abs(protocol.change7D).toFixed(2)}%` : "0.00%",
+    }));
+  }, [tableData]);
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      {topContent}
+      {/* Toolbar with title and search */}
+      <TableToolbar
+        showSearch
+        searchPlaceholder="Search protocols..."
+        searchValue={filterValue}
+        title="All Protocols"
+        variant="simple"
+        onSearchChange={setFilterValue}
+      />
 
-      {/* Mobile View - Custom protocol list */}
-      <ProtocolListView protocols={tableData} onProtocolClick={handleProtocolClick} />
+      {/* Mobile View - Shared mobile list layout */}
+      <MobileListLayout emptyMessage="No protocols available" items={mobileListItems} onItemClick={handleProtocolClick} />
 
       {/* Desktop View - UnifiedTable */}
       <div className="hidden md:block">
@@ -80,3 +93,6 @@ export function ProtocolsTable({ protocols }: ProtocolsTableProps) {
     </div>
   );
 }
+
+// Memoized version for performance
+export const MemoizedProtocolsTable = React.memo(ProtocolsTable);

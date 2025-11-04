@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { TopProtocols } from "./components/top-protocols";
 import { ProtocolsTable } from "./components/protocols-table";
 
-import { DefiStatsAggrigate } from "@/lib/types/defi-stats";
+import { fetchProtocolsData } from "@/lib/data/defi-data";
 import ChartPnl, { Chart } from "@/components/chart";
 
 export const metadata: Metadata = {
@@ -15,13 +15,13 @@ export const metadata: Metadata = {
     "DeFi analytics",
     "crypto metrics",
     "blockchain analytics",
-    "SolanaHub DeFi",
+    "Hubra DeFi",
     "TVL tracking",
     "protocol performance",
     "DeFi metrics",
   ],
   openGraph: {
-    title: "SolanaHub DeFi Statistics & Analytics",
+    title: "Hubra DeFi Statistics & Analytics",
     description: "View detailed DeFi statistics and analytics about Solana protocols, TVL, and performance metrics.",
     type: "website",
     images: [
@@ -29,53 +29,21 @@ export const metadata: Metadata = {
         url: "/logo.jpg",
         width: 1200,
         height: 630,
-        alt: "SolanaHub DeFi Dashboard",
+        alt: "Hubra DeFi Dashboard",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "SolanaHub DeFi Statistics & Analytics",
+    title: "Hubra DeFi Statistics & Analytics",
     description: "View detailed DeFi statistics and analytics about Solana protocols, TVL, and performance metrics.",
     images: ["/logo.jpg"],
   },
 };
 
-async function getProtocols(): Promise<DefiStatsAggrigate> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-    const response = await fetch(`${baseUrl}/api/defi`, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch: ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    return data;
-  } catch (error) {
-    console.error("Error fetching protocols:", error);
-
-    // Return empty structure instead of casting
-    return {
-      change_1d: 0,
-      chartData: [],
-      inflows: { change_1d: 0, chartData: [] },
-      solanaProtocols: [],
-      hotProtocols: [],
-      numberOfProtocols: 0,
-      totalTvl: 0,
-      totalRevenue_1d: 0,
-      totalFees_1d: 0,
-    };
-  }
-}
-
 export default async function DeFiPage() {
-  // Process TVL data for the chart
-  const protocols: DefiStatsAggrigate = await getProtocols();
+  // Fetch DeFi protocols data (with Redis caching)
+  const protocols = await fetchProtocolsData();
 
   // Check if we have valid data
   if (!protocols || protocols.numberOfProtocols === 0) {
@@ -91,8 +59,8 @@ export default async function DeFiPage() {
       tooltipType: "number-string",
       toolTipTitle: "TVL",
       toolTip2Title: "",
-      change: `${protocols.change_1d.toFixed(2)}%`,
-      changeType: protocols.change_1d >= 0 ? "positive" : "negative",
+      change: `${protocols.change1D.toFixed(2)}%`,
+      changeType: protocols.change1D >= 0 ? "positive" : "negative",
       chartData: protocols.chartData,
     },
     {

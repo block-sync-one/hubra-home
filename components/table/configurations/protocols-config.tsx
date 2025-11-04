@@ -49,7 +49,7 @@ export const protocolsTableConfig: TableConfiguration<Protocol> = {
       sortable: false,
       align: "right",
       hiddenOnMobile: true,
-      width: "150px",
+      width: "300px",
       render: (item: Protocol) => <ProtocolCell columnKey="category" item={item} />,
     },
   ],
