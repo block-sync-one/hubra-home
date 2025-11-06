@@ -1,4 +1,5 @@
 import "server-only";
+import { apiQueue } from "@/lib/utils/request-queue";
 
 export const BIRDEYE_API_BASE_URL = "https://public-api.birdeye.so";
 
@@ -41,6 +42,10 @@ export function buildBirdeyeUrl(endpoint: string, params?: Record<string, string
 /**
  * Fetch data from Birdeye API
  *
+ * Includes request deduplication to prevent concurrent identical requests.
+ * If the same endpoint+params are requested simultaneously, only one
+ * network call is made and the result is shared.
+ *
  * @param endpoint - API endpoint path
  * @param params - Query parameters
  * @param options - Fetch options
@@ -50,27 +55,34 @@ export function buildBirdeyeUrl(endpoint: string, params?: Record<string, string
  */
 export async function fetchBirdeyeData<T>(endpoint: string, params?: Record<string, string>, options?: RequestInit): Promise<T> {
   const url = buildBirdeyeUrl(endpoint, params);
-  const headers = getBirdeyeHeaders();
 
-  const response = await fetch(url, {
-    ...options,
-    cache: "no-store",
-    headers: {
-      ...headers,
-      ...options?.headers,
-      "Cache-Control": "no-cache, no-store, must-revalidate",
-    },
+  // Create deduplication key from endpoint + params
+  const dedupeKey = `birdeye:${endpoint}:${JSON.stringify(params || {})}`;
+
+  // Use request queue to deduplicate concurrent requests
+  return await apiQueue.dedupe(dedupeKey, async () => {
+    const headers = getBirdeyeHeaders();
+
+    const response = await fetch(url, {
+      ...options,
+      cache: "no-store",
+      headers: {
+        ...headers,
+        ...options?.headers,
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      throw new Error(`Birdeye API error: ${response.status} - ${errorText}`);
+    }
+
+    const data = await response.json();
+
+    return data;
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-
-    throw new Error(`Birdeye API error: ${response.status} - ${errorText}`);
-  }
-
-  const data = await response.json();
-
-  return data;
 }
 
 /**

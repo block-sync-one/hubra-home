@@ -11,7 +11,7 @@ import { SearchInput } from "./search-input";
 import { TabId, TabIdType } from "@/lib/models";
 import { TabsUI } from "@/components/tabs";
 
-const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAssetClick }) => {
+const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAssetClick, onAssetHover }) => {
   // State
   const [tab, setTab] = useState<TabIdType>(tabs[0]?.id || TabId.allAssets);
 
@@ -32,6 +32,13 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
       onAssetClick?.(asset);
     },
     [onAssetClick]
+  );
+
+  const handleAssetHover = useCallback(
+    (asset: any) => {
+      onAssetHover?.(asset);
+    },
+    [onAssetHover]
   );
 
   // Memoized top content
@@ -85,6 +92,7 @@ const TableWrapper: React.FC<TableWrapperProps> = ({ tabs, data, isLoading, onAs
         isLoading={isLoading}
         selectedTab={tab}
         onRowClick={handleAssetClick}
+        onRowHover={handleAssetHover}
       />
     </div>
   );

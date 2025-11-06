@@ -29,6 +29,7 @@ interface MobileListLayoutProps<T = MobileListItem> {
   isLoading?: boolean;
   emptyMessage?: string;
   onItemClick?: (item: T) => void;
+  onItemHover?: (item: T) => void;
   renderItem?: (item: T) => React.ReactNode;
 }
 
@@ -68,6 +69,7 @@ export function MobileListLayout<T extends MobileListItem>({
   isLoading = false,
   emptyMessage = "No data available",
   onItemClick,
+  onItemHover,
   renderItem,
 }: MobileListLayoutProps<T>) {
   // Memoize click handler to avoid creating new function on each render
@@ -76,6 +78,13 @@ export function MobileListLayout<T extends MobileListItem>({
       onItemClick?.(item);
     },
     [onItemClick]
+  );
+
+  const handleItemHover = React.useCallback(
+    (item: T) => {
+      onItemHover?.(item);
+    },
+    [onItemHover]
   );
 
   if (isLoading) {
@@ -97,7 +106,13 @@ export function MobileListLayout<T extends MobileListItem>({
         // Use custom render if provided
         if (renderItem) {
           return (
-            <div key={item.key} aria-label="Item details" className="cursor-pointer" role="button" onClick={() => handleItemClick(item)}>
+            <div
+              key={item.key}
+              aria-label="Item details"
+              className="cursor-pointer"
+              role="button"
+              onClick={() => handleItemClick(item)}
+              onMouseEnter={() => handleItemHover(item)}>
               {renderItem(item)}
             </div>
           );
@@ -110,7 +125,8 @@ export function MobileListLayout<T extends MobileListItem>({
             aria-label="Item details"
             className="flex items-center justify-between py-2 hover:bg-white/5 rounded-xl transition-colors cursor-pointer"
             role="button"
-            onClick={() => handleItemClick(item)}>
+            onClick={() => handleItemClick(item)}
+            onMouseEnter={() => handleItemHover(item)}>
             {/* Left Column: Logo, Name, Subtitle */}
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">

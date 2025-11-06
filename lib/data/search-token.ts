@@ -1,6 +1,8 @@
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { Token } from "@/lib/types/token";
 import { MARKET_CAP_FILTERS } from "@/lib/constants/market";
+import { getStaleWhileRevalidate } from "@/lib/cache/swr-cache";
+import { CACHE_TTL } from "@/lib/cache";
 
 export interface BirdeyeSearchItem {
   name: string;
@@ -62,8 +64,32 @@ function transformSearchItemToToken(item: BirdeyeSearchItem): Token {
 }
 
 /**
- * Search for tokens using Birdeye API
- * Filters out spam tokens with market cap below threshold
+ * Fetch search results from Birdeye API (uncached)
+ */
+async function fetchSearchResults(keyword: string): Promise<Token[]> {
+  const params = {
+    keyword: keyword.trim(),
+    target: "token",
+    search_mode: "fuzzy",
+    search_by: "combination",
+    sort_by: "volume_24h_usd",
+    sort_type: "desc",
+    ui_amount_mode: "scaled",
+  };
+
+  const data = await fetchBirdeyeData<BirdeyeSearchResponse>("/defi/v3/search", params);
+
+  const searchItems: BirdeyeSearchItem[] = data?.data?.items?.[0]?.result || [];
+
+  // Filter out spam/dead tokens using constant threshold
+  return searchItems.map(transformSearchItemToToken).filter((token) => token.marketCap && token.marketCap > MARKET_CAP_FILTERS.MIN_VIABLE);
+}
+
+/**
+ * Search for tokens using Birdeye API with caching
+ *
+ * Results are cached for 5 minutes to improve performance for popular searches.
+ * Filters out spam tokens with market cap below threshold.
  *
  * @param keyword - Search term (token name, symbol, or address)
  * @returns Array of matching tokens sorted by volume
@@ -75,24 +101,13 @@ export async function searchTokens(keyword: string): Promise<Token[]> {
   }
 
   try {
-    const params = {
-      keyword: keyword.trim(),
-      target: "token",
-      search_mode: "fuzzy",
-      search_by: "combination",
-      sort_by: "volume_24h_usd",
-      sort_type: "desc",
-      ui_amount_mode: "scaled",
-    };
+    // Generate cache key (lowercase for case-insensitive caching)
+    const cacheKey = `search:${keyword.toLowerCase().trim()}`;
 
-    const data = await fetchBirdeyeData<BirdeyeSearchResponse>("/defi/v3/search", params);
+    // Use SWR caching for search results
+    const results = await getStaleWhileRevalidate<Token[]>(cacheKey, CACHE_TTL.SEARCH, () => fetchSearchResults(keyword));
 
-    const searchItems: BirdeyeSearchItem[] = data?.data?.items?.[0]?.result || [];
-
-    // Filter out spam/dead tokens using constant threshold
-    return searchItems
-      .map(transformSearchItemToToken)
-      .filter((token) => token.marketCap && token.marketCap > MARKET_CAP_FILTERS.MIN_VIABLE);
+    return results || [];
   } catch (error) {
     // Re-throw error to be handled by caller
     throw error;

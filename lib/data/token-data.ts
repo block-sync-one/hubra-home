@@ -1,101 +1,117 @@
-import { getUnifiedToken, setUnifiedToken, mergeTokenData, UnifiedTokenData } from "./unified-token-cache";
+import { getUnifiedToken, mergeTokenData, setUnifiedToken, UnifiedTokenData } from "./unified-token-cache";
 
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { BirdEyeTokenOverview } from "@/lib/types/birdeye";
-import { CACHE_TTL } from "@/lib/cache";
+import { CACHE_TTL, cacheKeys, getStaleWhileRevalidate } from "@/lib/cache";
 import { loggers } from "@/lib/utils/logger";
 
 type TokenData = BirdEyeTokenOverview["data"];
 
 /**
- * Fetch token data using unified cache with ON-DEMAND overview fetching
+ * Fetch fresh token overview from Birdeye API (pure data fetching, NO caching)
+ * All caching is handled centrally by getStaleWhileRevalidate
+ */
+async function fetchFreshTokenOverview(tokenAddress: string, cachedUnified: UnifiedTokenData | null): Promise<UnifiedTokenData> {
+  const overviewResponse = await fetchBirdeyeData<BirdEyeTokenOverview>("/defi/token_overview", {
+    address: tokenAddress,
+    ui_amount_mode: "scaled",
+  });
+
+  if (!overviewResponse.success || !overviewResponse.data) {
+    // If we have cached list data, use it as fallback
+    if (cachedUnified) {
+      return cachedUnified;
+    }
+
+    throw new Error(`Token not found: ${tokenAddress}`);
+  }
+
+  const tokenData = overviewResponse.data;
+
+  // Replace "Wrapped SOL" with "Solana"
+  if (tokenData.name === "Wrapped SOL") {
+    tokenData.name = "Solana";
+  }
+
+  const newUnifiedData: Partial<UnifiedTokenData> = {
+    address: tokenData.address,
+    symbol: tokenData.symbol,
+    name: tokenData.name,
+    logoURI: tokenData.logoURI || "/logo.svg",
+    price: tokenData.price,
+    priceChange24hPercent: tokenData.priceChange24hPercent,
+    v24hUSD: tokenData.v24hUSD,
+    v24hChangePercent: tokenData.v24hChangePercent,
+    vBuy24hUSD: tokenData.vBuy24hUSD,
+    vSell24hUSD: tokenData.vSell24hUSD,
+    marketCap: tokenData.marketCap,
+    liquidity: tokenData.liquidity,
+    holder: tokenData.holder,
+    decimals: tokenData.decimals,
+    fdv: tokenData.fdv,
+    totalSupply: tokenData.totalSupply,
+    circulatingSupply: tokenData.circulatingSupply,
+    trade24h: tokenData.trade24h,
+    buy24h: tokenData.buy24h,
+    sell24h: tokenData.sell24h,
+    uniqueWallet24h: tokenData.uniqueWallet24h,
+    extensions: tokenData.extensions,
+  };
+
+  // Merge with existing cache (list data takes precedence for prices if newer)
+  return mergeTokenData(cachedUnified, newUnifiedData, "overview");
+}
+
+/**
+ * Fetch token data with stale-while-revalidate pattern
  *
  * STRATEGY:
- * 1. Check cache for existing data
- * 2. If full overview exists → return it
- * 3. If only list data exists → fetch full overview (1 API call)
- * 4. If no cache → fetch full overview (1 API call)
- *
- * Overview is only fetched when a user visits a specific token detail page.
+ * 1. Check cache - if fresh, return immediately
+ * 2. If stale (TTL < 60s) - return stale data, refresh in background
+ * 3. If overview data exists - return it (no upgrade needed)
+ * 4. If only list data - upgrade to overview
+ * 5. If no cache - fetch fresh overview
  */
 export async function fetchTokenData(tokenAddress: string): Promise<TokenData | null> {
   try {
-    // Check unified cache first
-    const cachedUnified = await getUnifiedToken(tokenAddress);
+    const cacheKey = cacheKeys.tokenDetail(tokenAddress);
 
-    if (cachedUnified) {
-      loggers.cache.debug(`✓ Unified cache HIT: ${cachedUnified.symbol}`);
+    // Use SWR pattern: returns stale data instantly, refreshes in background
+    const result = await getStaleWhileRevalidate<UnifiedTokenData>(cacheKey, CACHE_TTL.TOKEN_DETAIL, async () => {
+      const cachedUnified = await getUnifiedToken(tokenAddress);
 
-      // If we have full overview data, return it (no API call needed)
-      if (cachedUnified.dataSource === "overview" || cachedUnified.dataSource === "merged") {
-        return transformUnifiedToTokenData(cachedUnified);
+      // Check if we already have full overview data
+      if (cachedUnified && (cachedUnified.dataSource === "overview" || cachedUnified.dataSource === "merged")) {
+        loggers.cache.debug(`✓ Using existing overview data: ${cachedUnified.symbol}`);
+
+        return cachedUnified;
       }
 
-      // We only have basic list data, upgrade to full overview
-      loggers.cache.debug(`→ Upgrading list data to full overview: ${cachedUnified.symbol}`);
-    }
+      // Upgrade list data to overview or fetch fresh
+      if (cachedUnified) {
+        loggers.cache.debug(`→ Upgrading list data to overview: ${cachedUnified.symbol}`);
+      } else {
+        loggers.cache.debug(`→ Fetching overview from Birdeye: ${tokenAddress}`);
+      }
 
-    loggers.cache.debug(`→ Fetching overview from Birdeye: ${tokenAddress}`);
-
-    const overviewResponse = await fetchBirdeyeData<BirdEyeTokenOverview>("/defi/token_overview", {
-      address: tokenAddress,
-      ui_amount_mode: "scaled",
+      return await fetchFreshTokenOverview(tokenAddress, cachedUnified);
     });
 
-    if (!overviewResponse.success || !overviewResponse.data) {
-      loggers.data.warn(`Token not found: ${tokenAddress}`);
-
-      // If we have cached list data, return it
-      if (cachedUnified) {
-        return transformUnifiedToTokenData(cachedUnified);
-      }
-
+    if (!result) {
       return null;
     }
 
-    const tokenData = overviewResponse.data;
+    if (result.dataSource === "list") {
+      loggers.cache.debug(`↻ Upgrading list token to overview for details: ${result.symbol}`);
 
-    // Replace "Wrapped SOL" with "Solana"
-    if (tokenData.name === "Wrapped SOL") {
-      tokenData.name = "Solana";
+      const upgraded = await fetchFreshTokenOverview(tokenAddress, result);
+
+      await setUnifiedToken(tokenAddress, upgraded, CACHE_TTL.TOKEN_DETAIL);
+
+      return transformUnifiedToTokenData(upgraded);
     }
 
-    const newUnifiedData: Partial<UnifiedTokenData> = {
-      address: tokenData.address,
-      symbol: tokenData.symbol,
-      name: tokenData.name,
-      logoURI: tokenData.logoURI || "/logo.svg",
-      price: tokenData.price,
-      priceChange24hPercent: tokenData.priceChange24hPercent,
-      v24hUSD: tokenData.v24hUSD,
-      v24hChangePercent: tokenData.v24hChangePercent,
-      vBuy24hUSD: tokenData.vBuy24hUSD,
-      vSell24hUSD: tokenData.vSell24hUSD,
-      marketCap: tokenData.marketCap,
-      liquidity: tokenData.liquidity,
-      holder: tokenData.holder,
-      decimals: tokenData.decimals,
-      fdv: tokenData.fdv,
-      totalSupply: tokenData.totalSupply,
-      circulatingSupply: tokenData.circulatingSupply,
-      trade24h: tokenData.trade24h,
-      buy24h: tokenData.buy24h,
-      sell24h: tokenData.sell24h,
-      uniqueWallet24h: tokenData.uniqueWallet24h,
-      extensions: tokenData.extensions,
-    };
-
-    // Merge with existing cache (list data takes precedence for prices if newer)
-    const merged = mergeTokenData(cachedUnified, newUnifiedData, "overview");
-
-    // Store in unified cache
-    setUnifiedToken(tokenAddress, merged, CACHE_TTL.TOKEN_DETAIL).catch((err) => {
-      loggers.cache.error(`Failed to cache unified token ${tokenAddress}:`, err);
-    });
-
-    loggers.cache.debug(`✓ Caching unified token: ${merged.symbol} (source: ${merged.dataSource})`);
-
-    return transformUnifiedToTokenData(merged);
+    return transformUnifiedToTokenData(result);
   } catch (error) {
     loggers.data.error("Error fetching token data:", error);
 

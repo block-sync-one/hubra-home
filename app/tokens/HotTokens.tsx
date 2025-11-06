@@ -11,61 +11,17 @@ interface HotTokensProps {
   initialGainers: Token[];
   initialLosers: Token[];
   initialVolume: Token[];
+  initialTrending: Token[];
 }
 
-export default function HotTokens({ initialGainers, initialLosers, initialVolume }: HotTokensProps) {
+export default function HotTokens({ initialGainers, initialLosers, initialVolume, initialTrending }: HotTokensProps) {
   const tableTabData = [hotTokens, losers, gainers, volume];
   const [selectedTab, setSelectedTab] = useState<TabIdType>(TabId.hotTokens);
-
-  const [hotData, setHotData] = useState<Token[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  React.useEffect(() => {
-    if (selectedTab === TabId.hotTokens) {
-      const fetchTrending = async () => {
-        try {
-          setLoading(true);
-          setError(null);
-          const response = await fetch("/api/crypto/trending?limit=4");
-
-          if (!response.ok) {
-            throw new Error("Failed to fetch trending tokens");
-          }
-
-          const data = await response.json();
-
-          if (data?.coins) {
-            const trendingTokens: Token[] = data.coins.map((item: any) => ({
-              id: item.item.coin_id || item.item.address,
-              name: item.item.name === "Wrapped SOL" ? "Solana" : item.item.name,
-              symbol: item.item.symbol.toUpperCase(),
-              logoURI: item.item.small || item.item.logoURI || "/logo.svg",
-              price: "",
-              change: item.item.data?.price_change_percentage_24h?.usd || 0,
-              volume: "",
-              rawVolume: item.item.data?.volume_24h_usd || 0,
-              rawPrice: item.item.data?.price || 0,
-              marketCap: item.item.data?.marketcap || 0,
-            }));
-
-            setHotData(trendingTokens);
-          }
-        } catch (err) {
-          setError(err instanceof Error ? err.message : "Failed to load trending tokens");
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchTrending();
-    }
-  }, [selectedTab]);
 
   const getTokensForTab = () => {
     switch (selectedTab) {
       case TabId.hotTokens:
-        return hotData;
+        return initialTrending;
       case TabId.gainers:
         return initialGainers;
       case TabId.losers:
@@ -74,13 +30,6 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
         return initialVolume;
       default:
         return [];
-    }
-  };
-
-  const retry = () => {
-    if (selectedTab === TabId.hotTokens) {
-      setHotData([]);
-      setError(null);
     }
   };
 
@@ -102,7 +51,7 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
       {/* Content */}
       <div className="relative z-20 w-full flex flex-col items-start justify-center">
         <TabsUI className="mb-8 border-b border-gray-30" selectedTab={selectedTab} tabsData={tableTabData} onTabChange={setSelectedTab} />
-        <TokenListView error={error} loading={loading} tokens={getTokensForTab()} onRetry={retry} />
+        <TokenListView error={null} loading={false} tokens={getTokensForTab()} />
       </div>
     </div>
   );

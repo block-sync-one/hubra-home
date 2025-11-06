@@ -1,16 +1,18 @@
 import "server-only";
+import { unstable_cache } from "next/cache";
 
 /**
  * Market Data Fetching & Processing
  */
 
 import { toUnifiedTokenData, UnifiedTokenData } from "./unified-token-cache";
-import { getCachedMarketData, setCachedMarketData, setCachedTokensBatch, getMarketDataCacheKey } from "./market-data-cache";
+import { getMarketDataCacheKey, MarketDataResult } from "./market-data-cache";
 
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { Token } from "@/lib/types/token";
 import { loggers } from "@/lib/utils/logger";
 import { BIRDEYE_LIMITS, BIRDEYE_QUERY_PRESETS, MARKET_CAP_FILTERS } from "@/lib/constants/market";
+import { getStaleWhileRevalidate, CACHE_TTL, cacheKeys } from "@/lib/cache";
 
 export type { MarketDataStats, MarketDataResult } from "./market-data-cache";
 
@@ -151,7 +153,38 @@ function processTokens(apiTokens: BirdeyeToken[]): { tokens: Token[]; tokensToCa
 }
 
 /**
- * Fetch market data with intelligent caching
+ * Fetch fresh market data from API
+ * All caching is handled centrally by getStaleWhileRevalidate
+ */
+async function fetchFreshMarketData(
+  limit: number,
+  offset: number,
+  queryParams: Record<string, string>
+): Promise<MarketDataResult & { _tokens?: any[] }> {
+  const apiTokens = await fetchTokensFromAPI(limit, offset, queryParams);
+
+  if (apiTokens.length === 0) {
+    throw new Error("No tokens returned from API");
+  }
+
+  const { tokens, tokensToCache } = processTokens(apiTokens);
+
+  // Filter and calculate stats
+  const filteredTokens = filterViableTokens(tokens);
+  const stats = calculateMarketStats(filteredTokens);
+
+  // Return data with internal metadata for batch caching
+  return {
+    data: filteredTokens,
+    stats,
+    _tokens: tokensToCache, // Internal: used by SWR for batch caching
+  };
+}
+
+/**
+ * Fetch market data with stale-while-revalidate pattern
+ *
+ * Returns cached data instantly (even if stale), refreshes in background if needed.
  *
  * @param limit - Number of tokens to fetch
  * @param offset - Offset for pagination
@@ -159,61 +192,66 @@ function processTokens(apiTokens: BirdeyeToken[]): { tokens: Token[]; tokensToCa
  * @param cacheKey - Optional custom cache key
  * @returns Market data result with tokens and aggregate stats
  */
-export async function fetchMarketData(
+/**
+ * Internal implementation of market data fetching
+ */
+async function fetchMarketDataInternal(
   limit: number = 100,
   offset: number = 0,
   customQueryParams?: Record<string, string>,
   cacheKey?: string
-) {
+): Promise<MarketDataResult> {
   const perfStart = performance.now();
+  const finalCacheKey = cacheKey || getMarketDataCacheKey(limit, offset, customQueryParams);
+  const queryParams = customQueryParams || BIRDEYE_QUERY_PRESETS.DEFAULT;
 
   try {
-    // Step 1: Generate cache key
-    const finalCacheKey = cacheKey || getMarketDataCacheKey(limit, offset, customQueryParams);
+    // Use centralized SWR with batch caching
+    // SWR handles ALL caching (main result + individual tokens)
+    const result = await getStaleWhileRevalidate<MarketDataResult & { _tokens?: any[] }>(
+      finalCacheKey,
+      CACHE_TTL.MARKET_DATA,
+      () => fetchFreshMarketData(limit, offset, queryParams),
+      {
+        // Configure batch caching for individual tokens
+        batchCache: {
+          extractItems: (result) => result._tokens || [],
+          getItemKey: (item) => cacheKeys.tokenDetail(item.address),
+          transformItem: (item) => item.data,
+          itemTtl: CACHE_TTL.TOKEN_DETAIL,
+        },
+      }
+    );
 
-    // Step 2: Check for complete cached market data
-    const cached = await getCachedMarketData(finalCacheKey);
-
-    if (cached) {
-      return cached;
-    }
-
-    // Step 3: Fetch from API (cache miss)
-    const queryParams = customQueryParams || BIRDEYE_QUERY_PRESETS.DEFAULT;
-    const apiTokens = await fetchTokensFromAPI(limit, offset, queryParams);
-
-    if (apiTokens.length === 0) {
-      loggers.data.warn("No tokens returned from API");
-
-      return buildEmptyMarketData();
-    }
-
-    const { tokens, tokensToCache } = processTokens(apiTokens);
-
-    // Step 4: Cache fresh tokens (non-blocking)
-    setCachedTokensBatch(tokensToCache);
-
-    // Step 5: Filter and calculate stats
-    const filteredTokens = filterViableTokens(tokens);
-    const stats = calculateMarketStats(filteredTokens);
-
-    const result = {
-      data: filteredTokens,
-      stats,
-    };
-
-    // Step 6: Cache complete market data (non-blocking)
-    setCachedMarketData(finalCacheKey, result);
-
-    // Step 7: Log performance metrics
     const totalDuration = performance.now() - perfStart;
 
-    loggers.cache.debug(`✓ Market data fetched: ${filteredTokens.length} tokens in ${totalDuration.toFixed(0)}ms `);
+    loggers.cache.debug(`✓ Market data: ${result?.data.length || 0} tokens in ${totalDuration.toFixed(0)}ms`);
 
-    return result;
+    // Clean internal metadata before returning
+    if (result) {
+      const { _tokens, ...cleanResult } = result as any;
+
+      return cleanResult as MarketDataResult;
+    }
+
+    return buildEmptyMarketData();
   } catch (error) {
     loggers.data.error("Error fetching market data:", error);
 
     return buildEmptyMarketData();
   }
 }
+
+/**
+ * Fetch market data
+ *
+ * @param limit - Number of tokens to fetch
+ * @param offset - Offset for pagination
+ * @param customQueryParams - Custom query parameters
+ * @param cacheKey - Optional custom cache key
+ * @returns Market data with stats and tokens
+ */
+export const fetchMarketData = unstable_cache(fetchMarketDataInternal, ["market-data"], {
+  revalidate: 60, // Next.js cache: 60 seconds
+  tags: ["market-data", "tokens"],
+});

@@ -27,6 +27,7 @@ const UnifiedTable = <T extends Record<string, any>>({
   configuration,
   isLoading,
   onRowClick,
+  onRowHover,
   filterValue = "",
   selectedTab,
 }: ReusableTableProps<T>) => {
@@ -202,6 +203,11 @@ const UnifiedTable = <T extends Record<string, any>>({
 
           if (originalItem) handleRowClick(originalItem);
         }}
+        onItemHover={(item) => {
+          const originalItem = paginatedItems.find((i: any) => (i.key || i.id || String(i._index)) === item.key);
+
+          if (originalItem && onRowHover) onRowHover(originalItem);
+        }}
       />
       <div className="md:hidden">{paginationElement}</div>
 
@@ -240,7 +246,8 @@ const UnifiedTable = <T extends Record<string, any>>({
               <TableRow
                 key={item.key || item.id || item.asset?.mint || item._index}
                 className="cursor-pointer transition-colors duration-150 border-none"
-                onClick={() => handleRowClick(item)}>
+                onClick={() => handleRowClick(item)}
+                onMouseEnter={() => onRowHover?.(item)}>
                 {configuration.columns.map((column) => (
                   <TableCell
                     key={column.key}

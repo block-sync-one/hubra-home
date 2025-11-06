@@ -141,9 +141,8 @@ class RedisClient {
   public async ttl(key: string): Promise<number> {
     try {
       const client = await this.connect();
-      const result = await client.ttl(key);
 
-      return result;
+      return await client.ttl(key);
     } catch {
       return -1;
     }
