@@ -8,7 +8,6 @@ import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
-import { WebVitals } from "@/components/WebVitals";
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
@@ -151,7 +150,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </main>
           </div>
         </Providers>
-        <WebVitals />
         <Analytics />
         <SpeedInsights />
       </body>
