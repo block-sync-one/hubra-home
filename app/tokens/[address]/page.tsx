@@ -1,14 +1,21 @@
-import React from "react";
+import React, { cache } from "react";
 import { Metadata } from "next";
 
 import { TokenDetailPageClient } from "./TokenDetailPageClient";
 
 import { fetchTokenData } from "@/lib/data/token-data";
-import { fetchPriceHistory } from "@/lib/data/price-history";
 
 interface TokenDetailPageProps {
   params: Promise<{ address: string }>;
 }
+
+/**
+ * Cached token data fetcher - ensures single fetch per request
+ * React cache() memoizes for the duration of the request
+ */
+const getCachedTokenData = cache(async (address: string) => {
+  return await fetchTokenData(address);
+});
 
 /**
  * Generate dynamic metadata for token detail pages
@@ -16,8 +23,8 @@ interface TokenDetailPageProps {
 export async function generateMetadata({ params }: TokenDetailPageProps): Promise<Metadata> {
   const { address } = await params;
 
-  // Fetch token data for metadata
-  const tokenData = await getTokenData(address);
+  // Fetch token data for metadata (cached)
+  const tokenData = await getCachedTokenData(address);
 
   const tokenName = tokenData?.name || "Token";
   const tokenSymbol = tokenData?.symbol || "";
@@ -72,23 +79,11 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
   };
 }
 
-async function getTokenData(tokenAddress: string) {
-  return await fetchTokenData(tokenAddress);
-}
-
-async function getTokenDataWithHistory(tokenAddress: string) {
-  const [tokenData, priceHistory] = await Promise.allSettled([fetchTokenData(tokenAddress), fetchPriceHistory(tokenAddress, "7")]);
-
-  return {
-    tokenData: tokenData.status === "fulfilled" ? tokenData.value : null,
-    priceHistory: priceHistory.status === "fulfilled" ? priceHistory.value : null,
-  };
-}
-
 export default async function TokenDetailPage({ params }: TokenDetailPageProps) {
   const { address } = await params;
 
-  const { tokenData: apiTokenData } = await getTokenDataWithHistory(address);
+  // Fetch token data (reuses cached result from generateMetadata)
+  const apiTokenData = await getCachedTokenData(address);
 
   // Generate JSON-LD structured data for SEO
   const jsonLd = apiTokenData

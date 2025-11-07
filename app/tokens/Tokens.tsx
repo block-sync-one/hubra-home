@@ -1,10 +1,8 @@
 "use client";
 
-import React, { memo, useMemo, useState, useEffect } from "react";
-import { Icon } from "@iconify/react";
+import React, { memo, useMemo } from "react";
 
 import { useCurrency } from "@/lib/context/currency-format";
-import { StatsGridSkeleton } from "@/components/StatsCardSkeleton";
 import { PriceChangeChip } from "@/components/price";
 
 interface StatCardProps {
@@ -80,62 +78,35 @@ interface StatData {
 }
 
 interface TokensProps {
-  totalMarketCap: number;
+  totalFDV: number;
   totalVolume: number;
-  marketCapChange: number;
-  solanaFDV: number;
-  solanaFDVChange: number;
+  fdvChange: number;
+  solFDV: number;
+  solFDVChange: number;
   newTokensCount: number;
+  stablecoinTVL: number;
+  stablecoinTVLChange: number;
 }
 
-interface StablecoinData {
-  data: {
-    stablecoins_tvl: number;
-    stablecoins_tvl_change: number;
-  };
-}
-
-export default function Tokens({ totalMarketCap, totalVolume, marketCapChange, solanaFDV, solanaFDVChange, newTokensCount }: TokensProps) {
+export default function Tokens({
+  totalFDV,
+  totalVolume,
+  fdvChange,
+  solFDV,
+  solFDVChange,
+  newTokensCount,
+  stablecoinTVL,
+  stablecoinTVLChange,
+}: TokensProps) {
   const { formatPrice } = useCurrency();
-  const [stablecoinData, setStablecoinData] = useState<StablecoinData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchStablecoinData() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch("/api/crypto/global", {
-          cache: "no-store",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch stablecoin data");
-        }
-
-        const data = await response.json();
-
-        setStablecoinData(data);
-      } catch {
-        setError("Failed to fetch stablecoin data");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchStablecoinData();
-  }, []);
 
   const statsData: StatData[] = useMemo(() => {
-    // Use props for market data and API for stablecoin data
     return [
       {
-        title: "Total Market Cap",
-        value: formatPrice(totalMarketCap),
-        change: marketCapChange,
-        isPositive: marketCapChange >= 0,
+        title: "Total FDV",
+        value: formatPrice(totalFDV),
+        change: fdvChange,
+        isPositive: fdvChange >= 0,
       },
       {
         title: "Trading Vol",
@@ -148,18 +119,18 @@ export default function Tokens({ totalMarketCap, totalVolume, marketCapChange, s
       },*/
       {
         title: "Solana FDV",
-        value: formatPrice(solanaFDV),
-        change: solanaFDVChange,
-        isPositive: solanaFDVChange >= 0,
+        value: formatPrice(solFDV),
+        change: solFDVChange,
+        isPositive: solFDVChange >= 0,
       },
       {
         title: "Stablecoins TVL",
-        value: formatPrice(stablecoinData?.data?.stablecoins_tvl || 0),
-        change: stablecoinData?.data?.stablecoins_tvl_change,
-        isPositive: (stablecoinData?.data?.stablecoins_tvl_change || 0) >= 0,
+        value: formatPrice(stablecoinTVL),
+        change: stablecoinTVLChange,
+        isPositive: stablecoinTVLChange >= 0,
       },
     ];
-  }, [totalMarketCap, totalVolume, marketCapChange, solanaFDV, solanaFDVChange, newTokensCount, stablecoinData, formatPrice]);
+  }, [totalFDV, totalVolume, fdvChange, solFDV, solFDVChange, newTokensCount, stablecoinTVL, stablecoinTVLChange, formatPrice]);
 
   const statsCards = useMemo(
     () =>
@@ -168,64 +139,6 @@ export default function Tokens({ totalMarketCap, totalVolume, marketCapChange, s
       )),
     [statsData]
   );
-
-  // Enhanced loading state with skeleton
-  if (loading) {
-    return (
-      <div className="flex flex-col gap-6">
-        <h2 className="text-2xl font-medium text-white">Tokens</h2>
-        <StatsGridSkeleton count={5} />
-      </div>
-    );
-  }
-
-  // Enhanced error state with retry functionality
-  if (error) {
-    return (
-      <div className="flex flex-col gap-6">
-        <h2 className="text-2xl font-medium text-white">Tokens</h2>
-        <div className="relative rounded-xl border border-white/10 overflow-hidden">
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center max-w-md">
-              <Icon className="w-12 h-12 text-red-500 mx-auto mb-4" icon="mdi:alert-circle" />
-              <h3 className="text-lg font-medium text-white mb-2">Failed to Load Data</h3>
-              <p className="text-gray-400 mb-6">{error}</p>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                onClick={() => window.location.reload()}>
-                <Icon className="w-4 h-4 inline mr-2" icon="mdi:refresh" />
-                Retry
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Handle no data scenario
-  if (!stablecoinData || !stablecoinData.data) {
-    return (
-      <div className="flex flex-col gap-6">
-        <h2 className="text-2xl font-medium text-white">Tokens</h2>
-        <div className="relative rounded-xl border border-white/10 overflow-hidden">
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center max-w-md">
-              <Icon className="w-12 h-12 text-yellow-500 mx-auto mb-4" icon="mdi:database-off" />
-              <h3 className="text-lg font-medium text-white mb-2">No Data Available</h3>
-              <p className="text-gray-400 mb-6">Unable to fetch global cryptocurrency data at this time.</p>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                onClick={() => window.location.reload()}>
-                <Icon className="w-4 h-4 inline mr-2" icon="mdi:refresh" />
-                Try Again
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-6">

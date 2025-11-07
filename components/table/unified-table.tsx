@@ -3,12 +3,12 @@
 import type { TableProps } from "./types";
 
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import { SortDescriptor, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@heroui/react";
-import { Icon } from "@iconify/react";
+import { SortDescriptor, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@heroui/react";
 
 import TableSkeleton from "./skeleton/table-skeleton";
 
-import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
+import { MobileListLayout, type MobileListItem } from "@/components/ui/mobile-list-layout";
+import { TablePagination } from "@/components/ui/table-pagination";
 import { fixedNumber } from "@/lib/utils";
 
 // Simple get function to replace lodash
@@ -27,6 +27,7 @@ const UnifiedTable = <T extends Record<string, any>>({
   configuration,
   isLoading,
   onRowClick,
+  onRowHover,
   filterValue = "",
   selectedTab,
 }: ReusableTableProps<T>) => {
@@ -167,37 +168,24 @@ const UnifiedTable = <T extends Record<string, any>>({
     setPage(1);
   }, [filterValue]);
 
-  const bottomContent = useMemo(() => {
+  const paginationElement = useMemo(() => {
     if (sortedItems.length <= rowsPerPage) return null;
 
-    return (
-      <div className="flex flex-row justify-center items-center w-full gap-3 px-5 py-4 bg-transparent">
-        <span className="font-normal leading-[1.43] text-left text-gray-600">
-          Page {page} of {pages}
-        </span>
-        <div className="flex flex-row justify-end items-center gap-3 flex-1">
-          <Button
-            className="bg-card font-semibold rounded-lg px-3 py-2"
-            color="default"
-            isDisabled={page === 1}
-            size="md"
-            variant="flat"
-            onPress={onPreviousPage}>
-            Previous
-          </Button>
-          <Button
-            className="bg-card font-semibold rounded-lg px-3 py-2"
-            color="default"
-            isDisabled={page === pages}
-            size="md"
-            variant="flat"
-            onPress={onNextPage}>
-            Next
-          </Button>
-        </div>
-      </div>
-    );
+    return <TablePagination currentPage={page} totalPages={pages} onNext={onNextPage} onPageChange={setPage} onPrevious={onPreviousPage} />;
   }, [page, pages, onPreviousPage, onNextPage, sortedItems.length, rowsPerPage]);
+
+  // Convert items to mobile list format
+  const mobileListItems = useMemo<MobileListItem[]>(() => {
+    return paginatedItems.map((item: any) => ({
+      key: item.key || item.id || item.asset?.mint || String(item._index),
+      logoURI: item.logoURI || "/logo.svg",
+      name: item.name || "Unknown",
+      symbol: item.symbol,
+      primaryValue: item.price || "-",
+      change: item.change,
+      secondaryValue: item.change ? `${fixedNumber(Math.abs(item.change))}%` : "0%",
+    }));
+  }, [paginatedItems]);
 
   if (invalidConfig) {
     return <div className="p-4 text-center text-gray-500">Table configuration error</div>;
@@ -206,54 +194,22 @@ const UnifiedTable = <T extends Record<string, any>>({
   return (
     <>
       {/* Mobile List View */}
-      <div className="md:hidden rounded-lg overflow-hidden">
-        {isLoading ? (
-          <TableSkeleton columns={1} rows={5} />
-        ) : paginatedItems.length === 0 ? (
-          <div className="py-6 text-center text-gray-500">No data available</div>
-        ) : (
-          paginatedItems.map((item: any) => (
-            <div
-              key={item.key || item.id || item.asset?.mint || item._index}
-              aria-label="Token details"
-              className="flex items-center justify-between p-2 hover:bg-white/5 rounded-xl transition-colors cursor-pointer"
-              role="button"
-              onClick={() => handleRowClick(item)}>
-              {/* Left Column: Image, Name, Symbol */}
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
-                  <ImageWithSkeleton
-                    alt={`${item.name} (${item.symbol}) logo`}
-                    className="w-full h-full object-cover"
-                    height={32}
-                    src={item.logoURI || "/logo.svg"}
-                    width={32}
-                  />
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-semibold text-foreground truncate">{item.name}</span>
-                  <span className="text-xs text-gray-400 uppercase font-medium">{item.symbol}</span>
-                </div>
-              </div>
+      <MobileListLayout
+        emptyMessage="No data available"
+        isLoading={isLoading}
+        items={mobileListItems}
+        onItemClick={(item) => {
+          const originalItem = paginatedItems.find((i: any) => (i.key || i.id || String(i._index)) === item.key);
 
-              {/* Right Column: Price and Price Change */}
-              <div className="flex flex-col items-end">
-                <span className="text-sm font-medium text-foreground">{item.price}</span>
-                <div
-                  className={`flex items-center gap-1 text-xs font-semibold ${
-                    item.change && item.change > 0 ? "text-success" : item.change && item.change < 0 ? "text-danger" : "text-gray-400"
-                  }`}>
-                  {item.change !== undefined && item.change !== 0 && (
-                    <Icon icon={item.change > 0 ? "mdi:arrow-up" : "mdi:arrow-down"} width={12} />
-                  )}
-                  <span>{item.change ? fixedNumber(Math.abs(item.change)) : 0}%</span>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-        {bottomContent}
-      </div>
+          if (originalItem) handleRowClick(originalItem);
+        }}
+        onItemHover={(item) => {
+          const originalItem = paginatedItems.find((i: any) => (i.key || i.id || String(i._index)) === item.key);
+
+          if (originalItem && onRowHover) onRowHover(originalItem);
+        }}
+      />
+      <div className="md:hidden">{paginationElement}</div>
 
       {/* Desktop Table View */}
       <div className="hidden md:block">
@@ -290,7 +246,8 @@ const UnifiedTable = <T extends Record<string, any>>({
               <TableRow
                 key={item.key || item.id || item.asset?.mint || item._index}
                 className="cursor-pointer transition-colors duration-150 border-none"
-                onClick={() => handleRowClick(item)}>
+                onClick={() => handleRowClick(item)}
+                onMouseEnter={() => onRowHover?.(item)}>
                 {configuration.columns.map((column) => (
                   <TableCell
                     key={column.key}
@@ -315,7 +272,7 @@ const UnifiedTable = <T extends Record<string, any>>({
             ))}
           </TableBody>
         </Table>
-        {bottomContent}
+        {paginationElement}
       </div>
     </>
   );

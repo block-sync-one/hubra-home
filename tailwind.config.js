@@ -110,6 +110,7 @@ const config = {
       defaultTheme: "dark",
     }),
     require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
 
     // Custom utilities and components
     function ({ addBase, addComponents, addUtilities }) {

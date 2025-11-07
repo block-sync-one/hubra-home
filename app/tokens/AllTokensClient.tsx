@@ -45,6 +45,14 @@ export default function AllTokensClient({ initialAllTokens, initialGainers, init
     [router]
   );
 
+  // Prefetch token page on hover for instant navigation
+  const handleTokenHover = useCallback(
+    (token: Token) => {
+      router.prefetch(`/tokens/${token.id}`);
+    },
+    [router]
+  );
+
   return (
     <div className="flex flex-col gap-6">
       <h2 className="text-2xl font-medium text-white">All Tokens</h2>
@@ -59,6 +67,7 @@ export default function AllTokensClient({ initialAllTokens, initialGainers, init
         isLoading={false}
         tabs={tableTabData}
         onAssetClick={handleTokenClick}
+        onAssetHover={handleTokenHover}
       />
     </div>
   );

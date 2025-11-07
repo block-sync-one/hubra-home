@@ -141,9 +141,8 @@ class RedisClient {
   public async ttl(key: string): Promise<number> {
     try {
       const client = await this.connect();
-      const result = await client.ttl(key);
 
-      return result;
+      return await client.ttl(key);
     } catch {
       return -1;
     }
@@ -158,6 +157,97 @@ class RedisClient {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  /**
+   * Batch get multiple keys using MGET
+   * Returns a map of key -> parsed value (null if key doesn't exist)
+   */
+  public async mget<T>(keys: string[]): Promise<Map<string, T | null>> {
+    const result = new Map<string, T | null>();
+
+    if (keys.length === 0) return result;
+
+    try {
+      const client = await this.connect();
+      const values = await client.mget(...keys);
+
+      keys.forEach((key, index) => {
+        const value = values[index];
+
+        if (value) {
+          try {
+            result.set(key, JSON.parse(value) as T);
+          } catch {
+            result.set(key, null);
+          }
+        } else {
+          result.set(key, null);
+        }
+      });
+
+      return result;
+    } catch {
+      // Return empty map on error
+      keys.forEach((key) => result.set(key, null));
+
+      return result;
+    }
+  }
+
+  /**
+   * Batch set multiple key-value pairs using MSET + EXPIRE via pipeline
+   * More efficient than individual SET calls
+   */
+  public async mset<T>(entries: Array<{ key: string; value: T; ttl?: number }>): Promise<boolean> {
+    if (entries.length === 0) return true;
+
+    try {
+      const client = await this.connect();
+      const pipeline = client.pipeline();
+
+      for (const entry of entries) {
+        const serialized = JSON.stringify(entry.value);
+        const ttl = entry.ttl ?? CACHE_TTL.SEARCH;
+
+        pipeline.setex(entry.key, ttl, serialized);
+      }
+
+      await pipeline.exec();
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Execute a batch of commands using Redis pipeline
+   * Reduces network round trips
+   */
+  public async executePipeline<T>(commands: Array<{ command: string; args: (string | number)[] }>): Promise<Array<T | null>> {
+    if (commands.length === 0) return [];
+
+    try {
+      const client = await this.connect();
+      const pipeline = client.pipeline();
+
+      for (const cmd of commands) {
+        (pipeline as any)[cmd.command](...cmd.args);
+      }
+
+      const results = await pipeline.exec();
+
+      if (!results) return [];
+
+      return results.map(([err, result]) => {
+        if (err) return null;
+
+        return result as T;
+      });
+    } catch {
+      return new Array(commands.length).fill(null);
     }
   }
 

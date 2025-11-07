@@ -126,7 +126,7 @@ async function withDataCache<T>(cacheKey: string, fetchFn: () => Promise<T>, cac
 
   const data = await fetchFn();
 
-  await redis.set(cacheKey, data, CACHE_TTL.STABLECOIN_DATA).catch((err) => {
+  redis.set(cacheKey, data, CACHE_TTL.STABLECOIN_DATA).catch((err) => {
     loggers.cache.error(`${cacheName} cache failed:`, err);
   });
 

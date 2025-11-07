@@ -6,11 +6,13 @@ import AllTokens from "@/app/tokens/AllTokens";
 import HotTokens from "@/app/tokens/HotTokens";
 import { fetchMarketData } from "@/lib/data/market-data";
 import { fetchNewlyListedTokens } from "@/lib/data/newly-listed-tokens";
+import { fetchTrendingData } from "@/lib/data/trending-data";
+import { fetchGlobalStats } from "@/lib/data/global-stats";
 import { TokenFilter } from "@/lib/helpers/token";
+import { transformTrendingToTokens } from "@/lib/helpers/trending-transformer";
 import { TOKEN_LIMITS } from "@/lib/constants/market";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 60; // Revalidate every 60 seconds
 
 export const metadata: Metadata = {
   title: "Cryptocurrency Prices | Live Solana Token Market Data | Hubra",
@@ -70,23 +72,33 @@ export const metadata: Metadata = {
 
 /**
  * Server Component - Fetches all data once and distributes to child components
- * This ensures HotTokens and AllTokens use the same data source
- * Market stats are calculated server-side and cached in Redis
  */
 export default async function TokensPage() {
-  // Fetch main market data and newly listed tokens in parallel for performance
-  const [marketDataResult, newlyListedResult] = await Promise.all([
+  const perfStart = performance.now();
+
+  // Fetch all data in parallel - Redis cache absorbs load
+  const [marketDataResult, newlyListedResult, trendingData, globalStats] = await Promise.all([
     fetchMarketData(TOKEN_LIMITS.TOKENS_PAGE, 0),
     fetchNewlyListedTokens(TOKEN_LIMITS.TOKENS_PAGE, 0, 24), // Last 24 hours
+    fetchTrendingData(TOKEN_LIMITS.HOT_TOKENS),
+    fetchGlobalStats(),
   ]);
+
+  const perfDuration = performance.now() - perfStart;
+
+  if (process.env.NODE_ENV === "development") {
+    console.log(`📊 Tokens page data fetch: ${perfDuration.toFixed(0)}ms`);
+  }
 
   // Extract data and stats
   const marketTokens = marketDataResult.data;
   const newlyListedTokens = newlyListedResult.data;
-  const { totalMarketCap, totalVolume, totalFDV, marketCapChange } = marketDataResult.stats;
+  const { totalFDV, totalVolume, solFDV, totalFDVChange } = marketDataResult.stats;
   const newTokensCount = newlyListedTokens.length;
 
-  // Sort data for different views (reuse same data)
+  // Transform trending data to Token format
+  const trendingTokens = transformTrendingToTokens(trendingData);
+
   const allAssetsSorted = TokenFilter.byMarketCap(marketTokens, marketTokens.length);
   const gainersSorted = TokenFilter.gainers(marketTokens, marketTokens.length);
   const losersSorted = TokenFilter.losers(marketTokens, marketTokens.length);
@@ -118,19 +130,21 @@ export default async function TokensPage() {
       <main className="flex flex-col gap-12">
         <div className="md:max-w-7xl mx-auto w-full">
           <Tokens
-            marketCapChange={marketCapChange}
+            fdvChange={totalFDVChange}
             newTokensCount={newTokensCount}
-            solanaFDV={totalFDV}
-            solanaFDVChange={0}
-            totalMarketCap={totalMarketCap}
+            solFDV={solFDV}
+            solFDVChange={0}
+            stablecoinTVL={globalStats.stablecoins_tvl}
+            stablecoinTVLChange={globalStats.stablecoins_tvl_change}
+            totalFDV={totalFDV}
             totalVolume={totalVolume}
           />
         </div>
         <div className="md:max-w-7xl mx-auto w-full">
-          {/* Pass top 4 from each category to HotTokens */}
           <HotTokens
             initialGainers={gainersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
             initialLosers={losersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
+            initialTrending={trendingTokens}
             initialVolume={volumeSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
           />
         </div>

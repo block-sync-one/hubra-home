@@ -113,3 +113,24 @@ export function localNumberInputAmount(value: number) {
     maximumFractionDigits: 2,
   });
 }
+
+/**
+ * Format a number as currency (USD)
+ * @param value - Number to format
+ * @param compact - Whether to use compact notation (K, M, B)
+ * @returns Formatted currency string
+ */
+export function formatCurrency(value: number, compact: boolean = false): string {
+  if (value === 0) return "$0.00";
+
+  if (compact) {
+    return "$" + formatBigNumbers(value);
+  }
+
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: value < 1 ? 4 : 2,
+    maximumFractionDigits: value < 1 ? 6 : 2,
+  }).format(value);
+}

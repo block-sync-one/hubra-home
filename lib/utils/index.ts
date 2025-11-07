@@ -3,3 +3,4 @@ export * from "./virtual-storage";
 export * from "./random";
 export * from "./chart-utils";
 export * from "./logger";
+export * from "./performance-tracker";

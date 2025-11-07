@@ -84,13 +84,7 @@ export interface UnifiedTokenData {
  */
 export async function getUnifiedToken(address: string): Promise<UnifiedTokenData | null> {
   try {
-    const cached = await redis.get<UnifiedTokenData>(cacheKeys.tokenDetail(address));
-
-    if (cached) {
-      loggers.cache.debug(`✓ Unified token: ${address}`);
-    }
-
-    return cached;
+    return await redis.get<UnifiedTokenData>(cacheKeys.tokenDetail(address));
   } catch (error) {
     loggers.cache.error(`Failed to get unified token ${address}:`, error);
 
@@ -103,12 +97,82 @@ export async function getUnifiedToken(address: string): Promise<UnifiedTokenData
  */
 export async function setUnifiedToken(address: string, data: UnifiedTokenData, ttl: number = CACHE_TTL.TOKEN_DETAIL): Promise<boolean> {
   try {
-    await redis.set(cacheKeys.tokenDetail(address), data, ttl);
-    loggers.cache.debug(`✓ Cached unified token: ${data.symbol}`);
+    // Cache in background
+    redis.set(cacheKeys.tokenDetail(address), data, ttl).catch((err) => {
+      loggers.cache.error(`Failed to cache unified token ${address}:`, err);
+    });
+
+    loggers.cache.debug(`✓ Caching unified token: ${data.symbol}`);
 
     return true;
   } catch (error) {
     loggers.cache.error(`Failed to cache unified token ${address}:`, error);
+
+    return false;
+  }
+}
+
+/**
+ * Batch get multiple unified tokens from cache
+ * Uses Redis MGET for efficient bulk retrieval
+ */
+export async function getManyUnifiedTokens(addresses: string[]): Promise<Map<string, UnifiedTokenData | null>> {
+  const result = new Map<string, UnifiedTokenData | null>();
+
+  if (addresses.length === 0) return result;
+
+  try {
+    const keys = addresses.map((addr) => cacheKeys.tokenDetail(addr));
+    const cached = await redis.mget<UnifiedTokenData>(keys);
+
+    addresses.forEach((address, index) => {
+      const key = keys[index];
+      const data = cached.get(key);
+
+      result.set(address, data || null);
+
+      if (data) {
+        loggers.cache.debug(`✓ Batch unified token: ${address}`);
+      }
+    });
+
+    return result;
+  } catch (error) {
+    loggers.cache.error(`Failed to batch get unified tokens:`, error);
+
+    // Return empty results on error
+    addresses.forEach((addr) => result.set(addr, null));
+
+    return result;
+  }
+}
+
+/**
+ * Batch set multiple unified tokens in cache
+ * Uses Redis pipeline with SETEX for efficient bulk writes
+ */
+export async function setManyUnifiedTokens(
+  tokens: Array<{ address: string; data: UnifiedTokenData }>,
+  ttl: number = CACHE_TTL.TOKEN_DETAIL
+): Promise<boolean> {
+  if (tokens.length === 0) return true;
+
+  try {
+    const entries = tokens.map((token) => ({
+      key: cacheKeys.tokenDetail(token.address),
+      value: token.data,
+      ttl,
+    }));
+
+    const success = await redis.mset(entries);
+
+    if (success) {
+      loggers.cache.debug(`✓ Batch cached ${tokens.length} unified tokens`);
+    }
+
+    return success;
+  } catch (error) {
+    loggers.cache.error(`Failed to batch set unified tokens:`, error);
 
     return false;
   }

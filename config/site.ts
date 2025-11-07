@@ -32,6 +32,7 @@ export const siteConfig = {
     "Web3",
   ],
   url: "https://hubra.app",
+  welcomeUrl: "https://hubra-home.vercel.app/",
   ogImage: "/hubra-og-image.png",
   twitter: {
     handle: "@hubraApp",
@@ -48,9 +49,16 @@ export const siteConfig = {
       show: true,
     },
     {
-      label: "DeFi",
-      href: "/defi",
+      label: "Blog",
+      href: "/blog",
+      show: true,
     },
+    // DeFi route excluded (app/_defi)
+    // {
+    //   label: "DeFi",
+    //   href: "/defi",
+    //   show: true,
+    // },
     {
       label: "Resources",
       description: "Learn more about Hubra",
@@ -64,6 +72,7 @@ export const siteConfig = {
           icon: "mdi:blog",
           label: "Blog",
           href: "/blog",
+          show: true,
         },
       ],
     },
@@ -94,9 +103,17 @@ export const siteConfig = {
       show: true,
     },
     {
-      label: "DeFi",
-      href: "/defi",
+      icon: "mdi:blog",
+      label: "Blog",
+      href: "/blog",
+      show: true,
     },
+    // DeFi route excluded (app/_defi)
+    // {
+    //   label: "DeFi",
+    //   href: "/defi",
+    //   show: true,
+    // },
     {
       label: "Stats",
       href: "/stats",
