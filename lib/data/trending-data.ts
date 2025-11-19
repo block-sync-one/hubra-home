@@ -1,5 +1,4 @@
 import "server-only";
-import { unstable_cache } from "next/cache";
 
 import { toUnifiedTokenData, setManyUnifiedTokens } from "./unified-token-cache";
 
@@ -189,12 +188,11 @@ async function fetchTrendingDataInternal(limit: number): Promise<TrendingData> {
 }
 
 /**
- * Fetch trending tokens with Next.js + Redis dual-layer caching
+ * Fetch trending tokens
  *
  * @param limit - Number of trending tokens to fetch
  * @returns Trending tokens data
  */
-export const fetchTrendingData = unstable_cache(fetchTrendingDataInternal, ["trending-data"], {
-  revalidate: 60,
-  tags: ["trending", "tokens"],
-});
+export async function fetchTrendingData(limit: number): Promise<TrendingData> {
+  return fetchTrendingDataInternal(limit);
+}

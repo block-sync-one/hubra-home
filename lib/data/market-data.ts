@@ -1,5 +1,4 @@
 import "server-only";
-import { unstable_cache } from "next/cache";
 
 /**
  * Market Data Fetching & Processing
@@ -251,7 +250,11 @@ async function fetchMarketDataInternal(
  * @param cacheKey - Optional custom cache key
  * @returns Market data with stats and tokens
  */
-export const fetchMarketData = unstable_cache(fetchMarketDataInternal, ["market-data"], {
-  revalidate: 60, // Next.js cache: 60 seconds
-  tags: ["market-data", "tokens"],
-});
+export async function fetchMarketData(
+  limit: number = 100,
+  offset: number = 0,
+  customQueryParams?: Record<string, string>,
+  cacheKey?: string
+): Promise<MarketDataResult> {
+  return fetchMarketDataInternal(limit, offset, customQueryParams, cacheKey);
+}
