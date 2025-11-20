@@ -8,6 +8,7 @@ import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
+import { ORGANIZATION_JSON_LD_STRING, WEBSITE_JSON_LD_STRING } from "@/lib/utils/structured-data";
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
@@ -85,39 +86,6 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Organization structured data for better brand recognition
-  const organizationJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Hubra",
-    "description": "Hubra - the power of CEX, the freedom of DeFi",
-    "url": "https://hubra.app",
-    "logo": "https://hubra.app/logo.png",
-    "sameAs": ["https://twitter.com/hubraApp"],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "Customer Support",
-      "url": "https://hubra.app",
-    },
-  };
-
-  // Website schema with search functionality
-  const websiteJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Hubra",
-    "description": "Solana DeFi Analytics Platform",
-    "url": "https://hubra.app",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://hubra.app/tokens?search={search_term_string}",
-      },
-      "query-input": "required name=search_term_string",
-    },
-  };
-
   return (
     <html suppressHydrationWarning lang="en">
       <head>
@@ -130,11 +98,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://api.llama.fi" rel="dns-prefetch" />
 
         <script
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: ORGANIZATION_JSON_LD_STRING }}
+          defer
           id="organization-jsonld"
           type="application/ld+json"
         />
-        <script dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} id="website-jsonld" type="application/ld+json" />
+        <script dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD_STRING }} defer id="website-jsonld" type="application/ld+json" />
       </head>
       <body className={clsx("min-h-screen text-foreground font-sans antialiased overflow-x-hidden")}>
         <a

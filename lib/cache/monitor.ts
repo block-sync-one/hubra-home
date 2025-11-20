@@ -187,6 +187,3 @@ async function getMemoryUsage(): Promise<string> {
 /**
  * Clear all cache statistics (for testing)
  */
-export function clearCacheStats(): void {
-  apiQueue.clear();
-}

@@ -1,5 +1,4 @@
 import "server-only";
-import { unstable_cache } from "next/cache";
 
 import { fetchStablecoinData } from "./stablecoin-data";
 
@@ -72,11 +71,10 @@ async function fetchGlobalStatsInternal(): Promise<GlobalStats> {
 }
 
 /**
- * Fetch global statistics with Next.js + Redis dual-layer caching
+ * Fetch global statistics
  *
  * @returns Global statistics including stablecoin TVL
  */
-export const fetchGlobalStats = unstable_cache(fetchGlobalStatsInternal, ["global-stats"], {
-  revalidate: 300, // 5 minutes - stats change slowly
-  tags: ["global-stats", "stablecoins"],
-});
+export async function fetchGlobalStats(): Promise<GlobalStats> {
+  return fetchGlobalStatsInternal();
+}

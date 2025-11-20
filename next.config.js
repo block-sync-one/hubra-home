@@ -40,6 +40,10 @@ const nextConfig = {
   // PoweredBy header removal for security
   poweredByHeader: false,
 
+  experimental: {
+    optimizePackageImports: ["@iconify/react", "framer-motion", "recharts", "lucide-react"],
+  },
+
   // Headers for SEO and security
   async headers() {
     return [

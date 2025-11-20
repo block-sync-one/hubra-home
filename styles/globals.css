@@ -1,8 +1,7 @@
 /* ============================================
    Fonts
    ============================================ */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-@import url("https://geists.vercel.app/fonts.css");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 /* ============================================
    Tailwind Directives
@@ -28,7 +27,7 @@
 
   /* Body configuration */
   body {
-    font-family: "Geist", "Inter", sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: 14px;
     box-sizing: border-box;
     background-color: #0d0e21;

@@ -1,5 +1,8 @@
 import { Metadata } from "next";
 
+import { siteConfig } from "@/config/site";
+import { TOKEN_ANALYTICS_JSON_LD_STRING } from "@/lib/utils/structured-data";
+
 interface TokenLayoutProps {
   children: React.ReactNode;
   params: Promise<{ symbol: string }>;
@@ -9,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ symbol: s
   const { symbol } = await params;
 
   return {
-    metadataBase: new URL("https://hubra.app"),
+    metadataBase: new URL(siteConfig.welcomeUrl),
     title: `${symbol} Token Details | Hubra - DeFi Analytics Platform`,
     description: `View detailed analytics, price charts, and trading information for ${symbol} token on Hubra. Track market cap, volume, and trading data.`,
     keywords: [
@@ -62,26 +65,11 @@ export async function generateMetadata({ params }: { params: Promise<{ symbol: s
 export default function TokenLayout({ children }: TokenLayoutProps) {
   return (
     <>
-      {/* Structured Data for SEO */}
       <script
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FinancialProduct",
-            "name": "Token Analytics",
-            "description": "Cryptocurrency token analytics and trading data",
-            "provider": {
-              "@type": "Organization",
-              "name": "Hubra",
-              "url": "https://hubra.app",
-            },
-            "category": "Cryptocurrency",
-            "offers": {
-              "@type": "Offer",
-              "availability": "https://schema.org/InStock",
-            },
-          }),
+          __html: TOKEN_ANALYTICS_JSON_LD_STRING,
         }}
+        defer
         type="application/ld+json"
       />
       {children}
