@@ -7,6 +7,8 @@ import { Icon } from "@iconify/react";
 import { StatsGrid } from "../components/stats-grid";
 
 import { fetchProtocolData } from "@/lib/data/defi-data";
+import { siteConfig } from "@/config/site";
+import { getBreadcrumbJsonLdString } from "@/lib/utils/structured-data";
 import ChartPnl, { Chart } from "@/components/chart";
 import { formatCurrency } from "@/lib/utils/helper";
 
@@ -26,19 +28,59 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
     };
   }
 
+  const protocolName = protocol.name || "Protocol";
+  const protocolDescription =
+    firstInBreakDown?.description || `${protocolName} DeFi protocol on Solana blockchain. Track TVL, performance metrics, and analytics.`;
+  const protocolUrl = `${siteConfig.welcomeUrl}/defi/${slug}`;
+  const tvlFormatted = protocol.tvl ? `$${(protocol.tvl / 1e6).toFixed(2)}M` : "";
+
   return {
-    title: `${protocol.name || "Protocol"} | Hubra`,
-    description: firstInBreakDown?.description || "",
+    title: `${protocolName} DeFi Protocol | TVL ${tvlFormatted} | Hubra`,
+    description: protocolDescription,
+    keywords: [protocolName, "Solana DeFi", "DeFi protocol", "TVL tracking", "protocol analytics", "Solana blockchain"],
+    alternates: {
+      canonical: protocolUrl,
+    },
     openGraph: {
-      title: `${protocol.name || "Protocol"} | Hubra`,
-      description: firstInBreakDown?.description || "",
-      images: protocol.logo ? [protocol.logo] : [],
+      title: `${protocolName} DeFi Protocol | Hubra`,
+      description: protocolDescription,
+      type: "website",
+      url: protocolUrl,
+      siteName: "Hubra",
+      images: protocol.logo
+        ? [
+            {
+              url: protocol.logo,
+              width: 1200,
+              height: 630,
+              alt: `${protocolName} Logo`,
+            },
+          ]
+        : [
+            {
+              url: "/hubra-og-image.png",
+              width: 1200,
+              height: 630,
+              alt: `${protocolName} DeFi Protocol`,
+            },
+          ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${protocol.name || "Protocol"} | Hubra`,
-      description: firstInBreakDown?.description || "",
-      images: protocol.logo ? [protocol.logo] : [],
+      title: `${protocolName} DeFi Protocol | Hubra`,
+      description: protocolDescription,
+      images: protocol.logo ? [protocol.logo] : ["/hubra-og-image.png"],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        "index": true,
+        "follow": true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   };
 }
@@ -51,7 +93,6 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
     notFound();
   }
 
-  // Get first protocol from breakdown for detailed info (description, social links, etc.)
   const protocolDetail = protocolAggregate.breakdown?.[0];
 
   const chartData: Chart[] = [
@@ -179,8 +220,54 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
     }
   }
 
+  const protocolDescription =
+    protocolDetail?.description ||
+    `${protocolAggregate.name} is a decentralized finance (DeFi) protocol on the Solana blockchain with a total value locked (TVL) of $${(protocolAggregate.tvl / 1e9).toFixed(2)}B. Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics.`;
+
+  const protocolJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FinancialProduct",
+    "name": protocolAggregate.name,
+    "alternateName": protocolAggregate.name,
+    "description": protocolDescription,
+    "url": `${siteConfig.welcomeUrl}/defi/${slug}`,
+    "provider": {
+      "@type": "Organization",
+      "name": protocolAggregate.name,
+      "url": protocolDetail?.url || `${siteConfig.welcomeUrl}/defi/${slug}`,
+    },
+    "category": "DeFi Protocol",
+    "about": {
+      "@type": "FinancialProduct",
+      "name": "DeFi",
+      "description": "Decentralized Finance on Solana blockchain",
+    },
+    "additionalProperty": [
+      {
+        "@type": "PropertyValue",
+        "name": "Total Value Locked",
+        "value": `$${(protocolAggregate.tvl / 1e9).toFixed(2)}B`,
+      },
+      {
+        "@type": "PropertyValue",
+        "name": "Blockchain",
+        "value": "Solana",
+      },
+    ],
+  };
+
+  const breadcrumbJsonLdString = getBreadcrumbJsonLdString([
+    { name: "Home", url: siteConfig.welcomeUrl },
+    { name: "DeFi", url: `${siteConfig.welcomeUrl}/defi` },
+    { name: protocolAggregate.name, url: `${siteConfig.welcomeUrl}/defi/${slug}` },
+  ]);
+
+  const protocolJsonLdString = JSON.stringify(protocolJsonLd);
+
   return (
     <main className="flex flex-col gap-8 overflow-x-hidden">
+      <script dangerouslySetInnerHTML={{ __html: protocolJsonLdString }} defer type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: breadcrumbJsonLdString }} defer type="application/ld+json" />
       <div className="md:max-w-7xl mx-auto w-full px-0 sm:px-0">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">

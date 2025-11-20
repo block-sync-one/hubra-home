@@ -127,7 +127,15 @@ const MobileCarousel = () => {
                     {slide.component}
                   </Card>
                 ) : (
-                  <Image alt="Hubra" className="w-full h-full object-cover rounded-2xl" height={310} src={slide.image} width={310} />
+                  <Image
+                    alt="Hubra"
+                    className="w-full h-full object-cover rounded-2xl"
+                    height={310}
+                    loading="lazy"
+                    quality={85}
+                    src={slide.image}
+                    width={310}
+                  />
                 )}
                 <div className="w-full gap-4 flex flex-col items-start">
                   <h3 className={`font-sans text-white text-lg font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px]`}>
@@ -203,10 +211,26 @@ export const MainContentSection = (): JSX.Element => {
               <div className="flex flex-col gap-4">
                 <Card className="flex items-center justify-center mx-auto w-[350px] h-[518px] bg-[url('/image/hubra-m.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
                   <div className="absolute left-[60%] top-[17%] z-20 backdrop-blur-sm bg-transparent rounded-xl">
-                    <Image alt="Hubra" className="w-[47px] h-[43px]" height={43} src="/icons/wallet.svg" width={47} />
+                    <Image
+                      alt="Hubra"
+                      className="w-[47px] h-[43px]"
+                      height={43}
+                      loading="lazy"
+                      quality={85}
+                      src="/icons/wallet.svg"
+                      width={47}
+                    />
                   </div>
                   <div className="absolute left-[63%] top-[75%] z-30 backdrop-blur-sm bg-transparent rounded-xl">
-                    <Image alt="Hubra" className="w-[47px] h-[43px]" height={43} src="/icons/wallet.svg" width={47} />
+                    <Image
+                      alt="Hubra"
+                      className="w-[47px] h-[43px]"
+                      height={43}
+                      loading="lazy"
+                      quality={85}
+                      src="/icons/wallet.svg"
+                      width={47}
+                    />
                   </div>
                   <div className="absolute left-[32%] top-[18%] z-10">
                     <span className="capitalize w-[84px] h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand-mobile text-center tracking-[1px]">
@@ -296,6 +320,8 @@ export const MainContentSection = (): JSX.Element => {
                             alt="Hubra"
                             className="flex flex-col w-[650px] h-[182px] lg:w-[850px] lg:h-[208px] xl:w-[850px] xl:h-[208px]"
                             height={281}
+                            loading="lazy"
+                            quality={85}
                             src="/image/wgroup.png"
                             width={1014}
                           />
@@ -306,6 +332,8 @@ export const MainContentSection = (): JSX.Element => {
                         alt="token"
                         className="flex flex-col z-40 rounded-full absolute mb-3"
                         height={60}
+                        loading="lazy"
+                        quality={85}
                         src="/image/token.png"
                         width={60}
                       />
@@ -403,6 +431,8 @@ export const MainContentSection = (): JSX.Element => {
                   alt="Solana"
                   className="absolute left-0 bottom-0 w-auto h-[90%] flex hover:opacity-100"
                   height={80}
+                  loading="lazy"
+                  quality={85}
                   src="/image/tvl.svg"
                   width={264}
                 />
@@ -445,7 +475,15 @@ export const MainContentSection = (): JSX.Element => {
             <>
               <div className="flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-4 w-full">
                 <div className="flex w-full md:w-1/2 flex-col gap-8">
-                  <Image alt="Hubra" className="w-full h-full object-cover rounded-2xl" height={310} src="/image/df-1.svg" width={310} />
+                  <Image
+                    alt="Hubra"
+                    className="w-full h-full object-cover rounded-2xl"
+                    height={310}
+                    loading="lazy"
+                    quality={85}
+                    src="/image/df-1.svg"
+                    width={310}
+                  />
                   <div className="w-full gap-4 flex flex-col items-start">
                     <h3 className="font-sans text-white font-semibold text-xl">Eagle Eye</h3>
                     <p className="font-geist text-gray-400/70 text-body break-words">
@@ -454,7 +492,15 @@ export const MainContentSection = (): JSX.Element => {
                   </div>
                 </div>
                 <div className="flex w-full md:w-1/2 flex-col gap-8">
-                  <Image alt="Hubra" className="w-full h-full object-cover rounded-2xl" height={310} src="/image/df-2.svg" width={310} />
+                  <Image
+                    alt="Hubra"
+                    className="w-full h-full object-cover rounded-2xl"
+                    height={310}
+                    loading="lazy"
+                    quality={85}
+                    src="/image/df-2.svg"
+                    width={310}
+                  />
                   <div className="w-full gap-4 flex flex-col items-start">
                     <h3 className="font-sans text-white font-semibold text-xl">Explore</h3>
                     <p className="font-geist text-gray-400/70 text-body break-words">
@@ -548,6 +594,8 @@ export const MainContentSection = (): JSX.Element => {
               alt="Logo"
               className="w-full h-auto  md:flex max-w-[320px] max-h-[320px]"
               height={323}
+              loading="lazy"
+              quality={85}
               src="/image/hero-ball.svg"
               width={323}
             />
@@ -736,7 +784,15 @@ export const MainContentSection = (): JSX.Element => {
         <div className="flex flex-col items-start gap-8 w-full">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center justify-between w-full">
             <div className="inline-flex items-center gap-[8.03px]">
-              <Image alt="hub" className="w-[22px] h-[22px] md:w-6 md:h-6 rounded-none" height={32} src="/logo.png" width={32} />
+              <Image
+                alt="hub"
+                className="w-[22px] h-[22px] md:w-6 md:h-6 rounded-none"
+                height={32}
+                loading="lazy"
+                quality={85}
+                src="/logo.png"
+                width={32}
+              />
 
               <h2 className="text-white font-medium"> Hubra </h2>
             </div>
