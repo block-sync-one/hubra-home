@@ -7,13 +7,18 @@ import { getAllPosts } from "./lib";
 import { BLOG_CONSTANTS } from "./types";
 
 import { siteConfig } from "@/config/site";
+import { COMMON_BREADCRUMBS } from "@/lib/utils/structured-data";
 
-export const revalidate = 3600; // 1 hour - listing changes more frequently
+export const revalidate = 3600;
+
+const title = "Blog | Hubra - Solana News, Guides & DeFi Insights";
+const description = "Stay updated with the latest Solana and DeFi news, staking guides, and Web3 insights";
+const twitterTitle = "Hubra Blog - Solana News & DeFi Insights";
+const canonical = `${siteConfig.welcomeUrl}/blog`;
 
 export const metadata: Metadata = {
-  title: "Blog | Hubra - Solana News, Guides & DeFi Insights",
-  description:
-    "Stay updated with the latest Solana and DeFi news, staking guides, and Web3 insights. Learn about blockchain technology, crypto trading, and decentralized finance.",
+  title,
+  description,
   keywords: [
     "Solana blog",
     "DeFi news",
@@ -24,13 +29,12 @@ export const metadata: Metadata = {
     "cryptocurrency news",
   ],
   alternates: {
-    canonical: `${siteConfig.url}/blog`,
+    canonical,
   },
   openGraph: {
-    title: "Hubra Blog - Solana News & DeFi Insights",
-    description:
-      "Stay updated with the latest Solana and DeFi news, staking guides, and Web3 insights. Learn about blockchain technology and decentralized finance.",
-    url: `${siteConfig.url}/blog`,
+    title,
+    description,
+    url: canonical,
     siteName: siteConfig.name,
     type: "website",
     images: [
@@ -44,8 +48,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hubra Blog - Solana News & DeFi Insights",
-    description: "Stay updated with the latest Solana and DeFi news, staking guides, and Web3 insights.",
+    title: twitterTitle,
+    description,
     images: ["/hubra-og-image.png"],
   },
   robots: {
@@ -79,13 +83,13 @@ export default async function BlogPage() {
     "@type": "Blog",
     "name": "Hubra Blog",
     "description": "Solana and DeFi news, guides, and insights",
-    "url": `${siteConfig.url}/blog`,
+    "url": `${siteConfig.welcomeUrl}/blog`,
     "publisher": {
       "@type": "Organization",
       "name": siteConfig.name,
       "logo": {
         "@type": "ImageObject",
-        "url": `${siteConfig.url}/logo.png`,
+        "url": `/logo.png`,
       },
     },
     "blogPost": allPosts.slice(0, 10).map((post) => ({
@@ -93,7 +97,7 @@ export default async function BlogPage() {
       "headline": post.title,
       "description": post.excerpt,
       "datePublished": post.date,
-      "url": `${siteConfig.url}/blog/${post.slug}`,
+      "url": `${siteConfig.welcomeUrl}/blog/${post.slug}`,
       "image": post.image,
     })),
   };
@@ -107,22 +111,23 @@ export default async function BlogPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": siteConfig.url,
+        "item": siteConfig.welcomeUrl,
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Blog",
-        "item": `${siteConfig.url}/blog`,
+        "item": `${siteConfig.welcomeUrl}/blog`,
       },
     ],
   };
 
+  const blogJsonLdString = JSON.stringify(blogJsonLd);
+
   return (
     <>
-      {/* Structured Data */}
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }} id="blog-jsonld" type="application/ld+json" />
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: blogJsonLdString }} defer id="blog-jsonld" type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: COMMON_BREADCRUMBS.blog }} defer id="breadcrumb-jsonld" type="application/ld+json" />
 
       <div className="max-w-7xl mx-auto">
         {/*        <header className="mb-8 sm:mb-10 md:mb-12">

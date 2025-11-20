@@ -6,38 +6,70 @@ import { ProtocolsTable } from "./components/protocols-table";
 
 import { fetchProtocolsData } from "@/lib/data/defi-data";
 import ChartPnl, { Chart } from "@/components/chart";
+import { siteConfig } from "@/config/site";
+import { getWebPageJsonLd, getCollectionPageJsonLd } from "@/lib/utils/structured-data";
+
+const title = "Solana DeFi Protocols & Analytics | Hubra - TVL Tracking & Protocol Performance";
+const description = "Find the best DeFi opportunities to earn yield, maximize returns, and grow your crypto portfolio on Solana.";
+const canonical = `${siteConfig.welcomeUrl}/defi`;
 
 export const metadata: Metadata = {
-  title: "DeFi Statistics",
-  description: "View detailed DeFi statistics and analytics about Solana protocols, TVL, and performance metrics.",
+  title,
+  description,
   keywords: [
     "Solana DeFi",
+    "DeFi earn",
+    "DeFi yield",
+    "earn DeFi",
+    "yield farming",
+    "DeFi protocols",
+    "Solana",
+    "Solana blockchain",
     "DeFi analytics",
-    "crypto metrics",
-    "blockchain analytics",
-    "Hubra DeFi",
     "TVL tracking",
-    "protocol performance",
+    "Solana TVL",
     "DeFi metrics",
+    "protocol performance",
+    "DeFi statistics",
+    "blockchain analytics",
+    "crypto metrics",
+    "Solana ecosystem",
+    "DeFi opportunities",
   ],
+  alternates: {
+    canonical,
+  },
   openGraph: {
-    title: "Hubra DeFi Statistics & Analytics",
-    description: "View detailed DeFi statistics and analytics about Solana protocols, TVL, and performance metrics.",
+    title,
+    description,
     type: "website",
+    url: canonical,
+    siteName: "Hubra",
     images: [
       {
-        url: "/logo.jpg",
+        url: "/hubra-og-image.png",
         width: 1200,
         height: 630,
-        alt: "Hubra DeFi Dashboard",
+        alt: "Hubra DeFi Dashboard - Solana Protocol Analytics",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hubra DeFi Statistics & Analytics",
-    description: "View detailed DeFi statistics and analytics about Solana protocols, TVL, and performance metrics.",
-    images: ["/logo.jpg"],
+    title,
+    description,
+    images: ["/hubra-og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      "index": true,
+      "follow": true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
@@ -49,6 +81,22 @@ export default async function DeFiPage() {
   if (!protocols || protocols.numberOfProtocols === 0) {
     notFound();
   }
+
+  const defiPageJsonLd = getWebPageJsonLd(
+    "Solana DeFi Protocols & Analytics",
+    "Comprehensive DeFi protocol analytics and TVL tracking for Solana blockchain",
+    `${siteConfig.welcomeUrl}/defi`,
+    [
+      { name: "Home", url: siteConfig.welcomeUrl },
+      { name: "DeFi", url: `${siteConfig.welcomeUrl}/defi` },
+    ]
+  );
+
+  const collectionJsonLd = getCollectionPageJsonLd(
+    "Solana DeFi Protocols",
+    `Explore ${protocols.numberOfProtocols} DeFi protocols on Solana with total TVL of $${(protocols.totalTvl / 1e9).toFixed(2)}B`,
+    protocols.numberOfProtocols
+  );
   const chartData: Chart[] = [
     {
       key: "tvl",
@@ -78,8 +126,13 @@ export default async function DeFiPage() {
     },
   ];
 
+  const defiPageJsonLdString = JSON.stringify(defiPageJsonLd);
+  const collectionJsonLdString = JSON.stringify(collectionJsonLd);
+
   return (
     <main>
+      <script dangerouslySetInnerHTML={{ __html: defiPageJsonLdString }} defer type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: collectionJsonLdString }} defer type="application/ld+json" />
       <div className="md:max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="mb-6">

@@ -8,7 +8,8 @@ import { getPostBySlug, getAllBlogSlugs, getRelatedPosts } from "../lib";
 
 import { ShareButtons, RelatedPosts, HTMLContent } from "@/components/blog";
 import { siteConfig } from "@/config/site";
-import { calculateReadingTime, formatReadingTime } from "@/lib/utils/blog-helpers";
+import { calculateReadingTime, formatReadingTime, calculateWordCount } from "@/lib/utils/blog-helpers";
+import { getBreadcrumbJsonLdString, getEnhancedArticleJsonLd } from "@/lib/utils/structured-data";
 
 /**
  * Enable ISR with 5-minute revalidation
@@ -16,10 +17,6 @@ import { calculateReadingTime, formatReadingTime } from "@/lib/utils/blog-helper
  */
 export const revalidate = 300; // 5 minutes
 
-/**
- * Generate static paths for all blog posts
- * Improves initial load performance
- */
 export async function generateStaticParams() {
   const slugs = getAllBlogSlugs();
 
@@ -37,7 +34,7 @@ interface BlogPostProps {
 export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const resolvedParams = await params;
   const post = await getPostBySlug(resolvedParams.slug);
-  const url = `${siteConfig.url}/blog/${post.slug}`;
+  const url = `${siteConfig.welcomeUrl}/blog/${post.slug}`;
 
   // Use custom meta description or fall back to excerpt
   const description = post.metaDescription || post.excerpt;
@@ -101,69 +98,61 @@ export default async function BlogPost({ params }: BlogPostProps) {
   const readingTimeMinutes = post.readingTime || calculateReadingTime(post.content);
   const readingTimeText = formatReadingTime(readingTimeMinutes);
 
+  // Calculate word count for structured data (AI search optimization)
+  const wordCount = calculateWordCount(post.content);
+
   // Get related posts (3 posts)
   const relatedPosts = await getRelatedPosts(post, 3);
 
-  // Structured data for blog post
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": post.title,
-    "description": post.excerpt,
-    "image": post.image,
-    "datePublished": post.date,
-    "dateModified": post.lastUpdated || post.date,
-    "author": {
-      "@type": "Person",
-      "name": post.author || "Hubra Team",
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": siteConfig.name,
-      "logo": {
-        "@type": "ImageObject",
-        "url": `${siteConfig.url}/logo.png`,
-      },
-    },
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": url,
-    },
-    "keywords": post.keywords?.join(", ") || post.tags?.join(", "),
-    "articleSection": post.category,
-  };
+  const contentLower = post.content.toLowerCase();
+  const aboutEntities = [];
+  const mentionsEntities = [];
 
-  // Breadcrumb structured data
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": siteConfig.url,
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Blog",
-        "item": `${siteConfig.url}/blog`,
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": post.title,
-        "item": url,
-      },
-    ],
-  };
+  // Common entities in Solana/DeFi content
+  if (contentLower.includes("solana") || contentLower.includes("sol")) {
+    aboutEntities.push({ "@type": "Blockchain", "name": "Solana" });
+    mentionsEntities.push({ "@type": "Cryptocurrency", "name": "SOL" });
+  }
+  if (contentLower.includes("defi") || contentLower.includes("decentralized finance")) {
+    aboutEntities.push({ "@type": "FinancialProduct", "name": "DeFi" });
+  }
+  if (contentLower.includes("staking") || contentLower.includes("stake")) {
+    aboutEntities.push({ "@type": "FinancialProduct", "name": "Staking" });
+  }
+  if (contentLower.includes("hubra")) {
+    mentionsEntities.push({ "@type": "Organization", "name": "Hubra" });
+  }
+
+  const articleJsonLd = getEnhancedArticleJsonLd({
+    headline: post.title,
+    description: post.excerpt,
+    image: post.image,
+    datePublished: post.date,
+    dateModified: post.lastUpdated || post.date,
+    author: post.author || "Hubra Team",
+    publisherName: siteConfig.name,
+    publisherLogo: `${siteConfig.welcomeUrl}/logo.png`,
+    keywords: post.keywords || post.tags,
+    articleSection: post.category,
+    url,
+    wordCount,
+    inLanguage: "en-US",
+    about: aboutEntities.length > 0 ? aboutEntities : undefined,
+    mentions: mentionsEntities.length > 0 ? mentionsEntities : undefined,
+  });
+
+  const breadcrumbJsonLdString = getBreadcrumbJsonLdString([
+    { name: "Home", url: siteConfig.welcomeUrl },
+    { name: "Blog", url: `${siteConfig.welcomeUrl}/blog` },
+    { name: post.title, url },
+  ]);
+
+  const articleJsonLdString = JSON.stringify(articleJsonLd);
 
   return (
     <>
-      {/* Structured Data */}
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} id="article-jsonld" type="application/ld+json" />
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: articleJsonLdString }} defer id="article-jsonld" type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: breadcrumbJsonLdString }} defer id="breadcrumb-jsonld" type="application/ld+json" />
 
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-6 sm:mb-7 md:mb-8">
@@ -190,13 +179,15 @@ export default async function BlogPost({ params }: BlogPostProps) {
               </div>
             )}
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white leading-tight">{post.title}</h1>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white leading-tight" itemProp="headline">
+              {post.title}
+            </h1>
 
             {/* Meta Information */}
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-400 mb-6 sm:mb-7 md:mb-8">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" icon="mdi:calendar" />
-                <time dateTime={post.date}>
+                <time dateTime={post.date} itemProp="datePublished">
                   {new Date(post.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                 </time>
               </div>
@@ -208,9 +199,9 @@ export default async function BlogPost({ params }: BlogPostProps) {
               {post.author && (
                 <>
                   <span className="text-gray-600 hidden sm:inline">•</span>
-                  <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div itemScope className="flex items-center gap-1.5 sm:gap-2" itemType="https://schema.org/Person">
                     <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" icon="mdi:account" />
-                    <span>{post.author}</span>
+                    <span itemProp="name">{post.author}</span>
                   </div>
                 </>
               )}
