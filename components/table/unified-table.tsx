@@ -11,7 +11,6 @@ import { MobileListLayout, type MobileListItem } from "@/components/ui/mobile-li
 import { TablePagination } from "@/components/ui/table-pagination";
 import { fixedNumber } from "@/lib/utils";
 
-// Simple get function to replace lodash
 const get = (obj: any, path: string) => {
   return path.split(".").reduce((current, key) => current?.[key], obj);
 };
@@ -84,28 +83,46 @@ const UnifiedTable = <T extends Record<string, any>>({
   const sortedItems = useMemo(() => {
     if (!Array.isArray(filteredItems)) return [];
 
+    // Extract column key - ensure it's a string
+    const columnKey = typeof sortDescriptor.column === "string" ? sortDescriptor.column : String(sortDescriptor.column || "");
+
     // No sorting applied - return original order from API
-    if (!sortDescriptor.column) return filteredItems;
+    if (!columnKey) return filteredItems;
 
     // Single-column sorting only (no combined sorts)
     return [...filteredItems].sort((a, b) => {
       if (!a || !b || typeof a !== "object" || typeof b !== "object") return 0;
 
-      const getValue = (item: T) => get(item, String(sortDescriptor.column));
+      // Get the value directly from the item using the column key
+      const getValue = (item: T) => {
+        // Try direct property access first
+        if (columnKey in item) {
+          return item[columnKey];
+        }
+
+        // Fallback to nested property access
+        return get(item, columnKey);
+      };
 
       const first = getValue(a);
       const second = getValue(b);
 
-      if (first === undefined || second === undefined) {
-        return sortDescriptor.direction === "descending" ? -1 : 1;
+      // Handle undefined/null values - put them at the end
+      if (first === undefined || first === null) {
+        return 1; // Put undefined first at the end
+      }
+      if (second === undefined || second === null) {
+        return -1; // Put undefined second at the end
       }
 
+      // Handle number comparison
       if (typeof first === "number" && typeof second === "number") {
         const cmp = first - second;
 
         return sortDescriptor.direction === "descending" ? -cmp : cmp;
       }
 
+      // Handle string comparison
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -151,14 +168,26 @@ const UnifiedTable = <T extends Record<string, any>>({
 
   const handleSortChange = useCallback(
     (descriptor: SortDescriptor) => {
-      // Clear sorting if clicking the same column in descending order
-      if (descriptor.column === sortDescriptor.column && descriptor.direction === "descending") {
-        // Third click - clear sorting, return to default order
-        setSortDescriptor({ column: "", direction: "ascending" });
+      // Always ensure single-column sorting
+      // Extract only the column key (handle both string and object formats)
+      const newColumn = typeof descriptor.column === "string" ? descriptor.column : String(descriptor.column || "");
+
+      const currentColumn = typeof sortDescriptor.column === "string" ? sortDescriptor.column : String(sortDescriptor.column || "");
+
+      // If clicking the same column, cycle: ascending -> descending -> clear
+      if (newColumn === currentColumn) {
+        if (sortDescriptor.direction === "ascending") {
+          // Second click: switch to descending
+          setSortDescriptor({ column: newColumn, direction: "descending" });
+        } else {
+          // Third click: clear sorting
+          setSortDescriptor({ column: "", direction: "ascending" });
+        }
       } else {
-        // Set new sort - only one column at a time
-        setSortDescriptor(descriptor);
+        // New column: always start with ascending, clear any previous sort
+        setSortDescriptor({ column: newColumn, direction: "ascending" });
       }
+
       setPage(1); // Reset to first page when sorting
     },
     [sortDescriptor]
