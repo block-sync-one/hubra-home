@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
  * Includes: main pages, token pages, and blog posts
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = siteConfig.welcomeUrl;
+  const baseUrl = siteConfig.domain;
   const currentDate = new Date();
 
   // Main application pages

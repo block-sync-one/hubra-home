@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ symbol: s
   const { symbol } = await params;
 
   return {
-    metadataBase: new URL(siteConfig.welcomeUrl),
+    metadataBase: new URL(siteConfig.domain),
     title: `${symbol} Token Details | Hubra - DeFi Analytics Platform`,
     description: `View detailed analytics, price charts, and trading information for ${symbol} token on Hubra. Track market cap, volume, and trading data.`,
     keywords: [

@@ -90,23 +90,9 @@ export async function getStaleWhileRevalidate<T>(
       if (remainingTtl > 0 && remainingTtl < ttl / 4) {
         loggers.cache.debug(`⚠️ Stale cache (TTL: ${remainingTtl}s/${ttl}s), refreshing in background: ${key}`);
 
-        // Fire-and-forget background refresh
-        setImmediate(async () => {
-          try {
-            const fresh = await fetchFn();
-
-            // Cache main result
-            await redis.set(key, fresh, ttl);
-
-            // Batch cache individual items if configured
-            if (config?.batchCache) {
-              await cacheItemsBatch(fresh, config.batchCache, ttl);
-            }
-
-            loggers.cache.debug(`✓ Background refresh complete: ${key}`);
-          } catch (error) {
-            loggers.cache.error(`Background refresh failed for ${key}:`, error);
-          }
+        // Fire-and-forget background refresh with retry logic
+        setImmediate(() => {
+          retryBackgroundRefresh(key, fetchFn, ttl, config, 0);
         });
       } else {
         loggers.cache.debug(`✓ Fresh cache (TTL: ${remainingTtl}s/${ttl}s): ${key}`);
@@ -138,6 +124,55 @@ export async function getStaleWhileRevalidate<T>(
     loggers.cache.error(`SWR fetch failed for ${key}:`, error);
 
     return null;
+  }
+}
+
+/**
+ * Retry background refresh with exponential backoff
+ * Handles transient network errors gracefully
+ */
+async function retryBackgroundRefresh<T>(
+  key: string,
+  fetchFn: FetchFn<T>,
+  ttl: number,
+  config: CacheConfig<T> | undefined,
+  attempt: number,
+  maxAttempts: number = 3
+): Promise<void> {
+  const baseDelay = Math.min(1000 * Math.pow(2, attempt), 10000); // Max 10s delay
+
+  try {
+    const fresh = await fetchFn();
+
+    // Cache main result
+    await redis.set(key, fresh, ttl);
+
+    // Batch cache individual items if configured
+    if (config?.batchCache) {
+      await cacheItemsBatch(fresh, config.batchCache, ttl);
+    }
+
+    loggers.cache.debug(`✓ Background refresh complete: ${key}`);
+  } catch (error: any) {
+    const isNetworkError =
+      error?.code === "ECONNRESET" ||
+      error?.code === "ETIMEDOUT" ||
+      error?.code === "ENOTFOUND" ||
+      error?.message?.includes("fetch failed") ||
+      error?.cause?.code === "ECONNRESET";
+
+    // Only retry network errors, not API errors (4xx, 5xx)
+    if (isNetworkError && attempt < maxAttempts - 1) {
+      loggers.cache.debug(`⚠️ Background refresh failed (attempt ${attempt + 1}/${maxAttempts}), retrying in ${baseDelay}ms: ${key}`);
+
+      // Retry with exponential backoff
+      setTimeout(() => {
+        retryBackgroundRefresh(key, fetchFn, ttl, config, attempt + 1, maxAttempts);
+      }, baseDelay);
+    } else {
+      // Log error only if all retries failed or it's a non-retryable error
+      loggers.cache.error(`Background refresh failed for ${key} after ${attempt + 1} attempt(s):`, error);
+    }
   }
 }
 

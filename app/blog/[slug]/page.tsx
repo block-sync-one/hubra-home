@@ -34,7 +34,7 @@ interface BlogPostProps {
 export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const resolvedParams = await params;
   const post = await getPostBySlug(resolvedParams.slug);
-  const url = `${siteConfig.welcomeUrl}/blog/${post.slug}`;
+  const url = `${siteConfig.domain}/blog/${post.slug}`;
 
   // Use custom meta description or fall back to excerpt
   const description = post.metaDescription || post.excerpt;
@@ -92,7 +92,7 @@ export async function generateMetadata({ params }: BlogPostProps): Promise<Metad
 export default async function BlogPost({ params }: BlogPostProps) {
   const resolvedParams = await params;
   const post = await getPostBySlug(resolvedParams.slug);
-  const url = `${siteConfig.welcomeUrl}/blog/${post.slug}`;
+  const url = `${siteConfig.domain}/blog/${post.slug}`;
 
   // Calculate reading time if not provided
   const readingTimeMinutes = post.readingTime || calculateReadingTime(post.content);
@@ -131,7 +131,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
     dateModified: post.lastUpdated || post.date,
     author: post.author || "Hubra Team",
     publisherName: siteConfig.name,
-    publisherLogo: `${siteConfig.welcomeUrl}/logo.png`,
+    publisherLogo: `${siteConfig.domain}/logo.png`,
     keywords: post.keywords || post.tags,
     articleSection: post.category,
     url,
@@ -142,8 +142,8 @@ export default async function BlogPost({ params }: BlogPostProps) {
   });
 
   const breadcrumbJsonLdString = getBreadcrumbJsonLdString([
-    { name: "Home", url: siteConfig.welcomeUrl },
-    { name: "Blog", url: `${siteConfig.welcomeUrl}/blog` },
+    { name: "Home", url: siteConfig.domain },
+    { name: "Blog", url: `${siteConfig.domain}/blog` },
     { name: post.title, url },
   ]);
 

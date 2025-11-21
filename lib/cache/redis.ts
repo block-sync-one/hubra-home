@@ -29,15 +29,28 @@ class RedisClient {
   }
 
   private async connect(): Promise<Redis> {
+    // Reuse existing connection if ready
     if (this.client && this.client.status === "ready") {
       return this.client;
     }
 
-    if (this.isConnecting) {
-      // Wait for existing connection attempt
-      await new Promise((resolve) => setTimeout(resolve, 100));
+    // Clean up dead connections
+    if (this.client && (this.client.status === "end" || this.client.status === "close")) {
+      try {
+        this.client.disconnect();
+      } catch {
+        // Ignore errors
+      }
+      this.client = null;
+    }
 
-      return this.connect();
+    // Prevent concurrent connection attempts
+    if (this.isConnecting) {
+      // Wait briefly for existing attempt
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      if (this.client && this.client.status === "ready") {
+        return this.client;
+      }
     }
 
     this.isConnecting = true;
@@ -58,7 +71,7 @@ class RedisClient {
           return delay;
         },
         enableReadyCheck: true,
-        lazyConnect: false,
+        lazyConnect: true, // Only connect when needed - reduces idle connections
       };
 
       this.client = new Redis(redisUrl, options);
@@ -69,6 +82,13 @@ class RedisClient {
       return this.client;
     } catch (error) {
       this.isConnecting = false;
+      if (this.client) {
+        try {
+          this.client.disconnect();
+        } catch {
+          // Ignore errors
+        }
+      }
       this.client = null;
       throw error;
     }

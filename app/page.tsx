@@ -10,7 +10,7 @@ const description =
   "Hubra steps directly into this gap by blending TradFi-level usability with DeFi principles. Gasless operations, curated earning opportunities from top Solana protocols like Kamino, Jupiter, and Lulo; multi-wallet visibility under a single account; and selective, quality-first integrations to reduce risk and noise";
 const ogDescription =
   "Your Solana all-in-one portal to the decentralized world. Track tokens, Earn yields, DeFi protocols, and market analytics with CEX-grade experience.";
-const canonical = siteConfig.welcomeUrl;
+const canonical = siteConfig.domain;
 
 export const metadata: Metadata = {
   title,

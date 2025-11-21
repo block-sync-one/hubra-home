@@ -10,7 +10,7 @@ import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
 import { ORGANIZATION_JSON_LD_STRING, WEBSITE_JSON_LD_STRING } from "@/lib/utils/structured-data";
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+  metadataBase: new URL(siteConfig.domain),
   title: {
     default: siteConfig.name,
     template: `%s - ${siteConfig.name}`,
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   keywords: siteConfig.keywords,
   alternates: {
-    canonical: siteConfig.url,
+    canonical: siteConfig.domain,
   },
   icons: {
     icon: [
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteConfig.url,
+    url: siteConfig.domain,
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,

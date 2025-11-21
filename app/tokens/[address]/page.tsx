@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
       title: `${tokenName} (${tokenSymbol}) - ${tokenPrice} ${changeText}`,
       description,
       type: "website",
-      url: `${siteConfig.welcomeUrl}/tokens/${address}`,
+      url: `${siteConfig.domain}/tokens/${address}`,
       images: [
         {
           url: tokenData?.logoURI || "/og-token-default.png",
@@ -74,7 +74,7 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
       images: [tokenData?.logoURI || "/og-token-default.png"],
     },
     alternates: {
-      canonical: `${siteConfig.welcomeUrl}/tokens/${address}`,
+      canonical: `${siteConfig.domain}/tokens/${address}`,
     },
     robots: {
       index: true,
@@ -101,14 +101,14 @@ export default async function TokenDetailPage({ params }: TokenDetailPageProps) 
         description: apiTokenData.extensions?.description
           ? `${apiTokenData.extensions.description} ${apiTokenData.name} (${apiTokenData.symbol}) is a cryptocurrency token on the Solana blockchain with real-time price tracking, market analytics, and trading data available.`
           : undefined,
-        url: `${siteConfig.welcomeUrl}/tokens/${address}`,
+        url: `${siteConfig.domain}/tokens/${address}`,
       })
     : null;
 
   const breadcrumbJsonLdString = getBreadcrumbJsonLdString([
-    { name: "Home", url: siteConfig.welcomeUrl },
-    { name: "Tokens", url: `${siteConfig.welcomeUrl}/tokens` },
-    { name: apiTokenData?.name || "Token", url: `${siteConfig.welcomeUrl}/tokens/${address}` },
+    { name: "Home", url: siteConfig.domain },
+    { name: "Tokens", url: `${siteConfig.domain}/tokens` },
+    { name: apiTokenData?.name || "Token", url: `${siteConfig.domain}/tokens/${address}` },
   ]);
 
   const jsonLdString = jsonLd ? JSON.stringify(jsonLd) : null;

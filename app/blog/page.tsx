@@ -14,7 +14,7 @@ export const revalidate = 3600;
 const title = "Blog | Hubra - Solana News, Guides & DeFi Insights";
 const description = "Stay updated with the latest Solana and DeFi news, staking guides, and Web3 insights";
 const twitterTitle = "Hubra Blog - Solana News & DeFi Insights";
-const canonical = `${siteConfig.welcomeUrl}/blog`;
+const canonical = `${siteConfig.domain}/blog`;
 
 export const metadata: Metadata = {
   title,
@@ -83,7 +83,7 @@ export default async function BlogPage() {
     "@type": "Blog",
     "name": "Hubra Blog",
     "description": "Solana and DeFi news, guides, and insights",
-    "url": `${siteConfig.welcomeUrl}/blog`,
+    "url": `${siteConfig.domain}/blog`,
     "publisher": {
       "@type": "Organization",
       "name": siteConfig.name,
@@ -97,7 +97,7 @@ export default async function BlogPage() {
       "headline": post.title,
       "description": post.excerpt,
       "datePublished": post.date,
-      "url": `${siteConfig.welcomeUrl}/blog/${post.slug}`,
+      "url": `${siteConfig.domain}/blog/${post.slug}`,
       "image": post.image,
     })),
   };
@@ -111,13 +111,13 @@ export default async function BlogPage() {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": siteConfig.welcomeUrl,
+        "item": siteConfig.domain,
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Blog",
-        "item": `${siteConfig.welcomeUrl}/blog`,
+        "item": `${siteConfig.domain}/blog`,
       },
     ],
   };
