@@ -9,7 +9,7 @@ export const ORGANIZATION_JSON_LD = {
   "alternateName": "Hubra App",
   "description":
     "Your Solana all-in-one portal to the decentralized world. Track tokens, Earn yields, DeFi protocols, and market analytics with CEX-grade experience.",
-  "url": siteConfig.url,
+  "url": siteConfig.domain,
   "logo": `/logo.png`,
   "foundingDate": "2021",
   "areaServed": "Worldwide",
@@ -34,7 +34,7 @@ export const ORGANIZATION_JSON_LD = {
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "Customer Support",
-    "url": siteConfig.url,
+    "url": siteConfig.domain,
   },
   "aggregateRating": {
     "@type": "AggregateRating",
@@ -52,7 +52,7 @@ export function getWebsiteJsonLd() {
     "name": "Hubra",
     "description":
       "Your Solana all-in-one portal to the decentralized world. Track tokens, Earn yields, DeFi protocols, and market analytics with CEX-grade experience.",
-    "url": siteConfig.url,
+    "url": siteConfig.domain,
     "about": {
       "@type": "Blockchain",
       "name": "Solana",
@@ -62,7 +62,7 @@ export function getWebsiteJsonLd() {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": `${siteConfig.welcomeUrl}/tokens`,
+        "urlTemplate": `${siteConfig.domain}/tokens`,
       },
     },
   };
@@ -78,7 +78,7 @@ export const TOKEN_ANALYTICS_JSON_LD = {
   "provider": {
     "@type": "Organization",
     "name": "Hubra",
-    "url": siteConfig.url,
+    "url": siteConfig.domain,
   },
   "category": "Cryptocurrency",
   "offers": {
@@ -132,22 +132,22 @@ export function getBreadcrumbJsonLdString(items: Array<{ name: string; url: stri
 }
 
 export const COMMON_BREADCRUMBS = {
-  home: getBreadcrumbJsonLdString([{ name: "Home", url: siteConfig.welcomeUrl }]),
+  home: getBreadcrumbJsonLdString([{ name: "Home", url: siteConfig.domain }]),
   tokens: getBreadcrumbJsonLdString([
-    { name: "Home", url: siteConfig.welcomeUrl },
-    { name: "Tokens", url: `${siteConfig.welcomeUrl}/tokens` },
+    { name: "Home", url: siteConfig.domain },
+    { name: "Tokens", url: `${siteConfig.domain}/tokens` },
   ]),
   defi: getBreadcrumbJsonLdString([
-    { name: "Home", url: siteConfig.welcomeUrl },
-    { name: "DeFi", url: `${siteConfig.welcomeUrl}/defi` },
+    { name: "Home", url: siteConfig.domain },
+    { name: "DeFi", url: `${siteConfig.domain}/defi` },
   ]),
   blog: getBreadcrumbJsonLdString([
-    { name: "Home", url: siteConfig.welcomeUrl },
-    { name: "Blog", url: `${siteConfig.welcomeUrl}/blog` },
+    { name: "Home", url: siteConfig.domain },
+    { name: "Blog", url: `${siteConfig.domain}/blog` },
   ]),
   stats: getBreadcrumbJsonLdString([
-    { name: "Home", url: siteConfig.welcomeUrl },
-    { name: "Stats", url: `${siteConfig.welcomeUrl}/stats` },
+    { name: "Home", url: siteConfig.domain },
+    { name: "Stats", url: `${siteConfig.domain}/stats` },
   ]),
 } as const;
 
@@ -194,7 +194,7 @@ export function getWebPageJsonLd(name: string, description: string, url: string,
     "isPartOf": {
       "@type": "WebSite",
       "name": siteConfig.name,
-      "url": siteConfig.welcomeUrl,
+      "url": siteConfig.domain,
     },
   };
 
@@ -342,7 +342,7 @@ export function getEnhancedArticleJsonLd(article: {
       "name": article.publisherName || siteConfig.name,
       "logo": {
         "@type": "ImageObject",
-        "url": article.publisherLogo || `${siteConfig.welcomeUrl}/logo.png`,
+        "url": article.publisherLogo || `${siteConfig.domain}/logo.png`,
       },
     },
     "mainEntityOfPage": {
@@ -419,7 +419,7 @@ export function getDatasetJsonLd(dataset: {
     datasetJsonLd.creator = {
       "@type": "Organization",
       "name": dataset.creator.name,
-      "url": dataset.creator.url || siteConfig.welcomeUrl,
+      "url": dataset.creator.url || siteConfig.domain,
     };
   }
 

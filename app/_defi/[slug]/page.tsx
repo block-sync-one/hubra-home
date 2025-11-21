@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   const protocolName = protocol.name || "Protocol";
   const protocolDescription =
     firstInBreakDown?.description || `${protocolName} DeFi protocol on Solana blockchain. Track TVL, performance metrics, and analytics.`;
-  const protocolUrl = `${siteConfig.welcomeUrl}/defi/${slug}`;
+  const protocolUrl = `${siteConfig.domain}/defi/${slug}`;
   const tvlFormatted = protocol.tvl ? `$${(protocol.tvl / 1e6).toFixed(2)}M` : "";
 
   return {
@@ -230,11 +230,11 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
     "name": protocolAggregate.name,
     "alternateName": protocolAggregate.name,
     "description": protocolDescription,
-    "url": `${siteConfig.welcomeUrl}/defi/${slug}`,
+    "url": `${siteConfig.domain}/defi/${slug}`,
     "provider": {
       "@type": "Organization",
       "name": protocolAggregate.name,
-      "url": protocolDetail?.url || `${siteConfig.welcomeUrl}/defi/${slug}`,
+      "url": protocolDetail?.url || `${siteConfig.domain}/defi/${slug}`,
     },
     "category": "DeFi Protocol",
     "about": {
@@ -257,9 +257,9 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
   };
 
   const breadcrumbJsonLdString = getBreadcrumbJsonLdString([
-    { name: "Home", url: siteConfig.welcomeUrl },
-    { name: "DeFi", url: `${siteConfig.welcomeUrl}/defi` },
-    { name: protocolAggregate.name, url: `${siteConfig.welcomeUrl}/defi/${slug}` },
+    { name: "Home", url: siteConfig.domain },
+    { name: "DeFi", url: `${siteConfig.domain}/defi` },
+    { name: protocolAggregate.name, url: `${siteConfig.domain}/defi/${slug}` },
   ]);
 
   const protocolJsonLdString = JSON.stringify(protocolJsonLd);

@@ -10,12 +10,12 @@ export const metadata: Metadata = {
   description,
   keywords: ["Solana stats", "blockchain analytics", "SOL statistics", "network metrics", "validator data", "transaction volume"],
   alternates: {
-    canonical: `${siteConfig.welcomeUrl}/stats`,
+    canonical: `${siteConfig.domain}/stats`,
   },
   openGraph: {
     title: "Stats",
     description,
-    url: `${siteConfig.welcomeUrl}/stats`,
+    url: `${siteConfig.domain}/stats`,
     siteName: siteConfig.name,
     type: "website",
   },

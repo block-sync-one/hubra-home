@@ -10,7 +10,7 @@ const description =
 const ogTitle = "Statistics & Analytics | Hubra";
 const ogDescription = "View comprehensive Solana blockchain statistics, market analytics, and performance metrics.";
 const twitterTitle = "Statistics & Analytics | Hubra";
-const canonical = `${siteConfig.welcomeUrl}/stats`;
+const canonical = `${siteConfig.domain}/stats`;
 
 export const metadata: Metadata = {
   title,
@@ -71,10 +71,10 @@ export default function StatsPage() {
   const webpageJsonLd = getWebPageJsonLd(
     "Statistics & Analytics",
     "Comprehensive Solana blockchain statistics and market analytics",
-    `${siteConfig.welcomeUrl}/stats`,
+    `${siteConfig.domain}/stats`,
     [
-      { name: "Home", url: siteConfig.welcomeUrl },
-      { name: "Stats", url: `${siteConfig.welcomeUrl}/stats` },
+      { name: "Home", url: siteConfig.domain },
+      { name: "Stats", url: `${siteConfig.domain}/stats` },
     ]
   );
 
@@ -82,7 +82,7 @@ export default function StatsPage() {
     name: "Solana Blockchain Statistics & Market Analytics",
     description:
       "Comprehensive dataset of Solana blockchain statistics including TVL, trading volume, market cap, DeFi protocol metrics, and real-time market analytics",
-    url: `${siteConfig.welcomeUrl}/stats`,
+    url: `${siteConfig.domain}/stats`,
     keywords: [
       "Solana statistics",
       "Solana validator",
@@ -99,7 +99,7 @@ export default function StatsPage() {
     ],
     creator: {
       name: siteConfig.name,
-      url: siteConfig.welcomeUrl,
+      url: siteConfig.domain,
     },
     datePublished: "2024-01-01",
     license: "https://creativecommons.org/licenses/by/4.0/",

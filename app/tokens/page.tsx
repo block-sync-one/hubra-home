@@ -14,13 +14,13 @@ import { TOKEN_LIMITS } from "@/lib/constants/market";
 import { siteConfig } from "@/config/site";
 import { COMMON_BREADCRUMBS, getCollectionPageJsonLd, getDatasetJsonLd } from "@/lib/utils/structured-data";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 const title = "Cryptocurrency Prices | Live Solana Token Market Data | Hubra";
 const description =
   "Track real-time Solana token prices, market trends, and trading data. Discover hot tokens, gainers, and losers on the Solana blockchain.";
 const ogTitle = "Live Solana Token Prices & Market Data | Hubra";
-const canonical = `${siteConfig.welcomeUrl}/tokens`;
+const canonical = `${siteConfig.domain}/tokens`;
 
 export const metadata: Metadata = {
   title,
@@ -112,14 +112,14 @@ export default async function TokensPage() {
     marketTokens.length,
     marketTokens.slice(0, 10).map((token) => ({
       name: token.name,
-      url: `${siteConfig.welcomeUrl}/tokens/${token.id}`,
+      url: `${siteConfig.domain}/tokens/${token.id}`,
     }))
   );
 
   const datasetJsonLd = getDatasetJsonLd({
     name: "Solana Token Market Data",
     description: `Real-time market data for ${marketTokens.length}+ Solana tokens including prices, market cap, trading volume, price changes, holders, and liquidity metrics`,
-    url: `${siteConfig.welcomeUrl}/tokens`,
+    url: `${siteConfig.domain}/tokens`,
     keywords: [
       "Solana tokens",
       "crypto prices",
@@ -131,7 +131,7 @@ export default async function TokensPage() {
     ],
     creator: {
       name: siteConfig.name,
-      url: siteConfig.welcomeUrl,
+      url: siteConfig.domain,
     },
     datePublished: "2024-01-01",
   });

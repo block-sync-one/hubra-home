@@ -11,7 +11,7 @@ import { getWebPageJsonLd, getCollectionPageJsonLd } from "@/lib/utils/structure
 
 const title = "Solana DeFi Protocols & Analytics | Hubra - TVL Tracking & Protocol Performance";
 const description = "Find the best DeFi opportunities to earn yield, maximize returns, and grow your crypto portfolio on Solana.";
-const canonical = `${siteConfig.welcomeUrl}/defi`;
+const canonical = `${siteConfig.domain}/defi`;
 
 export const metadata: Metadata = {
   title,
@@ -85,10 +85,10 @@ export default async function DeFiPage() {
   const defiPageJsonLd = getWebPageJsonLd(
     "Solana DeFi Protocols & Analytics",
     "Comprehensive DeFi protocol analytics and TVL tracking for Solana blockchain",
-    `${siteConfig.welcomeUrl}/defi`,
+    `${siteConfig.domain}/defi`,
     [
-      { name: "Home", url: siteConfig.welcomeUrl },
-      { name: "DeFi", url: `${siteConfig.welcomeUrl}/defi` },
+      { name: "Home", url: siteConfig.domain },
+      { name: "DeFi", url: `${siteConfig.domain}/defi` },
     ]
   );
 

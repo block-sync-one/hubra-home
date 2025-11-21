@@ -10,7 +10,7 @@ const ogDescription =
   "Track real-time Solana token prices, market trends, and trading data. Discover hot tokens, gainers, and losers on the Solana blockchain.";
 const twitterTitle = "Live Solana Token Prices | Hubra";
 const twitterDescription = "Track real-time Solana cryptocurrency prices, market cap, and trading volume.";
-const canonical = `${siteConfig.welcomeUrl}/tokens`;
+const canonical = `${siteConfig.domain}/tokens`;
 
 export const metadata: Metadata = {
   title,

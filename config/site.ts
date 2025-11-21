@@ -31,9 +31,8 @@ export const siteConfig = {
     "crypto portfolio",
     "Web3",
   ],
-  url: "https://hubra.app",
-  welcomeUrl: "https://hubra-home.vercel.app/",
-  ogImage: "/hubra-og-image.png",
+  domain: "https://www.hubra.app",
+  ogImage: "https://www.hubra.app/hubra-og-image.png",
   twitter: {
     handle: "@hubraApp",
     site: "@hubraApp",
@@ -121,8 +120,8 @@ export const siteConfig = {
   ] as NavItem[],
   links: {
     app: "https://hubra.app",
-    github: "https://github.com/block-sync-one/hubra-app",
-    twitter: "https://twitter.com/hubrapp",
+    github: "https://github.com/block-sync-one",
+    twitter: "https://x.com/HubraApp",
     docs: "https://docs.hubra.app",
     discord: "https://discord.gg/62NFPhpHtH",
   },
