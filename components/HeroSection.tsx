@@ -22,10 +22,10 @@ export const HeroSection = (): JSX.Element => {
   const particles = [
     { top: -5, left: 40, size: 32, opacity: 0.12, delay: 0 }, // Top left of gradient
     { top: 30, left: 0, size: 24, opacity: 0.46, delay: 0.5 }, // Center area
-    { top: 40, left: 100, size: 32, opacity: 0.42, delay: 1 }, // Bottom left
-    { top: 25, left: 90, size: 9.624, opacity: 1, delay: 1.5 }, // Upper center
-    { top: 45, left: 5, size: 11, opacity: 1, delay: 2 }, // Lower right
-    { top: 20, left: 10, size: 8, opacity: 1, delay: 2.5 }, // Middle left
+    { top: 60, left: 110, size: 32, opacity: 0.32, delay: 2.5 }, // Bottom right
+    { top: -25, left: 90, size: 9.624, opacity: 1, delay: 1.5 }, // Upper center
+    { top: 45, left: 50, size: 18, opacity: 0.3, delay: 1 }, // Lower middle
+    { top: 20, left: 10, size: 8, opacity: 0.1, delay: 2.5 }, // Middle left
   ];
 
   return (
@@ -43,8 +43,7 @@ export const HeroSection = (): JSX.Element => {
         <Image alt="top" className="flex absolute top-0 right-0 opacity-55" height={124} quality={100} src="/image/top-m.png" width={360} />
       </div>
 
-      <div
-        className={`${isMobile ? "flex-col h-full" : "flex-row h-4/5"} absolute flex justify-center items-center gap-8 w-full md:top-[10%] py-8 md:py-10 px-4 md:px-14 xl:px-24`}>
+      <div className={`flex flex-col md:flex-row justify-between items-center gap-6 h-full w-full p-6 max-w-7xl mx-auto`}>
         {/* Main content text */}
         <div className="flex flex-col w-full md:max-w-lg items-start gap-6 top-4 left-4 main-content-position font-sans">
           <div className="inline-flex items-center justify-end gap-2 px-3 py-2 bg-transparent border border-white/10 rounded-full">
@@ -68,7 +67,7 @@ export const HeroSection = (): JSX.Element => {
         <div className="z-20 w-[80%] md:w-full h-full top-0 left-0 justify-center items-center">
           <motion.div
             animate={{ y: -90, opacity: 1 }}
-            className="justify-center items-center w-full h-full flex relative"
+            className="justify-center md:justify-end items-center w-full h-full flex relative"
             initial={{ y: 100, opacity: 0 }}
             transition={{
               duration: 0.5,
@@ -77,7 +76,7 @@ export const HeroSection = (): JSX.Element => {
             }}>
             {/* Fixed particles matching SVG file positions and sizes */}
             {isMounted && (
-              <div className="relative pointer-events-none z-20 hero-container w-full h-full">
+              <div className="relative pointer-events-none z-20 hero-container w-full h-2/3">
                 {particles.map((p, i) => (
                   <motion.div
                     key={i}
@@ -109,7 +108,7 @@ export const HeroSection = (): JSX.Element => {
                 ))}
               </div>
             )}
-            <div className="absolute h-full top-1/4 w-full max-w-[236px] sm:max-w-[326px] md:max-w-[350px] flex flex-row z-10 object-cover">
+            <div className="absolute h-full top-1/4 md:top-[40%] w-full max-w-[236px] sm:max-w-[326px] md:max-w-[350px] flex flex-row z-10 object-cover">
               <Image
                 unoptimized
                 alt="Pink Gradient"

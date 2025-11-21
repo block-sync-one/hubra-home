@@ -54,8 +54,8 @@ export default function AllTokensClient({ initialAllTokens, initialGainers, init
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <h2 className="text-2xl font-medium text-white">All Tokens</h2>
+    <div className="flex flex-col gap-1 md:gap-6">
+      <h2 className="text-lg md:text-2xl font-medium text-white">All Tokens</h2>
 
       <TableWrapper
         data={{

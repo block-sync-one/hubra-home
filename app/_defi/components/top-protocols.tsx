@@ -31,9 +31,9 @@ export function TopProtocols({ protocols }: TopProtocolsProps) {
                     <ImageWithSkeleton
                       alt={`${protocol.name} logo`}
                       className="w-full h-full object-cover"
-                      height={32}
+                      height={36}
                       src={protocol.logo || "/logo.svg"}
-                      width={32}
+                      width={36}
                     />
                   </div>
                   <div className="space-y-1">

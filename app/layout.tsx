@@ -114,7 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col items-center">
             <Navbar />
-            <main className="w-full px-6 md:px-10 flex flex-col scroll-mt-24" id="main" tabIndex={-1}>
+            <main className="w-full px-4 md:px-10 flex flex-col scroll-mt-24" id="main" tabIndex={-1}>
               {children}
             </main>
           </div>

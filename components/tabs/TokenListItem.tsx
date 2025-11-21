@@ -17,7 +17,7 @@ export const TokenListItem: React.FC<TokenListItemProps> = ({ token, rank, onCli
   return (
     <div
       aria-label="Token details"
-      className="flex items-center justify-between p-3 hover:bg-white/5 transition-colors cursor-pointer"
+      className="flex items-center justify-between py-2 px-1 transition-colors cursor-pointer"
       role="button"
       onClick={() => onClick(token)}>
       {/* Left Column: Image, Name, Symbol */}
@@ -26,9 +26,9 @@ export const TokenListItem: React.FC<TokenListItemProps> = ({ token, rank, onCli
           <ImageWithSkeleton
             alt={`${token.name} (${token.symbol}) logo`}
             className="w-full h-full object-cover"
-            height={32}
+            height={36}
             src={token.logoURI || "/logo.svg"}
-            width={32}
+            width={36}
           />
         </div>
         <div className="flex flex-col min-w-0">
