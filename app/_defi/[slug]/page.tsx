@@ -58,7 +58,7 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
           ]
         : [
             {
-              url: "/hubra-og-image.png",
+              url: siteConfig.ogImage,
               width: 1200,
               height: 630,
               alt: `${protocolName} DeFi Protocol`,

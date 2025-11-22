@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/hubra-og-image.png",
+        url: siteConfig.ogImage,
         width: 1200,
         height: 630,
         alt: "Hubra Blog - Solana & DeFi Insights",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: twitterTitle,
     description,
-    images: ["/hubra-og-image.png"],
+    images: [siteConfig.ogImage],
   },
   robots: {
     index: true,
@@ -89,7 +89,7 @@ export default async function BlogPage() {
       "name": siteConfig.name,
       "logo": {
         "@type": "ImageObject",
-        "url": `/logo.png`,
+        "url": `${siteConfig.domain}/logo.png`,
       },
     },
     "blogPost": allPosts.slice(0, 10).map((post) => ({
@@ -100,26 +100,6 @@ export default async function BlogPage() {
       "url": `${siteConfig.domain}/blog/${post.slug}`,
       "image": post.image,
     })),
-  };
-
-  // Breadcrumb structured data
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": siteConfig.domain,
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Blog",
-        "item": `${siteConfig.domain}/blog`,
-      },
-    ],
   };
 
   const blogJsonLdString = JSON.stringify(blogJsonLd);
@@ -152,7 +132,6 @@ export default async function BlogPage() {
                   quality={90}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   src={featuredPost.image}
-                  unoptimized={featuredPost?.image?.startsWith("http")}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8">
@@ -178,7 +157,6 @@ export default async function BlogPage() {
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         src={post.image}
-                        unoptimized={post.image?.startsWith("http")}
                       />
                     </div>
                     <div className="p-6">

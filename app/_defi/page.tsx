@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     siteName: "Hubra",
     images: [
       {
-        url: "/hubra-og-image.png",
+        url: siteConfig.ogImage,
         width: 1200,
         height: 630,
         alt: "Hubra DeFi Dashboard - Solana Protocol Analytics",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title,
     description,
-    images: ["/hubra-og-image.png"],
+    images: [siteConfig.ogImage],
   },
   robots: {
     index: true,
