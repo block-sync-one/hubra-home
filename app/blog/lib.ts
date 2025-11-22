@@ -50,7 +50,7 @@ function parseFrontmatter(data: unknown, slug: string): BlogFrontmatter {
  * Transform frontmatter to BlogPost
  */
 function transformToBlogPost(slug: string, frontmatter: BlogFrontmatter, htmlContent: string): BlogPost {
-  const image = `${siteConfig.domain}/${frontmatter.coverImage || frontmatter.image || DEFAULT_IMAGE}`;
+  const image = `${siteConfig.domain}${frontmatter.coverImage || frontmatter.image || DEFAULT_IMAGE}`;
 
   return {
     slug,
@@ -71,8 +71,8 @@ function transformToBlogPost(slug: string, frontmatter: BlogFrontmatter, htmlCon
     lastUpdated: frontmatter.lastUpdated,
     draft: frontmatter.draft || false,
     metaDescription: frontmatter.metaDescription || frontmatter.description,
-    ogImage: frontmatter.ogImage,
-    twitterImage: frontmatter.twitterImage,
+    ogImage: image,
+    twitterImage: image,
     canonicalUrl: frontmatter.canonicalUrl,
   };
 }

@@ -10,7 +10,6 @@ Real-time cryptocurrency analytics platform built with Next.js 15.
 
 - Real-time token prices & market data
 - Interactive charts with multiple timeframes
-- Multi-layer caching (Redis + Browser)
 - Mobile-first responsive design
 - SEO optimized (SSR)
 - Instant navigation with prefetch
@@ -61,31 +60,6 @@ npm run start        # Start production server
 npm run lint         # Lint code
 npm run format       # Format with Prettier
 ```
-
-## Project Structure
-
-```
-app/                 # Next.js pages & API routes
-components/          # React components
-lib/                 # Utilities, hooks, data fetching
-public/              # Static assets
-styles/              # Global styles
-```
-
-## Performance
-
-- LCP: ~1.5s (Target: <2.5s)
-- FCP: ~1.2s (Target: <1.8s)
-- Cache Hit Rate: ~92%
-
-## Deployment
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/hubra-home)
-
-1. Push to GitHub
-2. Import to Vercel
-3. Add environment variables
-4. Deploy
 
 ## License
 
