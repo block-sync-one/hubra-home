@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 
-import { title as titleStyle } from "@/components/primitives";
 import { siteConfig } from "@/config/site";
 import { COMMON_BREADCRUMBS, getWebPageJsonLd, getDatasetJsonLd } from "@/lib/utils/structured-data";
 
@@ -114,7 +113,10 @@ export default function StatsPage() {
       <script dangerouslySetInnerHTML={{ __html: webpageJsonLdString }} defer type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: datasetJsonLdString }} defer type="application/ld+json" />
       <div>
-        <h1 className={titleStyle()}>Statistics & Analytics</h1>
+        <header className="sr-only">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">Statistics & Analytics</h1>
+          <p className="text-gray-400 text-lg">Comprehensive Solana blockchain statistics and market analytics</p>
+        </header>
       </div>
     </>
   );

@@ -16,10 +16,10 @@ import { COMMON_BREADCRUMBS, getCollectionPageJsonLd, getDatasetJsonLd } from "@
 
 export const dynamic = "force-dynamic";
 
-const title = "Cryptocurrency Prices | Live Solana Token Market Data | Hubra";
+const title = "Cryptocurrency Prices | Live Solana Token Market Data";
 const description =
   "Track real-time Solana token prices, market trends, and trading data. Discover hot tokens, gainers, and losers on the Solana blockchain.";
-const ogTitle = "Live Solana Token Prices & Market Data | Hubra";
+const ogTitle = "Live Solana Token Prices & Market Data";
 const canonical = `${siteConfig.domain}/tokens`;
 
 export const metadata: Metadata = {
@@ -145,6 +145,10 @@ export default async function TokensPage() {
       <script dangerouslySetInnerHTML={{ __html: collectionJsonLdString }} defer type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: datasetJsonLdString }} defer type="application/ld+json" />
       <main className="flex flex-col gap-12">
+        <header className="sr-only">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Solana Token Prices & Market Data</h1>
+          <p className="text-gray-400">Track real-time prices, market cap, and trading volume for all Solana tokens</p>
+        </header>
         <div className="md:max-w-7xl mx-auto w-full">
           <Tokens
             fdvChange={totalFDVChange}

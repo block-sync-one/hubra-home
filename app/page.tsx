@@ -3,7 +3,6 @@ import { Metadata } from "next";
 import { HeroSection } from "@/components/HeroSection";
 import { MainContentSection } from "@/components/MainContent";
 import { siteConfig } from "@/config/site";
-import { WEBSITE_JSON_LD_STRING } from "@/lib/utils/structured-data";
 
 const title = "Hubra - Trade, stake, and earn with the best yields - never miss a trend, all in one.";
 const description =
@@ -75,9 +74,10 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <script dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD_STRING }} defer type="application/ld+json" />
-
       <section className="w-full flex flex-col items-center justify-center gap-20">
+        <header className="sr-only">
+          <h1>Hubra - Trade, stake, and earn with the best yields on Solana</h1>
+        </header>
         <HeroSection />
         <MainContentSection />
       </section>

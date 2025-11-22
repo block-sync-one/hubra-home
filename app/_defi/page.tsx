@@ -134,17 +134,16 @@ export default async function DeFiPage() {
       <script dangerouslySetInnerHTML={{ __html: defiPageJsonLdString }} defer type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: collectionJsonLdString }} defer type="application/ld+json" />
       <div className="md:max-w-7xl mx-auto">
-        {/* Header Section */}
-        <div className="mb-6">
+        <header className="mb-6 sr-only">
           <h1 className="text-2xl font-bold text-white mb-1">Solana DeFi Ecosystem</h1>
           <p className="text-sm text-gray-400">Track real-time DeFi metrics and protocol performance on Solana</p>
-        </div>
+        </header>
 
-        <div className="flex flex-col gap-12">
+        <section className="flex flex-col gap-12">
           <ChartPnl charts={chartData} title="DeFi TVL" />
           <TopProtocols protocols={protocols.hotProtocols} />
           <ProtocolsTable protocols={protocols.solanaProtocols} />
-        </div>
+        </section>
       </div>
     </main>
   );
