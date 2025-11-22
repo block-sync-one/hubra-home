@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: BlogPostProps): Promise<Metad
   const ogImage = post.ogImage || post.image;
 
   return {
-    title: `${post.title} | Hubra Blog`,
+    title: `${post.title} | Blog`,
     description: description,
     keywords: post.keywords || post.tags,
     authors: post.author ? [{ name: post.author }] : [{ name: "Hubra Team" }],

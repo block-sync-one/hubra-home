@@ -123,7 +123,7 @@ export function MobileListLayout<T extends MobileListItem>({
           <div
             key={item.key}
             aria-label="Item details"
-            className="flex items-center justify-between py-2 hover:bg-white/5 rounded-xl transition-colors cursor-pointer"
+            className="flex items-center justify-between py-2 px-1 transition-colors cursor-pointer"
             role="button"
             onClick={() => handleItemClick(item)}
             onMouseEnter={() => handleItemHover(item)}>
@@ -133,9 +133,9 @@ export function MobileListLayout<T extends MobileListItem>({
                 <ImageWithSkeleton
                   alt={`${item.name} logo`}
                   className="w-full h-full object-cover"
-                  height={32}
+                  height={36}
                   src={item.logoURI || item.logo || "/logo.svg"}
-                  width={32}
+                  width={36}
                 />
               </div>
               <div className="flex flex-col min-w-0">

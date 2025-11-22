@@ -60,10 +60,10 @@ export function TokenInfo({ name, symbol, logoURI }: { name: string; symbol: str
           priority
           alt={`${name} token logo`}
           className="w-full h-full object-cover"
-          height={32}
+          height={36}
           sizes="32px"
           src={logoURI}
-          width={32}
+          width={36}
         />
       </div>
       <div className="flex items-center gap-2">

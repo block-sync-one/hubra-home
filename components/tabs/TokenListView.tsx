@@ -49,12 +49,10 @@ export const TokenListView: React.FC<TokenListViewProps> = ({ tokens, loading, e
   return (
     <>
       {/* Mobile List View */}
-      <div className="md:hidden bg-card/50 backdrop-blur-sm rounded-2xl overflow-hidden w-full">
-        <div>
-          {formattedTokens.map((token, index) => (
-            <TokenListItem key={token.id} rank={index + 1} token={token} onClick={handleTokenClick} />
-          ))}
-        </div>
+      <div className="md:hidden overflow-hidden w-full">
+        {formattedTokens.map((token, index) => (
+          <TokenListItem key={token.id} rank={index + 1} token={token} onClick={handleTokenClick} />
+        ))}
       </div>
 
       {/* Desktop Card Grid */}

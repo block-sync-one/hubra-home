@@ -129,9 +129,9 @@ export function TokenCard({ name, symbol, logoURI, price, change, coinId }: Toke
             <ImageWithSkeleton
               alt={`${name} (${symbol}) logo`}
               className="w-full h-full object-cover"
-              height={32}
+              height={36}
               src={logoURI || "/logo.svg"}
-              width={32}
+              width={36}
             />
           </div>
           <div className="flex items-center gap-2 flex-1 min-w-0">

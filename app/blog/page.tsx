@@ -11,9 +11,9 @@ import { COMMON_BREADCRUMBS } from "@/lib/utils/structured-data";
 
 export const revalidate = 3600;
 
-const title = "Blog | Hubra - Solana News, Guides & DeFi Insights";
+const title = "Blog | Solana News, Guides & DeFi Insights";
 const description = "Stay updated with the latest Solana and DeFi news, staking guides, and Web3 insights";
-const twitterTitle = "Hubra Blog - Solana News & DeFi Insights";
+const twitterTitle = "Hubra Blog | Solana News & DeFi Insights";
 const canonical = `${siteConfig.domain}/blog`;
 
 export const metadata: Metadata = {

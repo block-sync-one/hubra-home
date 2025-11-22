@@ -141,8 +141,8 @@ export default function Tokens({
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <h2 className="text-2xl font-medium text-white">Tokens</h2>
+    <div className="flex flex-col gap-1 md:gap-6">
+      <h2 className="text-lg md:text-2xl font-medium text-white">Tokens</h2>
 
       <StatsGrid>{statsCards}</StatsGrid>
     </div>

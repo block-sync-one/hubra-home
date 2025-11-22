@@ -29,19 +29,30 @@ class RedisClient {
   }
 
   private async connect(): Promise<Redis> {
-    // Reuse existing connection if ready
-    if (this.client && this.client.status === "ready") {
-      return this.client;
-    }
+    // Reuse existing connection if ready or connecting
+    if (this.client) {
+      const status = this.client.status;
 
-    // Clean up dead connections
-    if (this.client && (this.client.status === "end" || this.client.status === "close")) {
-      try {
-        this.client.disconnect();
-      } catch {
-        // Ignore errors
+      if (status === "ready") {
+        return this.client;
       }
-      this.client = null;
+      // If connecting or reconnecting, wait for it
+      if (status === "connecting" || status === "reconnecting") {
+        // Wait briefly and check again
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        if (this.client.status === "ready") {
+          return this.client;
+        }
+      }
+      // Clean up dead connections
+      if (status === "end" || status === "close") {
+        try {
+          this.client.disconnect();
+        } catch {
+          // Ignore errors during cleanup
+        }
+        this.client = null;
+      }
     }
 
     // Prevent concurrent connection attempts
@@ -71,11 +82,14 @@ class RedisClient {
           return delay;
         },
         enableReadyCheck: true,
-        lazyConnect: true, // Only connect when needed - reduces idle connections
+        lazyConnect: true, // Only connect when first command is executed
+        keepAlive: 30000, // Keep connection alive for 30s
+        connectTimeout: 10000, // 10s connection timeout
       };
 
       this.client = new Redis(redisUrl, options);
 
+      // With lazyConnect, ping will trigger the actual connection
       await this.client.ping();
       this.isConnecting = false;
 

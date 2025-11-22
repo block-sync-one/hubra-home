@@ -31,11 +31,11 @@ const TradingInput: React.FC<TradingInputProps> = ({ tokenSymbol, tokenName, tok
           <ImageWithSkeleton
             alt={`${tokenName} token`}
             className="w-full h-full object-cover"
-            height={32}
+            height={36}
             loading="lazy"
             sizes="32px"
             src={tokenlogoURI}
-            width={32}
+            width={36}
           />
         </div>
         <div>

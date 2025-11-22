@@ -18,9 +18,9 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
             <ImageWithSkeleton
               alt={`${item.name} (${item.symbol}) logo`}
               className="w-full h-full object-cover"
-              height={32}
+              height={36}
               src={item.logoURI || "/logo.svg"}
-              width={32}
+              width={36}
             />
           </div>
           <div className="flex flex-col min-w-0 flex-1 text-left">
