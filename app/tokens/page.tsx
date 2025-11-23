@@ -161,14 +161,13 @@ export default async function TokensPage() {
             totalVolume={totalVolume}
           />
         </div>
-        <div className="md:max-w-7xl mx-auto w-full">
-          <HotTokens
-            initialGainers={gainersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
-            initialLosers={losersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
-            initialTrending={trendingTokens}
-            initialVolume={volumeSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
-          />
-        </div>
+        {/* HotTokens - full width background, content constrained internally */}
+        <HotTokens
+          initialGainers={gainersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
+          initialLosers={losersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
+          initialTrending={trendingTokens}
+          initialVolume={volumeSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
+        />
         <div className="md:max-w-7xl mx-auto w-full">
           {/* Pass full sorted data to AllTokens */}
           <AllTokens
