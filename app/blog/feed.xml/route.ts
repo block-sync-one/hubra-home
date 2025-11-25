@@ -14,18 +14,18 @@ export async function GET() {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>${siteConfig.name} Blog</title>
-    <link>${siteConfig.welcomeUrl}/blog</link>
+    <link>${siteConfig.domain}/blog</link>
     <description>${siteConfig.longDescription}</description>
     <language>en</language>
-    <atom:link href="${siteConfig.welcomeUrl}/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <atom:link href="${siteConfig.domain}/blog/feed.xml" rel="self" type="application/rss+xml"/>
     ${posts
       .slice(0, 20)
       .map(
         (post) => `
     <item>
       <title><![CDATA[${post.title}]]></title>
-      <link>${siteConfig.welcomeUrl}/blog/${post.slug}</link>
-      <guid isPermaLink="true">${siteConfig.welcomeUrl}/blog/${post.slug}</guid>
+      <link>${siteConfig.domain}/blog/${post.slug}</link>
+      <guid isPermaLink="true">${siteConfig.domain}/blog/${post.slug}</guid>
       <description><![CDATA[${post.excerpt}]]></description>
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
       ${post.author ? `<author>${post.author}</author>` : ""}

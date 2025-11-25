@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable MDX file extensions
+  pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
+
   // Enable static optimization for better SEO
   trailingSlash: false,
 
@@ -36,6 +39,10 @@ const nextConfig = {
 
   // PoweredBy header removal for security
   poweredByHeader: false,
+
+  experimental: {
+    optimizePackageImports: ["@iconify/react", "framer-motion", "recharts", "lucide-react"],
+  },
 
   // Headers for SEO and security
   async headers() {

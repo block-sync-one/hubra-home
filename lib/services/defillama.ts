@@ -187,21 +187,47 @@ export function getTotalCirculating(chainData: StablecoinChainData): number {
 }
 
 /**
- * Get breakdown by pegged currency type
- *
- * @param chainData - Chain stablecoin data
- * @returns Breakdown by currency type
+ * Interface for DeFiLlama protocol data
  */
-export function getPegBreakdown(chainData: StablecoinChainData) {
-  const mainPegs = ["peggedUSD", "peggedEUR", "peggedJPY"] as const;
-  const other = Object.entries(chainData.totalCirculatingUSD)
-    .filter(([key]) => !mainPegs.includes(key as any))
-    .reduce((sum, [, value]) => sum + (value ?? 0), 0);
+export interface DeFiLlamaProtocol {
+  id: string;
+  name: string;
+  slug: string;
+  logo: string;
+  tvl: number;
+  change_1d?: number;
+  change_7d?: number;
+  change_1h?: number;
+  category?: string;
+  chains?: string[];
+  chain?: string;
+  chainTvls?: string[];
+  description?: string;
+  url?: string;
+  twitter?: string;
+  github?: string;
+}
 
-  return {
-    usd: chainData.totalCirculatingUSD.peggedUSD ?? 0,
-    eur: chainData.totalCirculatingUSD.peggedEUR ?? 0,
-    jpy: chainData.totalCirculatingUSD.peggedJPY ?? 0,
-    other,
-  };
+export interface HistoricalTVL {
+  data: string;
+  tvl: number;
+}
+
+/**
+ * Fetch all protocols with their TVL data
+ *
+ * @returns List of all DeFi protocols
+ */
+export async function fetchTVL(): Promise<DeFiLlamaProtocol[]> {
+  return fetchFromDeFiLlama<DeFiLlamaProtocol[]>(`${DEFILLAMA_API_URL}/protocols`, "DeFiLlama All Protocols API error");
+}
+
+export async function fetchSingleTVL(protocol: string): Promise<DeFiLlamaProtocol> {
+  return fetchFromDeFiLlama<DeFiLlamaProtocol>(`${DEFILLAMA_API_URL}/protocol/${protocol}`, "DeFiLlama Single Protocols API error");
+}
+export async function fetchHistoricalChainTVL(): Promise<HistoricalTVL[]> {
+  return fetchFromDeFiLlama<HistoricalTVL[]>(
+    `${DEFILLAMA_API_URL}/v2/historicalChainTvl/solana`,
+    "DeFiLlama Solana Historical TVL API error"
+  );
 }

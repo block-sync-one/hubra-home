@@ -28,6 +28,7 @@ export interface TableProps<T = any> {
   totalValue?: number;
   tableType?: string;
   onRowClick?: (item: T) => void;
+  onRowHover?: (item: T) => void;
   filterValue?: string;
   onFilterChange?: (value: string) => void;
 }
@@ -37,6 +38,7 @@ export interface TableWrapperProps {
   data: any;
   isLoading: boolean;
   onAssetClick?: (asset: any) => void;
+  onAssetHover?: (asset: any) => void;
 }
 
 // Data types from the original file

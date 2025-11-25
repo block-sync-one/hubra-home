@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { fetchBirdeyeData, mapTimeRange } from "@/lib/services/birdeye";
-import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
+import { fetchPriceHistory } from "@/lib/data/price-history";
 import { loggers } from "@/lib/utils/logger";
 
 const FALLBACK_PRICE_HISTORY = {
@@ -10,6 +9,19 @@ const FALLBACK_PRICE_HISTORY = {
   error: "Unable to fetch price history data",
 };
 
+/**
+ * GET /api/crypto/price-history
+ *
+ * Client-side API route for interactive price chart period switching.
+ * Delegates to centralized fetchPriceHistory() which handles:
+ * - Redis SWR caching
+ * - Birdeye API fetching
+ * - Data transformation
+ *
+ * This API route is necessary because price charts are client-side
+ * interactive components that need to refetch data when users change
+ * the time period (24h, 7d, 1M, etc.)
+ */
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -21,77 +33,16 @@ export async function GET(request: Request) {
     }
 
     if (tokenAddress.length < 32 || tokenAddress.length > 44) {
-      loggers.api.warn("Invalid token address", tokenAddress);
+      loggers.api.warn("[Price History API] Invalid token address:", tokenAddress);
 
       return NextResponse.json({ error: "Invalid token address format" }, { status: 400 });
     }
 
-    const cacheKey = cacheKeys.priceHistory(tokenAddress, days);
+    // Delegate to centralized data layer function
+    const priceHistoryData = await fetchPriceHistory(tokenAddress, days);
 
-    const cachedData = await redis.get<any>(cacheKey);
-
-    if (cachedData) {
-      loggers.cache.debug(`HIT: price history ${tokenAddress}`);
-
-      return NextResponse.json(cachedData, {
-        headers: { "X-Cache": "HIT" },
-      });
-    }
-
-    loggers.cache.debug(`MISS: price history ${tokenAddress}`);
-
-    // Map days to Birdeye time range
-    const timeType = mapTimeRange(days === "max" ? "max" : parseInt(days, 10));
-
-    // Calculate time range
-    const now = Math.floor(Date.now() / 1000);
-    const daysNum = days === "max" ? 365 : parseInt(days, 10);
-    const timeFrom = now - daysNum * 24 * 60 * 60;
-
-    // Fetch OHLCV data from Birdeye v3 API
-    const response = await fetchBirdeyeData<{
-      data: {
-        items: Array<{
-          unix_time: number; // v3 uses snake_case
-          o: number;
-          h: number;
-          l: number;
-          c: number;
-          v: number;
-          address: string;
-          type: string;
-          currency: string;
-        }>;
-      };
-      success: boolean;
-    }>("/defi/v3/ohlcv", {
-      address: tokenAddress,
-      type: timeType,
-      time_from: timeFrom.toString(),
-      time_to: now.toString(),
-    });
-
-    if (!response.success || !response.data?.items) {
-      loggers.data.warn("Invalid Birdeye response", {
-        success: response.success,
-        hasData: !!response.data,
-      });
-
-      return NextResponse.json(
-        {
-          ...FALLBACK_PRICE_HISTORY,
-          error: "Invalid response from Birdeye API",
-        },
-        {
-          headers: { "X-Fallback-Data": "true" },
-        }
-      );
-    }
-
-    const items = response.data.items;
-
-    if (items.length === 0) {
-      loggers.data.warn("No price history data", tokenAddress);
+    if (!priceHistoryData) {
+      loggers.api.warn("[Price History API] No data returned for:", tokenAddress);
 
       return NextResponse.json(
         {
@@ -104,35 +55,11 @@ export async function GET(request: Request) {
       );
     }
 
-    // Transform to clean Birdeye-native format
-    const transformedData = {
-      data: items.map((item) => ({
-        timestamp: item.unix_time * 1000, // v3 uses snake_case, convert to milliseconds
-        price: item.c, // Close price
-        open: item.o,
-        high: item.h,
-        low: item.l,
-        volume: item.v,
-      })),
-      success: true,
-      tokenAddress,
-      timeRange: {
-        from: timeFrom,
-        to: now,
-        type: timeType,
-      },
-    };
-
-    loggers.data.debug(`Fetched ${items.length} OHLCV points`, tokenAddress);
-
-    // Store in Redis cache
-    await redis.set(cacheKey, transformedData, CACHE_TTL.PRICE_HISTORY);
-
-    return NextResponse.json(transformedData, {
-      headers: { "X-Cache": "MISS" },
+    return NextResponse.json(priceHistoryData, {
+      headers: { "X-Cache": "HIT" },
     });
   } catch (error) {
-    loggers.api.error("Failed to fetch price history", error);
+    loggers.api.error("[Price History API] Error:", error);
 
     return NextResponse.json(
       {

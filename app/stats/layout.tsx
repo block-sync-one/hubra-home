@@ -2,27 +2,27 @@ import { Metadata } from "next";
 
 import { siteConfig } from "@/config/site";
 
+const description =
+  "Real-time Solana blockchain statistics and analytics. Track transaction volumes, validator data, and ecosystem metrics.";
+
 export const metadata: Metadata = {
   title: "Stats",
-  description:
-    "Real-time Solana blockchain statistics and analytics. Track network performance, transaction volumes, validator data, and ecosystem metrics.",
+  description,
   keywords: ["Solana stats", "blockchain analytics", "SOL statistics", "network metrics", "validator data", "transaction volume"],
   alternates: {
-    canonical: `${siteConfig.url}/stats`,
+    canonical: `${siteConfig.domain}/stats`,
   },
   openGraph: {
     title: "Stats",
-    description:
-      "Real-time Solana blockchain statistics and analytics. Track network performance, transaction volumes, validator data, and ecosystem metrics.",
-    url: `${siteConfig.url}/stats`,
+    description,
+    url: `${siteConfig.domain}/stats`,
     siteName: siteConfig.name,
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Stats",
-    description:
-      "Real-time Solana blockchain statistics and analytics. Track network performance, transaction volumes, validator data, and ecosystem metrics.",
+    description,
   },
 };
 

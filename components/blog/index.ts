@@ -6,3 +6,4 @@
 export { ShareButtons } from "./ShareButtons";
 export { BlogSearch } from "./BlogSearch";
 export { RelatedPosts } from "./RelatedPosts";
+export { MDXContent, HTMLContent } from "./MDXContent";

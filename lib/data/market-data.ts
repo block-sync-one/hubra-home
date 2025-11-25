@@ -1,24 +1,19 @@
 import "server-only";
 
-import { setUnifiedToken, toUnifiedTokenData } from "./unified-token-cache";
+/**
+ * Market Data Fetching & Processing
+ */
+
+import { toUnifiedTokenData, UnifiedTokenData } from "./unified-token-cache";
+import { getMarketDataCacheKey, MarketDataResult } from "./market-data-cache";
 
 import { fetchBirdeyeData } from "@/lib/services/birdeye";
 import { Token } from "@/lib/types/token";
-import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
 import { loggers } from "@/lib/utils/logger";
 import { BIRDEYE_LIMITS, BIRDEYE_QUERY_PRESETS, MARKET_CAP_FILTERS } from "@/lib/constants/market";
+import { getStaleWhileRevalidate, CACHE_TTL, cacheKeys } from "@/lib/cache";
 
-export interface MarketDataStats {
-  totalMarketCap: number;
-  totalVolume: number;
-  totalFDV: number;
-  marketCapChange: number;
-}
-
-export interface MarketDataResult {
-  data: Token[];
-  stats: MarketDataStats;
-}
+export type { MarketDataStats, MarketDataResult } from "./market-data-cache";
 
 interface BirdeyeToken {
   address: string;
@@ -45,7 +40,6 @@ interface BirdeyeTokenListResponse {
 
 /**
  * Transform Birdeye API token to our internal Token type
- * Normalizes data structure and handles missing values
  */
 function transformBirdeyeToken(token: BirdeyeToken): Token {
   return {
@@ -53,9 +47,9 @@ function transformBirdeyeToken(token: BirdeyeToken): Token {
     name: token.name === "Wrapped SOL" ? "Solana" : token.name,
     symbol: token.symbol.toUpperCase(),
     logoURI: token.logo_uri ?? "/logo.svg",
-    price: "", // Will be formatted by caller based on currency preference
+    price: "",
     change: token.price_change_24h_percent || 0,
-    volume: "", // Will be formatted by caller
+    volume: "",
     rawVolume: token.volume_24h_usd || 0,
     fdv: token.fdv || 0,
     marketCap: token.market_cap || 0,
@@ -71,45 +65,190 @@ function filterViableTokens(tokens: Token[]): Token[] {
 }
 
 /**
- * Cache individual tokens asynchronously for detail page performance
- * This ONLY caches basic list data (price, volume, market cap)
- * Full token overview data is fetched ON-DEMAND when user visits token detail page
- *
- * This prevents 200+ unnecessary API calls to /defi/token_overview
- * Uses chunking to avoid overwhelming Redis with parallel writes
+ * Calculate aggregate market statistics
  */
-function cacheIndividualTokensAsync(tokens: BirdeyeToken[]): void {
-  // Fire and forget - don't block the response
-  (async () => {
-    try {
-      for (let i = 0; i < tokens.length; i += BIRDEYE_LIMITS.BATCH_SIZE) {
-        const chunk = tokens.slice(i, i + BIRDEYE_LIMITS.BATCH_SIZE);
+function calculateMarketStats(tokens: Token[]) {
+  const totalFDV = tokens.reduce((sum, t) => sum + (t.fdv || 0), 0);
+  const totalVolume = tokens.reduce((sum, t) => sum + (t.rawVolume || 0), 0);
+  const solFDV = tokens.find((t) => "solana" === t.name.toLowerCase())?.fdv ?? 0;
 
-        await Promise.all(chunk.map((token) => setUnifiedToken(token.address, toUnifiedTokenData(token, "list"), CACHE_TTL.TOKEN_DETAIL)));
-      }
-
-      loggers.cache.debug(`✓ Cached ${tokens.length} individual tokens (async)`);
-    } catch (error) {
-      loggers.cache.error("Failed to cache individual tokens:", error);
-    }
-  })();
+  return {
+    totalFDV,
+    totalFDVChange: 0, // TODO: Implement weighted calculation
+    totalVolume,
+    solFDV,
+  };
 }
 
 /**
- * Fetch market data from Birdeye API with Redis caching
- * This function can be called from both server components and API routes
- * The API key is protected as this only runs on the server
+ * Create empty result structure
+ */
+function buildEmptyMarketData() {
+  return {
+    data: [],
+    stats: {
+      totalFDV: 0,
+      totalVolume: 0,
+      solFDV: 0,
+      totalFDVChange: 0,
+    },
+  };
+}
+
+/**
+ * Fetch single page of tokens from Birdeye API
+ */
+async function fetchTokenPage(offset: number, limit: number, queryParams: Record<string, string>): Promise<BirdeyeToken[]> {
+  const response = await fetchBirdeyeData<BirdeyeTokenListResponse>("/defi/v3/token/list", {
+    offset: offset.toString(),
+    limit: limit.toString(),
+    ...queryParams,
+  });
+
+  return response.success && response.data?.items ? response.data.items : [];
+}
+
+/**
+ * Fetch tokens from API with automatic batching for large requests
+ */
+async function fetchTokensFromAPI(limit: number, offset: number, queryParams: Record<string, string>): Promise<BirdeyeToken[]> {
+  // Single request for small limits
+  if (limit <= BIRDEYE_LIMITS.MAX_PER_REQUEST) {
+    return fetchTokenPage(offset, limit, queryParams);
+  }
+
+  // Batch multiple requests for large limits
+  const numRequests = Math.ceil(limit / BIRDEYE_LIMITS.MAX_PER_REQUEST);
+  const requests = Array.from({ length: numRequests }, (_, i) => {
+    const batchOffset = offset + i * BIRDEYE_LIMITS.MAX_PER_REQUEST;
+    const batchLimit = Math.min(BIRDEYE_LIMITS.MAX_PER_REQUEST, limit - i * BIRDEYE_LIMITS.MAX_PER_REQUEST);
+
+    return fetchTokenPage(batchOffset, batchLimit, queryParams);
+  });
+
+  const responses = await Promise.all(requests);
+
+  return responses.flat();
+}
+
+/**
+ * Process tokens by merging cached and fresh API data
+ */
+function processTokens(apiTokens: BirdeyeToken[]): { tokens: Token[]; tokensToCache: Array<{ address: string; data: UnifiedTokenData }> } {
+  const tokens: Token[] = [];
+  const tokensToCache: Array<{ address: string; data: UnifiedTokenData }> = [];
+
+  for (const apiToken of apiTokens) {
+    const token = transformBirdeyeToken(apiToken);
+
+    tokens.push(token);
+    tokensToCache.push({
+      address: apiToken.address,
+      data: toUnifiedTokenData(apiToken, "list"),
+    });
+  }
+
+  return { tokens, tokensToCache };
+}
+
+/**
+ * Fetch fresh market data from API
+ * All caching is handled centrally by getStaleWhileRevalidate
+ */
+async function fetchFreshMarketData(
+  limit: number,
+  offset: number,
+  queryParams: Record<string, string>
+): Promise<MarketDataResult & { _tokens?: any[] }> {
+  const apiTokens = await fetchTokensFromAPI(limit, offset, queryParams);
+
+  if (apiTokens.length === 0) {
+    throw new Error("No tokens returned from API");
+  }
+
+  const { tokens, tokensToCache } = processTokens(apiTokens);
+
+  // Filter and calculate stats
+  const filteredTokens = filterViableTokens(tokens);
+  const stats = calculateMarketStats(filteredTokens);
+
+  // Return data with internal metadata for batch caching
+  return {
+    data: filteredTokens,
+    stats,
+    _tokens: tokensToCache, // Internal: used by SWR for batch caching
+  };
+}
+
+/**
+ * Fetch market data with stale-while-revalidate pattern
  *
- * Caching strategy:
- * - Cache key includes limit and offset for pagination support
- * - TTL: 2 minutes (market data changes frequently)
- * - Shared cache between server components and API routes
- * - Returns both token data and calculated stats
+ * Returns cached data instantly (even if stale), refreshes in background if needed.
  *
  * @param limit - Number of tokens to fetch
- * @param offset - Pagination offset
- * @param customQueryParams - Optional custom query params (e.g., for filtering newly listed tokens)
- * @param cacheKey - Optional custom cache key (if not provided, auto-generated from params)
+ * @param offset - Offset for pagination
+ * @param customQueryParams - Custom query parameters for Birdeye API
+ * @param cacheKey - Optional custom cache key
+ * @returns Market data result with tokens and aggregate stats
+ */
+/**
+ * Internal implementation of market data fetching
+ */
+async function fetchMarketDataInternal(
+  limit: number = 100,
+  offset: number = 0,
+  customQueryParams?: Record<string, string>,
+  cacheKey?: string
+): Promise<MarketDataResult> {
+  const perfStart = performance.now();
+  const finalCacheKey = cacheKey || getMarketDataCacheKey(limit, offset, customQueryParams);
+  const queryParams = customQueryParams || BIRDEYE_QUERY_PRESETS.DEFAULT;
+
+  try {
+    // Use centralized SWR with batch caching
+    // SWR handles ALL caching (main result + individual tokens)
+    const result = await getStaleWhileRevalidate<MarketDataResult & { _tokens?: any[] }>(
+      finalCacheKey,
+      CACHE_TTL.MARKET_DATA,
+      () => fetchFreshMarketData(limit, offset, queryParams),
+      {
+        // Configure batch caching for individual tokens
+        batchCache: {
+          extractItems: (result) => result._tokens || [],
+          getItemKey: (item) => cacheKeys.tokenDetail(item.address),
+          transformItem: (item) => item.data,
+          itemTtl: CACHE_TTL.TOKEN_DETAIL,
+        },
+      }
+    );
+
+    const totalDuration = performance.now() - perfStart;
+
+    loggers.cache.debug(`✓ Market data: ${result?.data.length || 0} tokens in ${totalDuration.toFixed(0)}ms`);
+
+    // Clean internal metadata before returning
+    if (result) {
+      const { _tokens, ...cleanResult } = result as any;
+
+      return cleanResult as MarketDataResult;
+    }
+
+    return buildEmptyMarketData();
+  } catch (error) {
+    loggers.data.error("Error fetching market data:", error);
+
+    return buildEmptyMarketData();
+  }
+}
+
+/**
+ * Fetch market data
+ *
+ * @param limit - Number of tokens to fetch
+ * @param offset - Offset for pagination
+ * @param customQueryParams - Custom query parameters
+ * @param cacheKey - Optional custom cache key
+ * @returns Market data with stats and tokens
  */
 export async function fetchMarketData(
   limit: number = 100,
@@ -117,136 +256,5 @@ export async function fetchMarketData(
   customQueryParams?: Record<string, string>,
   cacheKey?: string
 ): Promise<MarketDataResult> {
-  // Use provided cache key or generate one based on params
-  const finalCacheKey =
-    cacheKey ||
-    (customQueryParams ? `market:${limit}:${offset}:${JSON.stringify(customQueryParams)}` : cacheKeys.marketData(limit, offset));
-
-  try {
-    // Try Redis cache first
-    const cachedData = await redis.get<MarketDataResult>(finalCacheKey);
-
-    if (cachedData) {
-      loggers.cache.debug(`HIT: ${finalCacheKey}`);
-
-      return cachedData;
-    }
-
-    loggers.cache.debug(`MISS: Fetching ${limit} tokens from Birdeye (offset: ${offset})`);
-
-    // Use custom query params if provided, otherwise use default
-    const queryParam = customQueryParams || BIRDEYE_QUERY_PRESETS.DEFAULT;
-
-    let allItems: BirdeyeToken[] = [];
-
-    if (limit <= BIRDEYE_LIMITS.MAX_PER_REQUEST) {
-      // Single request for 100 or fewer tokens
-      const response = await fetchBirdeyeData<BirdeyeTokenListResponse>("/defi/v3/token/list", {
-        offset: offset.toString(),
-        limit: limit.toString(),
-        ...queryParam,
-      });
-
-      if (!response.success || !response.data?.items) {
-        loggers.data.warn("Invalid response from Birdeye API");
-
-        return {
-          data: [],
-          stats: {
-            totalMarketCap: 0,
-            totalVolume: 0,
-            totalFDV: 0,
-            marketCapChange: 0,
-          },
-        };
-      }
-
-      allItems = response.data.items;
-    } else {
-      // Multiple parallel requests for more than 100 tokens
-      const numRequests = Math.ceil(limit / BIRDEYE_LIMITS.MAX_PER_REQUEST);
-      const requests = [];
-
-      for (let i = 0; i < numRequests; i++) {
-        const batchOffset = offset + i * BIRDEYE_LIMITS.MAX_PER_REQUEST;
-        const batchLimit = Math.min(BIRDEYE_LIMITS.MAX_PER_REQUEST, limit - i * BIRDEYE_LIMITS.MAX_PER_REQUEST);
-
-        requests.push(
-          fetchBirdeyeData<BirdeyeTokenListResponse>("/defi/v3/token/list", {
-            offset: batchOffset.toString(),
-            limit: batchLimit.toString(),
-            ...queryParam,
-          })
-        );
-      }
-
-      const responses = await Promise.all(requests);
-
-      // Combine all results
-      for (const response of responses) {
-        if (response.success && response.data?.items) {
-          allItems.push(...response.data.items);
-        }
-      }
-    }
-
-    if (allItems.length === 0) {
-      loggers.data.warn("No tokens returned from Birdeye API");
-
-      return {
-        data: [],
-        stats: {
-          totalMarketCap: 0,
-          totalVolume: 0,
-          totalFDV: 0,
-          marketCapChange: 0,
-        },
-      };
-    }
-
-    // Transform and filter tokens
-    const transformedTokens = allItems.map(transformBirdeyeToken);
-    const filteredTokens = filterViableTokens(transformedTokens);
-
-    // Calculate global stats from filtered token data
-    const totalMarketCap = filteredTokens.reduce((sum, t) => sum + (t.marketCap || 0), 0);
-    const totalVolume = filteredTokens.reduce((sum, t) => sum + (t.rawVolume || 0), 0);
-    const totalFDV = filteredTokens.reduce((sum, t) => sum + (t.fdv || 0), 0);
-    // TODO: Implement weighted market cap change calculation
-    const marketCapChange = 0;
-
-    const result: MarketDataResult = {
-      data: filteredTokens,
-      stats: {
-        totalMarketCap,
-        totalVolume,
-        totalFDV,
-        marketCapChange,
-      },
-    };
-
-    // Cache the result (blocks response - quick operation)
-    redis.set(finalCacheKey, result, CACHE_TTL.MARKET_DATA).catch((err) => {
-      loggers.cache.error(`Market data cache failed: ${err.message}`);
-    });
-
-    // Cache individual tokens asynchronously (doesn't block response)
-    cacheIndividualTokensAsync(allItems);
-
-    loggers.cache.debug(`✓ Returning ${filteredTokens.length}/${transformedTokens.length} tokens with stats (caching in background)`);
-
-    return result;
-  } catch (error) {
-    loggers.data.error("Error fetching market data:", error);
-
-    return {
-      data: [],
-      stats: {
-        totalMarketCap: 0,
-        totalVolume: 0,
-        totalFDV: 0,
-        marketCapChange: 0,
-      },
-    };
-  }
+  return fetchMarketDataInternal(limit, offset, customQueryParams, cacheKey);
 }

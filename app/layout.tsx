@@ -8,9 +8,10 @@ import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
-import { WebVitals } from "@/components/WebVitals";
+import { ORGANIZATION_JSON_LD_STRING, WEBSITE_JSON_LD_STRING } from "@/lib/utils/structured-data";
+import { fontSans } from "@/config/fonts";
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+  metadataBase: new URL(siteConfig.domain),
   title: {
     default: siteConfig.name,
     template: `%s - ${siteConfig.name}`,
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   keywords: siteConfig.keywords,
   alternates: {
-    canonical: siteConfig.url,
+    canonical: siteConfig.domain,
   },
   icons: {
     icon: [
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: siteConfig.url,
+    url: siteConfig.domain,
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
@@ -86,43 +87,13 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Organization structured data for better brand recognition
-  const organizationJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Hubra",
-    "description": "Hubra - the power of CEX, the freedom of DeFi",
-    "url": "https://hubra.app",
-    "logo": "https://hubra.app/logo.png",
-    "sameAs": ["https://twitter.com/hubraApp"],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "Customer Support",
-      "url": "https://hubra.app",
-    },
-  };
-
-  // Website schema with search functionality
-  const websiteJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Hubra",
-    "description": "Solana DeFi Analytics Platform",
-    "url": "https://hubra.app",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": "https://hubra.app/tokens?search={search_term_string}",
-      },
-      "query-input": "required name=search_term_string",
-    },
-  };
-
   return (
-    <html suppressHydrationWarning lang="en">
+    <html suppressHydrationWarning className={clsx(fontSans.variable)} lang="en">
       <head>
         {/* Preconnect to external APIs for faster loading */}
+        <link href="https://fonts.googleapis.com" rel="preconnect" />
+        <link crossOrigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect" />
+        <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
         <link href="https://public-api.birdeye.so" rel="preconnect" />
         <link href="https://stablecoins.llama.fi" rel="preconnect" />
         <link href="https://api.llama.fi" rel="preconnect" />
@@ -131,11 +102,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://api.llama.fi" rel="dns-prefetch" />
 
         <script
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: ORGANIZATION_JSON_LD_STRING }}
+          defer
           id="organization-jsonld"
           type="application/ld+json"
         />
-        <script dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} id="website-jsonld" type="application/ld+json" />
+        <script dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD_STRING }} defer id="website-jsonld" type="application/ld+json" />
       </head>
       <body className={clsx("min-h-screen text-foreground font-sans antialiased overflow-x-hidden")}>
         <a
@@ -146,12 +118,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col items-center">
             <Navbar />
-            <main className="w-full px-6 md:px-10 flex flex-col scroll-mt-24" id="main" tabIndex={-1}>
+            <main className="w-full px-4 md:px-10 flex flex-col scroll-mt-24" id="main" tabIndex={-1}>
               {children}
             </main>
           </div>
         </Providers>
-        <WebVitals />
         <Analytics />
         <SpeedInsights />
       </body>

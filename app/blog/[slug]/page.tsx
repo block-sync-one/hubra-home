@@ -6,9 +6,10 @@ import { Icon } from "@iconify/react";
 
 import { getPostBySlug, getAllBlogSlugs, getRelatedPosts } from "../lib";
 
-import { ShareButtons, RelatedPosts } from "@/components/blog";
+import { ShareButtons, RelatedPosts, HTMLContent } from "@/components/blog";
 import { siteConfig } from "@/config/site";
-import { calculateReadingTime, formatReadingTime } from "@/lib/utils/blog-helpers";
+import { calculateReadingTime, formatReadingTime, calculateWordCount } from "@/lib/utils/blog-helpers";
+import { getBreadcrumbJsonLdString, getEnhancedArticleJsonLd } from "@/lib/utils/structured-data";
 
 /**
  * Enable ISR with 5-minute revalidation
@@ -16,10 +17,6 @@ import { calculateReadingTime, formatReadingTime } from "@/lib/utils/blog-helper
  */
 export const revalidate = 300; // 5 minutes
 
-/**
- * Generate static paths for all blog posts
- * Improves initial load performance
- */
 export async function generateStaticParams() {
   const slugs = getAllBlogSlugs();
 
@@ -37,7 +34,7 @@ interface BlogPostProps {
 export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const resolvedParams = await params;
   const post = await getPostBySlug(resolvedParams.slug);
-  const url = `${siteConfig.url}/blog/${post.slug}`;
+  const url = `${siteConfig.domain}/blog/${post.slug}`;
 
   // Use custom meta description or fall back to excerpt
   const description = post.metaDescription || post.excerpt;
@@ -46,7 +43,7 @@ export async function generateMetadata({ params }: BlogPostProps): Promise<Metad
   const ogImage = post.ogImage || post.image;
 
   return {
-    title: `${post.title} | Hubra Blog`,
+    title: `${post.title} | Blog`,
     description: description,
     keywords: post.keywords || post.tags,
     authors: post.author ? [{ name: post.author }] : [{ name: "Hubra Team" }],
@@ -95,75 +92,67 @@ export async function generateMetadata({ params }: BlogPostProps): Promise<Metad
 export default async function BlogPost({ params }: BlogPostProps) {
   const resolvedParams = await params;
   const post = await getPostBySlug(resolvedParams.slug);
-  const url = `${siteConfig.welcomeUrl}/blog/${post.slug}`;
+  const url = `${siteConfig.domain}/blog/${post.slug}`;
 
   // Calculate reading time if not provided
   const readingTimeMinutes = post.readingTime || calculateReadingTime(post.content);
   const readingTimeText = formatReadingTime(readingTimeMinutes);
 
+  // Calculate word count for structured data (AI search optimization)
+  const wordCount = calculateWordCount(post.content);
+
   // Get related posts (3 posts)
   const relatedPosts = await getRelatedPosts(post, 3);
 
-  // Structured data for blog post
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": post.title,
-    "description": post.excerpt,
-    "image": post.image,
-    "datePublished": post.date,
-    "dateModified": post.lastUpdated || post.date,
-    "author": {
-      "@type": "Person",
-      "name": post.author || "Hubra Team",
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": siteConfig.name,
-      "logo": {
-        "@type": "ImageObject",
-        "url": `${siteConfig.url}/logo.png`,
-      },
-    },
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": url,
-    },
-    "keywords": post.keywords?.join(", ") || post.tags?.join(", "),
-    "articleSection": post.category,
-  };
+  const contentLower = post.content.toLowerCase();
+  const aboutEntities = [];
+  const mentionsEntities = [];
 
-  // Breadcrumb structured data
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": siteConfig.url,
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Blog",
-        "item": `${siteConfig.url}/blog`,
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": post.title,
-        "item": url,
-      },
-    ],
-  };
+  // Common entities in Solana/DeFi content
+  if (contentLower.includes("solana") || contentLower.includes("sol")) {
+    aboutEntities.push({ "@type": "Blockchain", "name": "Solana" });
+    mentionsEntities.push({ "@type": "Cryptocurrency", "name": "SOL" });
+  }
+  if (contentLower.includes("defi") || contentLower.includes("decentralized finance")) {
+    aboutEntities.push({ "@type": "FinancialProduct", "name": "DeFi" });
+  }
+  if (contentLower.includes("staking") || contentLower.includes("stake")) {
+    aboutEntities.push({ "@type": "FinancialProduct", "name": "Staking" });
+  }
+  if (contentLower.includes("hubra")) {
+    mentionsEntities.push({ "@type": "Organization", "name": "Hubra" });
+  }
+
+  const articleJsonLd = getEnhancedArticleJsonLd({
+    headline: post.title,
+    description: post.excerpt,
+    image: post.image,
+    datePublished: post.date,
+    dateModified: post.lastUpdated || post.date,
+    author: post.author || "Hubra Team",
+    publisherName: siteConfig.name,
+    publisherLogo: `${siteConfig.domain}/logo.png`,
+    keywords: post.keywords || post.tags,
+    articleSection: post.category,
+    url,
+    wordCount,
+    inLanguage: "en-US",
+    about: aboutEntities.length > 0 ? aboutEntities : undefined,
+    mentions: mentionsEntities.length > 0 ? mentionsEntities : undefined,
+  });
+
+  const breadcrumbJsonLdString = getBreadcrumbJsonLdString([
+    { name: "Home", url: siteConfig.domain },
+    { name: "Blog", url: `${siteConfig.domain}/blog` },
+    { name: post.title, url },
+  ]);
+
+  const articleJsonLdString = JSON.stringify(articleJsonLd);
 
   return (
     <>
-      {/* Structured Data */}
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }} id="article-jsonld" type="application/ld+json" />
-      <script dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} id="breadcrumb-jsonld" type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: articleJsonLdString }} defer id="article-jsonld" type="application/ld+json" />
+      <script dangerouslySetInnerHTML={{ __html: breadcrumbJsonLdString }} defer id="breadcrumb-jsonld" type="application/ld+json" />
 
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-6 sm:mb-7 md:mb-8">
@@ -190,13 +179,15 @@ export default async function BlogPost({ params }: BlogPostProps) {
               </div>
             )}
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white leading-tight">{post.title}</h1>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white leading-tight" itemProp="headline">
+              {post.title}
+            </h1>
 
             {/* Meta Information */}
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-400 mb-6 sm:mb-7 md:mb-8">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" icon="mdi:calendar" />
-                <time dateTime={post.date}>
+                <time dateTime={post.date} itemProp="datePublished">
                   {new Date(post.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                 </time>
               </div>
@@ -208,9 +199,9 @@ export default async function BlogPost({ params }: BlogPostProps) {
               {post.author && (
                 <>
                   <span className="text-gray-600 hidden sm:inline">•</span>
-                  <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div itemScope className="flex items-center gap-1.5 sm:gap-2" itemType="https://schema.org/Person">
                     <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" icon="mdi:account" />
-                    <span>{post.author}</span>
+                    <span itemProp="name">{post.author}</span>
                   </div>
                 </>
               )}
@@ -233,28 +224,8 @@ export default async function BlogPost({ params }: BlogPostProps) {
 
           {/* Content */}
 
-          {/* MDX Content - Rendered as HTML */}
-          <div
-            dangerouslySetInnerHTML={{ __html: post.content }}
-            className="prose prose-invert prose-lg max-w-none
-              prose-headings:text-white prose-headings:font-bold
-              prose-h1:text-4xl prose-h2:text-3xl prose-h2:border-b prose-h2:border-gray-800 prose-h2:pb-2 prose-h3:text-2xl
-              prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-6
-              prose-a:text-primary-500 prose-a:underline hover:prose-a:text-primary-400 hover:prose-a:no-underline
-              prose-strong:text-white prose-strong:font-bold
-              prose-em:text-gray-200 prose-em:italic
-              prose-code:text-primary-400 prose-code:bg-gray-900 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:font-mono prose-code:text-sm prose-code:border prose-code:border-gray-800
-              prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-800 prose-pre:rounded-lg prose-pre:p-4
-              prose-ul:text-gray-300 prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-6 prose-ul:marker:text-primary-500
-              prose-ol:text-gray-300 prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-6 prose-ol:marker:text-primary-500
-              prose-li:text-gray-300 prose-li:mb-2 prose-li:pl-2
-              prose-blockquote:border-l-4 prose-blockquote:border-l-primary-500 prose-blockquote:text-gray-400 prose-blockquote:bg-card prose-blockquote:pl-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg prose-blockquote:italic
-              prose-img:rounded-xl prose-img:shadow-lg
-              prose-hr:border-gray-800 prose-hr:my-8
-              prose-table:border prose-table:border-gray-800 prose-table:rounded-lg prose-table:my-8
-              prose-th:bg-card prose-th:text-white prose-th:font-semibold prose-th:p-3
-              prose-td:text-gray-300 prose-td:p-3 prose-td:border-t prose-td:border-gray-800"
-          />
+          {/* MDX Content - Rendered as HTML with enhanced styling */}
+          <HTMLContent html={post.content} />
 
           <footer>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-5 md:gap-6">

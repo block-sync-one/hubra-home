@@ -1,6 +1,7 @@
+import "server-only";
+
 import { fetchBirdeyeData, mapTimeRange } from "@/lib/services/birdeye";
-import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache";
-import { loggers } from "@/lib/utils/logger";
+import { cacheKeys, CACHE_TTL, getStaleWhileRevalidate } from "@/lib/cache";
 
 export interface PriceHistoryData {
   data: Array<{
@@ -20,19 +21,13 @@ export interface PriceHistoryData {
   };
 }
 
+/**
+ * Fetch price history with stale-while-revalidate pattern
+ */
 export async function fetchPriceHistory(tokenAddress: string, days: string = "7"): Promise<PriceHistoryData | null> {
-  try {
-    const cacheKey = cacheKeys.priceHistory(tokenAddress, days);
-    const cachedData = await redis.get<PriceHistoryData>(cacheKey);
+  const cacheKey = cacheKeys.priceHistory(tokenAddress, days);
 
-    if (cachedData) {
-      loggers.cache.debug(`HIT: price history ${tokenAddress}`);
-
-      return cachedData;
-    }
-
-    loggers.cache.debug(`MISS: price history ${tokenAddress}`);
-
+  return await getStaleWhileRevalidate<PriceHistoryData>(cacheKey, CACHE_TTL.PRICE_HISTORY, async () => {
     const timeType = mapTimeRange(days === "max" ? "max" : parseInt(days, 10));
     const now = Math.floor(Date.now() / 1000);
     const daysNum = days === "max" ? 365 : parseInt(days, 10);
@@ -41,16 +36,19 @@ export async function fetchPriceHistory(tokenAddress: string, days: string = "7"
     const response = await fetchBirdeyeData<{
       data: {
         items: Array<{
-          unixTime: number;
+          unix_time: number; // Birdeye v3 uses snake_case
           o: number;
           h: number;
           l: number;
           c: number;
           v: number;
+          address: string;
+          type: string;
+          currency: string;
         }>;
       };
       success: boolean;
-    }>("/defi/ohlcv", {
+    }>("/defi/v3/ohlcv", {
       address: tokenAddress,
       type: timeType,
       time_from: timeFrom.toString(),
@@ -58,13 +56,13 @@ export async function fetchPriceHistory(tokenAddress: string, days: string = "7"
     });
 
     if (!response.success || !response.data?.items || response.data.items.length === 0) {
-      return null;
+      throw new Error("No price history data available");
     }
 
     const transformedData: PriceHistoryData = {
       data: response.data.items.map((item) => ({
-        timestamp: item.unixTime * 1000,
-        price: item.c,
+        timestamp: item.unix_time * 1000, // Convert to milliseconds
+        price: item.c, // Close price
         open: item.o,
         high: item.h,
         low: item.l,
@@ -79,12 +77,6 @@ export async function fetchPriceHistory(tokenAddress: string, days: string = "7"
       },
     };
 
-    await redis.set(cacheKey, transformedData, CACHE_TTL.PRICE_HISTORY);
-
     return transformedData;
-  } catch (error) {
-    loggers.data.error("Failed to fetch price history:", error);
-
-    return null;
-  }
+  });
 }

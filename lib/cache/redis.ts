@@ -29,15 +29,39 @@ class RedisClient {
   }
 
   private async connect(): Promise<Redis> {
-    if (this.client && this.client.status === "ready") {
-      return this.client;
+    // Reuse existing connection if ready or connecting
+    if (this.client) {
+      const status = this.client.status;
+
+      if (status === "ready") {
+        return this.client;
+      }
+      // If connecting or reconnecting, wait for it
+      if (status === "connecting" || status === "reconnecting") {
+        // Wait briefly and check again
+        await new Promise((resolve) => setTimeout(resolve, 50));
+        if (this.client.status === "ready") {
+          return this.client;
+        }
+      }
+      // Clean up dead connections
+      if (status === "end" || status === "close") {
+        try {
+          this.client.disconnect();
+        } catch {
+          // Ignore errors during cleanup
+        }
+        this.client = null;
+      }
     }
 
+    // Prevent concurrent connection attempts
     if (this.isConnecting) {
-      // Wait for existing connection attempt
+      // Wait briefly for existing attempt
       await new Promise((resolve) => setTimeout(resolve, 100));
-
-      return this.connect();
+      if (this.client && this.client.status === "ready") {
+        return this.client;
+      }
     }
 
     this.isConnecting = true;
@@ -58,17 +82,27 @@ class RedisClient {
           return delay;
         },
         enableReadyCheck: true,
-        lazyConnect: false,
+        lazyConnect: true, // Only connect when first command is executed
+        keepAlive: 30000, // Keep connection alive for 30s
+        connectTimeout: 10000, // 10s connection timeout
       };
 
       this.client = new Redis(redisUrl, options);
 
+      // With lazyConnect, ping will trigger the actual connection
       await this.client.ping();
       this.isConnecting = false;
 
       return this.client;
     } catch (error) {
       this.isConnecting = false;
+      if (this.client) {
+        try {
+          this.client.disconnect();
+        } catch {
+          // Ignore errors
+        }
+      }
       this.client = null;
       throw error;
     }
@@ -141,9 +175,8 @@ class RedisClient {
   public async ttl(key: string): Promise<number> {
     try {
       const client = await this.connect();
-      const result = await client.ttl(key);
 
-      return result;
+      return await client.ttl(key);
     } catch {
       return -1;
     }
@@ -158,6 +191,97 @@ class RedisClient {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  /**
+   * Batch get multiple keys using MGET
+   * Returns a map of key -> parsed value (null if key doesn't exist)
+   */
+  public async mget<T>(keys: string[]): Promise<Map<string, T | null>> {
+    const result = new Map<string, T | null>();
+
+    if (keys.length === 0) return result;
+
+    try {
+      const client = await this.connect();
+      const values = await client.mget(...keys);
+
+      keys.forEach((key, index) => {
+        const value = values[index];
+
+        if (value) {
+          try {
+            result.set(key, JSON.parse(value) as T);
+          } catch {
+            result.set(key, null);
+          }
+        } else {
+          result.set(key, null);
+        }
+      });
+
+      return result;
+    } catch {
+      // Return empty map on error
+      keys.forEach((key) => result.set(key, null));
+
+      return result;
+    }
+  }
+
+  /**
+   * Batch set multiple key-value pairs using MSET + EXPIRE via pipeline
+   * More efficient than individual SET calls
+   */
+  public async mset<T>(entries: Array<{ key: string; value: T; ttl?: number }>): Promise<boolean> {
+    if (entries.length === 0) return true;
+
+    try {
+      const client = await this.connect();
+      const pipeline = client.pipeline();
+
+      for (const entry of entries) {
+        const serialized = JSON.stringify(entry.value);
+        const ttl = entry.ttl ?? CACHE_TTL.SEARCH;
+
+        pipeline.setex(entry.key, ttl, serialized);
+      }
+
+      await pipeline.exec();
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Execute a batch of commands using Redis pipeline
+   * Reduces network round trips
+   */
+  public async executePipeline<T>(commands: Array<{ command: string; args: (string | number)[] }>): Promise<Array<T | null>> {
+    if (commands.length === 0) return [];
+
+    try {
+      const client = await this.connect();
+      const pipeline = client.pipeline();
+
+      for (const cmd of commands) {
+        (pipeline as any)[cmd.command](...cmd.args);
+      }
+
+      const results = await pipeline.exec();
+
+      if (!results) return [];
+
+      return results.map(([err, result]) => {
+        if (err) return null;
+
+        return result as T;
+      });
+    } catch {
+      return new Array(commands.length).fill(null);
     }
   }
 

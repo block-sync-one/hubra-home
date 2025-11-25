@@ -1,19 +1,21 @@
 import { Metadata } from "next";
 
+import { siteConfig } from "@/config/site";
+import { TOKEN_ANALYTICS_JSON_LD_STRING } from "@/lib/utils/structured-data";
+
 interface TokenLayoutProps {
   children: React.ReactNode;
-  params: Promise<{ symbol: string }>;
+  params: Promise<{ address: string }>;
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ symbol: string }> }): Promise<Metadata> {
-  const { symbol } = await params;
+export async function generateMetadata({ params }: { params: Promise<{ address: string }> }): Promise<Metadata> {
+  const { address } = await params;
 
   return {
-    metadataBase: new URL("https://hubra.app"),
-    title: `${symbol} Token Details | Hubra - DeFi Analytics Platform`,
-    description: `View detailed analytics, price charts, and trading information for ${symbol} token on Hubra. Track market cap, volume, and trading data.`,
+    metadataBase: new URL(siteConfig.domain),
+    title: `Token Details | Hubra - DeFi Analytics Platform`,
+    description: `View detailed analytics, price charts, and trading information for token on Hubra. Track market cap, volume, and trading data.`,
     keywords: [
-      symbol,
       "cryptocurrency",
       "token analytics",
       "DeFi",
@@ -32,15 +34,25 @@ export async function generateMetadata({ params }: { params: Promise<{ symbol: s
       "Hubra",
     ],
     openGraph: {
-      title: `${symbol} Token Details | Hubra`,
-      description: `View detailed analytics and trading information for ${symbol} token`,
+      title: `Token Details | Hubra`,
+      description: `View detailed analytics and trading information for token`,
       type: "website",
       siteName: "Hubra",
+      url: `${siteConfig.domain}/tokens/${address}`,
+      images: [
+        {
+          url: siteConfig.ogImage || "/hubra-og-image.png",
+          width: 1200,
+          height: 630,
+          alt: "Hubra Token Analytics",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${symbol} Token Details | Hubra`,
-      description: `View detailed analytics and trading information for ${symbol} token`,
+      title: `Token Details | Hubra`,
+      description: `View detailed analytics and trading information for token`,
+      images: [siteConfig.ogImage || "/hubra-og-image.png"],
     },
     robots: {
       index: true,
@@ -54,7 +66,7 @@ export async function generateMetadata({ params }: { params: Promise<{ symbol: s
       },
     },
     alternates: {
-      canonical: `/tokens/${symbol}`,
+      canonical: `${siteConfig.domain}/tokens/${address}`,
     },
   };
 }
@@ -62,26 +74,11 @@ export async function generateMetadata({ params }: { params: Promise<{ symbol: s
 export default function TokenLayout({ children }: TokenLayoutProps) {
   return (
     <>
-      {/* Structured Data for SEO */}
       <script
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FinancialProduct",
-            "name": "Token Analytics",
-            "description": "Cryptocurrency token analytics and trading data",
-            "provider": {
-              "@type": "Organization",
-              "name": "Hubra",
-              "url": "https://hubra.app",
-            },
-            "category": "Cryptocurrency",
-            "offers": {
-              "@type": "Offer",
-              "availability": "https://schema.org/InStock",
-            },
-          }),
+          __html: TOKEN_ANALYTICS_JSON_LD_STRING,
         }}
+        defer
         type="application/ld+json"
       />
       {children}

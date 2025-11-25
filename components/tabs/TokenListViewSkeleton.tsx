@@ -7,7 +7,7 @@ import React from "react";
  */
 function TokenListItemSkeleton() {
   return (
-    <div className="flex items-center justify-between p-3 min-h-[56px]">
+    <div className="flex items-center justify-between p-2 min-h-[56px]">
       {/* Left Column: Image, Name, Symbol */}
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-gray-700/50 animate-pulse flex-shrink-0" />

@@ -1,5 +1,5 @@
 /**
- * Blog Library - Improved
+ * Blog Library
  * Enhanced error handling, validation, and performance optimizations
  */
 
@@ -12,6 +12,7 @@ import matter from "gray-matter";
 import { BlogPost, BlogPostMeta, BlogFrontmatter, Result, BlogPostNotFoundError, BlogParseError, isValidFrontmatter } from "./types";
 
 import { mdxToHtml } from "@/lib/mdx";
+import { siteConfig } from "@/config/site";
 
 const CONTENT_DIR = path.join(process.cwd(), "app/blog/content");
 const DEFAULT_IMAGE = "/hubra-og-image.png";
@@ -49,13 +50,15 @@ function parseFrontmatter(data: unknown, slug: string): BlogFrontmatter {
  * Transform frontmatter to BlogPost
  */
 function transformToBlogPost(slug: string, frontmatter: BlogFrontmatter, htmlContent: string): BlogPost {
+  const image = `${siteConfig.domain}${frontmatter.coverImage || frontmatter.image || DEFAULT_IMAGE}`;
+
   return {
     slug,
     title: frontmatter.title,
     excerpt: frontmatter.excerpt || frontmatter.description || "",
     content: htmlContent,
     date: frontmatter.date,
-    image: frontmatter.coverImage || frontmatter.image || DEFAULT_IMAGE,
+    image,
 
     // Optional fields
     featured: frontmatter.featured || false,
@@ -68,8 +71,8 @@ function transformToBlogPost(slug: string, frontmatter: BlogFrontmatter, htmlCon
     lastUpdated: frontmatter.lastUpdated,
     draft: frontmatter.draft || false,
     metaDescription: frontmatter.metaDescription || frontmatter.description,
-    ogImage: frontmatter.ogImage,
-    twitterImage: frontmatter.twitterImage,
+    ogImage: image,
+    twitterImage: image,
     canonicalUrl: frontmatter.canonicalUrl,
   };
 }
@@ -82,12 +85,9 @@ async function parseMDXFile(slug: string): Promise<Result<BlogPost>> {
     // Try .mdx first, then .md
     let filePath: string | null = null;
     const mdxPath = path.join(CONTENT_DIR, `${slug}.mdx`);
-    const mdPath = path.join(CONTENT_DIR, `${slug}.md`);
 
     if (fs.existsSync(mdxPath)) {
       filePath = mdxPath;
-    } else if (fs.existsSync(mdPath)) {
-      filePath = mdPath;
     }
 
     if (!filePath) {

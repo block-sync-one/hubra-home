@@ -35,10 +35,10 @@ export async function fetchNewlyListedTokens(
     return {
       data: [],
       stats: {
-        totalMarketCap: 0,
-        totalVolume: 0,
         totalFDV: 0,
-        marketCapChange: 0,
+        totalVolume: 0,
+        solFDV: 0,
+        totalFDVChange: 0,
       },
     };
   }

@@ -102,6 +102,12 @@ export function TokenCard({ name, symbol, logoURI, price, change, coinId }: Toke
     router.push(`/tokens/${coinId}`);
   };
 
+  const handleHover = () => {
+    if (coinId) {
+      router.prefetch(`/tokens/${coinId}`);
+    }
+  };
+
   const chartData = transformPriceData(priceHistory, parsePrice(price), change || 0, coinId || "");
   const isPositive = (change || 0) >= 0;
   const color = isPositive ? "success" : "danger";
@@ -114,6 +120,7 @@ export function TokenCard({ name, symbol, logoURI, price, change, coinId }: Toke
       role="button"
       tabIndex={0}
       onKeyDown={(e: any) => e.key === "Enter" && handleClick()}
+      onMouseEnter={handleHover}
       onPress={handleClick}>
       <div className="p-4">
         {/* Header */}
@@ -122,9 +129,9 @@ export function TokenCard({ name, symbol, logoURI, price, change, coinId }: Toke
             <ImageWithSkeleton
               alt={`${name} (${symbol}) logo`}
               className="w-full h-full object-cover"
-              height={32}
+              height={36}
               src={logoURI || "/logo.svg"}
-              width={32}
+              width={36}
             />
           </div>
           <div className="flex items-center gap-2 flex-1 min-w-0">
