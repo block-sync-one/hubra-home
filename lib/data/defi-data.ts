@@ -2,7 +2,7 @@ import "server-only";
 
 import { getCachedProtocol, setCachedProtocol, setManyProtocols } from "./protocol-cache";
 
-import { redis } from "@/lib/cache/redis";
+import { getStaleWhileRevalidate } from "@/lib/cache/swr-cache";
 import { CACHE_TTL } from "@/lib/cache";
 import { DeFiLlamaProtocol, fetchHistoricalChainTVL, fetchSingleTVL, fetchTVL } from "@/lib/services/defillama";
 import { DefiStatsAggregate, ProtocolAggregate, Protocol } from "@/lib/types/defi-stats";
@@ -343,24 +343,35 @@ function buildProtocolStats(protocol: DeFiLlamaProtocol): DefiStatsAggregate {
 /**
  * Get cached DeFi statistics
  */
-async function getCachedProtocolsData(cacheKey: string): Promise<DefiStatsAggregate | null> {
-  const cached = await redis.get<DefiStatsAggregate>(cacheKey);
+async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
+  loggers.cache.debug(`→ Fetching from DeFiLlama: All protocols`);
 
-  if (cached) {
-    loggers.cache.debug(`✓ Cache HIT: ${cacheKey}`);
-  }
+  // Fetch data from DeFiLlama
+  const [allProtocols, historicalTVL] = await Promise.all([fetchTVL(), fetchHistoricalChainTVL()]);
 
-  return cached;
-}
+  // Filter and transform protocols
+  const solanaOnlyProtocols = filterSolanaOnlyProtocols(allProtocols);
+  const standardizedProtocols = solanaOnlyProtocols.map(transformProtocolToStandard);
 
-/**
- * Store DeFi statistics in cache
- */
-async function cacheProtocolsData(cacheKey: string, data: DefiStatsAggregate): Promise<void> {
-  redis.set(cacheKey, data, CACHE_TTL.GLOBAL_STATS).catch((err) => {
-    loggers.cache.error(`Failed to cache ${cacheKey}:`, err);
-  });
-  loggers.cache.debug(`✓ Caching: ${cacheKey}`);
+  // Group and merge similar protocols
+  const protocolGroups = groupProtocolsByName(standardizedProtocols);
+  const mergedProtocols = mergeProtocolGroups(protocolGroups);
+
+  // Calculate statistics
+  const totalTvl = getCurrentTvl(historicalTVL);
+  const tvlChange = calculateTvlChange(historicalTVL);
+  const hotProtocols = getTopProtocolsByGrowth(standardizedProtocols);
+
+  // Generate chart data
+  const chartData = transformHistoricalDataToChartFormat(historicalTVL);
+
+  // Build result
+  const result = buildDefiStatsAggregate(mergedProtocols, hotProtocols, totalTvl, tvlChange, chartData);
+
+  // Batch cache individual protocols for detail pages (non-blocking)
+  cacheIndividualProtocolsAsync(mergedProtocols);
+
+  return result;
 }
 
 /**
@@ -396,54 +407,27 @@ function cacheIndividualProtocolsAsync(protocols: ProtocolAggregate[]): void {
  * Fetch all Solana DeFi protocols with aggregated statistics
  *
  * STRATEGY:
+ * Uses centralized SWR (Stale-While-Revalidate) pattern:
  * 1. Check Redis cache first
- * 2. If cached → return immediately
- * 3. If no cache → fetch from DeFiLlama
- * 4. Filter Solana-only protocols
- * 5. Group and merge similar protocols
- * 6. Calculate aggregated statistics
- * 7. Store in cache for 5 minutes
+ * 2. If cached and fresh → return immediately
+ * 3. If cached but stale → return stale data, refresh in background
+ * 4. If no cache → fetch from DeFiLlama and cache
+ * 5. Filter Solana-only protocols
+ * 6. Group and merge similar protocols
+ * 7. Calculate aggregated statistics
+ * 8. Store in cache for 5 minutes
  *
  * Called directly from the DeFi page (Server Component)
  */
 export async function fetchProtocolsData(): Promise<DefiStatsAggregate> {
   try {
-    // Check cache
-    const cached = await getCachedProtocolsData(CACHE_KEY_ALL_PROTOCOLS);
+    const result = await getStaleWhileRevalidate<DefiStatsAggregate>(
+      CACHE_KEY_ALL_PROTOCOLS,
+      CACHE_TTL.MARKET_DATA,
+      fetchFreshProtocolsData
+    );
 
-    if (cached) return cached;
-
-    loggers.cache.debug(`→ Fetching from DeFiLlama: All protocols`);
-
-    // Fetch data from DeFiLlama
-    const [allProtocols, historicalTVL] = await Promise.all([fetchTVL(), fetchHistoricalChainTVL()]);
-
-    // Filter and transform protocols
-    const solanaOnlyProtocols = filterSolanaOnlyProtocols(allProtocols);
-    const standardizedProtocols = solanaOnlyProtocols.map(transformProtocolToStandard);
-
-    // Group and merge similar protocols
-    const protocolGroups = groupProtocolsByName(standardizedProtocols);
-    const mergedProtocols = mergeProtocolGroups(protocolGroups);
-
-    // Calculate statistics
-    const totalTvl = getCurrentTvl(historicalTVL);
-    const tvlChange = calculateTvlChange(historicalTVL);
-    const hotProtocols = getTopProtocolsByGrowth(standardizedProtocols);
-
-    // Generate chart data
-    const chartData = transformHistoricalDataToChartFormat(historicalTVL);
-
-    // Build result
-    const result = buildDefiStatsAggregate(mergedProtocols, hotProtocols, totalTvl, tvlChange, chartData);
-
-    // Cache aggregate result
-    await cacheProtocolsData(CACHE_KEY_ALL_PROTOCOLS, result);
-
-    // Batch cache individual protocols for detail pages
-    cacheIndividualProtocolsAsync(mergedProtocols);
-
-    return result;
+    return result || buildEmptyDefiStats();
   } catch (error) {
     loggers.data.error("Error fetching DeFi protocols data:", error);
 

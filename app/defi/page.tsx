@@ -73,11 +73,19 @@ export const metadata: Metadata = {
   },
 };
 
+export const revalidate = 300; // 5 minutes
+
 export default async function DeFiPage() {
-  // Fetch DeFi protocols data (with Redis caching)
+  const perfStart = performance.now();
+
   const protocols = await fetchProtocolsData();
 
-  // Check if we have valid data
+  const perfDuration = performance.now() - perfStart;
+
+  if (process.env.NODE_ENV === "development") {
+    console.log(`📊 DeFi page data fetch: ${perfDuration.toFixed(0)}ms`);
+  }
+
   if (!protocols || protocols.numberOfProtocols === 0) {
     notFound();
   }

@@ -18,8 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const mainPages = [
     { url: `${baseUrl}`, lastModified: currentDate, changeFrequency: "daily" as const, priority: 1.0 },
     { url: `${baseUrl}/tokens`, lastModified: currentDate, changeFrequency: "hourly" as const, priority: 0.9 },
-    // DeFi route excluded (app/_defi)
-    // { url: `${baseUrl}/defi`, lastModified: currentDate, changeFrequency: "weekly" as const, priority: 0.8 },
+    { url: `${baseUrl}/defi`, lastModified: currentDate, changeFrequency: "hourly" as const, priority: 0.8 },
     { url: `${baseUrl}/stats`, lastModified: currentDate, changeFrequency: "daily" as const, priority: 0.8 },
     { url: `${baseUrl}/blog`, lastModified: currentDate, changeFrequency: "weekly" as const, priority: 0.7 },
   ];
