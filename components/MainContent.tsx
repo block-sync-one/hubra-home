@@ -403,11 +403,11 @@ export const MainContentSection = (): JSX.Element => {
 
       <Separator className="w-full h-px bg-ui-border-transparent" />
 
-      {/* Introducing sunSOL Section */}
+      {/* Introducing raSOL Section */}
       <div className="flex flex-col w-full items-center justify-center gap-8 md:gap-10 px-4">
         <div className="flex flex-col w-full text-wrap-break-word md:w-[580px] items-center justify-center gap-5">
           <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
-            Introducing sunSOL
+            Introducing raSOL
           </h2>
           <p className="w-[80%] break-words md:w-fit font-geist text-gray-400/70 text-xl text-center">our empowered liquid staked SOL</p>
         </div>
@@ -556,7 +556,7 @@ export const MainContentSection = (): JSX.Element => {
       {/* Partners Section */}
       <div className="flex flex-col items-center gap-[52px] w-full">
         <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
-          Hubsol Partners
+          Hubra Partners
         </h2>
 
         <div className="flex w-full flex-col md:flex-row md:justify-center items-center gap-4">
@@ -798,11 +798,11 @@ export const MainContentSection = (): JSX.Element => {
             </div>
 
             <div className="inline-flex items-center gap-6">
-              <Link className="" href="https://x.com/hubraapp" target="_blank">
+              <Link className="" href="https://x.com/HubraApp" target="_blank">
                 <Icon className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white" icon="prime:twitter" />
               </Link>
 
-              <Link className="" href="https://github.com/block-sync-one/hubra" target="_blank">
+              <Link className="" href="https://github.com/block-sync-one/hubra-home" target="_blank">
                 <Icon className="w-6 h-6 cursor-pointer text-[#797B92] hover:text-white" icon="ri:github-fill" />
               </Link>
 
