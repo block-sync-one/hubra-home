@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Icon } from "@iconify/react";
 import dynamic from "next/dynamic";
 
@@ -55,18 +55,12 @@ interface TokenDetailPageClientProps {
 
 export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientProps) {
   const { formatPrice } = useCurrency();
-  const router = useRouter();
   const [selectedPeriod, setSelectedPeriod] = useState<ChartPeriod>("24h");
 
   // Memoize period change handler
   const handlePeriodChange = useCallback((period: string) => {
     setSelectedPeriod(period as ChartPeriod);
   }, []);
-
-  // Memoize navigation handler
-  const handleBackToTokens = useCallback(() => {
-    router.push("/tokens");
-  }, [router]);
 
   // Memoize formatted data to avoid recalculation on every render
   const formattedData = useMemo(() => {
@@ -130,12 +124,11 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
           <Icon className="w-16 h-16 mx-auto mb-4 text-gray-400" icon="mdi:alert-circle" />
           <h2 className="text-2xl font-bold mb-4">Token Not Found</h2>
           <p className="text-gray-400 mb-6">Unable to load token data. Please try again later.</p>
-          <button
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            type="button"
-            onClick={handleBackToTokens}>
+          <Link
+            className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            href="/tokens">
             Back to Tokens
-          </button>
+          </Link>
         </div>
       </div>
     );
@@ -145,13 +138,12 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
     <div className="min-h-screen text-white md:max-w-7xl mx-auto">
       {/* Breadcrumb Navigation */}
       <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm mb-8 text-gray-400">
-        <button
+        <Link
           aria-label="Navigate back to tokens list"
           className="cursor-pointer hover:text-white transition-colors bg-transparent border-none p-0 text-gray-400 text-sm focus:outline-none focus:text-white"
-          type="button"
-          onClick={handleBackToTokens}>
+          href="/tokens">
           Tokens
-        </button>
+        </Link>
         <Icon aria-hidden="true" className="h-4 w-4" icon="lucide:chevron-right" />
         <span className="text-white font-medium">{formattedData.name}</span>
       </nav>
