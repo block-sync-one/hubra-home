@@ -29,10 +29,10 @@ function getProtocolCacheKey(protocolId: string): string {
 /**
  * Get a single protocol from cache
  */
-export async function getCachedProtocol(protocolId: string): Promise<ProtocolAggregate | null> {
+export async function getCachedProtocol(protocolId: string): Promise<Protocol | ProtocolAggregate | null> {
   try {
     const cacheKey = getProtocolCacheKey(protocolId);
-    const cached = await redis.get<ProtocolAggregate>(cacheKey);
+    const cached = await redis.get<Protocol | ProtocolAggregate>(cacheKey);
 
     if (cached) {
       loggers.cache.debug(`✓ Protocol cache HIT: ${protocolId}`);
@@ -51,7 +51,7 @@ export async function getCachedProtocol(protocolId: string): Promise<ProtocolAgg
  */
 export async function setCachedProtocol(
   protocolId: string,
-  data: ProtocolAggregate,
+  data: Protocol | ProtocolAggregate,
   ttl: number = CACHE_TTL.GLOBAL_STATS
 ): Promise<boolean> {
   try {

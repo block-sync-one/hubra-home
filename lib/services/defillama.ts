@@ -206,6 +206,9 @@ export interface DeFiLlamaProtocol {
   url?: string;
   twitter?: string;
   github?: string;
+  parentProtocol?: string;
+  parentProtocolSlug?: string;
+  otherProtocols?: string[];
 }
 
 export interface HistoricalTVL {

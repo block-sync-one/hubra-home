@@ -16,7 +16,7 @@ export interface DefiStatsAggregate {
       value2: number;
     }[];
   };
-  solanaProtocols: ProtocolAggregate[];
+  solanaProtocols: Protocol[];
   hotProtocols: Protocol[];
   numberOfProtocols: number;
   totalTvl: number;

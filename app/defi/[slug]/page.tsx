@@ -21,7 +21,6 @@ type PageParams = {
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { slug } = await params;
   const protocol = await fetchProtocolData(slug);
-  const firstInBreakDown = protocol && protocol.breakdown[0];
 
   if (!protocol) {
     return {
@@ -37,8 +36,8 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
   const changeText = change1D >= 0 ? `+${change1D.toFixed(2)}%` : `${change1D.toFixed(2)}%`;
   const protocolUrl = `${siteConfig.domain}/defi/${slug}`;
 
-  const protocolDescription = firstInBreakDown?.description
-    ? `${firstInBreakDown.description} ${protocolName} is a DeFi protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`
+  const protocolDescription = protocol.description
+    ? `${protocol.description} ${protocolName} is a DeFi protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`
     : `${protocolName} is a decentralized finance (DeFi) protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`;
 
   return {
@@ -106,26 +105,24 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 
 export default async function Page({ params }: { params: Promise<PageParams> }) {
   const { slug } = await params;
-  const protocolAggregate = await fetchProtocolData(slug);
+  const protocol = await fetchProtocolData(slug);
 
-  if (!protocolAggregate) {
+  if (!protocol) {
     notFound();
   }
-
-  const protocolDetail = protocolAggregate.breakdown?.[0];
 
   const chartData: Chart[] = [
     {
       key: "tvl",
       title: "TVL",
-      value: protocolAggregate.tvl || 0,
+      value: protocol.tvl || 0,
       suffix: "$",
       type: "number",
       tooltipType: "number-string",
       toolTipTitle: "TVL",
       toolTip2Title: "",
-      change: `${protocolAggregate.change1D?.toFixed(2) || "0.00"}%`,
-      changeType: (protocolAggregate.change1D || 0) >= 0 ? "positive" : "negative",
+      change: `${protocol.change1D?.toFixed(2) || "0.00"}%`,
+      changeType: (protocol.change1D || 0) >= 0 ? "positive" : "negative",
       chartData: [], // TODO: Add historical chart data
     },
   ];
@@ -145,32 +142,32 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
   const statsData: StatItem[] = [
     {
       name: "TVL",
-      value: formatCurrency(protocolAggregate.tvl || 0, true),
+      value: formatCurrency(protocol.tvl || 0, true),
       icon: "solar:lock-bold",
-      change: `${protocolAggregate.change1D?.toFixed(2) || "0.00"}%`,
-      changeType: (protocolAggregate.change1D || 0) >= 0 ? "positive" : "negative",
+      change: `${protocol.change1D?.toFixed(2) || "0.00"}%`,
+      changeType: (protocol.change1D || 0) >= 0 ? "positive" : "negative",
     },
     {
       name: "7d Change",
-      value: `${protocolAggregate.change7D?.toFixed(2) || "0.00"}%`,
+      value: `${protocol.change7D?.toFixed(2) || "0.00"}%`,
       icon: "solar:chart-bold",
-      changeType: (protocolAggregate.change7D || 0) >= 0 ? "positive" : "negative",
+      changeType: (protocol.change7D || 0) >= 0 ? "positive" : "negative",
     },
   ];
 
-  // Social links and other external metrics (from breakdown detail)
+  // Social links and other external metrics
   const socialLinks: StatItem[] = [];
 
   // Add Twitter if available
-  if (protocolDetail?.twitter) {
+  if (protocol.twitter) {
     try {
-      const twitterHandle = protocolDetail.twitter.replace("https://twitter.com/", "").replace("@", "");
+      const twitterHandle = protocol.twitter.replace("https://twitter.com/", "").replace("@", "");
 
       socialLinks.push({
         name: "Twitter",
         value: twitterHandle,
         icon: "mdi:twitter",
-        url: protocolDetail.twitter.startsWith("http") ? protocolDetail.twitter : `https://twitter.com/${twitterHandle}`,
+        url: protocol.twitter.startsWith("http") ? protocol.twitter : `https://twitter.com/${twitterHandle}`,
         isExternal: true,
       });
     } catch (e) {
@@ -179,9 +176,9 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
   }
 
   // Add Website if available
-  if (protocolDetail?.url) {
+  if (protocol.url) {
     try {
-      const urlObj = new URL(protocolDetail.url.startsWith("http") ? protocolDetail.url : `https://${protocolDetail.url}`);
+      const urlObj = new URL(protocol.url.startsWith("http") ? protocol.url : `https://${protocol.url}`);
       const hostname = urlObj.hostname.replace("www.", "");
 
       socialLinks.push({
@@ -195,25 +192,23 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       // Fallback if URL is invalid
       socialLinks.push({
         name: "Website",
-        value: protocolDetail.url.replace("https://", "").replace("http://", "").replace("www.", ""),
+        value: protocol.url.replace("https://", "").replace("http://", "").replace("www.", ""),
         icon: "solar:link-circle-bold",
-        url: protocolDetail.url.startsWith("http") ? protocolDetail.url : `https://${protocolDetail.url}`,
+        url: protocol.url.startsWith("http") ? protocol.url : `https://${protocol.url}`,
         isExternal: true,
       });
     }
   }
 
   // Add GitHub if available
-  const protocolAny = protocolDetail as any;
-
-  if (protocolAny?.github) {
+  if (protocol.github) {
     try {
       let githubUrl = "";
 
-      if (Array.isArray(protocolAny.github) && protocolAny.github.length > 0) {
-        githubUrl = protocolAny.github[0];
-      } else if (typeof protocolAny.github === "string") {
-        githubUrl = protocolAny.github;
+      if (Array.isArray(protocol.github) && protocol.github.length > 0) {
+        githubUrl = protocol.github[0];
+      } else if (typeof protocol.github === "string") {
+        githubUrl = protocol.github;
       }
 
       if (githubUrl) {
@@ -227,34 +222,34 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       }
     } catch (e) {
       // Fallback if URL is invalid
-      if (typeof protocolAny.github === "string") {
+      if (typeof protocol.github === "string") {
         socialLinks.push({
           name: "GitHub",
           value: "Repo",
           icon: "mdi:github",
-          url: protocolAny.github,
+          url: protocol.github,
           isExternal: true,
         });
       }
     }
   }
 
-  const protocolTvl = protocolAggregate.tvl || 0;
+  const protocolTvl = protocol.tvl || 0;
   const tvlFormatted = protocolTvl >= 1e9 ? `$${(protocolTvl / 1e9).toFixed(2)}B` : `$${(protocolTvl / 1e6).toFixed(2)}M`;
-  const change1D = protocolAggregate.change1D || 0;
+  const change1D = protocol.change1D || 0;
   const changeText = change1D >= 0 ? `+${change1D.toFixed(2)}%` : `${change1D.toFixed(2)}%`;
 
-  const enhancedDescription = protocolDetail?.description
-    ? `${protocolDetail.description} ${protocolAggregate.name} is a DeFi protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`
-    : `${protocolAggregate.name} is a decentralized finance (DeFi) protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`;
+  const enhancedDescription = protocol.description
+    ? `${protocol.description} ${protocol.name} is a DeFi protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`
+    : `${protocol.name} is a decentralized finance (DeFi) protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`;
 
   const protocolJsonLd = {
     "@context": "https://schema.org",
     "@type": "FinancialProduct",
-    "name": protocolAggregate.name,
-    "alternateName": protocolAggregate.name,
+    "name": protocol.name,
+    "alternateName": protocol.name,
     "description": enhancedDescription,
-    "image": protocolAggregate.logo || siteConfig.ogImage,
+    "image": protocol.logo || siteConfig.ogImage,
     "url": `${siteConfig.domain}/defi/${slug}`,
     "brand": {
       "@type": "Brand",
@@ -263,8 +258,8 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
     },
     "provider": {
       "@type": "Organization",
-      "name": protocolAggregate.name,
-      "url": protocolDetail?.url || `${siteConfig.domain}/defi/${slug}`,
+      "name": protocol.name,
+      "url": protocol.url || `${siteConfig.domain}/defi/${slug}`,
     },
     "category": "DeFi Protocol",
     "about": {
@@ -288,12 +283,12 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
         "name": "Blockchain",
         "value": "Solana",
       },
-      ...(protocolAggregate.change7D !== undefined
+      ...(protocol.change7D !== undefined
         ? [
             {
               "@type": "PropertyValue",
               "name": "7d Change",
-              "value": `${protocolAggregate.change7D >= 0 ? "+" : ""}${protocolAggregate.change7D.toFixed(2)}%`,
+              "value": `${protocol.change7D >= 0 ? "+" : ""}${protocol.change7D.toFixed(2)}%`,
             },
           ]
         : []),
@@ -303,7 +298,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
   const breadcrumbJsonLdString = getBreadcrumbJsonLdString([
     { name: "Home", url: siteConfig.domain },
     { name: "DeFi", url: `${siteConfig.domain}/defi` },
-    { name: protocolAggregate.name, url: `${siteConfig.domain}/defi/${slug}` },
+    { name: protocol.name, url: `${siteConfig.domain}/defi/${slug}` },
   ]);
 
   const protocolJsonLdString = JSON.stringify(protocolJsonLd);
@@ -314,24 +309,24 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       <script dangerouslySetInnerHTML={{ __html: breadcrumbJsonLdString }} defer type="application/ld+json" />
       <div className="md:max-w-7xl mx-auto w-full px-0 sm:px-0">
         {/* Breadcrumb Navigation */}
-        <ProtocolBreadcrumb protocolName={protocolAggregate.name} />
+        <ProtocolBreadcrumb protocolName={protocol.name} />
 
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
           <div className="flex-shrink-0 h-14 w-14 overflow-hidden rounded-full bg-transparent flex items-center justify-center">
             <Image
-              alt={protocolAggregate.name || "Protocol logo"}
+              alt={protocol.name || "Protocol logo"}
               className="h-full w-full object-cover"
               height={56}
-              src={protocolAggregate.logo || "/logo.svg"}
+              src={protocol.logo || "/logo.svg"}
               style={{ aspectRatio: "1/1" }}
               width={56}
             />
           </div>
 
           <div className="flex-1 text-left">
-            <h1 className="text-2xl font-bold mb-1 text-white">{protocolAggregate.name}</h1>
-            <p className="text-gray-400 line-clamp-2 max-w-2xl">{protocolDetail?.description || ""}</p>
+            <h1 className="text-2xl font-bold mb-1 text-white">{protocol.name}</h1>
+            <p className="text-gray-400 line-clamp-2 max-w-2xl">{protocol.description || ""}</p>
 
             {/* Social links in header */}
             {socialLinks.length > 0 && (
@@ -357,58 +352,10 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
           <ChartPnl charts={chartData} title="Aggregate Performance" />
         </div>
 
-        {/* Aggregate Statistics */}
+        {/* Protocol Statistics */}
         <div className="mb-8">
-          <StatsGrid stats={statsData} title="Aggregate Metrics" />
+          <StatsGrid stats={statsData} title="Protocol Metrics" />
         </div>
-
-        {/* Breakdown Section - Show individual protocols */}
-        {protocolAggregate.breakdown && protocolAggregate.breakdown.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-white mb-4">Protocol Breakdown</h2>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {protocolAggregate.breakdown.map((individualProtocol, index) => {
-                const protocolStats: StatItem[] = [
-                  {
-                    name: "TVL",
-                    value: formatCurrency(individualProtocol.tvl || 0, true),
-                    icon: "solar:lock-bold",
-                    change: `${individualProtocol.change1D?.toFixed(2) || "0.00"}%`,
-                    changeType: (individualProtocol.change1D || 0) >= 0 ? "positive" : "negative",
-                  },
-                  {
-                    name: "7d Change",
-                    value: `${individualProtocol.change7D?.toFixed(2) || "0.00"}%`,
-                    icon: "solar:chart-bold",
-                    changeType: (individualProtocol.change7D || 0) >= 0 ? "positive" : "negative",
-                  },
-                ];
-
-                return (
-                  <div key={individualProtocol.id || index} className="bg-card backdrop-blur-sm rounded-xl p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                        <Image
-                          alt={individualProtocol.name}
-                          className="w-full h-full object-cover"
-                          height={40}
-                          src={individualProtocol.logo || "/logo.svg"}
-                          width={40}
-                        />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold text-white">{individualProtocol.name}</h3>
-                        {individualProtocol.category && <p className="text-xs text-gray-400">{individualProtocol.category}</p>}
-                      </div>
-                    </div>
-
-                    <StatsGrid stats={protocolStats} />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </div>
     </main>
   );

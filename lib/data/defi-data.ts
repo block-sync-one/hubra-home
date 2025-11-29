@@ -262,7 +262,7 @@ function buildEmptyDefiStats(): DefiStatsAggregate {
  * Build complete DeFi statistics aggregate
  */
 function buildDefiStatsAggregate(
-  mergedProtocols: ProtocolAggregate[],
+  protocols: Protocol[],
   hotProtocols: Protocol[],
   totalTvl: number,
   tvlChange: number,
@@ -278,9 +278,9 @@ function buildDefiStatsAggregate(
       change_1d: tvlChange * 0.5, // Estimated relationship
       chartData: generateInflowsChartData(totalFees, totalRevenue),
     },
-    solanaProtocols: mergedProtocols,
+    solanaProtocols: protocols,
     hotProtocols,
-    numberOfProtocols: mergedProtocols.length,
+    numberOfProtocols: protocols.length,
     totalTvl,
     totalRevenue_1d: totalRevenue,
     totalFees_1d: totalFees,
@@ -353,10 +353,6 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
   const solanaOnlyProtocols = filterSolanaOnlyProtocols(allProtocols);
   const standardizedProtocols = solanaOnlyProtocols.map(transformProtocolToStandard);
 
-  // Group and merge similar protocols
-  const protocolGroups = groupProtocolsByName(standardizedProtocols);
-  const mergedProtocols = mergeProtocolGroups(protocolGroups);
-
   // Calculate statistics
   const totalTvl = getCurrentTvl(historicalTVL);
   const tvlChange = calculateTvlChange(historicalTVL);
@@ -365,11 +361,11 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
   // Generate chart data
   const chartData = transformHistoricalDataToChartFormat(historicalTVL);
 
-  // Build result
-  const result = buildDefiStatsAggregate(mergedProtocols, hotProtocols, totalTvl, tvlChange, chartData);
+  // Build result - use individual protocols instead of merged aggregates
+  const result = buildDefiStatsAggregate(standardizedProtocols, hotProtocols, totalTvl, tvlChange, chartData);
 
   // Batch cache individual protocols for detail pages (non-blocking)
-  cacheIndividualProtocolsAsync(mergedProtocols);
+  cacheIndividualProtocolsAsync(standardizedProtocols);
 
   return result;
 }
@@ -378,13 +374,13 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
  * Cache individual protocols asynchronously (fire-and-forget)
  * Uses batch operations for efficiency
  */
-function cacheIndividualProtocolsAsync(protocols: ProtocolAggregate[]): void {
+function cacheIndividualProtocolsAsync(protocols: Protocol[]): void {
   (async () => {
     try {
       const startTime = performance.now();
 
       const batchData = protocols.map((protocol) => ({
-        id: protocol.id,
+        id: protocol.slug || protocol.id,
         data: protocol,
       }));
 
@@ -443,23 +439,31 @@ export async function fetchProtocolsData(): Promise<DefiStatsAggregate> {
  * 2. If cached → return immediately
  * 3. If no cache → fetch from DeFiLlama
  * 4. Find the specific protocol
- * 5. Build protocol statistics
+ * 5. Transform to standard format
  * 6. Store in cache for 5 minutes
  *
  * Called directly from the protocol detail page (Server Component)
  */
-export async function fetchProtocolData(slug: string): Promise<ProtocolAggregate | null> {
+export async function fetchProtocolData(slug: string): Promise<Protocol | null> {
   try {
     // Check cache
     const cached = await getCachedProtocol(slug);
 
-    if (cached) return cached;
+    if (cached) {
+      // If cached data is ProtocolAggregate, return the first protocol from breakdown
+      // Otherwise return as Protocol
+      if ("breakdown" in cached && Array.isArray(cached.breakdown) && cached.breakdown.length > 0) {
+        return cached.breakdown[0];
+      }
+
+      return cached as Protocol;
+    }
 
     loggers.cache.debug(`→ Fetching from DeFiLlama: ${slug}`);
 
     const singleProtocol = await fetchSingleTVL(slug);
 
-    // Find specific protocol
+    // Transform to standard protocol format
     const protocol = transformProtocolToStandard(singleProtocol);
 
     if (!protocol) {
@@ -468,15 +472,12 @@ export async function fetchProtocolData(slug: string): Promise<ProtocolAggregate
       return null;
     }
 
-    // Build protocol statistics
-    const result = mergeProtocolGroup([protocol]);
-
     // Cache result (non-blocking)
-    setCachedProtocol(slug, result).catch((err) => {
+    setCachedProtocol(slug, protocol).catch((err) => {
       loggers.cache.error(`Failed to cache protocol ${slug}:`, err);
     });
 
-    return result;
+    return protocol;
   } catch (error) {
     loggers.data.error(`Error fetching protocol ${slug}:`, error);
 
