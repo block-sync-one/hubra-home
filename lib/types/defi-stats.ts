@@ -49,6 +49,7 @@ export interface Protocol extends BaseProtocol {
   url?: string;
   twitter?: string;
   github?: string;
+  otherProtocols?: string[];
 }
 
 export interface ProtocolAggregate extends BaseProtocol {

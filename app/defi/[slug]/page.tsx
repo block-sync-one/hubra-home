@@ -1,3 +1,4 @@
+import React, { cache } from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Image } from "@heroui/image";
@@ -5,10 +6,12 @@ import Link from "next/link";
 import { Icon } from "@iconify/react";
 
 import { StatsGrid } from "../components/stats-grid";
+import { ProtocolOption } from "../protocol-options";
 
 import { ProtocolBreadcrumb } from "./ProtocolBreadcrumb";
+import { ProtocolSelector } from "./ProtocolSelector";
 
-import { fetchProtocolData } from "@/lib/data/defi-data";
+import { fetchProtocolData, deriveProtocolSlugFromName } from "@/lib/data/defi-data";
 import { siteConfig } from "@/config/site";
 import { getBreadcrumbJsonLdString } from "@/lib/utils/structured-data";
 import ChartPnl, { Chart } from "@/components/chart";
@@ -18,9 +21,16 @@ type PageParams = {
   slug: string;
 };
 
+/**
+ * Cached protocol data fetcher - ensures single fetch per request
+ */
+const getCachedProtocolData = cache(async (slug: string) => {
+  return await fetchProtocolData(slug);
+});
+
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { slug } = await params;
-  const protocol = await fetchProtocolData(slug);
+  const protocol = await getCachedProtocolData(slug);
 
   if (!protocol) {
     return {
@@ -105,11 +115,18 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 
 export default async function Page({ params }: { params: Promise<PageParams> }) {
   const { slug } = await params;
-  const protocol = await fetchProtocolData(slug);
+  const protocol = await getCachedProtocolData(slug);
 
   if (!protocol) {
     notFound();
   }
+
+  // Resolve otherProtocols names to slugs using cached protocol data
+  const currentProtocolSlug = protocol.slug || protocol.id;
+  const relatedProtocols = protocol.otherProtocols?.map((name) => ({
+    name,
+    slug: deriveProtocolSlugFromName(name),
+  })) as ProtocolOption[];
 
   const chartData: Chart[] = [
     {
@@ -325,7 +342,13 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
           </div>
 
           <div className="flex-1 text-left">
-            <h1 className="text-2xl font-bold mb-1 text-white">{protocol.name}</h1>
+            <ProtocolSelector
+              currentProtocol={{
+                name: protocol.name,
+                slug: currentProtocolSlug,
+              }}
+              relatedProtocols={relatedProtocols}
+            />
             <p className="text-gray-400 line-clamp-2 max-w-2xl">{protocol.description || ""}</p>
 
             {/* Social links in header */}

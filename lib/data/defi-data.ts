@@ -1,13 +1,19 @@
 import "server-only";
 
-import { getCachedProtocol, setCachedProtocol, setManyProtocols } from "./protocol-cache";
+import {
+  getUnifiedProtocol,
+  getManyUnifiedProtocols,
+  setUnifiedProtocol,
+  setManyUnifiedProtocols,
+  toUnifiedProtocolData,
+  mergeProtocolData,
+} from "./unified-protocol-cache";
 
 import { getStaleWhileRevalidate } from "@/lib/cache/swr-cache";
 import { CACHE_TTL } from "@/lib/cache";
 import { DeFiLlamaProtocol, fetchHistoricalChainTVL, fetchSingleTVL, fetchTVL } from "@/lib/services/defillama";
-import { DefiStatsAggregate, ProtocolAggregate, Protocol } from "@/lib/types/defi-stats";
+import { DefiStatsAggregate, Protocol } from "@/lib/types/defi-stats";
 import { loggers } from "@/lib/utils/logger";
-import { extractBaseName } from "@/lib/helpers";
 
 // ============================================================================
 // CONSTANTS
@@ -15,7 +21,6 @@ import { extractBaseName } from "@/lib/helpers";
 
 const CACHE_KEY_ALL_PROTOCOLS = "defi:protocols:all";
 const TOP_PROTOCOLS_LIMIT = 6;
-const JITO_ICON_URL = "https://icons.llamao.fi/icons/protocols/jito";
 
 // ============================================================================
 // PROTOCOL FILTERING & TRANSFORMATION
@@ -30,12 +35,16 @@ function filterSolanaOnlyProtocols(protocols: DeFiLlamaProtocol[]): DeFiLlamaPro
   );
 }
 
+export function deriveProtocolSlugFromName(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, "-");
+}
+
 /**
  * Transform DeFiLlama protocol to standardized Protocol format
  */
 function transformProtocolToStandard(protocol: DeFiLlamaProtocol): Protocol {
   return {
-    id: protocol.slug || protocol.name.toLowerCase().replace(/\s+/g, "-"),
+    id: protocol.slug || deriveProtocolSlugFromName(protocol.name),
     name: protocol.name,
     logo: protocol.logo || "/logo.svg",
     // @ts-ignore - chainTvls exists but not in type definition
@@ -50,79 +59,8 @@ function transformProtocolToStandard(protocol: DeFiLlamaProtocol): Protocol {
     url: protocol.url,
     twitter: protocol.twitter,
     github: protocol.github,
+    otherProtocols: protocol.otherProtocols,
   };
-}
-
-// ============================================================================
-// PROTOCOL GROUPING & MERGING
-// ============================================================================
-
-/**
- * Group protocols by their base name (e.g., "Jito Stakes" and "Jito SOL" → "jito")
- */
-function groupProtocolsByName(protocols: Protocol[]): Map<string, Protocol[]> {
-  const groups = new Map<string, Protocol[]>();
-
-  protocols.forEach((protocol) => {
-    const baseName = extractBaseName(protocol.name);
-
-    if (!groups.has(baseName)) {
-      groups.set(baseName, []);
-    }
-
-    groups.get(baseName)!.push(protocol);
-  });
-
-  return groups;
-}
-
-/**
- * Calculate aggregated TVL for a group of protocols
- */
-function calculateGroupTvl(protocols: Protocol[]): number {
-  return protocols.reduce((sum, p) => sum + (p.tvl || 0), 0);
-}
-
-/**
- * Get maximum change value from a group of protocols
- */
-function getMaxChange(protocols: Protocol[], field: "change1D" | "change7D" | "change1H"): number {
-  return Math.max(...protocols.map((p) => p[field] || 0));
-}
-
-/**
- * Get protocol logo URL (special case for Jito)
- */
-function getProtocolLogo(protocol: Protocol): string {
-  const baseSlug = protocol.slug?.split("-")[0];
-
-  return baseSlug === "jito" ? JITO_ICON_URL : protocol.logo;
-}
-
-/**
- * Merge a group of similar protocols into a single aggregated protocol
- */
-function mergeProtocolGroup(group: Protocol[]): ProtocolAggregate {
-  const firstProtocol = group[0];
-
-  return {
-    id: firstProtocol.slug?.split("-")[0] || firstProtocol.id,
-    name: extractBaseName(firstProtocol.name),
-    logo: getProtocolLogo(firstProtocol),
-    tvl: calculateGroupTvl(group),
-    change1D: getMaxChange(group, "change1D"),
-    change7D: getMaxChange(group, "change7D"),
-    change1H: getMaxChange(group, "change1H"),
-    category: group.map((p) => p.category),
-    breakdown: [...group],
-  } as ProtocolAggregate;
-}
-
-/**
- * Merge all protocol groups into aggregated protocols
- */
-function mergeProtocolGroups(groups: Map<string, Protocol[]>): ProtocolAggregate[] {
-  return Array.from(groups.values()).map(mergeProtocolGroup);
 }
 
 // ============================================================================
@@ -212,31 +150,6 @@ function generateInflowsChartData(fees: number, revenue: number) {
   return data;
 }
 
-/**
- * Generate mock TVL chart data for single protocol
- * TODO: Replace with real historical data when available
- */
-function generateMockProtocolChartData(currentTvl: number, change24h: number) {
-  const days = 30;
-  const data = [];
-
-  for (let i = days; i >= 0; i--) {
-    const date = new Date();
-
-    date.setDate(date.getDate() - i);
-
-    const progress = (days - i) / days;
-    const value = currentTvl * (1 - (change24h / 100) * (1 - progress));
-
-    data.push({
-      date: date.toISOString().split("T")[0],
-      value: Math.max(0, value),
-    });
-  }
-
-  return data;
-}
-
 // ============================================================================
 // HELPER DATA STRUCTURES
 // ============================================================================
@@ -288,55 +201,6 @@ function buildDefiStatsAggregate(
 }
 
 // ============================================================================
-// PROTOCOL SEARCH
-// ============================================================================
-
-/**
- * Find a protocol by slug, id, or name
- */
-function findProtocolBySlug(protocols: DeFiLlamaProtocol[], slug: string): DeFiLlamaProtocol | undefined {
-  const normalizedSlug = slug.toLowerCase();
-
-  return protocols.find(
-    (p) => p.slug === normalizedSlug || p.id === normalizedSlug || p.name.toLowerCase().replace(/\s+/g, "-") === normalizedSlug
-  );
-}
-
-/**
- * Build protocol detail statistics
- */
-function buildProtocolStats(protocol: DeFiLlamaProtocol): DefiStatsAggregate {
-  const protocolTvl = protocol.tvl || 0;
-  const protocolChange = protocol.change_1d || 0;
-
-  // Calculate estimated fees and revenue
-  const totalFees = protocolTvl * 0.001; // 0.1% daily estimate
-  const totalRevenue = totalFees * 0.3; // 30% revenue estimate
-
-  return {
-    change1D: protocolChange,
-    chartData: generateMockProtocolChartData(protocolTvl, protocolChange),
-    inflows: {
-      change_1d: protocolChange * 0.5,
-      chartData: generateInflowsChartData(totalFees, totalRevenue),
-    },
-    solanaProtocols: [],
-    hotProtocols: [],
-    numberOfProtocols: 1,
-    totalTvl: protocolTvl,
-    totalRevenue_1d: totalRevenue,
-    totalFees_1d: totalFees,
-    name: protocol.name,
-    description: protocol.description,
-    logo: protocol.logo,
-    tvl: protocolTvl,
-    twitter: protocol.twitter,
-    github: protocol.github,
-    url: protocol.url,
-  };
-}
-
-// ============================================================================
 // CACHE OPERATIONS
 // ============================================================================
 
@@ -373,18 +237,34 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
 /**
  * Cache individual protocols asynchronously (fire-and-forget)
  * Uses batch operations for efficiency
+ * Merges with existing cache to preserve overview data (otherProtocols)
  */
 function cacheIndividualProtocolsAsync(protocols: Protocol[]): void {
   (async () => {
     try {
       const startTime = performance.now();
 
-      const batchData = protocols.map((protocol) => ({
-        id: protocol.slug || protocol.id,
-        data: protocol,
-      }));
+      // Get existing cache entries for merging
+      const protocolIds = protocols.map((p) => p.slug || p.id);
+      const existingCache = await getManyUnifiedProtocols(protocolIds);
 
-      await setManyProtocols(batchData, CACHE_TTL.GLOBAL_STATS);
+      // Merge list data with existing cache (preserves overview data)
+      const batchData = protocols.map((protocol) => {
+        const protocolId = protocol.slug || protocol.id;
+        const existing = existingCache.get(protocolId);
+
+        const unifiedData = toUnifiedProtocolData(protocol, "list");
+
+        // Merge with existing cache if present
+        const merged = existing ? mergeProtocolData(existing, unifiedData, "list") : unifiedData;
+
+        return {
+          id: protocolId,
+          data: merged,
+        };
+      });
+
+      await setManyUnifiedProtocols(batchData, CACHE_TTL.GLOBAL_STATS);
 
       const duration = performance.now() - startTime;
 
@@ -409,9 +289,8 @@ function cacheIndividualProtocolsAsync(protocols: Protocol[]): void {
  * 3. If cached but stale → return stale data, refresh in background
  * 4. If no cache → fetch from DeFiLlama and cache
  * 5. Filter Solana-only protocols
- * 6. Group and merge similar protocols
- * 7. Calculate aggregated statistics
- * 8. Store in cache for 5 minutes
+ * 6. Calculate aggregated statistics
+ * 7. Store in cache for 5 minutes
  *
  * Called directly from the DeFi page (Server Component)
  */
@@ -435,31 +314,26 @@ export async function fetchProtocolsData(): Promise<DefiStatsAggregate> {
  * Fetch a specific DeFi protocol by slug
  *
  * STRATEGY:
- * 1. Check Redis cache first
- * 2. If cached → return immediately
- * 3. If no cache → fetch from DeFiLlama
- * 4. Find the specific protocol
- * 5. Transform to standard format
- * 6. Store in cache for 5 minutes
+ * 1. Check unified cache first
+ * 2. If cached with overview data → return immediately
+ * 3. If no cache or only list data → fetch from DeFiLlama
+ * 4. Merge overview data with existing cache
+ * 5. Store merged result in cache
  *
- * Called directly from the protocol detail page (Server Component)
+ * Called directly from the protocol detail page
  */
 export async function fetchProtocolData(slug: string): Promise<Protocol | null> {
   try {
-    // Check cache
-    const cached = await getCachedProtocol(slug);
+    const cached = await getUnifiedProtocol(slug);
 
-    if (cached) {
-      // If cached data is ProtocolAggregate, return the first protocol from breakdown
-      // Otherwise return as Protocol
-      if ("breakdown" in cached && Array.isArray(cached.breakdown) && cached.breakdown.length > 0) {
-        return cached.breakdown[0];
-      }
+    // Check if we already have full overview data
+    if (cached && (cached.dataSource === "overview" || cached.dataSource === "merged")) {
+      loggers.cache.debug(`✓ Using existing overview data: ${cached.name}`);
 
-      return cached as Protocol;
+      return cached;
     }
 
-    loggers.cache.debug(`→ Fetching from DeFiLlama: ${slug}`);
+    loggers.cache.debug(`→ Fetching from DeFiLlama: ${slug}${cached ? " (upgrading list to overview)" : ""}`);
 
     const singleProtocol = await fetchSingleTVL(slug);
 
@@ -472,12 +346,16 @@ export async function fetchProtocolData(slug: string): Promise<Protocol | null> 
       return null;
     }
 
-    // Cache result (non-blocking)
-    setCachedProtocol(slug, protocol).catch((err) => {
+    // Merge with existing cache (preserves list data for TVL/change)
+    const unifiedData = toUnifiedProtocolData(protocol, "overview");
+    const merged = cached ? mergeProtocolData(cached, unifiedData, "overview") : unifiedData;
+
+    // Cache merged result (non-blocking)
+    setUnifiedProtocol(slug, merged).catch((err) => {
       loggers.cache.error(`Failed to cache protocol ${slug}:`, err);
     });
 
-    return protocol;
+    return merged;
   } catch (error) {
     loggers.data.error(`Error fetching protocol ${slug}:`, error);
 
