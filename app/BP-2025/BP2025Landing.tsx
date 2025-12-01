@@ -3,7 +3,7 @@
 import React, { memo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Download, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 import { AuroraText } from "@/components/ui/aurora-text";
 
@@ -129,7 +129,7 @@ const HeroSection = memo(() => (
       className="mt-4 text-sm sm:text-base md:text-lg text-primary-400 font-medium max-w-2xl mx-auto px-4"
       custom={3}
       variants={fadeUp}>
-      For now Hubra is offering ZERO fees for all on-chain transactions within the Hubra App.
+      For now, Hubra is offering ZERO fees for all on-chain transactions within the Hubra App.
     </motion.p>
   </motion.div>
 ));
@@ -171,23 +171,17 @@ FeaturesSection.displayName = "FeaturesSection";
 =================================================================== */
 
 const CTASection = memo(() => (
-  <motion.div animate="visible" className="" initial="hidden" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
+  <motion.div animate="visible" className="text-center" initial="hidden" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
     <motion.div custom={1} variants={fadeUp}>
       <motion.a
-        className="group relative flex items-center justify-center gap-4 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-primary-500/20 to-success-500/20 backdrop-blur-sm border border-white/10 transition-all duration-300 max-w-md mx-auto"
+        className="inline-flex items-center justify-center px-4 py-2 md:py-4 md:px-8 rounded-2xl  backdrop-blur-sm  transition-all duration-300 bg-primary-500 hover:bg-primary-500/80"
         href="/BP-2025/link"
         rel="noopener noreferrer"
         whileHover={{ scale: 1.02, y: -2 }}
         whileTap={{ scale: 0.98 }}>
-        <div className="flex-shrink-0 w-14 h-14 md:w-16 md:h-16 rounded-xl bg-white/10 group-hover:bg-primary-400/20 flex items-center justify-center transition-colors">
-          <Download className="w-7 h-7 md:w-8 md:h-8 text-white group-hover:text-primary-400 transition-colors" />
-        </div>
-        <div className="flex-1">
-          <div className="sm:text-2xl md:text-3xl font-semibold tracking-tight text-white group-hover:text-primary-400 transition-colors">
-            Get Started
-          </div>
-          <div className="text-xs md:text-sm text-gray-400 mt-1">Automatically detects your device</div>
-        </div>
+        <AuroraText className="text-xl md:text-2xl font-semibold tracking-tight" colors={["#FCFBF6", "#FFFFE7", "#FEFFC1"]}>
+          Get Started
+        </AuroraText>
       </motion.a>
     </motion.div>
   </motion.div>
@@ -210,7 +204,7 @@ const GiveawaySection = memo(() => (
     <div>
       <div className="mx-auto max-w-3xl space-y-6 md:space-y-8">
         <div className="flex items-center justify-center ">
-          <AuroraText className="text-2xl md:text-4xl font-semibold tracking-tight" colors={["#2ED387", "#2ED387", "#2ED387"]}>
+          <AuroraText className="text-2xl md:text-4xl font-semibold tracking-tight" colors={["#FCFBF6", "#FFFFE7", "#FEFFC1"]}>
             Giveaway
           </AuroraText>
         </div>
@@ -228,7 +222,7 @@ const GiveawaySection = memo(() => (
     <motion.div className="mx-auto max-w-2xl text-center space-y-2 md:space-y-4" custom={4} variants={fadeUp}>
       <p className="text-gray-300 text-base md:text-lg leading-relaxed">
         There will be <span className="text-primary-400 font-semibold">4 random winners</span>, each receiving{" "}
-        <AuroraText className="text-2xl md:text-3xl font-semibold tracking-tight" colors={["#2ED387", "#2ED387", "#2ED387"]}>
+        <AuroraText className="text-2xl md:text-3xl font-semibold tracking-tight" colors={["#FDB122", "#FDB122", "#FDB122"]}>
           $250
         </AuroraText>
       </p>
@@ -252,7 +246,7 @@ const GiveawaySection = memo(() => (
         className="text-2xl md:text-4xl font-semibold tracking-tight text-primary-400 mb-6 md:mb-8 text-center"
         custom={0}
         variants={fadeUp}>
-        <AuroraText className="text-2xl md:text-4xl font-semibold tracking-tight" colors={["#FDB122", "#FDB122", "#FDB122"]}>
+        <AuroraText className="text-2xl md:text-4xl font-semibold tracking-tight" colors={["#FCFBF6", "#FFFFE7", "#FEFFC1"]}>
           Eligibility
         </AuroraText>
       </motion.div>

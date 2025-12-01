@@ -2,9 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const origin = request.nextUrl.origin;
 
-  // Only process /link and /BP-2025/link routes
-  if (pathname !== "/link" && pathname !== "/BP-2025/link") {
+  // Handle QR code redirect: /qr?code=bp25 -> /BP-2025
+  if (pathname === "/qr") {
+    const code = request.nextUrl.searchParams.get("code");
+
+    if (code?.toLowerCase() === "bp25") {
+      return NextResponse.redirect(`${origin}/BP-2025`);
+    }
+
+    // If code doesn't match, continue to next middleware/route
+    return NextResponse.next();
+  }
+
+  // Handle smart link redirect: /BP-2025/link
+  if (pathname !== "/BP-2025/link") {
     return NextResponse.next();
   }
 
@@ -27,10 +40,10 @@ export function middleware(request: NextRequest) {
 
   // Redirect URLs - Hubra app links
   const SOLANA_APP_STORE_URL = "https://mobile.solanamobile.com/apps/hubra";
-  const GOOGLE_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=app.hubra";
+  const GOOGLE_PLAY_STORE_URL = "https://play.google.com/store/search?q=hubra&c=apps";
   const FALLBACK_URL = "https://hubra.app";
 
-  // Priority order: Solana Mobile → Android → iOS → Fallback
+  // Priority order: Solana Mobile → Android → Fallback
   if (isSolanaMobile) {
     return NextResponse.redirect(SOLANA_APP_STORE_URL);
   }
@@ -43,7 +56,7 @@ export function middleware(request: NextRequest) {
   return NextResponse.redirect(FALLBACK_URL);
 }
 
-// Configure middleware to run on /link and /BP-2025/link routes
+// Configure middleware to run on /qr and /BP-2025/link routes
 export const config = {
-  matcher: ["/link", "/BP-2025/link"],
+  matcher: ["/qr", "/BP-2025/link"],
 };
