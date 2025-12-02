@@ -183,13 +183,13 @@ export const MainContentSection = (): JSX.Element => {
     },
     {
       icon: "ri:rocket-fill",
-      title: "Scalable",
-      description: "Automatically updated with new tokens and pools, ensuring you never miss out.",
+      title: "Accessible Yield Opportunities",
+      description: "Effortlessly tap into yield opportunities, all from a single platform",
     },
     {
-      icon: "mdi:swap-vertical-circle",
-      title: "Onramp & Offramp",
-      description: "Onramp & offramp with creditcard",
+      icon: "mdi:gas-station",
+      title: "Gasless Transactions",
+      description: "No more paying for gas. No more blockers.",
     },
   ];
 
@@ -438,7 +438,7 @@ export const MainContentSection = (): JSX.Element => {
                 />
               </div>
               <div className="z-10">
-                <div className="text-white text-2xl font-semibold">$5M+</div>
+                <div className="text-white text-2xl font-semibold">$3M+</div>
                 <div className="text-gray-400/70 text-body">TVL</div>
               </div>
             </Card>
