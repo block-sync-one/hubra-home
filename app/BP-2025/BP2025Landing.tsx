@@ -310,6 +310,8 @@ export const BP2025Landing = memo(() => {
         <CTASection />
         <HowToEnterSection />
         <EligibilitySection />
+        <CTASection />
+
         <Footer />
       </div>
     </div>
