@@ -47,10 +47,9 @@ export default function HotTokens({ initialGainers, initialLosers, initialVolume
         <div className="w-screen h-full">
           <Image
             fill
+            priority
             alt="hot token bg"
             className="object-cover object-center"
-            loading="lazy"
-            priority={false}
             quality={85}
             sizes="100vw"
             src="/image/hot-tokens-bg.png"
