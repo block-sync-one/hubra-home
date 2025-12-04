@@ -138,9 +138,7 @@ const MobileCarousel = () => {
                   />
                 )}
                 <div className="w-full gap-4 flex flex-col items-start">
-                  <h3 className={`font-sans text-white text-lg font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px]`}>
-                    {slide.title}
-                  </h3>
+                  <h3 className={`font-sans text-white text-lg font-semibold md:leading-[54.6px] tracking-[-1.04px]`}>{slide.title}</h3>
                   <p className={`font-geist text-gray-400/70 break-words text-sm font-normal leading-[26px]`}>{slide.description}</p>
                 </div>
               </div>
@@ -194,14 +192,12 @@ export const MainContentSection = (): JSX.Element => {
   ];
 
   return (
-    <section className="flex flex-col w-full items-start gap-20 mx-auto max-w-6xl md:mb-5 md:px-4">
+    <section className="flex flex-col w-full items-start gap-20 mx-auto max-w-6xl md:mb-5">
       {/* Meet Hubra Section */}
       <div className="flex flex-col w-full items-start gap-8">
         <div className="flex flex-col items-center gap-10 w-full">
-          <div className="flex flex-col max-w-[580px] items-center justify-center gap-5">
-            <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
-              Meet Hubra
-            </h2>
+          <div className="flex flex-col max-w-[580px] items-center justify-center ">
+            <h2 className="font-geist text-white text-3xl font-semibold md:leading-[54.6px] tracking-[-1.04px] text-center">Meet Hubra</h2>
           </div>
 
           {/* Mobile Layout: Stacked sections */}
@@ -248,9 +244,9 @@ export const MainContentSection = (): JSX.Element => {
 
                 {/* Normies Tab Text */}
                 <div className="flex items-start">
-                  <div className="w-full gap-4 flex flex-col items-start">
-                    <h3 className="font-sans text-white text-card-title">Normies</h3>
-                    <p className="font-geist text-gray-400/70 text-body">No complicated jargon. Effortless onboarding</p>
+                  <div className="w-full gap-2 flex flex-col items-start">
+                    <h3 className="font-sans text-lg text-white text-card-title">Normies</h3>
+                    <p className="font-geist text-gray-400/70 text-base">No complicated jargon. Effortless onboarding</p>
                   </div>
                 </div>
               </div>
@@ -263,9 +259,9 @@ export const MainContentSection = (): JSX.Element => {
 
                 {/* Degens Tab Text */}
                 <div className="flex items-start">
-                  <div className="w-full gap-4 flex flex-col items-start">
-                    <h3 className="font-sans text-white text-card-title">Degens</h3>
-                    <p className="font-geist text-gray-400/70 text-body">Powerful DeFi tools. Endless possibilities</p>
+                  <div className="w-full gap-2 flex flex-col items-start">
+                    <h3 className="font-sans text-lg text-white text-card-title">Degens</h3>
+                    <p className="font-geist text-gray-400/70 text-base">Powerful DeFi tools. Endless possibilities</p>
                   </div>
                 </div>
               </div>
@@ -373,7 +369,7 @@ export const MainContentSection = (): JSX.Element => {
                   }`}>
                   Normies
                 </span>
-                <p className="font-geist text-gray-400/70 text-body">No complicated jargon. Effortless onboarding</p>
+                <p className="font-geist text-gray-400/70 text-base">No complicated jargon. Effortless onboarding</p>
               </div>
             </button>
 
@@ -394,7 +390,7 @@ export const MainContentSection = (): JSX.Element => {
                   }`}>
                   Degens
                 </span>
-                <p className="font-geist text-gray-400/70 text-body">Powerful DeFi tools. Endless possibilities</p>
+                <p className="font-geist text-gray-400/70 text-base">Powerful DeFi tools. Endless possibilities</p>
               </div>
             </button>
           </div>
@@ -404,9 +400,9 @@ export const MainContentSection = (): JSX.Element => {
       <Separator className="w-full h-px bg-ui-border-transparent" />
 
       {/* Introducing raSOL Section */}
-      <div className="flex flex-col w-full items-center justify-center gap-8 md:gap-10 px-4">
-        <div className="flex flex-col w-full text-wrap-break-word md:w-[580px] items-center justify-center gap-5">
-          <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
+      <div className="flex flex-col w-full items-center justify-center gap-8 md:gap-10">
+        <div className="flex flex-col w-full text-wrap-break-word md:w-[580px] items-center justify-center ">
+          <h2 className="font-geist text-white text-3xl font-semibold md:leading-[54.6px] tracking-[-1.04px] text-center">
             Introducing raSOL
           </h2>
           <p className="w-[80%] break-words md:w-fit font-geist text-gray-400/70 text-xl text-center">our empowered liquid staked SOL</p>
@@ -439,7 +435,7 @@ export const MainContentSection = (): JSX.Element => {
               </div>
               <div className="z-10">
                 <div className="text-white text-2xl font-semibold">$3M+</div>
-                <div className="text-gray-400/70 text-body">TVL</div>
+                <div className="text-gray-400/70 text-base">TVL</div>
               </div>
             </Card>
             {/* 20+ Integrated platforms Card */}
@@ -447,7 +443,7 @@ export const MainContentSection = (): JSX.Element => {
               <Solanaglow color={isMobile ? "#FDB122" : "#FDB122"} right={96} top={86} />
               <div className="flex flex-col items-start justify-start">
                 <div className="text-white text-2xl font-semibold">20+</div>
-                <div className="text-gray-400/70 text-body">Integrated platforms</div>
+                <div className="text-gray-400/70 text-base">Integrated platforms</div>
               </div>
             </Card>
           </div>
@@ -457,10 +453,10 @@ export const MainContentSection = (): JSX.Element => {
       <Separator className="w-full h-px bg-ui-border-transparent" />
 
       {/* DeFi, Simplified Section */}
-      <div className="flex flex-col items-start justify-center w-full gap-10 px-4">
+      <div className="flex flex-col items-start justify-center w-full gap-10">
         <div className="flex flex-col w-full items-center gap-10">
-          <div className="flex flex-col w-full md:w-[580px] items-center justify-center gap-5">
-            <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
+          <div className="flex flex-col w-full md:w-[580px] items-center justify-center ">
+            <h2 className="font-geist text-white text-3xl font-semibold md:leading-[54.6px] tracking-[-1.04px] text-center">
               Defi, Simplified
             </h2>
             <p className="w-[80%] break-words md:w-fit font-geist text-gray-400/70 text-xl text-center">
@@ -472,9 +468,9 @@ export const MainContentSection = (): JSX.Element => {
               <MobileCarousel />
             </div>
           ) : (
-            <>
+            <div className="flex flex-col gap-12 mb-4">
               <div className="flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-4 w-full">
-                <div className="flex w-full md:w-1/2 flex-col gap-8">
+                <div className="flex w-full md:w-1/2 flex-col gap-4">
                   <Image
                     alt="Hubra"
                     className="w-full h-full object-cover rounded-2xl"
@@ -484,14 +480,14 @@ export const MainContentSection = (): JSX.Element => {
                     src="/image/df-1.svg"
                     width={310}
                   />
-                  <div className="w-full gap-4 flex flex-col items-start">
+                  <div className="w-full gap-2 flex flex-col items-start">
                     <h3 className="font-sans text-white font-semibold text-xl">Eagle Eye</h3>
-                    <p className="font-geist text-gray-400/70 text-body break-words">
+                    <p className="font-geist text-gray-400/70 text-base break-words">
                       Track, manage, and optimize your entire on-chain protfoio from one dashboard
                     </p>
                   </div>
                 </div>
-                <div className="flex w-full md:w-1/2 flex-col gap-8">
+                <div className="flex w-full md:w-1/2 flex-col gap-4">
                   <Image
                     alt="Hubra"
                     className="w-full h-full object-cover rounded-2xl"
@@ -501,37 +497,37 @@ export const MainContentSection = (): JSX.Element => {
                     src="/image/df-2.svg"
                     width={310}
                   />
-                  <div className="w-full gap-4 flex flex-col items-start">
+                  <div className="w-full gap-2 flex flex-col items-start">
                     <h3 className="font-sans text-white font-semibold text-xl">Explore</h3>
-                    <p className="font-geist text-gray-400/70 text-body break-words">
+                    <p className="font-geist text-gray-400/70 text-base break-words">
                       Discover emerging trends. Seamlessly convert tokens with minimal fees
                     </p>
                   </div>
                 </div>
               </div>
               <div className="flex flex-col items-center md:flex-row md:items-start gap-4 md:gap-4 w-full">
-                <div className="flex w-full md:w-1/2 flex-col gap-8">
+                <div className="flex w-full md:w-1/2 flex-col gap-4">
                   <Card className="relative flex w-full h-[310px] bg-[url('/image/df-3.png')] bg-cover bg-center rounded-2xl">
                     <FloatingEarnImages />
                   </Card>
-                  <div className="w-full gap-4 flex flex-col items-start">
+                  <div className="w-full gap-2 flex flex-col items-start">
                     <h3 className="font-sans text-white font-semibold text-xl">Earn</h3>
-                    <p className="font-geist text-gray-400/70  break-words">
+                    <p className="font-geist text-gray-400/70 text-base break-words">
                       Effortlessly tap into yield opportunities, all from a single platform
                     </p>
                   </div>
                 </div>
-                <div className="flex w-full md:w-1/2 flex-col gap-8">
+                <div className="flex w-full md:w-1/2 flex-col gap-4">
                   <Card className="relative overflow-hidden flex w-full h-[310px] bg-[url('/image/df-4.png')] bg-cover bg-center rounded-2xl">
                     <DefiCardMotionOverlay />
                   </Card>
-                  <div className="w-full gap-4 flex flex-col items-start">
+                  <div className="w-full gap-2 flex flex-col items-start">
                     <h3 className="font-sans text-white font-semibold text-xl">Cross Platform</h3>
-                    <p className="font-geist text-gray-400/70 break-words">One app, One account, All Devices</p>
+                    <p className="font-geist text-gray-400/70 text-base break-words">One app, One account, All Devices</p>
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           )}
         </div>
 
@@ -541,12 +537,12 @@ export const MainContentSection = (): JSX.Element => {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className={`h-[90px] flex flex-col items-start justify-center md:flex-row md:items-center md:justify-between px-4 md:px-6 w-full ${index > 0 ? "border-t [border-top-style:solid] border-white/10" : ""}`}>
-                <div className="inline-flex items-center gap-[9px]">
-                  {feature.icon && <Icon className="text-[#FEAA01]" icon={feature.icon} />}
-                  <div className="font-sans text-white whitespace-nowrap">{feature.title}</div>
+                className={`flex flex-col gap-1 items-start justify-center md:flex-row md:items-center md:justify-between p-4 md:py-8 md:px-6 w-full ${index > 0 ? "border-t [border-top-style:solid] border-white/10" : ""}`}>
+                <div className="inline-flex items-center gap-2.5">
+                  {feature.icon && <Icon className="text-xl md:text-2xl text-[#FEAA01]" icon={feature.icon} />}
+                  <div className="font-sans text-base text-white whitespace-nowrap">{feature.title}</div>
                 </div>
-                <div className="break-words font-sans text-gray-500 text-label md:text-right">{feature.description}</div>
+                <div className="break-words text-base font-sans text-gray-500 text-label md:text-right">{feature.description}</div>
               </div>
             ))}
           </CardContent>
@@ -555,9 +551,7 @@ export const MainContentSection = (): JSX.Element => {
 
       {/* Partners Section */}
       <div className="flex flex-col items-center gap-[52px] w-full">
-        <h2 className="font-geist text-white text-3xl font-semibold leading-[1.1] md:leading-[54.6px] tracking-[-1.04px] text-center">
-          Hubra Partners
-        </h2>
+        <h2 className="font-geist text-white text-3xl font-semibold md:leading-[54.6px] tracking-[-1.04px] text-center">Hubra Partners</h2>
 
         <div className="flex w-full flex-col md:flex-row md:justify-center items-center gap-4">
           {/* Left column */}
@@ -639,7 +633,7 @@ export const MainContentSection = (): JSX.Element => {
           <div className="flex-col items-start gap-8 flex relative flex-1 grow w-full">
             <div className="flex flex-col h-[62px] items-start gap-2 w-full">
               <h3 className=" font-text-xl-semibold text-white">Stay Connected</h3>
-              <p className="w-fit font-sans text-gray-400/70 text-body break-words">
+              <p className="w-fit font-sans text-gray-400/70 text-base break-words">
                 Follow us on social to stay up to date on the latest announcements
               </p>
             </div>
@@ -674,7 +668,7 @@ export const MainContentSection = (): JSX.Element => {
               <div className="flex flex-col items-start md:items-end text-xs sm:text-sm md:text-base justify-center gap-3 w-full">
                 <div className="inline-flex items-center gap-2">
                   <div className="inline-flex items-center justify-center gap-2">
-                    <span className="disabled:opacity-50 w-fit font-sans text-gray-400/70 text-body text-left md:text-right break-words cursor-not-allowed">
+                    <span className="disabled:opacity-50 w-fit font-sans text-gray-400/70 text-base text-left md:text-right break-words cursor-not-allowed">
                       Download App (soon)
                     </span>
                   </div>
@@ -682,7 +676,7 @@ export const MainContentSection = (): JSX.Element => {
                 <div className="inline-flex items-center gap-2">
                   <div className="inline-flex items-center justify-center gap-2">
                     <Link
-                      className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words"
+                      className="w-fit font-sans text-gray-400/80 text-base text-left md:text-right break-words"
                       href="https://hubra.app"
                       target="_blank">
                       Web App
@@ -692,7 +686,7 @@ export const MainContentSection = (): JSX.Element => {
                 <div className="inline-flex items-center gap-2">
                   <div className="inline-flex items-center justify-center gap-2">
                     <Link
-                      className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words"
+                      className="w-fit font-sans text-gray-400/80 text-base text-left md:text-right break-words"
                       href="https://docs.hubra.app"
                       target="_blank">
                       Learn
@@ -708,7 +702,7 @@ export const MainContentSection = (): JSX.Element => {
                 <div className="inline-flex items-center gap-2">
                   <div className="inline-flex items-center justify-center gap-2">
                     <Link
-                      className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words"
+                      className="w-fit font-sans text-gray-400/80 text-base text-left md:text-right break-words"
                       href="https://discord.hubra.app"
                       target="_blank">
                       Discord
@@ -718,7 +712,7 @@ export const MainContentSection = (): JSX.Element => {
                 <div className="inline-flex items-center gap-2">
                   <div className="inline-flex items-center justify-center gap-2">
                     <Link
-                      className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words"
+                      className="w-fit font-sans text-gray-400/80 text-base text-left md:text-right break-words"
                       href="https://t.me/hubraapp"
                       target="_blank">
                       Telegram
@@ -728,7 +722,7 @@ export const MainContentSection = (): JSX.Element => {
                 <div className="inline-flex items-center gap-2">
                   <div className="inline-flex items-center justify-center gap-2">
                     <Link
-                      className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words"
+                      className="w-fit font-sans text-gray-400/80 text-base text-left md:text-right break-words"
                       href="https://x.com/hubraapp"
                       target="_blank">
                       X
@@ -744,7 +738,7 @@ export const MainContentSection = (): JSX.Element => {
                 <div className="inline-flex items-center gap-2">
                   <div className="inline-flex items-center justify-center gap-2">
                     <Link
-                      className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words"
+                      className="w-fit font-sans text-gray-400/80 text-base text-left md:text-right break-words"
                       href="https://github.com/block-sync-one/hubra"
                       target="_blank">
                       GitHub
@@ -755,7 +749,7 @@ export const MainContentSection = (): JSX.Element => {
                 <div className="inline-flex items-center gap-2">
                   <div className="inline-flex items-center justify-center gap-2">
                     <Link
-                      className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words"
+                      className="w-fit font-sans text-gray-400/80 text-base text-left md:text-right break-words"
                       href="https://docs.hubra.app"
                       target="_blank">
                       Docs
@@ -764,14 +758,14 @@ export const MainContentSection = (): JSX.Element => {
                 </div>
                 {/* <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-base text-left md:text-right break-words">
                                             Stats
                                         </div>
                                     </div>
                                 </div>
                                 <div className="inline-flex items-center gap-2">
                                     <div className="inline-flex items-center justify-center gap-2">
-                                        <div className="w-fit font-sans text-gray-400/80 text-body text-left md:text-right break-words">
+                                        <div className="w-fit font-sans text-gray-400/80 text-base text-left md:text-right break-words">
                                             Privacy
                                         </div>
                                     </div>
