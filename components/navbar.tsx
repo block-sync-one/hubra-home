@@ -10,14 +10,14 @@ import {
   NavbarMenuItem,
   Button,
   Link,
-  Image,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
 } from "@heroui/react";
 import NextLink from "next/link";
-import { Icon } from "@iconify/react";
+import NextImage from "next/image";
+import { ChevronDown, ArrowRight } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
 
@@ -73,7 +73,7 @@ export const Navbar = () => {
       {/* Brand/Logo */}
       <NavbarBrand as="li" className="gap-3 max-w-fit md:mr-16">
         <NextLink className="flex justify-start items-center gap-2" href="/">
-          <Image alt="Hubra" className="rounded-none w-[22px] h-[22px] md:w-6 md:h-6" src="/logo.png" />
+          <NextImage priority alt="Hubra" className="rounded-none" height={24} src="/logo.png" width={24} />
           <p className="font-bold text-white text-lg">Hubra</p>
         </NextLink>
       </NavbarBrand>
@@ -93,7 +93,7 @@ export const Navbar = () => {
                             ? "text-primary border-b-2 border-primary rounded-none hover:rounded-xl"
                             : "text-[#797B92] hover:text-white"
                         }`}
-                        endContent={<Icon icon="mdi:chevron-down" width={16} />}
+                        endContent={<ChevronDown size={16} />}
                         variant="light">
                         {item.label}
                       </Button>
@@ -109,7 +109,7 @@ export const Navbar = () => {
                               : "text-gray-300 hover:bg-white/10 hover:text-white"
                           }`}
                           href={child.href}
-                          startContent={child.icon && isMounted ? <Icon className="w-4 h-4" icon={child.icon} /> : null}>
+                          startContent={null}>
                           {child.label}
                         </DropdownItem>
                       ))}
@@ -151,7 +151,7 @@ export const Navbar = () => {
           <Button
             as={Link}
             className="text-sm font-medium text-black bg-white hover:bg-gray-100 transition-colors duration-200"
-            endContent={isMounted ? <Icon icon="solar:alt-arrow-right-outline" width={14} /> : null}
+            endContent={isMounted ? <ArrowRight size={14} /> : null}
             href={siteConfig.links.app}
             radius="full"
             variant="flat">
@@ -198,7 +198,6 @@ export const Navbar = () => {
                             }`}
                             href={child.href}
                             onClick={() => setIsMenuOpen(false)}>
-                            {child.icon && isMounted && <Icon className="w-5 h-5" icon={child.icon} />}
                             {child.label}
                           </NextLink>
                         ))}
@@ -241,7 +240,7 @@ export const Navbar = () => {
             <Button
               as={Link}
               className="w-full text-sm font-medium text-black bg-white hover:bg-gray-100 transition-colors duration-200"
-              endContent={isMounted ? <Icon icon="solar:alt-arrow-right-outline" width={14} /> : null}
+              endContent={isMounted ? <ArrowRight size={14} /> : null}
               href={siteConfig.links.app}
               radius="full"
               variant="flat"
