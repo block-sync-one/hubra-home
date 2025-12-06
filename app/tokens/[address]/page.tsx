@@ -25,13 +25,23 @@ const getCachedTokenData = cache(async (address: string) => {
 export async function generateMetadata({ params }: TokenDetailPageProps): Promise<Metadata> {
   const { address } = await params;
 
-  // Fetch token data for metadata (cached)
   const tokenData = await getCachedTokenData(address);
 
-  const tokenName = tokenData?.name || "Token";
-  const tokenSymbol = tokenData?.symbol || "";
-  const tokenPrice = tokenData?.price ? `$${tokenData.price.toFixed(2)}` : "";
-  const tokenChange = tokenData?.priceChange24hPercent || 0;
+  if (!tokenData) {
+    return {
+      title: "Token Not Found | Hubra",
+      description: "The requested token could not be found on Solana blockchain.",
+      robots: {
+        index: false,
+        follow: true,
+      },
+    };
+  }
+
+  const tokenName = tokenData.name || "Token";
+  const tokenSymbol = tokenData.symbol || "";
+  const tokenPrice = tokenData.price ? `$${tokenData.price.toFixed(2)}` : "";
+  const tokenChange = tokenData.priceChange24hPercent || 0;
   const changeText = tokenChange >= 0 ? `+${tokenChange.toFixed(2)}%` : `${tokenChange.toFixed(2)}%`;
 
   const title = `${tokenName} (${tokenSymbol}) Price ${tokenPrice} ${changeText} | Hubra - Solana Token Tracker`;
@@ -87,6 +97,10 @@ export default async function TokenDetailPage({ params }: TokenDetailPageProps) 
   const { address } = await params;
 
   const apiTokenData = await getCachedTokenData(address);
+
+  if (!apiTokenData) {
+    throw new Error(`Token not found: ${address}`);
+  }
 
   const jsonLd = apiTokenData
     ? getFinancialProductJsonLd({

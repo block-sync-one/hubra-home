@@ -137,7 +137,7 @@ const MobileCarousel = () => {
                     width={310}
                   />
                 )}
-                <div className="w-full gap-4 flex flex-col items-start">
+                <div className="w-full gap-2 flex flex-col items-start">
                   <h3 className={`font-sans text-white text-lg font-semibold md:leading-[54.6px] tracking-[-1.04px]`}>{slide.title}</h3>
                   <p className={`font-geist text-gray-400/70 break-words text-sm font-normal leading-[26px]`}>{slide.description}</p>
                 </div>
