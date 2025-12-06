@@ -2,23 +2,26 @@
 
 import { useEffect } from "react";
 
-export default function Error({ error, reset }: { error: Error; reset: () => void }) {
+import { ErrorPage } from "@/components/ErrorPage";
+
+export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    /* eslint-disable no-console */
-    console.error(error);
+    console.error("Global error:", error);
   }, [error]);
 
   return (
-    <div>
-      <h2>Something went wrong!</h2>
-      <button
-        onClick={
-          // Attempt to recover by trying to re-render the segment
-          () => reset()
-        }>
-        Try again
-      </button>
-    </div>
+    <ErrorPage
+      error={error}
+      quickLinks={[
+        { label: "Home", href: "/" },
+        { label: "Tokens", href: "/tokens" },
+        { label: "Blog", href: "/blog" },
+      ]}
+      reset={reset}
+      secondaryButton={{
+        label: "Go Home",
+        href: "/",
+      }}
+    />
   );
 }

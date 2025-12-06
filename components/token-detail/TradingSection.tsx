@@ -73,7 +73,7 @@ export function TradingSection({ tokenName, tokenSymbol, tokenlogoURI, currentPr
         <Button
           className="w-full bg-primary text-white font-semibold hover:bg-primary/90 rounded-lg mt-3.5 transition-colors"
           onPress={() => window.open("https://hubra.app/convert", "_blank")}>
-          Swap on Hubra
+          Convert on Hubra
           <Icon className="h-4 w-4" icon="lucide:chevron-right" />
         </Button>
       </CardBody>

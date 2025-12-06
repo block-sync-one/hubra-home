@@ -65,11 +65,9 @@ export async function fetchBirdeyeData<T>(endpoint: string, params?: Record<stri
 
     const response = await fetch(url, {
       ...options,
-      cache: "no-store",
       headers: {
         ...headers,
         ...options?.headers,
-        "Cache-Control": "no-cache, no-store, must-revalidate",
       },
     });
 

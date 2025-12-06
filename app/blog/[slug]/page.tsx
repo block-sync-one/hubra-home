@@ -33,60 +33,72 @@ interface BlogPostProps {
 
 export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const post = await getPostBySlug(resolvedParams.slug);
-  const url = `${siteConfig.domain}/blog/${post.slug}`;
 
-  // Use custom meta description or fall back to excerpt
-  const description = post.metaDescription || post.excerpt;
+  try {
+    const post = await getPostBySlug(resolvedParams.slug);
+    const url = `${siteConfig.domain}/blog/${post.slug}`;
 
-  // Use custom OG image or fall back to post image
-  const ogImage = post.ogImage || post.image;
+    // Use custom meta description or fall back to excerpt
+    const description = post.metaDescription || post.excerpt;
 
-  return {
-    title: `${post.title} | Blog`,
-    description: description,
-    keywords: post.keywords || post.tags,
-    authors: post.author ? [{ name: post.author }] : [{ name: "Hubra Team" }],
-    alternates: {
-      canonical: post.canonicalUrl || url,
-    },
-    openGraph: {
-      title: post.title,
+    // Use custom OG image or fall back to post image
+    const ogImage = post.ogImage || post.image;
+
+    return {
+      title: `${post.title} | Blog`,
       description: description,
-      type: "article",
-      publishedTime: post.date,
-      modifiedTime: post.lastUpdated || post.date,
-      authors: post.author ? [post.author] : ["Hubra Team"],
-      tags: post.tags,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-      url: url,
-      siteName: siteConfig.name,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: description,
-      images: [post.twitterImage || ogImage],
-    },
-    robots: {
-      index: !post.draft,
-      follow: !post.draft,
-      googleBot: {
-        "index": !post.draft,
-        "follow": !post.draft,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
+      keywords: post.keywords || post.tags,
+      authors: post.author ? [{ name: post.author }] : [{ name: "Hubra Team" }],
+      alternates: {
+        canonical: post.canonicalUrl || url,
       },
-    },
-  };
+      openGraph: {
+        title: post.title,
+        description: description,
+        type: "article",
+        publishedTime: post.date,
+        modifiedTime: post.lastUpdated || post.date,
+        authors: post.author ? [post.author] : ["Hubra Team"],
+        tags: post.tags,
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: post.title,
+          },
+        ],
+        url: url,
+        siteName: siteConfig.name,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: post.title,
+        description: description,
+        images: [post.twitterImage || ogImage],
+      },
+      robots: {
+        index: !post.draft,
+        follow: !post.draft,
+        googleBot: {
+          "index": !post.draft,
+          "follow": !post.draft,
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+        },
+      },
+    };
+  } catch (error) {
+    return {
+      title: "Post Not Found | Hubra Blog",
+      description: "The blog post you're looking for doesn't exist or has been removed.",
+      robots: {
+        index: false,
+        follow: true,
+      },
+    };
+  }
 }
 
 export default async function BlogPost({ params }: BlogPostProps) {

@@ -65,7 +65,7 @@ export const SearchInput: React.FC = () => {
           setIsLoading(false);
         }
       }
-    }, 500);
+    }, 800);
 
     return () => {
       isCancelled = true;
