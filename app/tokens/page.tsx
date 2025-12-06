@@ -14,7 +14,7 @@ import { TOKEN_LIMITS } from "@/lib/constants/market";
 import { siteConfig } from "@/config/site";
 import { COMMON_BREADCRUMBS, getCollectionPageJsonLd, getDatasetJsonLd } from "@/lib/utils/structured-data";
 
-export const revalidate = 300; // 5 minutes
+export const dynamic = "force-dynamic";
 
 const title = "Cryptocurrency Prices | Live Solana Token Market Data";
 const description =
