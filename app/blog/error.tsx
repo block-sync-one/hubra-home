@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
 
 import { ErrorPage } from "@/components/ErrorPage";
 
@@ -12,6 +11,8 @@ export default function BlogError({ error, reset }: { error: Error & { digest?: 
 
   return (
     <ErrorPage
+      backHref="/blog"
+      backLabel="Back to Blog"
       error={error}
       message="We encountered an error while loading the blog content. Please try again."
       quickLinks={[
@@ -20,11 +21,6 @@ export default function BlogError({ error, reset }: { error: Error & { digest?: 
         { label: "All Posts", href: "/blog" },
       ]}
       reset={reset}
-      secondaryButton={{
-        label: "Back to Blog",
-        href: "/blog",
-        icon: ArrowLeft,
-      }}
       title="Blog Error"
     />
   );

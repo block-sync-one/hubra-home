@@ -1,7 +1,5 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
-
 import { ErrorPage } from "@/components/ErrorPage";
 
 interface ErrorProps {
@@ -14,6 +12,8 @@ export default function TokenError({ error, reset }: ErrorProps) {
 
   return (
     <ErrorPage
+      backHref="/tokens"
+      backLabel="Back to Tokens"
       error={error}
       message={
         isNotFound
@@ -25,11 +25,6 @@ export default function TokenError({ error, reset }: ErrorProps) {
         { label: "Home", href: "/" },
       ]}
       reset={reset}
-      secondaryButton={{
-        label: "Back to Tokens",
-        href: "/tokens",
-        icon: ArrowLeft,
-      }}
       title={isNotFound ? "Token Not Found" : "Token Error"}
     />
   );

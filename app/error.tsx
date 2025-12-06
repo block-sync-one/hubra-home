@@ -11,6 +11,8 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
 
   return (
     <ErrorPage
+      backHref="/"
+      backLabel="Go Home"
       error={error}
       quickLinks={[
         { label: "Home", href: "/" },
@@ -18,10 +20,6 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         { label: "Blog", href: "/blog" },
       ]}
       reset={reset}
-      secondaryButton={{
-        label: "Go Home",
-        href: "/",
-      }}
     />
   );
 }
