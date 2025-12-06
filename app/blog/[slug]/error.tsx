@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { ArrowLeft } from "lucide-react";
 
 import { ErrorPage } from "@/components/ErrorPage";
 
@@ -12,6 +11,8 @@ export default function BlogPostError({ error, reset }: { error: Error & { diges
 
   return (
     <ErrorPage
+      backHref="/blog"
+      backLabel="View All Posts"
       error={error}
       message="We couldn't load this blog post. It may have been moved or deleted."
       quickLinks={[
@@ -20,11 +21,6 @@ export default function BlogPostError({ error, reset }: { error: Error & { diges
         { label: "All Posts", href: "/blog" },
       ]}
       reset={reset}
-      secondaryButton={{
-        label: "View All Posts",
-        href: "/blog",
-        icon: ArrowLeft,
-      }}
       title="Post Not Found"
     />
   );

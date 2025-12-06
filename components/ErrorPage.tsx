@@ -3,23 +3,16 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
-import { AlertTriangle, RefreshCw, ArrowLeft, LucideIcon } from "lucide-react";
+import { AlertTriangle, RefreshCw, ArrowLeft } from "lucide-react";
 
 interface ErrorPageProps {
   error: Error & { digest?: string };
   reset?: () => void;
   title?: string;
   message?: string;
-  primaryButton?: {
-    label: string;
-    onClick?: () => void;
-    icon?: LucideIcon;
-  };
-  secondaryButton?: {
-    label: string;
-    href: string;
-    icon?: LucideIcon;
-  };
+  showTryAgain?: boolean;
+  backLabel?: string;
+  backHref?: string;
   quickLinks?: Array<{
     label: string;
     href: string;
@@ -32,29 +25,12 @@ export function ErrorPage({
   reset,
   title = "Something Went Wrong",
   message = "We encountered an error while loading this page. Please try again.",
-  primaryButton = {
-    label: "Try Again",
-    icon: RefreshCw,
-  },
-  secondaryButton = {
-    label: "Go Back",
-    href: "/",
-    icon: ArrowLeft,
-  },
+  showTryAgain = true,
+  backLabel = "Go Home",
+  backHref = "/",
   quickLinks,
   showErrorDetails = true,
 }: ErrorPageProps) {
-  const PrimaryIcon = primaryButton.icon;
-  const SecondaryIcon = secondaryButton.icon;
-
-  const handlePrimaryAction = () => {
-    if (primaryButton.onClick) {
-      primaryButton.onClick();
-    } else if (reset) {
-      reset();
-    }
-  };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-12">
       <div className="max-w-2xl w-full text-center space-y-8">
@@ -71,25 +47,25 @@ export function ErrorPage({
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-          {(primaryButton.onClick || reset) && (
+          {showTryAgain && reset && (
             <Button
               className="bg-white text-black hover:bg-gray-100 font-medium min-w-[160px]"
               radius="full"
               size="lg"
-              startContent={PrimaryIcon && <PrimaryIcon size={20} />}
-              onClick={handlePrimaryAction}>
-              {primaryButton.label}
+              startContent={<RefreshCw size={20} />}
+              onClick={reset}>
+              Try Again
             </Button>
           )}
           <Button
             as={Link}
             className="backdrop-blur-md bg-white/10 hover:bg-white/20 text-white font-medium min-w-[160px]"
-            href={secondaryButton.href}
+            href={backHref}
             radius="full"
             size="lg"
-            startContent={SecondaryIcon && <SecondaryIcon size={20} />}
+            startContent={<ArrowLeft size={20} />}
             variant="flat">
-            {secondaryButton.label}
+            {backLabel}
           </Button>
         </div>
 

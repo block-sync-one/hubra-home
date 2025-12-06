@@ -3,42 +3,42 @@
 import React from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
-import { Home, TrendingUp, LucideIcon } from "lucide-react";
+import { Home, TrendingUp, ArrowLeft } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
+
+type IconType = "home" | "trending-up" | "arrow-left";
 
 interface NotFoundPageProps {
   title?: string;
   message?: string;
-  primaryButton?: {
-    label: string;
-    href: string;
-    icon?: LucideIcon;
-  };
-  secondaryButton?: {
-    label: string;
-    href: string;
-    icon?: LucideIcon;
-  };
+  primaryLabel?: string;
+  primaryHref?: string;
+  primaryIcon?: IconType;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+  secondaryIcon?: IconType;
   quickLinks?: Array<{
     label: string;
     href: string;
   }>;
 }
 
+const iconComponents = {
+  "home": Home,
+  "trending-up": TrendingUp,
+  "arrow-left": ArrowLeft,
+};
+
 export function NotFoundPage({
   title = "Page Not Found",
   message = "Looks like this page took a trip to another blockchain. Let's get you back on track.",
-  primaryButton = {
-    label: "Go Home",
-    href: "/",
-    icon: Home,
-  },
-  secondaryButton = {
-    label: "View Tokens",
-    href: "/tokens",
-    icon: TrendingUp,
-  },
+  primaryLabel = "Go Home",
+  primaryHref = "/",
+  primaryIcon = "home",
+  secondaryLabel = "View Tokens",
+  secondaryHref = "/tokens",
+  secondaryIcon = "trending-up",
   quickLinks = [
     { label: "Tokens", href: "/tokens" },
     { label: "Blog", href: "/blog" },
@@ -46,8 +46,8 @@ export function NotFoundPage({
     { label: "Launch App", href: siteConfig.links.app },
   ],
 }: NotFoundPageProps) {
-  const PrimaryIcon = primaryButton.icon;
-  const SecondaryIcon = secondaryButton.icon;
+  const PrimaryIconComponent = iconComponents[primaryIcon];
+  const SecondaryIconComponent = iconComponents[secondaryIcon];
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-12">
@@ -68,21 +68,21 @@ export function NotFoundPage({
           <Button
             as={Link}
             className="bg-white text-black hover:bg-gray-100 font-medium min-w-[160px]"
-            href={primaryButton.href}
+            href={primaryHref}
             radius="full"
             size="lg"
-            startContent={PrimaryIcon && <PrimaryIcon size={20} />}>
-            {primaryButton.label}
+            startContent={<PrimaryIconComponent size={20} />}>
+            {primaryLabel}
           </Button>
           <Button
             as={Link}
             className="backdrop-blur-md bg-white/10 hover:bg-white/20 text-white font-medium min-w-[160px]"
-            href={secondaryButton.href}
+            href={secondaryHref}
             radius="full"
             size="lg"
-            startContent={SecondaryIcon && <SecondaryIcon size={20} />}
+            startContent={<SecondaryIconComponent size={20} />}
             variant="flat">
-            {secondaryButton.label}
+            {secondaryLabel}
           </Button>
         </div>
 

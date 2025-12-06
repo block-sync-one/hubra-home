@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Icon } from "@iconify/react";
 
 import { getPostBySlug, getAllBlogSlugs, getRelatedPosts } from "../lib";
@@ -36,6 +37,15 @@ export async function generateMetadata({ params }: BlogPostProps): Promise<Metad
 
   try {
     const post = await getPostBySlug(resolvedParams.slug);
+
+    if (!post) {
+      return {
+        title: "Post Not Found | Hubra Blog",
+        description: "The blog post you're looking for doesn't exist or has been removed.",
+        robots: { index: false, follow: true },
+      };
+    }
+
     const url = `${siteConfig.domain}/blog/${post.slug}`;
 
     // Use custom meta description or fall back to excerpt
@@ -103,7 +113,19 @@ export async function generateMetadata({ params }: BlogPostProps): Promise<Metad
 
 export default async function BlogPost({ params }: BlogPostProps) {
   const resolvedParams = await params;
-  const post = await getPostBySlug(resolvedParams.slug);
+
+  let post;
+
+  try {
+    post = await getPostBySlug(resolvedParams.slug);
+  } catch (error) {
+    notFound();
+  }
+
+  if (!post) {
+    notFound();
+  }
+
   const url = `${siteConfig.domain}/blog/${post.slug}`;
 
   // Calculate reading time if not provided
