@@ -33,6 +33,7 @@ export const HeroSection = (): JSX.Element => {
       {/* Pink orb effect */}
       <div className="absolute flex w-full h-full z-0 top-0 left-0">
         <Image
+          priority
           alt="Pink Orb"
           className="flex absolute opacity-90 -top-5 md:top-0 left-20 md:left-[16%]"
           height={124}
@@ -40,7 +41,15 @@ export const HeroSection = (): JSX.Element => {
           src="/image/pink-orb1.png"
           width={360}
         />
-        <Image alt="top" className="flex absolute top-0 right-0 opacity-55" height={124} quality={100} src="/image/top-m.png" width={360} />
+        <Image
+          priority
+          alt="top"
+          className="flex absolute top-0 right-0 opacity-55"
+          height={124}
+          quality={100}
+          src="/image/top-m.png"
+          width={360}
+        />
       </div>
 
       <div className={`flex flex-col md:flex-row justify-between items-center gap-6 h-full w-full p-6 max-w-7xl mx-auto`}>
@@ -110,7 +119,7 @@ export const HeroSection = (): JSX.Element => {
             )}
             <div className="absolute h-full top-1/4 md:top-[40%] w-full max-w-[236px] sm:max-w-[326px] md:max-w-[350px] flex flex-row z-10 object-cover">
               <Image
-                unoptimized
+                priority
                 alt="Pink Gradient"
                 className="w-full max-w-[230px] sm:max-w-[320px] top-1 md:max-w-[340px] hero-image absolute z-20 rounded-full md:mt-[6px] ml-[1px]"
                 height={200}
@@ -130,7 +139,7 @@ export const HeroSection = (): JSX.Element => {
 
       {/* Bottom large circular gradient with animated satellite */}
       <div className="absolute satellite-position w-[375px] h-[180px] md:w-[660px] md:h-[304px] pointer-events-none select-none z-40">
-        <Image fill alt="Mask group" className="flex w-[400px] h-[300px]" quality={100} src="/image/globe.png" />
+        <Image fill priority alt="Mask group" className="flex w-[400px] h-[300px]" quality={100} src="/image/globe.png" />
         {/* Animated satellite overlay */}
         <AnimatedSatelliteOrbit />
       </div>

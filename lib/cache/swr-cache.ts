@@ -86,8 +86,8 @@ export async function getStaleWhileRevalidate<T>(
       // Check remaining TTL
       const remainingTtl = await redis.ttl(key);
 
-      // If cache is in last 25% of its lifetime, refresh in background
-      if (remainingTtl > 0 && remainingTtl < ttl / 4) {
+      // If cache is in last 5% of its lifetime, refresh in background
+      if (remainingTtl > 0 && remainingTtl < ttl / 20) {
         loggers.cache.debug(`⚠️ Stale cache (TTL: ${remainingTtl}s/${ttl}s), refreshing in background: ${key}`);
 
         // Fire-and-forget background refresh with retry logic

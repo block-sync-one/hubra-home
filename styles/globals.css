@@ -1,9 +1,4 @@
 /* ============================================
-   Fonts
-   ============================================ */
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
-
-/* ============================================
    Tailwind Directives
    ============================================ */
 @tailwind base;
@@ -27,7 +22,7 @@
 
   /* Body configuration */
   body {
-    font-family: "Inter", sans-serif;
+    font-family: "Geist", "Inter", sans-serif;
     font-size: 14px;
     box-sizing: border-box;
     background-color: #0d0e21;
@@ -152,4 +147,17 @@
   background-color: theme("colors.bgPlaceholder");
   border-radius: 10px;
   border: 2px solid theme("colors.card");
+}
+
+/* ============================================
+   Aurora Text Animation
+   ============================================ */
+@keyframes aurora-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }

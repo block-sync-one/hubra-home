@@ -14,7 +14,7 @@ import { TOKEN_LIMITS } from "@/lib/constants/market";
 import { siteConfig } from "@/config/site";
 import { COMMON_BREADCRUMBS, getCollectionPageJsonLd, getDatasetJsonLd } from "@/lib/utils/structured-data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300; // 5 minutes
 
 const title = "Cryptocurrency Prices | Live Solana Token Market Data";
 const description =
@@ -79,12 +79,24 @@ export const metadata: Metadata = {
 export default async function TokensPage() {
   const perfStart = performance.now();
 
-  const [marketDataResult, newlyListedResult, trendingData, globalStats] = await Promise.all([
+  const results = await Promise.allSettled([
     fetchMarketData(TOKEN_LIMITS.TOKENS_PAGE, 0),
     fetchNewlyListedTokens(TOKEN_LIMITS.TOKENS_PAGE, 0, 24), // Last 24 hours
     fetchTrendingData(TOKEN_LIMITS.HOT_TOKENS),
     fetchGlobalStats(),
   ]);
+
+  // Extract results with fallbacks for failed requests
+  const marketDataResult =
+    results[0].status === "fulfilled"
+      ? results[0].value
+      : { data: [], stats: { totalFDV: 0, totalVolume: 0, solFDV: 0, totalFDVChange: 0 } };
+  const newlyListedResult =
+    results[1].status === "fulfilled"
+      ? results[1].value
+      : { data: [], stats: { totalFDV: 0, totalVolume: 0, solFDV: 0, totalFDVChange: 0 } };
+  const trendingData = results[2].status === "fulfilled" ? results[2].value : { tokens: [] };
+  const globalStats = results[3].status === "fulfilled" ? results[3].value : { stablecoins_tvl: 0, stablecoins_tvl_change: 0 };
 
   const perfDuration = performance.now() - perfStart;
 
@@ -161,14 +173,13 @@ export default async function TokensPage() {
             totalVolume={totalVolume}
           />
         </div>
-        <div className="md:max-w-7xl mx-auto w-full">
-          <HotTokens
-            initialGainers={gainersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
-            initialLosers={losersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
-            initialTrending={trendingTokens}
-            initialVolume={volumeSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
-          />
-        </div>
+        {/* HotTokens - full width background, content constrained internally */}
+        <HotTokens
+          initialGainers={gainersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
+          initialLosers={losersSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
+          initialTrending={trendingTokens}
+          initialVolume={volumeSorted.slice(0, TOKEN_LIMITS.HOT_TOKENS)}
+        />
         <div className="md:max-w-7xl mx-auto w-full">
           {/* Pass full sorted data to AllTokens */}
           <AllTokens

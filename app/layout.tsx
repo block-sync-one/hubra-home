@@ -9,6 +9,7 @@ import { Providers } from "./providers";
 import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
 import { ORGANIZATION_JSON_LD_STRING, WEBSITE_JSON_LD_STRING } from "@/lib/utils/structured-data";
+import { fontSans } from "@/config/fonts";
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.domain),
   title: {
@@ -87,9 +88,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html suppressHydrationWarning lang="en">
+    <html suppressHydrationWarning className={clsx(fontSans.variable)} lang="en">
       <head>
         {/* Preconnect to external APIs for faster loading */}
+        <link href="https://fonts.googleapis.com" rel="preconnect" />
+        <link crossOrigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect" />
+        <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
         <link href="https://public-api.birdeye.so" rel="preconnect" />
         <link href="https://stablecoins.llama.fi" rel="preconnect" />
         <link href="https://api.llama.fi" rel="preconnect" />

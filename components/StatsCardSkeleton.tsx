@@ -24,8 +24,8 @@ export function StatsCardSkeleton({ title }: StatsCardSkeletonProps) {
 /**
  * Grid of stats card skeletons with titles
  */
-export function StatsGridSkeleton({ count = 5 }: { count?: number }) {
-  const titles = ["Total Market Cap", "Trading Vol", "New Tokens", "Solana TVL", "Stablecoins TVL"];
+export function StatsGridSkeleton({ count = 4 }: { count?: number }) {
+  const titles = ["Total Market Cap", "Trading Vol", "Solana TVL", "Stablecoins TVL"];
 
   return (
     <div className="relative rounded-xl bg-card overflow-hidden">
