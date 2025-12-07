@@ -34,7 +34,14 @@ export default function SmartLinkRedirect() {
       const { solanaDappStore, googlePlay, app } = siteConfig.links;
 
       if (isSeeker) {
-        window.location.href = solanaDappStore;
+        const opened = window.open(solanaDappStore, "_blank");
+
+        if (opened) {
+          opened.focus();
+        } else {
+          // Deep link blocked → fallback to Play Store
+          window.location.href = googlePlay;
+        }
       } else if (isAndroid) {
         window.location.href = googlePlay;
       } else {
