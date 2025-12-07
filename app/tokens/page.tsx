@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     url: canonical,
     images: [
       {
-        url: "/og-tokens.png",
+        url: "/df-2.svg",
         width: 1200,
         height: 630,
         alt: "Hubra - Solana Token Market Overview",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: ogTitle,
     description,
-    images: ["/og-tokens.png"],
+    images: ["/df-2.svg"],
   },
   alternates: {
     canonical,
