@@ -43,7 +43,7 @@ export function NotFoundPage({
     { label: "Tokens", href: "/tokens" },
     { label: "Blog", href: "/blog" },
     { label: "Docs", href: siteConfig.links.docs },
-    { label: "Launch App", href: siteConfig.links.app },
+    { label: "Launch App", href: "/link" },
   ],
 }: NotFoundPageProps) {
   const PrimaryIconComponent = iconComponents[primaryIcon];

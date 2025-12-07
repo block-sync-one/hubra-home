@@ -120,6 +120,8 @@ export const siteConfig = {
   ] as NavItem[],
   links: {
     app: "https://hubra.app",
+    solanaDappStore: "solanadappstore://details?id=app.hubra.twa",
+    googlePlay: "https://play.google.com/store/search?q=hubra&c=apps",
     github: "https://github.com/block-sync-one",
     twitter: "https://x.com/HubraApp",
     docs: "https://docs.hubra.app",

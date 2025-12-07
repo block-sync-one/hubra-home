@@ -152,7 +152,7 @@ export const Navbar = () => {
             as={Link}
             className="text-sm font-medium text-black bg-white hover:bg-gray-100 transition-colors duration-200"
             endContent={isMounted ? <ArrowRight size={14} /> : null}
-            href={siteConfig.links.app}
+            href="/link"
             radius="full"
             variant="flat">
             Launch App
@@ -241,7 +241,7 @@ export const Navbar = () => {
               as={Link}
               className="w-full text-sm font-medium text-black bg-white hover:bg-gray-100 transition-colors duration-200"
               endContent={isMounted ? <ArrowRight size={14} /> : null}
-              href={siteConfig.links.app}
+              href="/link"
               radius="full"
               variant="flat"
               onPress={() => setIsMenuOpen(false)}>
