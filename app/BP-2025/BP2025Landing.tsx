@@ -6,6 +6,7 @@ import Image from "next/image";
 import { CheckCircle2, Calendar, Gift, Users } from "lucide-react";
 
 import { AuroraText } from "@/components/ui/aurora-text";
+import { AccessModal } from "@/components/AccessModal";
 
 const FEATURES = ["Frictionless onboarding", "One-click yield strategies", "Non-custodial. Transparent. Verifiable."] as const;
 
@@ -214,7 +215,7 @@ const CTASection = memo(() => (
     <motion.div custom={0} variants={fadeUp}>
       <motion.a
         className="inline-flex items-center justify-center px-10 py-4 md:px-14 md:py-5 rounded-full bg-primary-500 hover:bg-primary-600 transition-all duration-200 text-lg md:text-xl font-bold text-white shadow-xl shadow-primary-500/20"
-        href="/BP-2025/link"
+        href="/link"
         rel="noopener noreferrer"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}>
@@ -299,8 +300,28 @@ const Footer = memo(() => (
 Footer.displayName = "Footer";
 
 export const BP2025Landing = memo(() => {
+  const [hasAccess, setHasAccess] = useState(false);
+
+  const handleAccessGranted = () => {
+    setHasAccess(true);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("bp2025_access", "true");
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedAccess = sessionStorage.getItem("bp2025_access");
+
+      if (savedAccess === "true") {
+        setHasAccess(true);
+      }
+    }
+  }, []);
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background text-white">
+      <AccessModal isOpen={!hasAccess} onAccessGranted={handleAccessGranted} />
       <Background />
 
       <div className="relative mx-auto max-w-4xl px-4 pt-10 md:pt-20 pb-2 flex flex-col gap-20 md:gap-28">
