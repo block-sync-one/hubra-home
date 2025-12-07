@@ -9,19 +9,40 @@ export default function SmartLinkRedirect() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const ua = navigator.userAgent.toLowerCase();
-    const isSeeker = ua.includes("seeker") || ua.includes("solanamobile/seeker");
-    const isAndroid = ua.includes("android");
+    async function detectAndRedirect() {
+      let isSeeker = false;
+      let isAndroid = false;
 
-    const { solanaDappStore, googlePlay, app } = siteConfig.links;
+      if ("userAgentData" in navigator && navigator.userAgentData) {
+        try {
+          const hints = await (navigator.userAgentData as any).getHighEntropyValues(["model", "platform"]);
+          const model = hints.model?.toLowerCase() || "";
+          const platform = hints.platform?.toLowerCase() || "";
 
-    if (isSeeker) {
-      window.location.href = solanaDappStore;
-    } else if (isAndroid) {
-      window.location.href = googlePlay;
-    } else {
-      window.location.href = app;
+          isSeeker = model === "seeker" || model.includes("seeker");
+          isAndroid = platform === "android";
+        } catch (error: any) {}
+      }
+
+      if (!isSeeker && !isAndroid) {
+        const ua = navigator.userAgent.toLowerCase();
+
+        isSeeker = ua.includes("seeker") || ua.includes("solanamobile/seeker");
+        isAndroid = ua.includes("android");
+      }
+
+      const { solanaDappStore, googlePlay, app } = siteConfig.links;
+
+      if (isSeeker) {
+        window.location.href = solanaDappStore;
+      } else if (isAndroid) {
+        window.location.href = googlePlay;
+      } else {
+        window.location.href = app;
+      }
     }
+
+    detectAndRedirect();
   }, []);
 
   return (
