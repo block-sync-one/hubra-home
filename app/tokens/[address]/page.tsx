@@ -70,7 +70,7 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
       url: `${siteConfig.domain}/tokens/${address}`,
       images: [
         {
-          url: tokenData?.logoURI || "/og-token-default.png",
+          url: tokenData?.logoURI || "/image/token.svg",
           width: 1200,
           height: 630,
           alt: `${tokenName} (${tokenSymbol}) Logo`,
@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: TokenDetailPageProps): Promis
       card: "summary_large_image",
       title: `${tokenName} (${tokenSymbol}) - ${tokenPrice}`,
       description: `${tokenName} price ${tokenPrice} ${changeText}. Live market data on Hubra.`,
-      images: [tokenData?.logoURI || "/og-token-default.png"],
+      images: [tokenData?.logoURI || "/image/token.svg"],
     },
     alternates: {
       canonical: `${siteConfig.domain}/tokens/${address}`,
