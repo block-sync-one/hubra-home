@@ -45,18 +45,6 @@ export function ShareButtons({ url, title, description }: ShareButtonsProps) {
         },
         ariaLabel: "Share on Twitter",
       },
-      {
-        name: "Facebook",
-        icon: "mdi:facebook",
-        getUrl: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-        ariaLabel: "Share on Facebook",
-      },
-      {
-        name: "LinkedIn",
-        icon: "mdi:linkedin",
-        getUrl: (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-        ariaLabel: "Share on LinkedIn",
-      },
     ],
     []
   );
