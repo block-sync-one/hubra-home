@@ -292,7 +292,7 @@ EligibilitySection.displayName = "EligibilitySection";
 
 const Footer = memo(() => (
   <div className="border-t border-white/10 pt-8 pb-4 text-center">
-    <p className="text-gray-500 text-sm">© 2025 Hubra · Non-custodial · On-chain · DeFi made simple</p>
+    <p className="text-gray-500 text-sm">© 2025 Hubra · DeFi made simple</p>
   </div>
 ));
 
