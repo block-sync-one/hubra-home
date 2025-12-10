@@ -13,7 +13,7 @@ const FEATURES = ["Frictionless onboarding", "One-click yield strategies", "Non-
 const ENTRY_STEPS = [
   {
     title: "Create your account",
-    description: "Use code BREAK when signing up",
+    description: "Socials or email sign up",
   },
   {
     title: "Take action by Dec 23",
@@ -111,9 +111,8 @@ const EventHeader = memo(() => (
     </motion.h1>
 
     <motion.p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto px-4 mb-8 leading-relaxed" custom={3} variants={fadeUp}>
-      <span>Create an account with code </span>
-      <span className="text-primary-400 font-semibold">BREAK </span>
-      <span>and either open an Earn position or stake raSOL for </span>
+      <span>Create an account</span>
+      <span> and either open an Earn position or stake raSOL for </span>
       <span className="text-primary-400 font-semibold">FREE</span>. <span> You&#39;ll be automatically entered.</span>
     </motion.p>
 
@@ -293,7 +292,7 @@ EligibilitySection.displayName = "EligibilitySection";
 
 const Footer = memo(() => (
   <div className="border-t border-white/10 pt-8 pb-4 text-center">
-    <p className="text-gray-500 text-sm">© 2025 Hubra · Non-custodial · On-chain · DeFi made simple</p>
+    <p className="text-gray-500 text-sm">© 2025 Hubra · DeFi made simple</p>
   </div>
 ));
 

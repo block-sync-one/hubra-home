@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Input } from "@heroui/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, InputOtp } from "@heroui/react";
 import { Gift } from "lucide-react";
 
 interface AccessModalProps {
@@ -29,8 +29,9 @@ export function AccessModal({ isOpen, onAccessGranted }: AccessModalProps) {
     }, 500);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
+  const handleComplete = (value?: string) => {
+    if (value) {
+      setCode(value);
       handleSubmit();
     }
   };
@@ -64,30 +65,31 @@ export function AccessModal({ isOpen, onAccessGranted }: AccessModalProps) {
           </div>
         </ModalHeader>
         <ModalBody>
-          <Input
-            autoFocus
-            classNames={{
-              input: "text-white",
-              inputWrapper: "bg-gray-800/50 group-data-[focus=true]:border group-data-[focus=true]:border-primary",
-            }}
-            errorMessage={error ? "Invalid access code. Please try again." : ""}
-            isInvalid={error}
-            label=""
-            placeholder="Enter access code"
-            size="lg"
-            type="text"
-            value={code}
-            variant="flat"
-            onChange={(e) => {
-              setCode(e.target.value);
-              setError(false);
-            }}
-            onKeyDown={handleKeyPress}
-          />
+          <div className="flex justify-center">
+            <InputOtp
+              autoFocus
+              allowedKeys="^[A-Za-z]*$"
+              classNames={{
+                wrapper: "justify-center",
+                segment: "data-[focus=true]:border-primary data-[focus-visible=true]:border-primary",
+              }}
+              errorMessage={error ? "Invalid access code. Please try again." : ""}
+              isInvalid={error}
+              length={5}
+              size="lg"
+              value={code}
+              variant="bordered"
+              onComplete={handleComplete}
+              onValueChange={(value?: string) => {
+                setCode(value || "");
+                setError(false);
+              }}
+            />
+          </div>
         </ModalBody>
         <ModalFooter>
-          <Button className="w-full" color="primary" isLoading={isLoading} size="lg" onClick={handleSubmit}>
-            {isLoading ? "Verifying..." : "Submit"}
+          <Button className="w-full" color="primary" isLoading={isLoading} size="lg" onPress={handleSubmit}>
+            <span>{isLoading ? "Verifying..." : "Submit"}</span>
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -17,12 +17,12 @@ export const TokenListItem: React.FC<TokenListItemProps> = ({ token, rank, onCli
   return (
     <div
       aria-label="Token details"
-      className="flex items-center justify-between py-2 px-1 transition-colors cursor-pointer"
+      className="relative z-20 flex items-center justify-between py-2 px-1 transition-colors cursor-pointer"
       role="button"
       onClick={() => onClick(token)}>
       {/* Left Column: Image, Name, Symbol */}
-      <div className="flex items-center gap-3 flex-1 min-w-0">
-        <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
+      <div className="relative z-20 flex items-center gap-3 flex-1 min-w-0">
+        <div className="relative z-0 w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
           <ImageWithSkeleton
             alt={`${token.name} (${token.symbol}) logo`}
             className="w-full h-full object-cover"
@@ -38,7 +38,7 @@ export const TokenListItem: React.FC<TokenListItemProps> = ({ token, rank, onCli
       </div>
 
       {/* Right Column: Price and Price Change */}
-      <div className="flex flex-col items-end gap-1">
+      <div className="relative z-20 flex flex-col items-end gap-1">
         <span className="text-sm font-medium text-foreground">{token.price}</span>
         <div
           className={`flex items-center gap-1 text-xs font-semibold ${

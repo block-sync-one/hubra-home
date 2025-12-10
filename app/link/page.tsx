@@ -11,27 +11,17 @@ export default function SmartLinkRedirect() {
 
     async function detectAndRedirect() {
       let isSeeker = false;
-      let isAndroid = false;
 
       if ("userAgentData" in navigator && navigator.userAgentData) {
         try {
           const hints = await (navigator.userAgentData as any).getHighEntropyValues(["model", "platform"]);
           const model = hints.model?.toLowerCase() || "";
-          const platform = hints.platform?.toLowerCase() || "";
 
           isSeeker = model === "seeker" || model.includes("seeker");
-          isAndroid = platform === "android";
         } catch (error: any) {}
       }
 
-      if (!isSeeker && !isAndroid) {
-        const ua = navigator.userAgent.toLowerCase();
-
-        isSeeker = ua.includes("seeker") || ua.includes("solanamobile/seeker");
-        isAndroid = ua.includes("android");
-      }
-
-      const { solanaDappStore, googlePlay, app } = siteConfig.links;
+      const { solanaDappStore, app } = siteConfig.links;
 
       if (isSeeker) {
         const opened = window.open(solanaDappStore, "_blank");
@@ -39,11 +29,8 @@ export default function SmartLinkRedirect() {
         if (opened) {
           opened.focus();
         } else {
-          // Deep link blocked → fallback to Play Store
-          window.location.href = googlePlay;
+          window.location.href = app;
         }
-      } else if (isAndroid) {
-        window.location.href = googlePlay;
       } else {
         window.location.href = app;
       }
