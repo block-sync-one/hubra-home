@@ -162,7 +162,7 @@ const AboutSection = memo(() => (
       <AuroraText className="font-semibold tracking-tight" colors={["#FDB122", "#FDB122", "#FDB122"]}>
         Hubra
       </AuroraText>
-      <span className="text-gray-500 mx-2">—</span>
+      <span className="text-gray-500 mx-2">-</span>
       <span className="text-white">DeFi made simple. On Solana.</span>
     </motion.h2>
 
