@@ -130,7 +130,7 @@ export function TokenCard({ name, symbol, logoURI, price, change, coinId }: Toke
               alt={`${name} (${symbol}) logo`}
               className="w-full h-full object-cover"
               height={36}
-              src={logoURI || "/logo.svg"}
+              src={logoURI || ""}
               width={36}
             />
           </div>

@@ -27,7 +27,7 @@ export const TokenListItem: React.FC<TokenListItemProps> = ({ token, rank, onCli
             alt={`${token.name} (${token.symbol}) logo`}
             className="w-full h-full object-cover"
             height={36}
-            src={token.logoURI || "/logo.svg"}
+            src={token.logoURI || ""}
             width={36}
           />
         </div>

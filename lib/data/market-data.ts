@@ -46,7 +46,7 @@ function transformBirdeyeToken(token: BirdeyeToken): Token {
     id: token.address,
     name: token.name === "Wrapped SOL" ? "Solana" : token.name,
     symbol: token.symbol.toUpperCase(),
-    logoURI: token.logo_uri ?? "/logo.svg",
+    logoURI: token.logo_uri ?? "",
     price: "",
     change: token.price_change_24h_percent || 0,
     volume: "",

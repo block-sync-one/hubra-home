@@ -9,7 +9,7 @@ const nextConfig = {
   // Image optimization for better Core Web Vitals
   images: {
     formats: ["image/webp", "image/avif"],
-    minimumCacheTTL: 60,
+    minimumCacheTTL: 86400,
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
@@ -18,20 +18,16 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "**",
-        port: "",
         pathname: "/**",
       },
       {
         protocol: "http",
         hostname: "**",
-        port: "",
         pathname: "/**",
       },
     ],
     // Disable image optimization for problematic domains
     unoptimized: false,
-    // Allow all domains
-    domains: [],
   },
 
   // Enable compression
