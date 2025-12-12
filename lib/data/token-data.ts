@@ -37,7 +37,7 @@ async function fetchFreshTokenOverview(tokenAddress: string, cachedUnified: Unif
     address: tokenData.address,
     symbol: tokenData.symbol,
     name: tokenData.name,
-    logoURI: tokenData.logoURI || "/logo.svg",
+    logoURI: tokenData.logoURI || "",
     price: tokenData.price,
     priceChange24hPercent: tokenData.priceChange24hPercent,
     v24hUSD: tokenData.v24hUSD,

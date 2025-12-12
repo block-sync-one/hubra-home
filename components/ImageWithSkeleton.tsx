@@ -42,12 +42,17 @@ function isValidImageSrc(src: any): boolean {
  * - Works with Next.js Image optimization
  * - Validates URLs before rendering
  */
-export function ImageWithSkeleton({ src, alt, fallbackSrc = "/logo.svg", className = "", ...props }: ImageWithSkeletonProps) {
+export function ImageWithSkeleton({ src, alt, fallbackSrc = "", className = "", ...props }: ImageWithSkeletonProps) {
   const [error, setError] = useState(false);
 
   // Validate and determine which src to use
   const isValidSrc = isValidImageSrc(src);
   const imageSrc = error || !isValidSrc ? fallbackSrc : src;
+  const shouldRenderImage = isValidImageSrc(imageSrc);
+
+  // Check if image is external (starts with http:// or https://)
+  // External images including IP addresses with ports should use unoptimized
+  const isExternalImage = typeof imageSrc === "string" && (imageSrc.startsWith("http://") || imageSrc.startsWith("https://"));
 
   const handleError = () => {
     // Prevent infinite loop - only try fallback once
@@ -58,11 +63,20 @@ export function ImageWithSkeleton({ src, alt, fallbackSrc = "/logo.svg", classNa
 
   return (
     <div suppressHydrationWarning className="relative w-full h-full">
-      {/* Animated skeleton background (shows while image loads) */}
+      {/* Animated skeleton background (shows while image loads or if no image) */}
       <div className="absolute inset-0 bg-gray-800 animate-pulse" />
 
       {/* Image (loads on top of skeleton) */}
-      <Image {...props} alt={alt} className={`${className} relative z-10`} src={imageSrc} onError={handleError} />
+      {shouldRenderImage && (
+        <Image
+          {...props}
+          alt={alt}
+          className={`${className} relative z-10`}
+          src={imageSrc}
+          unoptimized={isExternalImage}
+          onError={handleError}
+        />
+      )}
     </div>
   );
 }
