@@ -109,7 +109,7 @@ export default async function BlogPage() {
       <script dangerouslySetInnerHTML={{ __html: blogJsonLdString }} defer id="blog-jsonld" type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: COMMON_BREADCRUMBS.blog }} defer id="breadcrumb-jsonld" type="application/ld+json" />
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/*        <header className="mb-8 sm:mb-10 md:mb-12">
 
           <p className="text-base sm:text-lg md:text-xl text-gray-400">
