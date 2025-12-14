@@ -166,18 +166,9 @@ const AboutSection = memo(() => (
     </motion.h2>
 
     <motion.p className="text-base md:text-lg text-gray-400 leading-relaxed mb-6" custom={2} variants={fadeUp}>
-      Hubra is an earn aggregator wallet which is gasless by default. You can capture the best yields across all your wallets in one place
-      with one-click strategies, staying fully non-custodial.
+      Hubra is an earn aggregator wallet. You can capture the best yields across all your wallets in one place with one-click strategies,
+      staying fully non-custodial.
     </motion.p>
-
-    <motion.p className="text-base font-bold text-gray-300 leading-relaxed mb-1" custom={3} variants={fadeUp}>
-      Limited offer
-    </motion.p>
-
-    <motion.div className="inline-flex items-center gap-2 px-6 py-3 rounded-full  bg-primary-500/10" custom={3} variants={fadeUp}>
-      <span className="text-primary-400 font-bold text-sm">ZERO FEES</span>
-      <span className="text-white text-sm">on all transactions</span>
-    </motion.div>
   </motion.div>
 ));
 

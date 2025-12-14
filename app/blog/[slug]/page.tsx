@@ -188,7 +188,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
       <script dangerouslySetInnerHTML={{ __html: articleJsonLdString }} defer id="article-jsonld" type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: breadcrumbJsonLdString }} defer id="breadcrumb-jsonld" type="application/ld+json" />
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6 sm:mb-7 md:mb-8">
           <Link
             className="inline-flex items-center gap-2 text-sm sm:text-base text-gray-400 hover:text-white transition-colors group"
@@ -198,7 +198,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
           </Link>
         </div>
 
-        <article className="max-w-7xl mx-auto">
+        <article className="max-w-5xl mx-auto">
           <header className="mb-8 sm:mb-10 md:mb-12">
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (

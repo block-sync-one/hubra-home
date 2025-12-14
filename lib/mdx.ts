@@ -7,6 +7,8 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeStringify from "rehype-stringify";
 
+import { rehypeCenterImages } from "./rehype-center-images";
+
 /**
  * Convert MDX/Markdown to HTML string
  * Uses remark and rehype for processing
@@ -15,19 +17,22 @@ import rehypeStringify from "rehype-stringify";
 export async function mdxToHtml(source: string): Promise<string> {
   try {
     const result = await unified()
-      .use(remarkParse) // Parse markdown
-      .use(remarkGfm) // GitHub Flavored Markdown
-      .use(remarkRehype) // Convert to HTML AST
-      .use(rehypeSlug) // Add IDs to headings
-      .use(rehypeAutolinkHeadings) // Add links to headings
-      .use(rehypeHighlight) // Syntax highlighting
-      .use(rehypeStringify) // Convert to HTML string
+      .use(remarkParse)
+      .use(remarkGfm)
+      .use(remarkRehype, { allowDangerousHtml: true }) // Allow HTML tags in markdown
+      .use(rehypeSlug)
+      .use(rehypeAutolinkHeadings)
+      .use(rehypeCenterImages) // Auto-center images
+      .use(rehypeHighlight)
+      .use(rehypeStringify, { allowDangerousHtml: true }) // Preserve HTML in output
       .process(source);
 
     return String(result);
   } catch (error) {
     console.error("MDX processing error:", error);
-    throw new Error("Failed to process MDX content");
+    const message = error instanceof Error ? error.message : "Unknown error";
+
+    throw new Error(`Failed to process MDX content: ${message}`);
   }
 }
 
