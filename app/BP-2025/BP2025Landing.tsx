@@ -209,20 +209,81 @@ const FeaturesSection = memo(() => (
 
 FeaturesSection.displayName = "FeaturesSection";
 
-const CTASection = memo(() => (
-  <motion.div animate="visible" className="text-center" initial="hidden" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
-    <motion.div custom={0} variants={fadeUp}>
-      <motion.a
-        className="inline-flex items-center justify-center px-10 py-4 md:px-14 md:py-5 rounded-full bg-primary-500 hover:bg-primary-600 transition-all duration-200 text-lg md:text-xl font-bold text-white shadow-xl shadow-primary-500/20"
-        href="/link"
-        rel="noopener noreferrer"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}>
-        Get Started
-      </motion.a>
+const CTASection = memo(() => {
+  const openApp = () => {
+    const dAppStoreURL = "solanadappstore://details?id=app.hubra.twa";
+    const fallbackURL = "https://hubra.app";
+    const TIMEOUT_MS = 2500; // 2.5 seconds to detect if app opened
+
+    let fallbackTimer: NodeJS.Timeout | null = null;
+    let hasOpenedFallback = false;
+
+    const openFallback = () => {
+      if (!hasOpenedFallback) {
+        hasOpenedFallback = true;
+        window.open(fallbackURL, "_blank");
+      }
+    };
+
+    // Listen for page blur (user switched to app)
+    const handleBlur = () => {
+      if (fallbackTimer) {
+        clearTimeout(fallbackTimer);
+        fallbackTimer = null;
+      }
+      window.removeEventListener("blur", handleBlur);
+    };
+
+    // Listen for page visibility change (user switched to app)
+    const handleVisibilityChange = () => {
+      if (document.hidden && fallbackTimer) {
+        clearTimeout(fallbackTimer);
+        fallbackTimer = null;
+        window.removeEventListener("blur", handleBlur);
+        document.removeEventListener("visibilitychange", handleVisibilityChange);
+      }
+    };
+
+    // Set up listeners
+    window.addEventListener("blur", handleBlur);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // Try to open the deep link
+    try {
+      window.open(dAppStoreURL, "_blank");
+    } catch (error) {
+      // If opening throws an error, immediately open fallback
+      console.error("Error opening deep link:", error);
+      openFallback();
+      window.removeEventListener("blur", handleBlur);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+
+      return;
+    }
+
+    // Set timeout - if app doesn't open, fallback to web
+    fallbackTimer = setTimeout(() => {
+      openFallback();
+      window.removeEventListener("blur", handleBlur);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    }, TIMEOUT_MS);
+  };
+
+  return (
+    <motion.div animate="visible" className="text-center" initial="hidden" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
+      <motion.div custom={0} variants={fadeUp}>
+        <motion.button
+          className="inline-flex items-center justify-center px-10 py-4 md:px-14 md:py-5 rounded-full bg-primary-500 hover:bg-primary-600 transition-all duration-200 text-lg md:text-xl font-bold text-white shadow-xl shadow-primary-500/20"
+          rel="noopener noreferrer"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => openApp()}>
+          Get Started
+        </motion.button>
+      </motion.div>
     </motion.div>
-  </motion.div>
-));
+  );
+});
 
 CTASection.displayName = "CTASection";
 
