@@ -174,18 +174,30 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     // Horizontal rule
     hr: (props) => <hr className="my-8 border-gray-700" {...props} />,
 
-    // Images with Next.js Image component
+    // Supports custom dimensions via HTML attributes in MDX:
+    // <img src="image.jpg" alt="Description" width="800" height="600" />
     img: ({ src, alt, width, height, ...props }) => {
       if (!src) return null;
 
-      // Parse dimensions to numbers if they're strings
-      const imageWidth = typeof width === "string" ? parseInt(width, 10) : width || 800;
-      const imageHeight = typeof height === "string" ? parseInt(height, 10) : height || 400;
+      // Parse dimensions to numbers if they're strings, or use defaults
+      const imageWidth = width ? (typeof width === "string" ? parseInt(width, 10) : width) : 800;
+      const imageHeight = height ? (typeof height === "string" ? parseInt(height, 10) : height) : 400;
+
+      // Check if image is external (starts with http:// or https://)
+      const isExternalImage = typeof src === "string" && (src.startsWith("http://") || src.startsWith("https://"));
 
       return (
-        <span className="mb-4 block">
-          <Image alt={alt || ""} className="rounded-lg" height={imageHeight} src={src} width={imageWidth} {...props} />
-        </span>
+        <div className="my-6 flex justify-center">
+          <Image
+            alt={alt || ""}
+            className="rounded-lg"
+            height={imageHeight}
+            src={src}
+            unoptimized={isExternalImage}
+            width={imageWidth}
+            {...props}
+          />
+        </div>
       );
     },
 

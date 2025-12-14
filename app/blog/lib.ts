@@ -12,7 +12,6 @@ import matter from "gray-matter";
 import { BlogPost, BlogPostMeta, BlogFrontmatter, Result, BlogPostNotFoundError, BlogParseError, isValidFrontmatter } from "./types";
 
 import { mdxToHtml } from "@/lib/mdx";
-import { siteConfig } from "@/config/site";
 
 const CONTENT_DIR = path.join(process.cwd(), "app/blog/content");
 const DEFAULT_IMAGE = "/hubra-og-image.png";
@@ -50,7 +49,7 @@ function parseFrontmatter(data: unknown, slug: string): BlogFrontmatter {
  * Transform frontmatter to BlogPost
  */
 function transformToBlogPost(slug: string, frontmatter: BlogFrontmatter, htmlContent: string): BlogPost {
-  const image = `${siteConfig.domain}${frontmatter.coverImage || frontmatter.image || DEFAULT_IMAGE}`;
+  const image = `${frontmatter.coverImage || frontmatter.image || DEFAULT_IMAGE}`;
 
   return {
     slug,
