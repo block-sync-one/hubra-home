@@ -207,7 +207,7 @@ const UnifiedTable = <T extends Record<string, any>>({
   const mobileListItems = useMemo<MobileListItem[]>(() => {
     return paginatedItems.map((item: any) => ({
       key: item.key || item.id || item.asset?.mint || String(item._index),
-      logoURI: item.logoURI || "/logo.svg",
+      logoURI: item.logoURI || "",
       name: item.name || "Unknown",
       symbol: item.symbol,
       primaryValue: item.price || "-",

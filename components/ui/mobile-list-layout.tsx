@@ -134,7 +134,7 @@ export function MobileListLayout<T extends MobileListItem>({
                   alt={`${item.name} logo`}
                   className="w-full h-full object-cover"
                   height={36}
-                  src={item.logoURI || item.logo || "/logo.svg"}
+                  src={item.logoURI || item.logo || ""}
                   width={36}
                 />
               </div>

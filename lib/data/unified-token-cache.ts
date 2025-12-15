@@ -19,7 +19,7 @@ export function toUnifiedTokenData(token: any, dataSource: "list" | "overview" =
     address: token.address,
     symbol: token.symbol?.toUpperCase() || "",
     name: token.name === "Wrapped SOL" ? "Solana" : token.name,
-    logoURI: token.logoURI || token.logo_uri || "/logo.svg",
+    logoURI: token.logoURI || token.logo_uri || "",
     price: token.price || 0,
     priceChange24hPercent: token.priceChange24hPercent || token.price24hChangePercent || token.price_change_24h_percent || 0,
     v24hUSD: token.v24hUSD || token.volume24hUSD || token.volume_24h_usd || 0,

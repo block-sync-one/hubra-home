@@ -227,7 +227,7 @@ export function getFinancialProductJsonLd(token: {
     "name": token.name,
     "alternateName": token.symbol,
     "description": enhancedDescription,
-    "image": token.logoURI || "/og-token-default.png",
+    "image": token.logoURI || "/image/token.svg",
     "brand": {
       "@type": "Brand",
       "name": "Solana",

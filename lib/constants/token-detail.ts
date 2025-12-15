@@ -23,6 +23,6 @@ export const NUMBER_FORMAT = {
 // Fallback Values
 export const FALLBACK_VALUES = {
   NOT_AVAILABLE: "N/A",
-  DEFAULT_LOGO: "/logo.svg",
+  DEFAULT_LOGO: "",
   DEFAULT_DESCRIPTION_TEMPLATE: (name: string, symbol: string) => `${name} (${symbol}) is a token on the Solana blockchain.`,
 } as const;

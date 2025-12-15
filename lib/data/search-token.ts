@@ -52,7 +52,7 @@ function transformSearchItemToToken(item: BirdeyeSearchItem): Token {
     id: item.address,
     name: item.name === "Wrapped SOL" ? "Solana" : item.name || "Unknown Token",
     symbol: item.symbol?.toUpperCase() || "???",
-    logoURI: item.logo_uri || "/logo.svg",
+    logoURI: item.logo_uri || "",
     price: "", // Will be formatted by the caller based on currency preference
     change: item.price_change_24h_percent || 0,
     volume: "", // Will be formatted by the caller

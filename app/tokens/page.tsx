@@ -14,7 +14,8 @@ import { TOKEN_LIMITS } from "@/lib/constants/market";
 import { siteConfig } from "@/config/site";
 import { COMMON_BREADCRUMBS, getCollectionPageJsonLd, getDatasetJsonLd } from "@/lib/utils/structured-data";
 
-export const revalidate = 300; // 5 minutes
+export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 const title = "Cryptocurrency Prices | Live Solana Token Market Data";
 const description =
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
     url: canonical,
     images: [
       {
-        url: "/og-tokens.png",
+        url: "/image/df-2.svg",
         width: 1200,
         height: 630,
         alt: "Hubra - Solana Token Market Overview",
@@ -58,7 +59,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: ogTitle,
     description,
-    images: ["/og-tokens.png"],
+    images: ["/image/df-2.svg"],
   },
   alternates: {
     canonical,

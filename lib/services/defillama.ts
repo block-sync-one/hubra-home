@@ -55,10 +55,8 @@ export interface StablecoinHistoricalDataPoint {
  */
 async function fetchFromDeFiLlama<T>(url: string, errorContext: string): Promise<T> {
   const response = await fetch(url, {
-    cache: "no-store",
     headers: {
-      "Accept": "application/json",
-      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Accept: "application/json",
     },
   });
 

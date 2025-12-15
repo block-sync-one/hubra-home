@@ -13,7 +13,7 @@ export function transformTrendingToTokens(trendingData: TrendingData): Token[] {
     id: coin.item.coin_id || coin.item.id,
     name: coin.item.name === "Wrapped SOL" ? "Solana" : coin.item.name,
     symbol: coin.item.symbol.toUpperCase(),
-    logoURI: coin.item.small || coin.item.large || "/logo.svg",
+    logoURI: coin.item.small || coin.item.large || "",
     price: "",
     change: coin.item.data?.price_change_percentage_24h?.usd || 0,
     volume: "",

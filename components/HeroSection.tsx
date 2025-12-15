@@ -67,7 +67,7 @@ export const HeroSection = (): JSX.Element => {
               The Freedom Of DeFi.
             </div>
             <p className="sm:max-w-md font-sans text-[#797B92] text-lg md:text-base lg:text-lg tracking-[1%]">
-              Hubra is the first truly all-in-one platform. Manage, Explore, Earn—across any device.
+              Hubra is the first truly all-in-one platform. Manage, Explore, Earn-across any device.
             </p>
           </div>
         </div>

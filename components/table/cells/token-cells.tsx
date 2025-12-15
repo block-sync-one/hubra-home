@@ -19,7 +19,7 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
               alt={`${item.name} (${item.symbol}) logo`}
               className="w-full h-full object-cover"
               height={36}
-              src={item.logoURI || "/logo.svg"}
+              src={item.logoURI || ""}
               width={36}
             />
           </div>

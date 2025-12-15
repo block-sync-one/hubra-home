@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Icon } from "@iconify/react";
 
 import { getPostBySlug, getAllBlogSlugs, getRelatedPosts } from "../lib";
@@ -33,65 +34,98 @@ interface BlogPostProps {
 
 export async function generateMetadata({ params }: BlogPostProps): Promise<Metadata> {
   const resolvedParams = await params;
-  const post = await getPostBySlug(resolvedParams.slug);
-  const url = `${siteConfig.domain}/blog/${post.slug}`;
 
-  // Use custom meta description or fall back to excerpt
-  const description = post.metaDescription || post.excerpt;
+  try {
+    const post = await getPostBySlug(resolvedParams.slug);
 
-  // Use custom OG image or fall back to post image
-  const ogImage = post.ogImage || post.image;
+    if (!post) {
+      return {
+        title: "Post Not Found | Hubra Blog",
+        description: "The blog post you're looking for doesn't exist or has been removed.",
+        robots: { index: false, follow: true },
+      };
+    }
 
-  return {
-    title: `${post.title} | Blog`,
-    description: description,
-    keywords: post.keywords || post.tags,
-    authors: post.author ? [{ name: post.author }] : [{ name: "Hubra Team" }],
-    alternates: {
-      canonical: post.canonicalUrl || url,
-    },
-    openGraph: {
-      title: post.title,
+    const url = `${siteConfig.domain}/blog/${post.slug}`;
+
+    // Use custom meta description or fall back to excerpt
+    const description = post.metaDescription || post.excerpt;
+
+    // Use custom OG image or fall back to post image
+    const ogImage = post.ogImage || post.image;
+
+    return {
+      title: `${post.title} | Blog`,
       description: description,
-      type: "article",
-      publishedTime: post.date,
-      modifiedTime: post.lastUpdated || post.date,
-      authors: post.author ? [post.author] : ["Hubra Team"],
-      tags: post.tags,
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-      url: url,
-      siteName: siteConfig.name,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: description,
-      images: [post.twitterImage || ogImage],
-    },
-    robots: {
-      index: !post.draft,
-      follow: !post.draft,
-      googleBot: {
-        "index": !post.draft,
-        "follow": !post.draft,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
+      keywords: post.keywords || post.tags,
+      authors: post.author ? [{ name: post.author }] : [{ name: "Hubra Team" }],
+      alternates: {
+        canonical: post.canonicalUrl || url,
       },
-    },
-  };
+      openGraph: {
+        title: post.title,
+        description: description,
+        type: "article",
+        publishedTime: post.date,
+        modifiedTime: post.lastUpdated || post.date,
+        authors: post.author ? [post.author] : ["Hubra Team"],
+        tags: post.tags,
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 630,
+            alt: post.title,
+          },
+        ],
+        url: url,
+        siteName: siteConfig.name,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: post.title,
+        description: description,
+        images: [post.twitterImage || ogImage],
+      },
+      robots: {
+        index: !post.draft,
+        follow: !post.draft,
+        googleBot: {
+          "index": !post.draft,
+          "follow": !post.draft,
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+        },
+      },
+    };
+  } catch (error) {
+    return {
+      title: "Post Not Found | Hubra Blog",
+      description: "The blog post you're looking for doesn't exist or has been removed.",
+      robots: {
+        index: false,
+        follow: true,
+      },
+    };
+  }
 }
 
 export default async function BlogPost({ params }: BlogPostProps) {
   const resolvedParams = await params;
-  const post = await getPostBySlug(resolvedParams.slug);
+
+  let post;
+
+  try {
+    post = await getPostBySlug(resolvedParams.slug);
+  } catch (error) {
+    notFound();
+  }
+
+  if (!post) {
+    notFound();
+  }
+
   const url = `${siteConfig.domain}/blog/${post.slug}`;
 
   // Calculate reading time if not provided
@@ -154,7 +188,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
       <script dangerouslySetInnerHTML={{ __html: articleJsonLdString }} defer id="article-jsonld" type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: breadcrumbJsonLdString }} defer id="breadcrumb-jsonld" type="application/ld+json" />
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="flex items-center justify-between mb-6 sm:mb-7 md:mb-8">
           <Link
             className="inline-flex items-center gap-2 text-sm sm:text-base text-gray-400 hover:text-white transition-colors group"
@@ -164,7 +198,7 @@ export default async function BlogPost({ params }: BlogPostProps) {
           </Link>
         </div>
 
-        <article className="max-w-7xl mx-auto">
+        <article className="max-w-5xl mx-auto">
           <header className="mb-8 sm:mb-10 md:mb-12">
             {/* Tags */}
             {post.tags && post.tags.length > 0 && (

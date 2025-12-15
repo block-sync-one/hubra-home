@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -10,19 +10,20 @@ import {
   NavbarMenuItem,
   Button,
   Link,
-  Image,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
 } from "@heroui/react";
 import NextLink from "next/link";
-import { Icon } from "@iconify/react";
+import NextImage from "next/image";
+import { ChevronDown, ArrowRight } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
 
 export const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -60,10 +61,10 @@ export const Navbar = () => {
     <HeroUINavbar
       className="backdrop-blur-md bg-black/20 border-b border-white/10"
       classNames={{
-        base: "z-50",
+        base: "z-[60] relative",
         wrapper: "max-w-7xl mx-auto ",
         menuItem: "text-white",
-        menu: "text-white bg-black/90 backdrop-blur-md",
+        menu: "text-white bg-black/90 backdrop-blur-md z-[60]",
         item: "text-white",
       }}
       isMenuOpen={isMenuOpen}
@@ -73,7 +74,7 @@ export const Navbar = () => {
       {/* Brand/Logo */}
       <NavbarBrand as="li" className="gap-3 max-w-fit md:mr-16">
         <NextLink className="flex justify-start items-center gap-2" href="/">
-          <Image alt="Hubra" className="rounded-none w-[22px] h-[22px] md:w-6 md:h-6" src="/logo.png" />
+          <NextImage priority alt="Hubra" className="rounded-none" height={24} src="/logo.png" width={24} />
           <p className="font-bold text-white text-lg">Hubra</p>
         </NextLink>
       </NavbarBrand>
@@ -85,7 +86,12 @@ export const Navbar = () => {
             item.show && (
               <NavbarItem key={item.label}>
                 {item.navItems ? (
-                  <Dropdown>
+                  <Dropdown
+                    classNames={{
+                      base: "relative z-[55]",
+                      content: "z-[55]",
+                    }}
+                    shouldBlockScroll={false}>
                     <DropdownTrigger>
                       <Button
                         className={`font-medium text-sm transition-colors duration-200 ${
@@ -93,12 +99,15 @@ export const Navbar = () => {
                             ? "text-primary border-b-2 border-primary rounded-none hover:rounded-xl"
                             : "text-[#797B92] hover:text-white"
                         }`}
-                        endContent={<Icon icon="mdi:chevron-down" width={16} />}
+                        endContent={<ChevronDown size={16} />}
                         variant="light">
                         {item.label}
                       </Button>
                     </DropdownTrigger>
-                    <DropdownMenu aria-label={`${item.label} menu`} className="bg-black/90 backdrop-blur-md border border-white/10">
+                    <DropdownMenu
+                      aria-label={`${item.label} menu`}
+                      className="bg-black/90 backdrop-blur-md border border-white/10"
+                      style={{ zIndex: 55 }}>
                       {item.navItems.map((child) => (
                         <DropdownItem
                           key={child.href}
@@ -109,7 +118,7 @@ export const Navbar = () => {
                               : "text-gray-300 hover:bg-white/10 hover:text-white"
                           }`}
                           href={child.href}
-                          startContent={child.icon && isMounted ? <Icon className="w-4 h-4" icon={child.icon} /> : null}>
+                          startContent={null}>
                           {child.label}
                         </DropdownItem>
                       ))}
@@ -151,8 +160,8 @@ export const Navbar = () => {
           <Button
             as={Link}
             className="text-sm font-medium text-black bg-white hover:bg-gray-100 transition-colors duration-200"
-            endContent={isMounted ? <Icon icon="solar:alt-arrow-right-outline" width={14} /> : null}
-            href={siteConfig.links.app}
+            endContent={isMounted ? <ArrowRight size={14} /> : null}
+            href="/link"
             radius="full"
             variant="flat">
             Launch App
@@ -189,33 +198,38 @@ export const Navbar = () => {
                       </div>
                       <div className="space-y-1">
                         {item.navItems.map((child) => (
-                          <NextLink
+                          <button
                             key={child.href}
-                            className={`flex items-center gap-3 px-6 py-3 transition-colors duration-200 ${
+                            className={`w-full text-left flex items-center gap-3 px-6 py-3 transition-colors duration-200 ${
                               isActive(child.href)
                                 ? "text-white bg-white/20 font-semibold border-l-4 border-white"
                                 : "text-gray-300 hover:text-white hover:bg-white/10"
                             }`}
-                            href={child.href}
-                            onClick={() => setIsMenuOpen(false)}>
-                            {child.icon && isMounted && <Icon className="w-5 h-5" icon={child.icon} />}
+                            onClick={() => {
+                              setIsMenuOpen(false);
+                              router.push(child.href);
+                            }}>
                             {child.label}
-                          </NextLink>
+                          </button>
                         ))}
                       </div>
                     </div>
                   ) : (
                     item.href && (
-                      <NextLink
-                        className={`block py-3 text-lg transition-colors duration-200 ${
+                      <button
+                        className={`w-full text-left block py-3 text-lg transition-colors duration-200 ${
                           isActive(item.href)
                             ? "text-primary bg-white/20 font-semibold border-l-4 border-primary pl-4"
                             : "text-gray-300 hover:text-white hover:bg-white/10 pl-4"
                         }`}
-                        href={item.href}
-                        onClick={() => setIsMenuOpen(false)}>
+                        onClick={() => {
+                          if (item.href) {
+                            setIsMenuOpen(false);
+                            router.push(item.href);
+                          }
+                        }}>
                         {item.label}
-                      </NextLink>
+                      </button>
                     )
                   )}
                 </NavbarMenuItem>
@@ -241,8 +255,8 @@ export const Navbar = () => {
             <Button
               as={Link}
               className="w-full text-sm font-medium text-black bg-white hover:bg-gray-100 transition-colors duration-200"
-              endContent={isMounted ? <Icon icon="solar:alt-arrow-right-outline" width={14} /> : null}
-              href={siteConfig.links.app}
+              endContent={isMounted ? <ArrowRight size={14} /> : null}
+              href="/link"
               radius="full"
               variant="flat"
               onPress={() => setIsMenuOpen(false)}>
