@@ -7,11 +7,12 @@ import {
   setManyUnifiedProtocols,
   toUnifiedProtocolData,
   mergeProtocolData,
+  UnifiedProtocolData,
 } from "./unified-protocol-cache";
 
 import { getStaleWhileRevalidate } from "@/lib/cache/swr-cache";
 import { CACHE_TTL } from "@/lib/cache";
-import { DeFiLlamaProtocol, fetchHistoricalChainTVL, fetchSingleTVL, fetchTVL } from "@/lib/services/defillama";
+import { DeFiLlamaProtocol, fetchHistoricalChainTVL, fetchProtocolHistoricalTVL, fetchSingleTVL, fetchTVL } from "@/lib/services/defillama";
 import { DefiStatsAggregate, Protocol } from "@/lib/types/defi-stats";
 import { loggers } from "@/lib/utils/logger";
 
@@ -42,13 +43,14 @@ export function deriveProtocolSlugFromName(name: string): string {
 /**
  * Transform DeFiLlama protocol to standardized Protocol format
  */
-function transformProtocolToStandard(protocol: DeFiLlamaProtocol): Protocol {
+function transformProtocolToStandard(protocol: DeFiLlamaProtocol, dataSource: "overview" | "list" = "list"): Protocol {
   return {
     id: protocol.slug || deriveProtocolSlugFromName(protocol.name),
     name: protocol.name,
     logo: protocol.logo || "/logo.svg",
     // @ts-ignore - chainTvls exists but not in type definition
-    tvl: protocol.chainTvls?.["Solana"] || 0,
+    tvl: dataSource === "list" ? protocol.chainTvls?.["Solana"] : protocol.currentChainTvls?.["Solana"],
+    tvlChartData: protocol.chainTvls?.["Solana"],
     change1D: protocol.change_1d,
     change7D: protocol.change_7d,
     change1H: protocol.change_1h,
@@ -215,7 +217,7 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
 
   // Filter and transform protocols
   const solanaOnlyProtocols = filterSolanaOnlyProtocols(allProtocols);
-  const standardizedProtocols = solanaOnlyProtocols.map(transformProtocolToStandard);
+  const standardizedProtocols = solanaOnlyProtocols.map((p) => transformProtocolToStandard(p));
 
   // Calculate statistics
   const totalTvl = getCurrentTvl(historicalTVL);
@@ -322,7 +324,7 @@ export async function fetchProtocolsData(): Promise<DefiStatsAggregate> {
  *
  * Called directly from the protocol detail page
  */
-export async function fetchProtocolData(slug: string): Promise<Protocol | null> {
+export async function fetchProtocolData(slug: string): Promise<UnifiedProtocolData | null> {
   try {
     const cached = await getUnifiedProtocol(slug);
 
@@ -335,15 +337,28 @@ export async function fetchProtocolData(slug: string): Promise<Protocol | null> 
 
     loggers.cache.debug(`→ Fetching from DeFiLlama: ${slug}${cached ? " (upgrading list to overview)" : ""}`);
 
-    const singleProtocol = await fetchSingleTVL(slug);
+    const [singleProtocol, historicalTVL] = await Promise.all([
+      fetchSingleTVL(slug),
+      fetchProtocolHistoricalTVL(slug).catch((error) => {
+        // If historical data fetch fails, continue without it
+        loggers.data.debug(`Failed to fetch historical TVL for ${slug}:`, error);
+
+        return [];
+      }),
+    ]);
 
     // Transform to standard protocol format
-    const protocol = transformProtocolToStandard(singleProtocol);
+    const protocol = transformProtocolToStandard(singleProtocol, "overview");
 
     if (!protocol) {
       loggers.data.warn(`Protocol not found: ${slug}`);
 
       return null;
+    }
+
+    // Add historical TVL chart data if available
+    if (historicalTVL && historicalTVL.length > 0) {
+      protocol.tvlChartData = historicalTVL;
     }
 
     // Merge with existing cache (preserves list data for TVL/change)

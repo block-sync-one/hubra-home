@@ -128,6 +128,18 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
     slug: deriveProtocolSlugFromName(name),
   })) as ProtocolOption[];
 
+  // Transform TVL chart data to Chart component format
+  const tvlChartData: Chart["chartData"] = protocol.tvlChartData
+    ? protocol.tvlChartData.map((point) => ({
+        date: new Date(point.date * 1000).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }),
+        value: point.totalLiquidityUSD,
+      }))
+    : [];
+
   const chartData: Chart[] = [
     {
       key: "tvl",
@@ -140,7 +152,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       toolTip2Title: "",
       change: `${protocol.change1D?.toFixed(2) || "0.00"}%`,
       changeType: (protocol.change1D || 0) >= 0 ? "positive" : "negative",
-      chartData: [], // TODO: Add historical chart data
+      chartData: tvlChartData,
     },
   ];
 

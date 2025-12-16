@@ -27,30 +27,23 @@ function getProtocolCacheKey(protocolId: string): string {
 export interface UnifiedProtocolData extends Protocol {
   lastUpdated: number;
   dataSource: "list" | "overview" | "merged";
-  tvlChartData?: Array<{ date: number; totalLiquidityUSD: number }>;
+  currentChainTvls?: {
+    [key: string]: string;
+  };
+  isParentProtocol?: boolean;
 }
 
 /**
  * Transform protocol data to unified format
  */
-export function toUnifiedProtocolData(protocol: Protocol, dataSource: "list" | "overview" = "list"): UnifiedProtocolData {
-  if (dataSource === "list") {
-    return {
-      ...protocol,
-      lastUpdated: Date.now(),
-      dataSource,
-    };
-  }
-
-  const tvlChartData = (protocol as any)?.tvl?.tvl as any[];
-  const tvl = tvlChartData && tvlChartData.length > 0 ? tvlChartData[tvlChartData.length - 1].totalLiquidityUSD : 0;
+export function toUnifiedProtocolData(protocol: any, dataSource: "list" | "overview" = "list"): UnifiedProtocolData {
+  const tvlChartData = dataSource === "list" ? protocol.tvlChartData : protocol?.tvlChartData.tvl;
 
   return {
     ...protocol,
-    tvl,
-    tvlChartData,
     lastUpdated: Date.now(),
     dataSource,
+    tvlChartData,
   };
 }
 
@@ -186,6 +179,8 @@ export function mergeProtocolData(
       change1D: newData.change1D ?? existing.change1D,
       change7D: newData.change7D ?? existing.change7D,
       change1H: newData.change1H ?? existing.change1H,
+      // Preserve tvlChartData from existing if new data doesn't have it
+      tvlChartData: newData.tvlChartData ?? existing.tvlChartData,
       otherProtocols: existing.otherProtocols ?? newData.otherProtocols,
       description: existing.description ?? newData.description,
       url: existing.url ?? newData.url,
@@ -204,10 +199,12 @@ export function mergeProtocolData(
     url: newData.url ?? existing.url,
     twitter: newData.twitter ?? existing.twitter,
     github: newData.github ?? existing.github,
-    tvl: existing.tvl ?? newData.tvl,
+    tvl: existing.tvl ?? newData.currentChainTvls?.["Solana"],
     change1D: existing.change1D ?? newData.change1D,
     change7D: existing.change7D ?? newData.change7D,
     change1H: existing.change1H ?? newData.change1H,
+    // Preserve tvlChartData from new data (overview) if available, otherwise keep existing
+    tvlChartData: newData.tvlChartData ?? existing.tvlChartData,
     dataSource: "merged",
     lastUpdated: Date.now(),
   } as UnifiedProtocolData;

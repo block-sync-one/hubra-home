@@ -189,6 +189,7 @@ export function getTotalCirculating(chainData: StablecoinChainData): number {
  */
 export interface DeFiLlamaProtocol {
   id: string;
+  isParentProtocol?: boolean;
   name: string;
   slug: string;
   logo: string;
@@ -199,7 +200,12 @@ export interface DeFiLlamaProtocol {
   category?: string;
   chains?: string[];
   chain?: string;
-  chainTvls?: string[];
+  chainTvls?: {
+    [key: string]: Array<{ date: number; totalLiquidityUSD: number }>;
+  };
+  currentChainTvls?: {
+    [key: string]: string;
+  };
   description?: string;
   url?: string;
   twitter?: string;
@@ -231,4 +237,19 @@ export async function fetchHistoricalChainTVL(): Promise<HistoricalTVL[]> {
     `${DEFILLAMA_API_URL}/v2/historicalChainTvl/solana`,
     "DeFiLlama Solana Historical TVL API error"
   );
+}
+
+/**
+ * Fetch historical TVL data for a specific protocol
+ *
+ * @param protocolSlug - Protocol slug identifier
+ * @returns Historical TVL data points for the protocol
+ */
+export async function fetchProtocolHistoricalTVL(protocolSlug: string): Promise<Array<{ date: number; totalLiquidityUSD: number }>> {
+  const response = await fetchFromDeFiLlama<Array<{ date: number; totalLiquidityUSD: number }>>(
+    `${DEFILLAMA_API_URL}/v2/historicalProtocolTvl/${protocolSlug}`,
+    `DeFiLlama Protocol Historical TVL API error for ${protocolSlug}`
+  );
+
+  return response;
 }

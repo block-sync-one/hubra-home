@@ -49,6 +49,7 @@ export interface Protocol extends BaseProtocol {
   url?: string;
   twitter?: string;
   github?: string;
+  tvlChartData?: Array<{ date: number; totalLiquidityUSD: number }>;
   otherProtocols?: string[];
 }
 
