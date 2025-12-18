@@ -51,21 +51,30 @@ interface CustomTooltipProps {
 function CustomTooltip({ active, payload, label, chart }: CustomTooltipProps) {
   if (!active || !payload || !payload.length) return null;
 
+  const formatValue = (value: number) => {
+    if (chart.tooltipType === "number-string" || chart.type === "currency") {
+      return formatCurrency(value, true);
+    }
+    if (chart.type === "percentage") {
+      return `${value.toFixed(2)}%`;
+    }
+
+    return value.toLocaleString();
+  };
+
   return (
     <div className="rounded-lg border border-white/10 bg-gray-900 p-3 shadow-xl">
-      <p className="text-xs text-gray-400 mb-1">{label}</p>
-      <p className="text-sm font-semibold text-white">
-        {chart.type === "currency" && "$"}
-        {chart.tooltipType === "number-string" || chart.type === "currency"
-          ? formatCurrency(payload[0].value, true)
-          : chart.type === "percentage"
-            ? `${payload[0].value.toFixed(2)}%`
-            : payload[0].value.toLocaleString()}
-      </p>
+      <p className="text-xs text-gray-400 mb-2">{label}</p>
+      {payload[0] && (
+        <p className="text-sm" style={{ color: payload[0].color || "rgb(156 163 175)" }}>
+          {chart.toolTipTitle || "Fees"}: {chart.type === "currency" && "$"}
+          {formatValue(payload[0].value)}
+        </p>
+      )}
       {payload[1] && chart.toolTip2Title && (
-        <p className="text-xs text-gray-400 mt-1">
-          {chart.toolTip2Title}: $
-          {Number(payload[1].value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <p className="text-sm mt-1" style={{ color: payload[1].color || "rgb(99 102 241)" }}>
+          {chart.toolTip2Title}: {chart.type === "currency" && "$"}
+          {formatValue(payload[1].value)}
         </p>
       )}
     </div>
@@ -127,11 +136,19 @@ function ChartCard({ chart }: { chart: Chart }) {
               />
               <YAxis hide domain={["auto", "auto"]} />
               <Tooltip content={<CustomTooltip chart={chart} />} />
-              <Area dataKey="value" fill={`url(#gradient-${chart.key})`} stroke={colorRgb} strokeWidth={2} type="monotone" />
+              <Area
+                dataKey="value"
+                fill={`url(#gradient-${chart.key})`}
+                name={chart.toolTipTitle || "Fee"}
+                stroke={colorRgb}
+                strokeWidth={2}
+                type="monotone"
+              />
               {chart.chartData[0]?.value2 !== undefined && (
                 <Area
                   dataKey="value2"
                   fill={`url(#gradient-secondary-${chart.key})`}
+                  name={chart.toolTip2Title || "Revenue"}
                   stroke="rgb(99 102 241)"
                   strokeWidth={2}
                   type="monotone"

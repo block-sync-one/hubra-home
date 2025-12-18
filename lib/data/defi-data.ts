@@ -12,9 +12,26 @@ import {
 
 import { getStaleWhileRevalidate } from "@/lib/cache/swr-cache";
 import { CACHE_TTL } from "@/lib/cache";
-import { DeFiLlamaProtocol, fetchHistoricalChainTVL, fetchProtocolHistoricalTVL, fetchSingleTVL, fetchTVL } from "@/lib/services/defillama";
+import {
+  DeFiLlamaProtocol,
+  fetchDailyFees,
+  fetchDailyRevenue,
+  fetchHistoricalChainTVL,
+  fetchProtocolFees,
+  fetchProtocolHistoricalTVL,
+  fetchProtocolRevenue,
+  fetchSingleTVL,
+  fetchTVL,
+  FeeRevenueData,
+} from "@/lib/services/defillama";
 import { DefiStatsAggregate, Protocol } from "@/lib/types/defi-stats";
 import { loggers } from "@/lib/utils/logger";
+
+interface InflowsChartDataPoint {
+  date: string;
+  value: number;
+  value2: number;
+}
 
 const CACHE_KEY_ALL_PROTOCOLS = "defi:protocols:all";
 const TOP_PROTOCOLS_LIMIT = 6;
@@ -119,6 +136,36 @@ function formatChartDate(unixTimestamp: number): string {
 }
 
 /**
+ * Transform fee and revenue data to chart format
+ * Matches dates between fee and revenue arrays for dual-line chart
+ */
+function transformFeeRevenueToChartFormat(fees: Array<[number, number]>, revenue: Array<[number, number]>): InflowsChartDataPoint[] {
+  if (!fees || fees.length === 0) {
+    return [];
+  }
+
+  const revenueMap = new Map<number, number>();
+
+  for (const [date, value] of revenue || []) {
+    revenueMap.set(date, value);
+  }
+
+  const result: InflowsChartDataPoint[] = new Array(fees.length);
+
+  for (let i = 0; i < fees.length; i++) {
+    const [date, feeValue] = fees[i];
+
+    result[i] = {
+      date: formatChartDate(date),
+      value: feeValue,
+      value2: revenueMap.get(date) ?? 0,
+    };
+  }
+
+  return result;
+}
+
+/**
  * Transform historical TVL data to chart format
  */
 function transformHistoricalDataToChartFormat(historicalData: any[]) {
@@ -132,31 +179,6 @@ function transformHistoricalDataToChartFormat(historicalData: any[]) {
   }
 
   return result;
-}
-
-/**
- * Generate mock inflows chart data (fees & revenue)
- * TODO: Replace with real data when available
- */
-function generateInflowsChartData(fees: number, revenue: number) {
-  const days = 30;
-  const data = [];
-
-  for (let i = days; i >= 0; i--) {
-    const date = new Date();
-
-    date.setDate(date.getDate() - i);
-
-    const variation = 0.8 + Math.random() * 0.4;
-
-    data.push({
-      date: date.toISOString().split("T")[0],
-      value: fees * variation,
-      value2: revenue * variation,
-    });
-  }
-
-  return data;
 }
 
 /**
@@ -184,31 +206,46 @@ function buildDefiStatsAggregate(
   hotProtocols: Protocol[],
   totalTvl: number,
   tvlChange: number,
-  chartData: any[]
+  chartData: any[],
+  feesData: FeeRevenueData,
+  revenueData: FeeRevenueData
 ): DefiStatsAggregate {
-  const totalFees = 0; // TODO: Fetch real fees data
-  const totalRevenue = 0; // TODO: Fetch real revenue data
+  const feesChart = feesData?.totalDataChart || [];
+  const revenueChart = revenueData?.totalDataChart || [];
 
   return {
     change1D: tvlChange,
     chartData,
     inflows: {
-      change_1d: tvlChange * 0.5, // Estimated relationship
-      chartData: generateInflowsChartData(totalFees, totalRevenue),
+      change_1d: feesData?.change_1d || 0,
+      chartData: transformFeeRevenueToChartFormat(feesChart, revenueChart),
     },
     solanaProtocols: protocols,
     hotProtocols,
     numberOfProtocols: protocols.length,
     totalTvl,
-    totalRevenue_1d: totalRevenue,
-    totalFees_1d: totalFees,
+    totalRevenue_1d: revenueData?.total24h || 0,
+    totalFees_1d: feesData?.total24h || 0,
   };
 }
 
 async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
   loggers.cache.debug(`→ Fetching from DeFiLlama: All protocols`);
 
-  const [allProtocols, historicalTVL] = await Promise.all([fetchTVL(), fetchHistoricalChainTVL()]);
+  const [feesData, revenueData, allProtocols, historicalTVL] = await Promise.all([
+    fetchDailyFees().catch((error) => {
+      loggers.data.error("Failed to fetch daily fees:", error);
+
+      return null;
+    }),
+    fetchDailyRevenue().catch((error) => {
+      loggers.data.error("Failed to fetch daily revenue:", error);
+
+      return null;
+    }),
+    fetchTVL(),
+    fetchHistoricalChainTVL(),
+  ]);
 
   const { standardized: standardizedProtocols, hotProtocols } = filterAndTransformSolanaProtocols(allProtocols);
 
@@ -216,7 +253,15 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
   const tvlChange = calculateTvlChange(historicalTVL);
   const chartData = transformHistoricalDataToChartFormat(historicalTVL);
 
-  const result = buildDefiStatsAggregate(standardizedProtocols, hotProtocols, totalTvl, tvlChange, chartData);
+  const result = buildDefiStatsAggregate(
+    standardizedProtocols,
+    hotProtocols,
+    totalTvl,
+    tvlChange,
+    chartData,
+    (feesData as FeeRevenueData) || {},
+    (revenueData as FeeRevenueData) || {}
+  );
 
   cacheIndividualProtocolsAsync(standardizedProtocols);
 
@@ -294,13 +339,22 @@ export async function fetchProtocolData(slug: string): Promise<UnifiedProtocolDa
 
     loggers.cache.debug(`→ Fetching from DeFiLlama: ${slug}${cached ? " (upgrading list to overview)" : ""}`);
 
-    const [singleProtocol, historicalTVL] = await Promise.all([
+    const [singleProtocol, historicalTVL, feesData, revenueData] = await Promise.all([
       fetchSingleTVL(slug),
       fetchProtocolHistoricalTVL(slug).catch((error) => {
-        // If historical data fetch fails, continue without it
         loggers.data.debug(`Failed to fetch historical TVL for ${slug}:`, error);
 
         return [];
+      }),
+      fetchProtocolFees(slug).catch((error) => {
+        loggers.data.debug(`Failed to fetch fees for ${slug}:`, error);
+
+        return null;
+      }),
+      fetchProtocolRevenue(slug).catch((error) => {
+        loggers.data.debug(`Failed to fetch revenue for ${slug}:`, error);
+
+        return null;
       }),
     ]);
 
@@ -316,6 +370,17 @@ export async function fetchProtocolData(slug: string): Promise<UnifiedProtocolDa
     // Add historical TVL chart data if available
     if (historicalTVL && historicalTVL.length > 0) {
       protocol.tvlChartData = historicalTVL;
+    }
+
+    // Add fees and revenue data if available
+    if (feesData && revenueData) {
+      const feesChart = feesData.totalDataChart || [];
+      const revenueChart = revenueData.totalDataChart || [];
+
+      protocol.feesRevenueChartData = transformFeeRevenueToChartFormat(feesChart, revenueChart);
+      protocol.totalFees_1d = feesData.total24h || 0;
+      protocol.totalRevenue_1d = revenueData.total24h || 0;
+      protocol.feesChange_1d = feesData.change_1d || 0;
     }
 
     // Merge with existing cache (preserves list data for TVL/change)

@@ -108,7 +108,7 @@ export default async function DeFiPage() {
   const chartData: Chart[] = [
     {
       key: "tvl",
-      title: "TVL",
+      title: "24h TVL",
       value: protocols.totalTvl,
       suffix: "",
       type: "number",
@@ -121,13 +121,13 @@ export default async function DeFiPage() {
     },
     {
       key: "inflows",
-      title: "Inflows",
+      title: "24h Inflows",
       value: protocols.totalFees_1d,
       suffix: "",
       type: "number",
       tooltipType: "number-string",
-      toolTipTitle: "fees",
-      toolTip2Title: "revenue",
+      toolTipTitle: "Fees",
+      toolTip2Title: "Revenue",
       change: `${protocols.inflows.change_1d.toFixed(2)}%`,
       changeType: protocols.inflows.change_1d >= 0 ? "positive" : "negative",
       chartData: protocols.inflows.chartData,

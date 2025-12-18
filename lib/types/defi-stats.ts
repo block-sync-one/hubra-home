@@ -50,6 +50,10 @@ export interface Protocol extends BaseProtocol {
   twitter?: string;
   github?: string;
   tvlChartData?: Array<{ date: number; totalLiquidityUSD: number }>;
+  feesRevenueChartData?: Array<{ date: string; value: number; value2: number }>;
+  totalFees_1d?: number;
+  totalRevenue_1d?: number;
+  feesChange_1d?: number;
   otherProtocols?: string[];
 }
 

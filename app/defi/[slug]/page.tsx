@@ -142,7 +142,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
   const chartData: Chart[] = [
     {
       key: "tvl",
-      title: "TVL",
+      title: "24h TVL",
       value: protocol.tvl || 0,
       suffix: "$",
       type: "number",
@@ -154,6 +154,22 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       chartData: tvlChartData,
     },
   ];
+
+  if (protocol.feesRevenueChartData && protocol.feesRevenueChartData.length > 0) {
+    chartData.push({
+      key: "fees-revenue",
+      title: "24h Fees & Revenue",
+      value: protocol.totalFees_1d || 0,
+      suffix: "$",
+      type: "number",
+      tooltipType: "number-string",
+      toolTipTitle: "Fees",
+      toolTip2Title: "Revenue",
+      change: `${protocol.feesChange_1d?.toFixed(2) || "0.00"}%`,
+      changeType: (protocol.feesChange_1d || 0) >= 0 ? "positive" : "negative",
+      chartData: protocol.feesRevenueChartData,
+    });
+  }
 
   // Define StatItem type to match the one in StatsGrid
   type StatItem = {

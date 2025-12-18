@@ -220,6 +220,12 @@ export interface HistoricalTVL {
   tvl: number;
 }
 
+export interface FeeRevenueData {
+  change_1d?: number;
+  total24h?: number;
+  totalDataChart?: Array<[number, number]>;
+}
+
 /**
  * Fetch all protocols with their TVL data
  *
@@ -227,6 +233,46 @@ export interface HistoricalTVL {
  */
 export async function fetchTVL(): Promise<DeFiLlamaProtocol[]> {
   return fetchFromDeFiLlama<DeFiLlamaProtocol[]>(`${DEFILLAMA_API_URL}/protocols`, "DeFiLlama All Protocols API error");
+}
+
+export async function fetchDailyFees(): Promise<any[]> {
+  return fetchFromDeFiLlama<any[]>(
+    `${DEFILLAMA_API_URL}/overview/fees/solana?excludeTotalDataChart=false&excludeTotalDataChartBreakdown=true&dataType=dailyFees`,
+    "DeFiLlama Daily Fees API error"
+  );
+}
+
+export async function fetchDailyRevenue(): Promise<any[]> {
+  return fetchFromDeFiLlama<any[]>(
+    `${DEFILLAMA_API_URL}/overview/fees/solana?excludeTotalDataChart=false&excludeTotalDataChartBreakdown=true&dataType=dailyRevenue`,
+    "DeFiLlama Daily Revenue API error"
+  );
+}
+
+export interface FeeRevenueData {
+  change_1d?: number;
+  total24h?: number;
+  totalDataChart?: Array<[number, number]>;
+}
+
+export async function fetchProtocolFees(protocolSlug: string): Promise<FeeRevenueData> {
+  return fetchFromDeFiLlama<FeeRevenueData>(
+    `${DEFILLAMA_API_URL}/summary/fees/${protocolSlug}?excludeTotalDataChart=false&excludeTotalDataChartBreakdown=true&dataType=dailyFees`,
+    `DeFiLlama Protocol Fees API error for ${protocolSlug}`
+  );
+}
+
+export async function fetchProtocolRevenue(protocolSlug: string): Promise<FeeRevenueData> {
+  return fetchFromDeFiLlama<FeeRevenueData>(
+    `${DEFILLAMA_API_URL}/summary/fees/${protocolSlug}?excludeTotalDataChart=false&excludeTotalDataChartBreakdown=true&dataType=dailyRevenue`,
+    `DeFiLlama Protocol Revenue API error for ${protocolSlug}`
+  );
+}
+
+export interface FeeRevenueData {
+  change_1d?: number;
+  total24h?: number;
+  totalDataChart?: Array<[number, number]>;
 }
 
 export async function fetchSingleTVL(protocol: string): Promise<DeFiLlamaProtocol> {
@@ -252,4 +298,18 @@ export async function fetchProtocolHistoricalTVL(protocolSlug: string): Promise<
   );
 
   return response;
+}
+
+export async function fetchProtocolDailyFees(protocolSlug: string): Promise<FeeRevenueData> {
+  return fetchFromDeFiLlama<FeeRevenueData>(
+    `${DEFILLAMA_API_URL}/summary/fees/${protocolSlug}?excludeTotalDataChart=false&excludeTotalDataChartBreakdown=true&dataType=dailyFees`,
+    `DeFiLlama Protocol Daily Fees API error for ${protocolSlug}`
+  );
+}
+
+export async function fetchProtocolDailyRevenue(protocolSlug: string): Promise<FeeRevenueData> {
+  return fetchFromDeFiLlama<FeeRevenueData>(
+    `${DEFILLAMA_API_URL}/summary/fees/${protocolSlug}?excludeTotalDataChart=false&excludeTotalDataChartBreakdown=true&dataType=dailyRevenue`,
+    `DeFiLlama Protocol Daily Revenue API error for ${protocolSlug}`
+  );
 }
