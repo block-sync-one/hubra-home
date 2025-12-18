@@ -16,28 +16,54 @@ import { DeFiLlamaProtocol, fetchHistoricalChainTVL, fetchProtocolHistoricalTVL,
 import { DefiStatsAggregate, Protocol } from "@/lib/types/defi-stats";
 import { loggers } from "@/lib/utils/logger";
 
-// ============================================================================
-// CONSTANTS
-// ============================================================================
-
 const CACHE_KEY_ALL_PROTOCOLS = "defi:protocols:all";
 const TOP_PROTOCOLS_LIMIT = 6;
 
-// ============================================================================
-// PROTOCOL FILTERING & TRANSFORMATION
-// ============================================================================
-
-/**
- * Filter protocols that are exclusively on Solana (not multi-chain or CEX)
- */
-function filterSolanaOnlyProtocols(protocols: DeFiLlamaProtocol[]): DeFiLlamaProtocol[] {
-  return protocols.filter(
-    (protocol) => protocol?.chains?.length === 1 && protocol.chains.includes("Solana") && protocol.category !== "CEX"
-  );
-}
-
 export function deriveProtocolSlugFromName(name: string): string {
   return name.toLowerCase().replace(/\s+/g, "-");
+}
+
+function filterAndTransformSolanaProtocols(protocols: DeFiLlamaProtocol[]): { standardized: Protocol[]; hotProtocols: Protocol[] } {
+  const standardized: Protocol[] = [];
+  const hotProtocols: Protocol[] = [];
+
+  for (const protocol of protocols) {
+    if (protocol?.chains?.length !== 1 || !protocol.chains.includes("Solana") || protocol.category === "CEX") {
+      continue;
+    }
+
+    const transformed: Protocol = {
+      id: protocol.slug || deriveProtocolSlugFromName(protocol.name),
+      name: protocol.name,
+      logo: protocol.logo || "/logo.svg",
+      // @ts-ignore
+      tvl: protocol.chainTvls?.["Solana"] ?? 0,
+      change1D: protocol.change_1d,
+      change7D: protocol.change_7d,
+      change1H: protocol.change_1h,
+      category: protocol.category,
+      chains: protocol.chains,
+      slug: protocol.slug,
+      description: protocol.description,
+      url: protocol.url,
+      twitter: protocol.twitter,
+      github: protocol.github,
+      otherProtocols: protocol.otherProtocols,
+    };
+
+    standardized.push(transformed);
+
+    if (transformed.change1D && transformed.change1D > 0) {
+      hotProtocols.push(transformed);
+    }
+  }
+
+  hotProtocols.sort((a, b) => (b.change1D || 0) - (a.change1D || 0));
+
+  return {
+    standardized,
+    hotProtocols: hotProtocols.slice(0, TOP_PROTOCOLS_LIMIT),
+  };
 }
 
 /**
@@ -65,22 +91,15 @@ function transformProtocolToStandard(protocol: DeFiLlamaProtocol, dataSource: "o
   };
 }
 
-// ============================================================================
-// DATA CALCULATIONS
-// ============================================================================
-
 /**
  * Calculate 24-hour TVL change percentage from historical data
  */
 function calculateTvlChange(historicalData: any[]): number {
-  const dataLength = historicalData.length;
-
-  if (dataLength < 2) {
+  if (historicalData.length < 2) {
     return 0;
   }
-
-  const currentTvl = historicalData[dataLength - 1].tvl;
-  const previousTvl = historicalData[dataLength - 2].tvl;
+  const currentTvl = historicalData[historicalData.length - 1].tvl;
+  const previousTvl = historicalData[historicalData.length - 2].tvl;
 
   return ((currentTvl - previousTvl) / previousTvl) * 100;
 }
@@ -92,39 +111,27 @@ function getCurrentTvl(historicalData: any[]): number {
   return historicalData[historicalData.length - 1]?.tvl ?? 0;
 }
 
-/**
- * Filter and sort protocols by 24h growth to get top performers
- */
-function getTopProtocolsByGrowth(protocols: Protocol[], limit: number = TOP_PROTOCOLS_LIMIT): Protocol[] {
-  return [...protocols]
-    .filter((p) => p.change1D && p.change1D > 0)
-    .sort((a, b) => (b.change1D || 0) - (a.change1D || 0))
-    .slice(0, limit);
-}
-
-// ============================================================================
-// CHART DATA GENERATION
-// ============================================================================
-
-/**
- * Format Unix timestamp to readable date string
- */
 function formatChartDate(unixTimestamp: number): string {
-  return new Date(unixTimestamp * 1000).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const date = new Date(unixTimestamp * 1000);
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 }
 
 /**
  * Transform historical TVL data to chart format
  */
 function transformHistoricalDataToChartFormat(historicalData: any[]) {
-  return historicalData.map((item) => ({
-    date: formatChartDate(item.date),
-    value: item.tvl,
-  }));
+  const result = new Array(historicalData.length);
+
+  for (let i = 0; i < historicalData.length; i++) {
+    result[i] = {
+      date: formatChartDate(historicalData[i].date),
+      value: historicalData[i].tvl,
+    };
+  }
+
+  return result;
 }
 
 /**
@@ -151,10 +158,6 @@ function generateInflowsChartData(fees: number, revenue: number) {
 
   return data;
 }
-
-// ============================================================================
-// HELPER DATA STRUCTURES
-// ============================================================================
 
 /**
  * Build empty DeFi statistics (fallback for errors)
@@ -202,35 +205,19 @@ function buildDefiStatsAggregate(
   };
 }
 
-// ============================================================================
-// CACHE OPERATIONS
-// ============================================================================
-
-/**
- * Get cached DeFi statistics
- */
 async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
   loggers.cache.debug(`→ Fetching from DeFiLlama: All protocols`);
 
-  // Fetch data from DeFiLlama
   const [allProtocols, historicalTVL] = await Promise.all([fetchTVL(), fetchHistoricalChainTVL()]);
 
-  // Filter and transform protocols
-  const solanaOnlyProtocols = filterSolanaOnlyProtocols(allProtocols);
-  const standardizedProtocols = solanaOnlyProtocols.map((p) => transformProtocolToStandard(p));
+  const { standardized: standardizedProtocols, hotProtocols } = filterAndTransformSolanaProtocols(allProtocols);
 
-  // Calculate statistics
   const totalTvl = getCurrentTvl(historicalTVL);
   const tvlChange = calculateTvlChange(historicalTVL);
-  const hotProtocols = getTopProtocolsByGrowth(standardizedProtocols);
-
-  // Generate chart data
   const chartData = transformHistoricalDataToChartFormat(historicalTVL);
 
-  // Build result - use individual protocols instead of merged aggregates
   const result = buildDefiStatsAggregate(standardizedProtocols, hotProtocols, totalTvl, tvlChange, chartData);
 
-  // Batch cache individual protocols for detail pages (non-blocking)
   cacheIndividualProtocolsAsync(standardizedProtocols);
 
   return result;
@@ -244,20 +231,13 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
 function cacheIndividualProtocolsAsync(protocols: Protocol[]): void {
   (async () => {
     try {
-      const startTime = performance.now();
-
-      // Get existing cache entries for merging
       const protocolIds = protocols.map((p) => p.slug || p.id);
       const existingCache = await getManyUnifiedProtocols(protocolIds);
 
-      // Merge list data with existing cache (preserves overview data)
       const batchData = protocols.map((protocol) => {
         const protocolId = protocol.slug || protocol.id;
         const existing = existingCache.get(protocolId);
-
         const unifiedData = toUnifiedProtocolData(protocol, "list");
-
-        // Merge with existing cache if present
         const merged = existing ? mergeProtocolData(existing, unifiedData, "list") : unifiedData;
 
         return {
@@ -267,35 +247,12 @@ function cacheIndividualProtocolsAsync(protocols: Protocol[]): void {
       });
 
       await setManyUnifiedProtocols(batchData, CACHE_TTL.GLOBAL_STATS);
-
-      const duration = performance.now() - startTime;
-
-      loggers.cache.debug(`✓ Cached ${protocols.length} individual protocols in ${duration.toFixed(0)}ms (batched)`);
     } catch (error) {
       loggers.cache.error("Failed to batch cache individual protocols:", error);
     }
   })();
 }
 
-// ============================================================================
-// MAIN DATA FETCHING FUNCTIONS
-// ============================================================================
-
-/**
- * Fetch all Solana DeFi protocols with aggregated statistics
- *
- * STRATEGY:
- * Uses centralized SWR (Stale-While-Revalidate) pattern:
- * 1. Check Redis cache first
- * 2. If cached and fresh → return immediately
- * 3. If cached but stale → return stale data, refresh in background
- * 4. If no cache → fetch from DeFiLlama and cache
- * 5. Filter Solana-only protocols
- * 6. Calculate aggregated statistics
- * 7. Store in cache for 5 minutes
- *
- * Called directly from the DeFi page (Server Component)
- */
 export async function fetchProtocolsData(): Promise<DefiStatsAggregate> {
   try {
     const result = await getStaleWhileRevalidate<DefiStatsAggregate>(

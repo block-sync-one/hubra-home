@@ -121,7 +121,6 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
     notFound();
   }
 
-  // Resolve otherProtocols names to slugs using cached protocol data
   const currentProtocolSlug = protocol.slug || protocol.id;
   const relatedProtocols = protocol.otherProtocols?.map((name) => ({
     name,
