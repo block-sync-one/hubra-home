@@ -48,14 +48,13 @@ export const siteConfig = {
       show: true,
     },
     {
-      label: "Blog",
-      href: "/blog",
-      show: true,
-    },
-
-    {
       label: "DeFi",
       href: "/defi",
+      show: true,
+    },
+    {
+      label: "Blog",
+      href: "/blog",
       show: true,
     },
     {
@@ -102,14 +101,14 @@ export const siteConfig = {
       show: true,
     },
     {
-      icon: "mdi:blog",
-      label: "Blog",
-      href: "/blog",
+      label: "DeFi",
+      href: "/defi",
       show: true,
     },
     {
-      label: "DeFi",
-      href: "/defi",
+      icon: "mdi:blog",
+      label: "Blog",
+      href: "/blog",
       show: true,
     },
     {

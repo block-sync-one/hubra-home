@@ -4,6 +4,7 @@ import { isNotNil } from "es-toolkit";
 
 import { loggers } from "@/lib/utils/logger";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache/redis";
+import { apiQueue } from "@/lib/utils/request-queue";
 
 export interface CryptoPanicInstrument {
   code: string;
@@ -242,13 +243,7 @@ async function enrichWithFallbackNews(
   return mergeNewsWithoutDuplicates(originalNews, solNews);
 }
 
-/**
- * Fetch news from CryptoPanic API with Redis caching
- * Falls back to SOL news if the requested entity has no news
- * @param entity - Entity symbol (e.g., "SOL", "BTC", "sol,eth")
- * @returns Array of news posts or empty array on error
- */
-export async function fetchCryptoPanicNews(entity: string): Promise<CryptoPanicPost[]> {
+async function fetchCryptoPanicNewsInternal(entity: string): Promise<CryptoPanicPost[]> {
   const apiKey = process.env.CRYPTOPANIC_API_KEY;
 
   if (!apiKey) {
@@ -260,13 +255,11 @@ export async function fetchCryptoPanicNews(entity: string): Promise<CryptoPanicP
   const normalizedCurrency = entity.toLowerCase();
   const cacheKey = cacheKeys.cryptopanicNews(normalizedCurrency);
 
-  // Check cache first
   const cachedNews = await redis.get<CryptoPanicPost[]>(cacheKey);
 
   if (isNotNil(cachedNews)) {
     loggers.cache.debug(`HIT: CryptoPanic news cache for ${normalizedCurrency}`);
 
-    // If cached result is insufficient and entity is not SOL, try SOL as fallback
     if (shouldUseFallback(cachedNews.length, normalizedCurrency)) {
       return await enrichWithFallbackNews(apiKey, normalizedCurrency, cachedNews);
     }
@@ -278,15 +271,20 @@ export async function fetchCryptoPanicNews(entity: string): Promise<CryptoPanicP
 
   const newsPosts = await fetchNewsFromApi(normalizedCurrency, apiKey);
 
-  // Always cache the result, even if below threshold
   await redis.set(cacheKey, newsPosts, CACHE_TTL.CRYPTOPANIC_NEWS).catch((err) => {
     loggers.cache.error(`Failed to cache CryptoPanic news for ${normalizedCurrency}:`, err);
   });
 
-  // If insufficient news found and entity is not SOL, try to enrich with SOL news as fallback
   if (shouldUseFallback(newsPosts.length, normalizedCurrency)) {
     return await enrichWithFallbackNews(apiKey, normalizedCurrency, newsPosts);
   }
 
   return newsPosts;
+}
+
+export async function fetchCryptoPanicNews(entity: string): Promise<CryptoPanicPost[]> {
+  const normalizedCurrency = entity.toLowerCase();
+  const dedupeKey = `cryptopanic:news:${normalizedCurrency}`;
+
+  return await apiQueue.dedupe(dedupeKey, () => fetchCryptoPanicNewsInternal(entity));
 }

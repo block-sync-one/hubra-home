@@ -68,7 +68,7 @@ export async function getUnifiedProtocol(protocolId: string): Promise<UnifiedPro
 export async function setUnifiedProtocol(
   protocolId: string,
   data: UnifiedProtocolData,
-  ttl: number = CACHE_TTL.GLOBAL_STATS
+  ttl: number = CACHE_TTL.PROTOCOL
 ): Promise<boolean> {
   try {
     const cacheKey = getProtocolCacheKey(protocolId);
@@ -128,7 +128,7 @@ export async function getManyUnifiedProtocols(protocolIds: string[]): Promise<Ma
  */
 export async function setManyUnifiedProtocols(
   protocols: Array<{ id: string; data: UnifiedProtocolData }>,
-  ttl: number = CACHE_TTL.GLOBAL_STATS
+  ttl: number = CACHE_TTL.PROTOCOL
 ): Promise<boolean> {
   if (protocols.length === 0) return true;
 

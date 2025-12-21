@@ -292,7 +292,7 @@ function cacheIndividualProtocolsAsync(protocols: Protocol[]): void {
         };
       });
 
-      await setManyUnifiedProtocols(batchData, CACHE_TTL.GLOBAL_STATS);
+      await setManyUnifiedProtocols(batchData, CACHE_TTL.PROTOCOL);
     } catch (error) {
       loggers.cache.error("Failed to batch cache individual protocols:", error);
     }
