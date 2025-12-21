@@ -4,3 +4,4 @@ export type { MobileListItem } from "./mobile-list-layout";
 export { TableToolbar, MemoizedTableToolbar } from "./table-toolbar";
 export type { ToolbarTab } from "./table-toolbar";
 export { TablePagination, MemoizedTablePagination } from "./table-pagination";
+export { HorizontalSwiper } from "./horizontal-swiper";

@@ -11,6 +11,7 @@ export const CACHE_TTL = {
   SEARCH: 300, // 5 minutes
   STABLECOIN_DATA: 300, // 15min
   EXCHANGE_RATES: 3600, // 1 hour - exchange rates change slowly
+  CRYPTOPANIC_NEWS: 10800, // 3 hours
 } as const;
 
 class RedisClient {
@@ -305,4 +306,5 @@ export const cacheKeys = {
   stablecoinChains: () => "global:stablecoin",
   globalSolanaTVL: () => "global:totalTVL",
   exchangeRates: () => "global:exchange-rates",
+  cryptopanicNews: (key: string) => `cryptopanic:news:${key.toUpperCase()}`,
 } as const;

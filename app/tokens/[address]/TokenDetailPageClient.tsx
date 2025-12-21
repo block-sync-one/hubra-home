@@ -20,6 +20,7 @@ const TokenDescription = dynamic(() =>
 const TokenPriceChart = dynamic(() =>
   import("@/components/token-detail/TokenPriceChart").then((mod) => ({ default: mod.TokenPriceChart }))
 );
+const CryptoPanicNews = dynamic(() => import("@/components/news/CryptoPanicNews").then((mod) => ({ default: mod.CryptoPanicNews })));
 
 type TokenOverviewData = {
   address: string;
@@ -218,6 +219,12 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
 
           <TokenDescription description={formattedData.description} twitter={formattedData.twitter} website={formattedData.website} />
         </div>
+      </div>
+
+      {/* CryptoPanic News Section */}
+      <div className="mt-12">
+        <h3 className="text-lg font-semibold mb-4 text-white">Latest News</h3>
+        <CryptoPanicNews tokenSymbol={formattedData.symbol} />
       </div>
     </div>
   );
