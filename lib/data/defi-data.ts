@@ -91,6 +91,7 @@ function transformProtocolToStandard(protocol: DeFiLlamaProtocol, dataSource: "o
     id: protocol.slug || deriveProtocolSlugFromName(protocol.name),
     name: protocol.name,
     logo: protocol.logo || "/logo.svg",
+    symbol: protocol.symbol || "",
     // @ts-ignore - chainTvls exists but not in type definition
     tvl: dataSource === "list" ? protocol.chainTvls?.["Solana"] : protocol.currentChainTvls?.["Solana"],
     tvlChartData: protocol.chainTvls?.["Solana"],

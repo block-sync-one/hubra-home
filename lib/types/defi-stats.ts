@@ -35,6 +35,7 @@ export interface BaseProtocol {
   id: string;
   name: string;
   logo: string;
+  symbol?: string;
   tvl: number;
   change1D?: number;
   change7D?: number;

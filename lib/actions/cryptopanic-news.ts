@@ -8,5 +8,5 @@ import { fetchCryptoPanicNews } from "@/lib/services/cryptopanic";
  * @param key - Token symbol (e.g., "SOL", "BTC")
  */
 export async function getCryptoPanicNews(key: string) {
-  return await fetchCryptoPanicNews(key);
+  return await fetchCryptoPanicNews(key.toLowerCase());
 }

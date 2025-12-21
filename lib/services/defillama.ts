@@ -194,6 +194,7 @@ export interface DeFiLlamaProtocol {
   slug: string;
   logo: string;
   tvl: number;
+  symbol?: string;
   change_1d?: number;
   change_7d?: number;
   change_1h?: number;

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Image } from "@heroui/image";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
+import dynamic from "next/dynamic";
 
 import { StatsGrid } from "../components/stats-grid";
 import { ProtocolOption } from "../protocol-options";
@@ -16,6 +17,8 @@ import { siteConfig } from "@/config/site";
 import { getBreadcrumbJsonLdString } from "@/lib/utils/structured-data";
 import ChartPnl, { Chart } from "@/components/chart";
 import { formatCurrency } from "@/lib/utils/helper";
+
+const CryptoPanicNews = dynamic(() => import("@/components/news/CryptoPanicNews").then((mod) => ({ default: mod.CryptoPanicNews })));
 
 type PageParams = {
   slug: string;
@@ -210,7 +213,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       socialLinks.push({
         name: "Twitter",
         value: twitterHandle,
-        icon: "mdi:twitter",
+        icon: "simple-icons:x",
         url: protocol.twitter.startsWith("http") ? protocol.twitter : `https://twitter.com/${twitterHandle}`,
         isExternal: true,
       });
@@ -228,7 +231,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       socialLinks.push({
         name: "Website",
         value: hostname,
-        icon: "solar:link-circle-bold",
+        icon: "lucide:globe",
         url: urlObj.href,
         isExternal: true,
       });
@@ -237,7 +240,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       socialLinks.push({
         name: "Website",
         value: protocol.url.replace("https://", "").replace("http://", "").replace("www.", ""),
-        icon: "solar:link-circle-bold",
+        icon: "lucide:globe",
         url: protocol.url.startsWith("http") ? protocol.url : `https://${protocol.url}`,
         isExternal: true,
       });
@@ -405,6 +408,12 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
         {/* Protocol Statistics */}
         <div className="mb-8">
           <StatsGrid stats={statsData} title="Protocol Metrics" />
+        </div>
+
+        {/* CryptoPanic News Section */}
+        <div className="mt-12">
+          <h3 className="text-lg font-semibold mb-4 text-white">Latest News</h3>
+          <CryptoPanicNews newsId={`${protocol?.symbol},sol`} />
         </div>
       </div>
     </main>

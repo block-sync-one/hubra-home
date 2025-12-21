@@ -12,11 +12,11 @@ import { NewsEmptyState } from "./NewsEmptyState";
 import { getCryptoPanicNews } from "@/lib/actions/cryptopanic-news";
 
 interface CryptoPanicNewsProps {
-  tokenSymbol: string;
+  newsId: string;
   maxItems?: number;
 }
 
-export function CryptoPanicNews({ tokenSymbol, maxItems = 15 }: CryptoPanicNewsProps) {
+export function CryptoPanicNews({ newsId, maxItems = 15 }: CryptoPanicNewsProps) {
   const [news, setNews] = useState<CryptoPanicPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +24,7 @@ export function CryptoPanicNews({ tokenSymbol, maxItems = 15 }: CryptoPanicNewsP
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!tokenSymbol) {
+    if (!newsId) {
       setLoading(false);
 
       return;
@@ -35,7 +35,7 @@ export function CryptoPanicNews({ tokenSymbol, maxItems = 15 }: CryptoPanicNewsP
         setLoading(true);
         setError(null);
 
-        const result = await getCryptoPanicNews(tokenSymbol);
+        const result = await getCryptoPanicNews(newsId);
 
         if (result && result.length > 0) {
           setNews(result);
@@ -50,7 +50,7 @@ export function CryptoPanicNews({ tokenSymbol, maxItems = 15 }: CryptoPanicNewsP
     }
 
     fetchNews();
-  }, [tokenSymbol]);
+  }, [newsId]);
 
   if (loading) {
     return <NewsMarqueeSkeleton />;

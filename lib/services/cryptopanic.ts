@@ -1,5 +1,7 @@
 "use server";
 
+import { isNotNil } from "es-toolkit";
+
 import { loggers } from "@/lib/utils/logger";
 import { redis, cacheKeys, CACHE_TTL } from "@/lib/cache/redis";
 
@@ -67,13 +69,186 @@ export interface CryptoPanicResponse {
   previous?: string;
 }
 
+const DEFAULT_VOTES: CryptoPanicVotes = {
+  negative: 0,
+  positive: 0,
+  important: 0,
+  liked: 0,
+  disliked: 0,
+  lol: 0,
+  toxic: 0,
+  saved: 0,
+  comments: 0,
+};
+
+const DEFAULT_CONTENT: CryptoPanicContent = {
+  original: null,
+  clean: null,
+};
+
+const CRYPTOPANIC_API_BASE = "https://cryptopanic.com/api/developer/v2/posts/";
+const FALLBACK_CURRENCY = "sol";
+const MIN_NEWS_COUNT = 4;
+
 /**
- * Fetch news from CryptoPanic API with 1-hour Redis caching
- * Only fetches from API if cache doesn't exist
- * @param key - Token symbol (e.g., "SOL", "BTC")
+ * Builds the CryptoPanic API URL for a given entity
+ */
+function buildApiUrl(entity: string, apiKey: string): URL {
+  const url = new URL(CRYPTOPANIC_API_BASE);
+
+  url.searchParams.set("auth_token", apiKey);
+  url.searchParams.set("currencies", entity);
+  url.searchParams.set("public", "true");
+
+  return url;
+}
+
+/**
+ * Validates if a post has the minimum required fields
+ */
+function isValidPost(post: unknown): post is CryptoPanicPost {
+  return (
+    typeof post === "object" &&
+    post !== null &&
+    "id" in post &&
+    "title" in post &&
+    typeof (post as Record<string, unknown>).id === "number" &&
+    typeof (post as Record<string, unknown>).title === "string"
+  );
+}
+
+/**
+ * Normalizes a raw post from the API to ensure all fields have defaults
+ */
+function normalizePost(post: CryptoPanicPost): CryptoPanicPost {
+  return {
+    ...post,
+    source: post.source || undefined,
+    original_url: post.original_url || post.url || "",
+    description: post.description || "",
+    instruments: post.instruments || [],
+    votes: post.votes || DEFAULT_VOTES,
+    content: post.content || DEFAULT_CONTENT,
+  };
+}
+
+/**
+ * Fetches and processes news from CryptoPanic API for a given entity
+ */
+async function fetchNewsFromApi(entity: string, apiKey: string): Promise<CryptoPanicPost[]> {
+  const apiUrl = buildApiUrl(entity, apiKey);
+
+  try {
+    const response = await fetch(apiUrl.toString(), {
+      headers: {
+        "User-Agent": "HubraBot/1.0",
+        "Accept": "application/json",
+      },
+      next: { revalidate: 0 },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      loggers.cache.error(`CryptoPanic API error ${response.status}: ${errorText.substring(0, 200)}`);
+
+      if (response.status === 401 || response.status === 403) {
+        loggers.cache.error("CryptoPanic API authentication failed. Check CRYPTOPANIC_API_KEY.");
+      }
+
+      return [];
+    }
+
+    let apiResponse: CryptoPanicResponse;
+
+    try {
+      apiResponse = await response.json();
+    } catch (parseError) {
+      loggers.cache.error("Failed to parse CryptoPanic API response:", parseError);
+
+      return [];
+    }
+
+    if (!apiResponse || !Array.isArray(apiResponse.results)) {
+      loggers.cache.error("CryptoPanic API returned invalid response structure", { apiResponse });
+
+      return [];
+    }
+
+    loggers.cache.debug(`CryptoPanic API returned ${apiResponse.results.length} total results for ${entity}`);
+
+    const normalizedPosts = apiResponse.results.filter(isValidPost).map(normalizePost);
+
+    loggers.cache.debug(
+      `Fetched ${normalizedPosts.length} valid news items from CryptoPanic for ${entity} (filtered from ${apiResponse.results.length} total)`
+    );
+
+    return normalizedPosts;
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    loggers.cache.error(`CryptoPanic fetch error for ${entity}:`, errorMessage);
+
+    return [];
+  }
+}
+
+/**
+ * Determines if fallback news should be used based on news count and entity
+ */
+function shouldUseFallback(newsCount: number, entity: string): boolean {
+  return newsCount <= MIN_NEWS_COUNT && entity !== FALLBACK_CURRENCY;
+}
+
+/**
+ * Merges news arrays without duplicates based on post ID
+ */
+function mergeNewsWithoutDuplicates(original: CryptoPanicPost[], fallback: CryptoPanicPost[]): CryptoPanicPost[] {
+  const originalIds = new Set(original.map((p) => p.id));
+  const uniqueFallback = fallback.filter((p) => !originalIds.has(p.id));
+
+  return [...original, ...uniqueFallback];
+}
+
+/**
+ * Enriches news with fallback SOL news when the requested entity has insufficient news
+ */
+async function enrichWithFallbackNews(
+  apiKey: string,
+  requestedCurrency: string,
+  originalNews: CryptoPanicPost[]
+): Promise<CryptoPanicPost[]> {
+  loggers.cache.debug(
+    `Insufficient news for ${requestedCurrency} (${originalNews.length} items), trying ${FALLBACK_CURRENCY.toUpperCase()} as fallback`
+  );
+
+  const solCacheKey = cacheKeys.cryptopanicNews(FALLBACK_CURRENCY);
+  const cachedSolNews = await redis.get<CryptoPanicPost[]>(solCacheKey);
+
+  if (cachedSolNews && cachedSolNews.length > 0) {
+    loggers.cache.debug(`Using cached ${FALLBACK_CURRENCY.toUpperCase()} news as fallback for ${requestedCurrency}`);
+
+    return mergeNewsWithoutDuplicates(originalNews, cachedSolNews);
+  }
+
+  loggers.cache.debug(`Fetching fresh ${FALLBACK_CURRENCY.toUpperCase()} news as fallback for ${requestedCurrency}`);
+  const solNews = await fetchNewsFromApi(FALLBACK_CURRENCY, apiKey);
+
+  if (solNews.length > 0) {
+    await redis.set(solCacheKey, solNews, CACHE_TTL.CRYPTOPANIC_NEWS).catch(() => {});
+    loggers.cache.debug(`Returning ${solNews.length} ${FALLBACK_CURRENCY.toUpperCase()} news items as fallback for ${requestedCurrency}`);
+  }
+
+  return mergeNewsWithoutDuplicates(originalNews, solNews);
+}
+
+/**
+ * Fetch news from CryptoPanic API with Redis caching
+ * Falls back to SOL news if the requested entity has no news
+ * @param entity - Entity symbol (e.g., "SOL", "BTC", "sol,eth")
  * @returns Array of news posts or empty array on error
  */
-export async function fetchCryptoPanicNews(key: string): Promise<CryptoPanicPost[]> {
+export async function fetchCryptoPanicNews(entity: string): Promise<CryptoPanicPost[]> {
   const apiKey = process.env.CRYPTOPANIC_API_KEY;
 
   if (!apiKey) {
@@ -82,116 +257,36 @@ export async function fetchCryptoPanicNews(key: string): Promise<CryptoPanicPost
     return [];
   }
 
-  const cacheKey = cacheKeys.cryptopanicNews(key);
+  const normalizedCurrency = entity.toLowerCase();
+  const cacheKey = cacheKeys.cryptopanicNews(normalizedCurrency);
 
   // Check cache first
-  const cached = await redis.get<CryptoPanicPost[]>(cacheKey);
+  const cachedNews = await redis.get<CryptoPanicPost[]>(cacheKey);
 
-  if (cached) {
-    loggers.cache.debug(`HIT: CryptoPanic news cache for ${key}`);
+  if (isNotNil(cachedNews)) {
+    loggers.cache.debug(`HIT: CryptoPanic news cache for ${normalizedCurrency}`);
 
-    return cached;
+    // If cached result is insufficient and entity is not SOL, try SOL as fallback
+    if (shouldUseFallback(cachedNews.length, normalizedCurrency)) {
+      return await enrichWithFallbackNews(apiKey, normalizedCurrency, cachedNews);
+    }
+
+    return cachedNews;
   }
 
-  loggers.cache.debug(`MISS: Fetching CryptoPanic news for ${key}`);
+  loggers.cache.debug(`MISS: Fetching CryptoPanic news for ${normalizedCurrency}`);
 
-  try {
-    const url = new URL(`https://cryptopanic.com/api/developer/v2/posts/?auth_token=${apiKey}&currencies=${key.toUpperCase()}&public=true`);
+  const newsPosts = await fetchNewsFromApi(normalizedCurrency, apiKey);
 
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent": "HubraBot/1.0",
-        "Accept": "application/json",
-      },
-      next: { revalidate: 0 }, // No Next.js cache, using Redis instead
-    });
+  // Always cache the result, even if below threshold
+  await redis.set(cacheKey, newsPosts, CACHE_TTL.CRYPTOPANIC_NEWS).catch((err) => {
+    loggers.cache.error(`Failed to cache CryptoPanic news for ${normalizedCurrency}:`, err);
+  });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-
-      loggers.cache.error(`CryptoPanic API error ${response.status}: ${errorText.substring(0, 200)}`);
-
-      // Check if it's an authentication error
-      if (response.status === 401 || response.status === 403) {
-        loggers.cache.error("CryptoPanic API authentication failed. Check CRYPTOPANIC_API_KEY.");
-      }
-
-      return [];
-    }
-
-    let data: CryptoPanicResponse;
-
-    try {
-      data = await response.json();
-    } catch (parseError) {
-      loggers.cache.error("Failed to parse CryptoPanic API response:", parseError);
-
-      return [];
-    }
-
-    if (!data || !Array.isArray(data.results)) {
-      loggers.cache.error("CryptoPanic API returned invalid response structure", { data });
-
-      return [];
-    }
-
-    loggers.cache.debug(`CryptoPanic API returned ${data.results.length} total results for ${key}`);
-
-    // Filter and validate posts
-    const validPosts = data.results
-      .filter((post) => {
-        if (!post) {
-          loggers.cache.debug("Filtered out null/undefined post");
-
-          return false;
-        }
-        if (!post.id) {
-          loggers.cache.debug("Filtered out post without id:", post);
-
-          return false;
-        }
-        if (!post.title) {
-          loggers.cache.debug("Filtered out post without title:", { id: post.id });
-
-          return false;
-        }
-
-        return true;
-      })
-      .map((post) => ({
-        ...post,
-        // Ensure required fields have defaults
-        source: post.source || undefined,
-        original_url: post?.original_url || post.url || "",
-        description: post.description || "",
-        instruments: post.instruments || [],
-        votes: post.votes || {
-          negative: 0,
-          positive: 0,
-          important: 0,
-          liked: 0,
-          disliked: 0,
-          lol: 0,
-          toxic: 0,
-          saved: 0,
-          comments: 0,
-        },
-        content: post.content || { original: null, clean: null },
-      }));
-
-    loggers.cache.debug(
-      `Fetched ${validPosts.length} valid news items from CryptoPanic for ${key} (filtered from ${data.results.length} total)`
-    );
-
-    // Cache the result for 1 hour
-    await redis.set(cacheKey, validPosts, CACHE_TTL.CRYPTOPANIC_NEWS).catch((err) => {
-      loggers.cache.error(`Failed to cache CryptoPanic news for ${key}:`, err);
-    });
-
-    return validPosts;
-  } catch (error: any) {
-    loggers.cache.error("CryptoPanic fetch error:", error);
-
-    return [];
+  // If insufficient news found and entity is not SOL, try to enrich with SOL news as fallback
+  if (shouldUseFallback(newsPosts.length, normalizedCurrency)) {
+    return await enrichWithFallbackNews(apiKey, normalizedCurrency, newsPosts);
   }
+
+  return newsPosts;
 }

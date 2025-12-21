@@ -9,6 +9,18 @@ interface NewsModalProps {
   onClose: () => void;
 }
 
+function getKindTagStyles(kind: string): string {
+  const styles: Record<string, string> = {
+    news: "bg-blue-500/20 text-blue-400",
+    media: "bg-purple-500/20 text-purple-400",
+    blog: "bg-green-500/20 text-green-400",
+    twitter: "bg-cyan-500/20 text-cyan-400",
+    reddit: "bg-orange-500/20 text-orange-400",
+  };
+
+  return styles[kind.toLowerCase()] || "bg-primary/20 text-primary";
+}
+
 export function NewsModal({ post, isOpen, onClose }: NewsModalProps) {
   if (!post) return null;
 
@@ -42,7 +54,15 @@ export function NewsModal({ post, isOpen, onClose }: NewsModalProps) {
       onClose={onClose}>
       <ModalContent>
         <ModalHeader className="flex flex-col gap-3">
-          <h2 className="text-2xl font-bold text-white leading-tight">{post.title || "Untitled"}</h2>
+          <div className="flex flex-col gap-2">
+            {post.kind && (
+              <span
+                className={`px-2.5 py-1 text-xs font-medium rounded-md uppercase tracking-wide shrink-0 w-fit ${getKindTagStyles(post.kind)}`}>
+                {post.kind}
+              </span>
+            )}
+            <h2 className="text-2xl font-bold text-white leading-tight">{post.title || "Untitled"}</h2>
+          </div>
           <div className="flex items-center gap-2.5 text-sm text-gray-400/90">
             {post.source?.title && (
               <>
