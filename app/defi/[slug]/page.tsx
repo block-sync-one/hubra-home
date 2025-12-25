@@ -1,4 +1,4 @@
-import React, { cache } from "react";
+import { cache } from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Image } from "@heroui/image";
@@ -6,13 +6,20 @@ import Link from "next/link";
 import { Icon } from "@iconify/react";
 import dynamic from "next/dynamic";
 
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
+
+import { Suspense } from "react";
+
 import { StatsGrid } from "../components/stats-grid";
-import { ProtocolOption } from "../protocol-options";
 
 import { ProtocolBreadcrumb } from "./ProtocolBreadcrumb";
-import { ProtocolSelector } from "./ProtocolSelector";
+import { KeyMetricsSection } from "./KeyMetricsSection";
 
-import { fetchProtocolData, deriveProtocolSlugFromName } from "@/lib/data/defi-data";
+import { fetchProtocolWithResolution } from "@/lib/data/defi-data";
 import { siteConfig } from "@/config/site";
 import { getBreadcrumbJsonLdString } from "@/lib/utils/structured-data";
 import ChartPnl, { Chart } from "@/components/chart";
@@ -24,34 +31,50 @@ type PageParams = {
   slug: string;
 };
 
-/**
- * Cached protocol data fetcher - ensures single fetch per request
- */
-const getCachedProtocolData = cache(async (slug: string) => {
-  return await fetchProtocolData(slug);
-});
+const getCachedProtocolResolution = cache(fetchProtocolWithResolution);
+
+function formatTvl(tvl: number): string {
+  return tvl >= 1e9 ? `$${(tvl / 1e9).toFixed(2)}B` : `$${(tvl / 1e6).toFixed(2)}M`;
+}
+
+function formatChange(change?: number): string {
+  const value = change ?? 0;
+
+  return value >= 0 ? `+${value.toFixed(2)}%` : `${value.toFixed(2)}%`;
+}
+
+interface StatItem {
+  name: string;
+  value: string;
+  icon: string;
+  change?: string;
+  changeType?: "positive" | "negative" | "neutral";
+  url?: string;
+  isExternal?: boolean;
+}
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
   const { slug } = await params;
-  const protocol = await getCachedProtocolData(slug);
+  const resolution = await getCachedProtocolResolution(slug);
 
-  if (!protocol) {
+  if (!resolution) {
     return {
       title: "Protocol Not Found",
       description: "The requested protocol could not be found.",
     };
   }
 
+  const protocol = resolution.protocol;
+
   const protocolName = protocol.name || "Protocol";
   const protocolTvl = protocol.tvl || 0;
-  const tvlFormatted = protocolTvl >= 1e9 ? `$${(protocolTvl / 1e9).toFixed(2)}B` : `$${(protocolTvl / 1e6).toFixed(2)}M`;
-  const change1D = protocol.change1D || 0;
-  const changeText = change1D >= 0 ? `+${change1D.toFixed(2)}%` : `${change1D.toFixed(2)}%`;
+  const tvlFormatted = formatTvl(protocolTvl);
+  const changeText = formatChange(protocol.change1D);
   const protocolUrl = `${siteConfig.domain}/defi/${slug}`;
-
+  const baseDescription = `${protocolName} is a DeFi protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`;
   const protocolDescription = protocol.description
-    ? `${protocol.description} ${protocolName} is a DeFi protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`
-    : `${protocolName} is a decentralized finance (DeFi) protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`;
+    ? `${protocol.description} ${baseDescription}`
+    : baseDescription.replace("DeFi protocol", "decentralized finance (DeFi) protocol");
 
   return {
     title: `${protocolName} DeFi Protocol | TVL ${tvlFormatted} ${changeText} | Hubra - Solana DeFi Tracker`,
@@ -118,26 +141,19 @@ export async function generateMetadata({ params }: { params: Promise<PageParams>
 
 export default async function Page({ params }: { params: Promise<PageParams> }) {
   const { slug } = await params;
-  const protocol = await getCachedProtocolData(slug);
+  const resolution = await getCachedProtocolResolution(slug);
 
-  if (!protocol) {
+  if (!resolution) {
     notFound();
   }
 
-  const currentProtocolSlug = protocol.slug || protocol.id;
-  const relatedProtocols = protocol.otherProtocols?.map((name) => ({
-    name,
-    slug: deriveProtocolSlugFromName(name),
-  })) as ProtocolOption[];
+  const { protocol } = resolution;
+  const protocolSlug = protocol.slug || protocol.id;
 
-  // Transform TVL chart data to Chart component format
+  // Transform TVL chart data to Chart component format (memoized formatter)
   const tvlChartData: Chart["chartData"] = protocol.tvlChartData
-    ? protocol.tvlChartData.map((point) => ({
-        date: new Date(point.date * 1000).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        }),
+    ? protocol.tvlChartData.map((point: { date: number; totalLiquidityUSD: number }) => ({
+        date: dateFormatter.format(new Date(point.date * 1000)),
         value: point.totalLiquidityUSD,
       }))
     : [];
@@ -145,7 +161,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
   const chartData: Chart[] = [
     {
       key: "tvl",
-      title: "24h TVL",
+      title: "TVL",
       value: protocol.tvl || 0,
       suffix: "$",
       type: "number",
@@ -174,17 +190,6 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
     });
   }
 
-  // Define StatItem type to match the one in StatsGrid
-  type StatItem = {
-    name: string;
-    value: string;
-    icon: string;
-    change?: string;
-    changeType?: "positive" | "negative" | "neutral";
-    url?: string;
-    isExternal?: boolean;
-  };
-
   // Transform protocol data to match StatsGrid expected format
   const statsData: StatItem[] = [
     {
@@ -202,64 +207,51 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
     },
   ];
 
-  // Social links and other external metrics
-  const socialLinks: StatItem[] = [];
+  function buildSocialLinks(): StatItem[] {
+    const links: StatItem[] = [];
 
-  // Add Twitter if available
-  if (protocol.twitter) {
-    try {
-      const twitterHandle = protocol.twitter.replace("https://twitter.com/", "").replace("@", "");
+    if (protocol.twitter) {
+      const twitterHandle = protocol.twitter.replace(/^https?:\/\/twitter\.com\//, "").replace(/^@/, "");
 
-      socialLinks.push({
+      links.push({
         name: "Twitter",
         value: twitterHandle,
         icon: "simple-icons:x",
         url: protocol.twitter.startsWith("http") ? protocol.twitter : `https://twitter.com/${twitterHandle}`,
         isExternal: true,
       });
-    } catch (e) {
-      // Handle error
     }
-  }
 
-  // Add Website if available
-  if (protocol.url) {
-    try {
-      const urlObj = new URL(protocol.url.startsWith("http") ? protocol.url : `https://${protocol.url}`);
-      const hostname = urlObj.hostname.replace("www.", "");
+    if (protocol.url) {
+      try {
+        const urlStr = protocol.url.startsWith("http") ? protocol.url : `https://${protocol.url}`;
+        const urlObj = new URL(urlStr);
 
-      socialLinks.push({
-        name: "Website",
-        value: hostname,
-        icon: "lucide:globe",
-        url: urlObj.href,
-        isExternal: true,
-      });
-    } catch (e) {
-      // Fallback if URL is invalid
-      socialLinks.push({
-        name: "Website",
-        value: protocol.url.replace("https://", "").replace("http://", "").replace("www.", ""),
-        icon: "lucide:globe",
-        url: protocol.url.startsWith("http") ? protocol.url : `https://${protocol.url}`,
-        isExternal: true,
-      });
-    }
-  }
+        links.push({
+          name: "Website",
+          value: urlObj.hostname.replace("www.", ""),
+          icon: "lucide:globe",
+          url: urlObj.href,
+          isExternal: true,
+        });
+      } catch {
+        const cleanUrl = protocol.url.replace(/^https?:\/\//, "").replace(/^www\./, "");
 
-  // Add GitHub if available
-  if (protocol.github) {
-    try {
-      let githubUrl = "";
-
-      if (Array.isArray(protocol.github) && protocol.github.length > 0) {
-        githubUrl = protocol.github[0];
-      } else if (typeof protocol.github === "string") {
-        githubUrl = protocol.github;
+        links.push({
+          name: "Website",
+          value: cleanUrl,
+          icon: "lucide:globe",
+          url: protocol.url.startsWith("http") ? protocol.url : `https://${protocol.url}`,
+          isExternal: true,
+        });
       }
+    }
+
+    if (protocol.github) {
+      const githubUrl = Array.isArray(protocol.github) ? protocol.github[0] : protocol.github;
 
       if (githubUrl) {
-        socialLinks.push({
+        links.push({
           name: "GitHub",
           value: "Repo",
           icon: "mdi:github",
@@ -267,28 +259,19 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
           isExternal: true,
         });
       }
-    } catch (e) {
-      // Fallback if URL is invalid
-      if (typeof protocol.github === "string") {
-        socialLinks.push({
-          name: "GitHub",
-          value: "Repo",
-          icon: "mdi:github",
-          url: protocol.github,
-          isExternal: true,
-        });
-      }
     }
+
+    return links;
   }
 
-  const protocolTvl = protocol.tvl || 0;
-  const tvlFormatted = protocolTvl >= 1e9 ? `$${(protocolTvl / 1e9).toFixed(2)}B` : `$${(protocolTvl / 1e6).toFixed(2)}M`;
-  const change1D = protocol.change1D || 0;
-  const changeText = change1D >= 0 ? `+${change1D.toFixed(2)}%` : `${change1D.toFixed(2)}%`;
+  const socialLinks = buildSocialLinks();
 
+  const tvlFormatted = formatTvl(protocol.tvl || 0);
+  const changeText = formatChange(protocol.change1D);
+  const baseDesc = `${protocol.name} is a DeFi protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`;
   const enhancedDescription = protocol.description
-    ? `${protocol.description} ${protocol.name} is a DeFi protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`
-    : `${protocol.name} is a decentralized finance (DeFi) protocol on the Solana blockchain with a total value locked (TVL) of ${tvlFormatted} (${changeText}). Track protocol performance, TVL changes, fees, revenue, and comprehensive DeFi analytics on Hubra.`;
+    ? `${protocol.description} ${baseDesc}`
+    : baseDesc.replace("DeFi protocol", "decentralized finance (DeFi) protocol");
 
   const protocolJsonLd = {
     "@context": "https://schema.org",
@@ -372,13 +355,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
           </div>
 
           <div className="flex-1 text-left">
-            <ProtocolSelector
-              currentProtocol={{
-                name: protocol.name,
-                slug: currentProtocolSlug,
-              }}
-              relatedProtocols={relatedProtocols}
-            />
+            <h1 className="text-2xl font-bold mb-1 text-white">{protocol.name}</h1>
             <p className="text-gray-400 line-clamp-2 max-w-2xl">{protocol.description || ""}</p>
 
             {/* Social links in header */}
@@ -409,6 +386,11 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
         <div className="mb-8">
           <StatsGrid stats={statsData} title="Protocol Metrics" />
         </div>
+
+        {/* Key Metrics for Child/Other Protocols */}
+        <Suspense fallback={<div className="mb-8">Loading child protocols...</div>}>
+          <KeyMetricsSection otherProtocols={protocol.otherProtocols} protocolSlug={protocolSlug} />
+        </Suspense>
 
         {/* CryptoPanic News Section */}
         <div className="mt-12">

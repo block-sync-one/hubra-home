@@ -1,19 +1,21 @@
 import "server-only";
 
 import {
-  getUnifiedProtocol,
   getManyUnifiedProtocols,
-  setUnifiedProtocol,
-  setManyUnifiedProtocols,
-  toUnifiedProtocolData,
+  getUnifiedProtocol,
   mergeProtocolData,
+  setManyUnifiedProtocols,
+  setUnifiedProtocol,
+  toUnifiedProtocolData,
   UnifiedProtocolData,
 } from "./unified-protocol-cache";
+import { isParentProtocol, type ProtocolResolutionResult } from "./protocol-utils";
 
 import { getStaleWhileRevalidate } from "@/lib/cache/swr-cache";
-import { CACHE_TTL } from "@/lib/cache";
+import { CACHE_TTL, redis } from "@/lib/cache";
 import {
   DeFiLlamaProtocol,
+  FeeRevenueData,
   fetchDailyFees,
   fetchDailyRevenue,
   fetchHistoricalChainTVL,
@@ -22,7 +24,6 @@ import {
   fetchProtocolRevenue,
   fetchSingleTVL,
   fetchTVL,
-  FeeRevenueData,
 } from "@/lib/services/defillama";
 import { DefiStatsAggregate, Protocol } from "@/lib/types/defi-stats";
 import { loggers } from "@/lib/utils/logger";
@@ -35,38 +36,60 @@ interface InflowsChartDataPoint {
 
 const CACHE_KEY_ALL_PROTOCOLS = "defi:protocols:all";
 const TOP_PROTOCOLS_LIMIT = 6;
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function deriveProtocolSlugFromName(name: string): string {
   return name.toLowerCase().replace(/\s+/g, "-");
 }
 
-function filterAndTransformSolanaProtocols(protocols: DeFiLlamaProtocol[]): { standardized: Protocol[]; hotProtocols: Protocol[] } {
+function isValidSolanaProtocol(protocol: DeFiLlamaProtocol): boolean {
+  return protocol?.chains?.length === 1 && protocol.chains.includes("Solana") && protocol.category !== "CEX";
+}
+
+function extractValidCategories(category: string | string[] | undefined): string[] {
+  const categories = Array.isArray(category) ? category : category ? [category] : [];
+
+  return categories.filter((cat) => cat && cat !== "Uncategorized");
+}
+
+function collectParentCategories(parentSlug: string, category: string | string[] | undefined, categoryMap: Map<string, Set<string>>): void {
+  const validCategories = extractValidCategories(category);
+
+  if (validCategories.length === 0) {
+    return;
+  }
+
+  if (categoryMap.has(parentSlug)) {
+    const existingCategories = categoryMap.get(parentSlug)!;
+
+    validCategories.forEach((cat) => existingCategories.add(cat));
+  } else {
+    categoryMap.set(parentSlug, new Set(validCategories));
+  }
+}
+
+function filterAndTransformSolanaProtocols(protocols: DeFiLlamaProtocol[]): {
+  standardized: Protocol[];
+  hotProtocols: Protocol[];
+  missingParentProtocolSlugsMap: Map<string, Set<string>>;
+} {
   const standardized: Protocol[] = [];
   const hotProtocols: Protocol[] = [];
+  const missingParentProtocolSlugs = new Map<string, Set<string>>();
 
   for (const protocol of protocols) {
-    if (protocol?.chains?.length !== 1 || !protocol.chains.includes("Solana") || protocol.category === "CEX") {
+    if (!isValidSolanaProtocol(protocol)) {
       continue;
     }
 
-    const transformed: Protocol = {
-      id: protocol.slug || deriveProtocolSlugFromName(protocol.name),
-      name: protocol.name,
-      logo: protocol.logo || "/logo.svg",
-      // @ts-ignore
-      tvl: protocol.chainTvls?.["Solana"] ?? 0,
-      change1D: protocol.change_1d,
-      change7D: protocol.change_7d,
-      change1H: protocol.change_1h,
-      category: protocol.category,
-      chains: protocol.chains,
-      slug: protocol.slug,
-      description: protocol.description,
-      url: protocol.url,
-      twitter: protocol.twitter,
-      github: protocol.github,
-      otherProtocols: protocol.otherProtocols,
-    };
+    const parentSlug = protocol.parentProtocolSlug;
+
+    if (parentSlug) {
+      collectParentCategories(parentSlug, protocol.category, missingParentProtocolSlugs);
+      continue;
+    }
+
+    const transformed: Protocol = transformProtocolToStandard(protocol, "list");
 
     standardized.push(transformed);
 
@@ -80,22 +103,45 @@ function filterAndTransformSolanaProtocols(protocols: DeFiLlamaProtocol[]): { st
   return {
     standardized,
     hotProtocols: hotProtocols.slice(0, TOP_PROTOCOLS_LIMIT),
+    missingParentProtocolSlugsMap: missingParentProtocolSlugs,
   };
+}
+
+function extractTvlFromProtocol(protocol: DeFiLlamaProtocol, dataSource: "overview" | "parent" | "list"): number {
+  if (dataSource === "list") {
+    // @ts-ignore - chainTvls exists but not in type definition
+    return protocol.chainTvls?.["Solana"] ?? 0;
+  }
+
+  const solanaTvl = protocol.currentChainTvls?.["Solana"];
+
+  if (typeof solanaTvl === "string") {
+    return parseFloat(solanaTvl) || 0;
+  }
+  if (typeof solanaTvl === "number") {
+    return solanaTvl;
+  }
+
+  // @ts-ignore - chainTvls exists but not in type definition
+  return getCurrentTvl(protocol.chainTvls?.["Solana"]);
 }
 
 /**
  * Transform DeFiLlama protocol to standardized Protocol format
  */
-function transformProtocolToStandard(protocol: DeFiLlamaProtocol, dataSource: "overview" | "list" = "list"): Protocol {
+function transformProtocolToStandard(protocol: DeFiLlamaProtocol, dataSource: "overview" | "parent" | "list" = "list"): Protocol {
+  const tvl = extractTvlFromProtocol(protocol, dataSource);
+  const change1D = protocol.change_1d;
+
   return {
     id: protocol.slug || deriveProtocolSlugFromName(protocol.name),
     name: protocol.name,
-    logo: protocol.logo || "/logo.svg",
+    logo: protocol.logo || "",
     symbol: protocol.symbol || "",
+    tvl,
     // @ts-ignore - chainTvls exists but not in type definition
-    tvl: dataSource === "list" ? protocol.chainTvls?.["Solana"] : protocol.currentChainTvls?.["Solana"],
     tvlChartData: protocol.chainTvls?.["Solana"],
-    change1D: protocol.change_1d,
+    change1D,
     change7D: protocol.change_7d,
     change1H: protocol.change_1h,
     category: protocol.category,
@@ -106,6 +152,9 @@ function transformProtocolToStandard(protocol: DeFiLlamaProtocol, dataSource: "o
     twitter: protocol.twitter,
     github: protocol.github,
     otherProtocols: protocol.otherProtocols,
+    isParentProtocol: protocol.isParentProtocol,
+    parentProtocol: protocol.parentProtocol,
+    parentProtocolSlug: protocol.parentProtocolSlug,
   };
 }
 
@@ -131,9 +180,8 @@ function getCurrentTvl(historicalData: any[]): number {
 
 function formatChartDate(unixTimestamp: number): string {
   const date = new Date(unixTimestamp * 1000);
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+  return `${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 }
 
 /**
@@ -231,8 +279,6 @@ function buildDefiStatsAggregate(
 }
 
 async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
-  loggers.cache.debug(`→ Fetching from DeFiLlama: All protocols`);
-
   const [feesData, revenueData, allProtocols, historicalTVL] = await Promise.all([
     fetchDailyFees().catch((error) => {
       loggers.data.error("Failed to fetch daily fees:", error);
@@ -248,14 +294,46 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
     fetchHistoricalChainTVL(),
   ]);
 
-  const { standardized: standardizedProtocols, hotProtocols } = filterAndTransformSolanaProtocols(allProtocols);
+  const successfulParents: Protocol[] = [];
+  const {
+    standardized: standardizedProtocols,
+    hotProtocols,
+    missingParentProtocolSlugsMap,
+  } = filterAndTransformSolanaProtocols(allProtocols);
+
+  const missingParentProtocolSlugs: string[] = Array.from(missingParentProtocolSlugsMap.keys());
+
+  if (missingParentProtocolSlugs.length > 0) {
+    const parentProtocolsData = await Promise.allSettled(missingParentProtocolSlugs.map((slug) => fetchSingleTVL(slug).catch(() => null)));
+
+    for (let i = 0; i < parentProtocolsData.length; i++) {
+      const result = parentProtocolsData[i];
+      const originalSlug = missingParentProtocolSlugs[i];
+
+      if (result.status === "fulfilled" && result.value) {
+        const fetchedSlug = result.value.slug || result.value.id;
+        const categories = missingParentProtocolSlugsMap.get(originalSlug) || missingParentProtocolSlugsMap.get(fetchedSlug);
+
+        if (categories && categories.size > 0) {
+          result.value.category = Array.from(categories);
+        }
+
+        const transformed = transformProtocolToStandard(result.value, "overview");
+
+        transformed.isParentProtocol = true;
+        successfulParents.push(transformed);
+      }
+    }
+  }
+
+  const protocolResult = successfulParents.concat(standardizedProtocols);
 
   const totalTvl = getCurrentTvl(historicalTVL);
   const tvlChange = calculateTvlChange(historicalTVL);
   const chartData = transformHistoricalDataToChartFormat(historicalTVL);
 
   const result = buildDefiStatsAggregate(
-    standardizedProtocols,
+    protocolResult,
     hotProtocols,
     totalTvl,
     tvlChange,
@@ -264,7 +342,7 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
     (revenueData as FeeRevenueData) || {}
   );
 
-  cacheIndividualProtocolsAsync(standardizedProtocols);
+  cacheIndividualProtocolsAsync(protocolResult);
 
   return result;
 }
@@ -301,11 +379,7 @@ function cacheIndividualProtocolsAsync(protocols: Protocol[]): void {
 
 export async function fetchProtocolsData(): Promise<DefiStatsAggregate> {
   try {
-    const result = await getStaleWhileRevalidate<DefiStatsAggregate>(
-      CACHE_KEY_ALL_PROTOCOLS,
-      CACHE_TTL.MARKET_DATA,
-      fetchFreshProtocolsData
-    );
+    const result = await getStaleWhileRevalidate<DefiStatsAggregate>(CACHE_KEY_ALL_PROTOCOLS, CACHE_TTL.PROTOCOL, fetchFreshProtocolsData);
 
     return result || buildEmptyDefiStats();
   } catch (error) {
@@ -316,50 +390,31 @@ export async function fetchProtocolsData(): Promise<DefiStatsAggregate> {
 }
 
 /**
- * Fetch a specific DeFi protocol by slug
- *
- * STRATEGY:
- * 1. Check unified cache first
- * 2. If cached with overview data → return immediately
- * 3. If no cache or only list data → fetch from DeFiLlama
- * 4. Merge overview data with existing cache
- * 5. Store merged result in cache
- *
- * Called directly from the protocol detail page
+ * Fetch protocol data by slug (without resolution)
+ * @param slug - Protocol slug
+ * @param includeHistoricalTVL - Whether to fetch historical TVL chart data (default: true)
  */
-export async function fetchProtocolData(slug: string): Promise<UnifiedProtocolData | null> {
+export async function fetchProtocolDataRaw(slug: string, includeHistoricalTVL = true): Promise<UnifiedProtocolData | null> {
   try {
     const cached = await getUnifiedProtocol(slug);
 
-    // Check if we already have full overview data
+    // Return cached data if we have full overview data
     if (cached && (cached.dataSource === "overview" || cached.dataSource === "merged")) {
-      loggers.cache.debug(`✓ Using existing overview data: ${cached.name}`);
-
-      return cached;
+      // For minimal fetch, check if we have fees/revenue
+      if (!includeHistoricalTVL && (cached.totalFees_1d !== undefined || cached.totalRevenue_1d !== undefined)) {
+        return cached;
+      }
+      if (includeHistoricalTVL) {
+        return cached;
+      }
     }
 
-    loggers.cache.debug(`→ Fetching from DeFiLlama: ${slug}${cached ? " (upgrading list to overview)" : ""}`);
-
-    const [singleProtocol, historicalTVL, feesData, revenueData] = await Promise.all([
+    const [singleProtocol, feesData, revenueData] = await Promise.all([
       fetchSingleTVL(slug),
-      fetchProtocolHistoricalTVL(slug).catch((error) => {
-        loggers.data.debug(`Failed to fetch historical TVL for ${slug}:`, error);
-
-        return [];
-      }),
-      fetchProtocolFees(slug).catch((error) => {
-        loggers.data.debug(`Failed to fetch fees for ${slug}:`, error);
-
-        return null;
-      }),
-      fetchProtocolRevenue(slug).catch((error) => {
-        loggers.data.debug(`Failed to fetch revenue for ${slug}:`, error);
-
-        return null;
-      }),
+      fetchProtocolFees(slug).catch(() => null),
+      fetchProtocolRevenue(slug).catch(() => null),
     ]);
 
-    // Transform to standard protocol format
     const protocol = transformProtocolToStandard(singleProtocol, "overview");
 
     if (!protocol) {
@@ -368,27 +423,34 @@ export async function fetchProtocolData(slug: string): Promise<UnifiedProtocolDa
       return null;
     }
 
-    // Add historical TVL chart data if available
-    if (historicalTVL && historicalTVL.length > 0) {
-      protocol.tvlChartData = historicalTVL;
+    if (singleProtocol.isParentProtocol || !protocol.parentProtocol) {
+      protocol.isParentProtocol = true;
     }
 
-    // Add fees and revenue data if available
-    if (feesData && revenueData) {
-      const feesChart = feesData.totalDataChart || [];
-      const revenueChart = revenueData.totalDataChart || [];
+    if (includeHistoricalTVL) {
+      const historicalTVL = await fetchProtocolHistoricalTVL(slug).catch(() => []);
 
-      protocol.feesRevenueChartData = transformFeeRevenueToChartFormat(feesChart, revenueChart);
+      if (historicalTVL && historicalTVL.length > 0) {
+        protocol.tvlChartData = historicalTVL;
+      }
+    }
+
+    if (feesData && revenueData) {
       protocol.totalFees_1d = feesData.total24h || 0;
       protocol.totalRevenue_1d = revenueData.total24h || 0;
       protocol.feesChange_1d = feesData.change_1d || 0;
+
+      if (includeHistoricalTVL) {
+        const feesChart = feesData.totalDataChart || [];
+        const revenueChart = revenueData.totalDataChart || [];
+
+        protocol.feesRevenueChartData = transformFeeRevenueToChartFormat(feesChart, revenueChart);
+      }
     }
 
-    // Merge with existing cache (preserves list data for TVL/change)
     const unifiedData = toUnifiedProtocolData(protocol, "overview");
     const merged = cached ? mergeProtocolData(cached, unifiedData, "overview") : unifiedData;
 
-    // Cache merged result (non-blocking)
     setUnifiedProtocol(slug, merged).catch((err) => {
       loggers.cache.error(`Failed to cache protocol ${slug}:`, err);
     });
@@ -398,5 +460,116 @@ export async function fetchProtocolData(slug: string): Promise<UnifiedProtocolDa
     loggers.data.error(`Error fetching protocol ${slug}:`, error);
 
     return null;
+  }
+}
+
+/**
+ * Fetch minimal protocol data (no historical TVL) for key metrics
+ */
+export async function fetchProtocolDataMinimal(slug: string): Promise<UnifiedProtocolData | null> {
+  return fetchProtocolDataRaw(slug, false);
+}
+
+/**
+ * Fetch protocol data with automatic parent resolution
+ *
+ * If the slug belongs to a child protocol, automatically resolves to the parent.
+ * Returns resolution metadata for explicit handling in UI.
+ *
+ * @param slug - Protocol slug (can be child or parent)
+ * @returns Resolution result with metadata, or null if not found
+ */
+export async function fetchProtocolWithResolution(slug: string): Promise<ProtocolResolutionResult | null> {
+  const originalSlug = slug;
+
+  // First, fetch the protocol to check if it's a child
+  let protocol = await fetchProtocolDataRaw(slug);
+
+  if (!protocol) {
+    return null;
+  }
+
+  // If it's a child protocol, resolve to parent
+  if (protocol.parentProtocolSlug && !isParentProtocol(protocol)) {
+    const parentSlug = protocol.parentProtocolSlug;
+
+    const parentProtocol = await fetchProtocolDataRaw(parentSlug);
+
+    if (!parentProtocol) {
+      loggers.data.warn(`Parent protocol ${parentSlug} not found for child ${slug}`);
+
+      return null;
+    }
+
+    return {
+      originalSlug,
+      resolvedSlug: parentSlug,
+      wasResolved: true,
+      protocol: parentProtocol,
+    };
+  }
+
+  // Already a parent protocol
+  return {
+    originalSlug,
+    resolvedSlug: slug,
+    wasResolved: false,
+    protocol,
+  };
+}
+
+const CACHE_KEY_CHILD_PROTOCOLS = (parentSlug: string) => `defi:children:${parentSlug}`;
+
+export async function fetchChildProtocols(parentSlug: string, otherProtocols?: string[]): Promise<Protocol[]> {
+  try {
+    // 1. Check if children already exist in cache
+    const cacheKey = CACHE_KEY_CHILD_PROTOCOLS(parentSlug);
+    const cached = await redis.get<Protocol[]>(cacheKey);
+
+    if (cached && Array.isArray(cached)) {
+      return cached;
+    }
+
+    if (!otherProtocols || otherProtocols.length === 0) {
+      return [];
+    }
+
+    // 2. Derive slugs from otherProtocols array and exclude parent protocol before fetching
+    const parentSlugNormalized = parentSlug.toLowerCase();
+    const protocolSlugs = otherProtocols
+      .map((name) => deriveProtocolSlugFromName(name))
+      .filter((slug) => slug.toLowerCase() !== parentSlugNormalized);
+
+    if (protocolSlugs.length === 0) {
+      return [];
+    }
+
+    // 3. Fetch all in parallel (fetchProtocolDataMinimal handles its own caching)
+    const protocols = await Promise.allSettled(protocolSlugs.map((slug) => fetchProtocolDataMinimal(slug).catch(() => null)));
+
+    // 4. Normalize values - filter out null and parent protocols
+    const children: Protocol[] = [];
+
+    for (let i = 0; i < protocols.length; i++) {
+      const result = protocols[i];
+
+      if (result.status !== "fulfilled" || !result.value) continue;
+
+      children.push(result.value);
+    }
+
+    // 5. Return
+    // 6. Save in cache non-blocking
+    if (children.length > 0) {
+      redis.set(cacheKey, children, CACHE_TTL.PROTOCOL).catch((err) => {
+        loggers.cache.error(`Failed to cache children for ${parentSlug}:`, err);
+      });
+    }
+
+    return children;
+  } catch (error) {
+    loggers.data.error(`Error fetching child protocols for ${parentSlug}:`, error);
+
+    return [];
   }
 }

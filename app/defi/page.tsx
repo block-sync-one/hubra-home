@@ -5,6 +5,7 @@ import { TopProtocols } from "./components/top-protocols";
 import { ProtocolsTable } from "./components/protocols-table";
 
 import { fetchProtocolsData } from "@/lib/data/defi-data";
+import { isParentProtocol } from "@/lib/data/protocol-utils";
 import ChartPnl, { Chart } from "@/components/chart";
 import { siteConfig } from "@/config/site";
 import { getWebPageJsonLd, getCollectionPageJsonLd } from "@/lib/utils/structured-data";
@@ -108,7 +109,7 @@ export default async function DeFiPage() {
   const chartData: Chart[] = [
     {
       key: "tvl",
-      title: "24h TVL",
+      title: "TVL",
       value: protocols.totalTvl,
       suffix: "",
       type: "number",
@@ -150,7 +151,7 @@ export default async function DeFiPage() {
         <section className="flex flex-col gap-12">
           <ChartPnl charts={chartData} title="DeFi TVL" />
           <TopProtocols protocols={protocols.hotProtocols} />
-          <ProtocolsTable protocols={protocols.solanaProtocols} />
+          <ProtocolsTable protocols={protocols.solanaProtocols.filter(isParentProtocol)} />
         </section>
       </div>
     </main>

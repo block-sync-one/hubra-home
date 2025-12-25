@@ -56,6 +56,9 @@ export interface Protocol extends BaseProtocol {
   totalRevenue_1d?: number;
   feesChange_1d?: number;
   otherProtocols?: string[];
+  isParentProtocol?: boolean;
+  parentProtocol?: string;
+  parentProtocolSlug?: string;
 }
 
 export interface ProtocolAggregate extends BaseProtocol {

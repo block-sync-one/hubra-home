@@ -198,7 +198,7 @@ export interface DeFiLlamaProtocol {
   change_1d?: number;
   change_7d?: number;
   change_1h?: number;
-  category?: string;
+  category?: string | string[];
   chains?: string[];
   chain?: string;
   chainTvls?: {
