@@ -11,7 +11,7 @@ export const CACHE_TTL = {
   SEARCH: 300,
   STABLECOIN_DATA: 300,
   EXCHANGE_RATES: 3600,
-  CRYPTOPANIC_NEWS: 10800,
+  CRYPTOPANIC_NEWS: 43200,
   PROTOCOL: 43200,
 } as const;
 
@@ -307,5 +307,5 @@ export const cacheKeys = {
   stablecoinChains: () => "global:stablecoin",
   globalSolanaTVL: () => "global:totalTVL",
   exchangeRates: () => "global:exchange-rates",
-  cryptopanicNews: (key: string) => `cryptopanic:news:${key.toUpperCase()}`,
+  cryptopanicNews: (key: string) => `cryptopanic:news:${key.toLowerCase()}`,
 } as const;

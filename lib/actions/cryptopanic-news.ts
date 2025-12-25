@@ -3,10 +3,8 @@
 import { fetchCryptoPanicNews } from "@/lib/services/cryptopanic";
 
 /**
- * Server Action to fetch CryptoPanic news
- * Can be called directly from client components
- * @param key - Token symbol (e.g., "SOL", "BTC")
+ * Server Action to fetch all CryptoPanic SOL news
  */
-export async function getCryptoPanicNews(key: string) {
-  return await fetchCryptoPanicNews(key.toLowerCase());
+export async function getCryptoPanicNews() {
+  return await fetchCryptoPanicNews();
 }

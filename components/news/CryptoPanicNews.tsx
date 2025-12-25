@@ -11,12 +11,7 @@ import { NewsEmptyState } from "./NewsEmptyState";
 
 import { getCryptoPanicNews } from "@/lib/actions/cryptopanic-news";
 
-interface CryptoPanicNewsProps {
-  newsId: string;
-  maxItems?: number;
-}
-
-export function CryptoPanicNews({ newsId, maxItems = 15 }: CryptoPanicNewsProps) {
+export function CryptoPanicNews() {
   const [news, setNews] = useState<CryptoPanicPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,18 +19,12 @@ export function CryptoPanicNews({ newsId, maxItems = 15 }: CryptoPanicNewsProps)
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!newsId) {
-      setLoading(false);
-
-      return;
-    }
-
     async function fetchNews() {
       try {
         setLoading(true);
         setError(null);
 
-        const result = await getCryptoPanicNews(newsId);
+        const result = await getCryptoPanicNews();
 
         if (result && result.length > 0) {
           setNews(result);
@@ -50,7 +39,7 @@ export function CryptoPanicNews({ newsId, maxItems = 15 }: CryptoPanicNewsProps)
     }
 
     fetchNews();
-  }, [newsId]);
+  }, []);
 
   if (loading) {
     return <NewsMarqueeSkeleton />;
@@ -70,13 +59,9 @@ export function CryptoPanicNews({ newsId, maxItems = 15 }: CryptoPanicNewsProps)
     setSelectedPost(null);
   };
 
-  // Limit news items
-  const displayNews = news.slice(0, maxItems);
-  const hasEnoughItems = displayNews.length >= 10;
-
-  // Split into first half and second half if we have at least 10 items
-  const firstHalf = hasEnoughItems ? displayNews.slice(0, Math.ceil(displayNews.length / 2)) : displayNews;
-  const secondHalf = hasEnoughItems ? displayNews.slice(Math.ceil(displayNews.length / 2)) : [];
+  const hasEnoughItems = news.length >= 10;
+  const firstHalf = hasEnoughItems ? news.slice(0, Math.ceil(news.length / 2)) : news;
+  const secondHalf = hasEnoughItems ? news.slice(Math.ceil(news.length / 2)) : [];
 
   return (
     <>

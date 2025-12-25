@@ -395,7 +395,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
         {/* CryptoPanic News Section */}
         <div className="mt-12">
           <h3 className="text-lg font-semibold mb-4 text-white">Latest News</h3>
-          <CryptoPanicNews newsId={`${protocol?.symbol},sol`} />
+          <CryptoPanicNews />
         </div>
       </div>
     </main>

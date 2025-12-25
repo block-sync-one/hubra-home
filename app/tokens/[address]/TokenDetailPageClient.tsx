@@ -224,7 +224,7 @@ export function TokenDetailPageClient({ apiTokenData }: TokenDetailPageClientPro
       {/* CryptoPanic News Section */}
       <div className="mt-12">
         <h3 className="text-lg font-semibold mb-4 text-white">Latest News</h3>
-        <CryptoPanicNews newsId={formattedData.symbol} />
+        <CryptoPanicNews />
       </div>
     </div>
   );
