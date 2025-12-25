@@ -195,6 +195,7 @@ export interface DeFiLlamaProtocol {
   logo: string;
   tvl: number;
   symbol?: string;
+  assetToken?: string;
   change_1d?: number;
   change_7d?: number;
   change_1h?: number;

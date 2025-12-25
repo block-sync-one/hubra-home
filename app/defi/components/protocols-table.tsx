@@ -53,15 +53,15 @@ export function ProtocolsTable({ protocols }: ProtocolsTableProps) {
 
   // Convert protocols to mobile list format
   const mobileListItems = useMemo<MobileListItem[]>(() => {
-    return tableData.map((protocol) => ({
-      key: protocol.id,
-      logo: protocol.logo,
-      name: protocol.name,
-      subtitle: Array.isArray(protocol.category) ? protocol.category[0] : protocol.category || "DeFi",
-      primaryValue: formatCurrency(protocol.tvl, true),
-      change: protocol.change7D,
-      secondaryValue: protocol.change7D ? `${Math.abs(protocol.change7D).toFixed(2)}%` : "0.00%",
-    }));
+    return tableData.map((protocol) => {
+      return {
+        key: protocol.id,
+        logo: protocol.logo,
+        name: protocol.name,
+        subtitle: protocol.symbol || (Array.isArray(protocol.category) ? protocol.category[0] : protocol.category || "DeFi"),
+        primaryValue: formatCurrency(protocol.tvl, true),
+      };
+    });
   }, [tableData]);
 
   return (

@@ -1,6 +1,7 @@
 "use server";
 
 import type { ProtocolMetric } from "./types";
+import type { Protocol } from "@/lib/types/defi-stats";
 
 import { fetchChildProtocols } from "@/lib/data/defi-data";
 
@@ -17,14 +18,7 @@ function extractNumericValue(value: unknown): number {
   return 0;
 }
 
-function transformProtocolToMetric(protocol: {
-  id?: string;
-  slug?: string;
-  name?: string;
-  tvl?: unknown;
-  totalFees_1d?: unknown;
-  totalRevenue_1d?: unknown;
-}): ProtocolMetric {
+function transformProtocolToMetric(protocol: Protocol): ProtocolMetric {
   const id = protocol.id || protocol.slug || protocol.name || "";
 
   return {
@@ -34,6 +28,7 @@ function transformProtocolToMetric(protocol: {
     tvl: extractNumericValue(protocol.tvl),
     fees: extractNumericValue(protocol.totalFees_1d),
     revenue: extractNumericValue(protocol.totalRevenue_1d),
+    assetToken: protocol.assetToken || protocol.symbol,
   };
 }
 

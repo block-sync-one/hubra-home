@@ -12,7 +12,7 @@ import { Protocol } from "@/lib/types/defi-stats";
 
 interface ProtocolCellProps {
   item: Protocol & { _index?: number };
-  columnKey: "rank" | "protocol" | "tvl" | "change_7d" | "category";
+  columnKey: "rank" | "protocol" | "tvl" | "description" | "category";
 }
 
 export function ProtocolCell({ item, columnKey }: ProtocolCellProps) {
@@ -33,7 +33,10 @@ export function ProtocolCell({ item, columnKey }: ProtocolCellProps) {
             />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-sm font-semibold text-white truncate">{item.name}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-white truncate">{item.name}</span>
+              {item.symbol && <span className="text-xs text-gray-400 font-medium">{item.symbol}</span>}
+            </div>
           </div>
         </div>
       );
@@ -41,12 +44,13 @@ export function ProtocolCell({ item, columnKey }: ProtocolCellProps) {
     case "tvl":
       return <div className="font-medium text-white">{formatCurrency(item.tvl, true)}</div>;
 
-    case "change_7d":
-      const isPositive = item.change7D && item.change7D >= 0;
+    case "description":
+      const description = item.description || "";
+      const truncatedDescription = description.length > 150 ? `${description.substring(0, 150)}...` : description;
 
       return (
-        <div className={`font-medium ${isPositive ? "text-success" : "text-danger"}`}>
-          {item.change7D ? `${item.change7D > 0 ? "+" : ""}${item.change7D.toFixed(2)}%` : "N/A"}
+        <div className="text-sm text-gray-400 line-clamp-2 pl-12" title={description || undefined}>
+          {truncatedDescription || "-"}
         </div>
       );
 

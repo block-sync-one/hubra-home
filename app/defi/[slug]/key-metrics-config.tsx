@@ -1,10 +1,21 @@
 import type { TableConfiguration } from "@/components/table/types";
 import type { ProtocolMetric } from "./types";
 
+import React from "react";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 
 import { formatCurrency } from "@/lib/utils/helper";
+
+function isValidNumericValue(value: unknown): value is number {
+  return typeof value === "number" && !isNaN(value) && isFinite(value);
+}
+
+function renderCurrencyValue(value: unknown): React.ReactNode {
+  const numericValue = isValidNumericValue(value) ? value : null;
+
+  return <span className="font-medium text-white">{numericValue !== null ? formatCurrency(numericValue, true) : "-"}</span>;
+}
 
 export const keyMetricsTableConfig: TableConfiguration<ProtocolMetric> = {
   columns: [
@@ -13,40 +24,33 @@ export const keyMetricsTableConfig: TableConfiguration<ProtocolMetric> = {
       label: "Protocol",
       sortable: true,
       align: "left",
-      render: (item) => <span className="font-semibold text-white">{item.name || "-"}</span>,
+      render: (item) => (
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-white">{item.name || "-"}</span>
+          {item.assetToken && <span className="text-xs text-gray-400 font-medium uppercase">{item.assetToken}</span>}
+        </div>
+      ),
     },
     {
       key: "tvl",
       label: "TVL",
       sortable: true,
       align: "right",
-      render: (item) => {
-        const value = typeof item.tvl === "number" && !isNaN(item.tvl) && isFinite(item.tvl) ? item.tvl : null;
-
-        return <span className="font-medium text-white">{value !== null && value !== undefined ? formatCurrency(value, true) : "-"}</span>;
-      },
+      render: (item) => renderCurrencyValue(item.tvl),
     },
     {
       key: "fees",
       label: "24h Fees",
       sortable: true,
       align: "right",
-      render: (item) => {
-        const value = typeof item.fees === "number" && !isNaN(item.fees) && isFinite(item.fees) ? item.fees : null;
-
-        return <span className="font-medium text-white">{value !== null && value !== undefined ? formatCurrency(value, true) : "-"}</span>;
-      },
+      render: (item) => renderCurrencyValue(item.fees),
     },
     {
       key: "revenue",
       label: "24h Revenue",
       sortable: true,
       align: "right",
-      render: (item) => {
-        const value = typeof item.revenue === "number" && !isNaN(item.revenue) && isFinite(item.revenue) ? item.revenue : null;
-
-        return <span className="font-medium text-white">{value !== null && value !== undefined ? formatCurrency(value, true) : "-"}</span>;
-      },
+      render: (item) => renderCurrencyValue(item.revenue),
     },
     {
       key: "action",

@@ -10,6 +10,7 @@ import TableSkeleton from "./skeleton/table-skeleton";
 import { MobileListLayout, type MobileListItem } from "@/components/ui/mobile-list-layout";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { fixedNumber } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils/helper";
 
 const get = (obj: any, path: string) => {
   return path.split(".").reduce((current, key) => current?.[key], obj);
@@ -205,15 +206,42 @@ const UnifiedTable = <T extends Record<string, any>>({
 
   // Convert items to mobile list format
   const mobileListItems = useMemo<MobileListItem[]>(() => {
-    return paginatedItems.map((item: any) => ({
-      key: item.key || item.id || item.asset?.mint || String(item._index),
-      logoURI: item.logoURI || "",
-      name: item.name || "Unknown",
-      symbol: item.symbol,
-      primaryValue: item.price || "-",
-      change: item.change,
-      secondaryValue: item.change ? `${fixedNumber(Math.abs(item.change))}%` : "0%",
-    }));
+    return paginatedItems.map((item: any) => {
+      const key = item.key || item.id || item.asset?.mint || String(item._index);
+      const name = item.name || "Unknown";
+
+      // Handle ProtocolMetric type (has tvl, fees, revenue)
+      if (item.tvl !== undefined && item.fees !== undefined && item.revenue !== undefined) {
+        const isTvlValid = typeof item.tvl === "number" && !isNaN(item.tvl) && isFinite(item.tvl);
+        const isFeesValid = typeof item.fees === "number" && !isNaN(item.fees) && isFinite(item.fees);
+        const isRevenueValid = typeof item.revenue === "number" && !isNaN(item.revenue) && isFinite(item.revenue);
+
+        const feesFormatted = isFeesValid ? formatCurrency(item.fees, true) : "-";
+        const revenueFormatted = isRevenueValid ? formatCurrency(item.revenue, true) : "-";
+        const subtitleParts = [item.slug, item.assetToken].filter(Boolean);
+
+        return {
+          key,
+          logoURI: "", // No image for Key Metrics
+          name,
+          symbol: item.assetToken,
+          subtitle: subtitleParts.length > 0 ? subtitleParts.join(" • ") : undefined,
+          primaryValue: isTvlValid ? formatCurrency(item.tvl, true) : "-",
+          secondaryValue: `Fees: ${feesFormatted} • Rev.: ${revenueFormatted}`,
+        };
+      }
+
+      // Handle standard token/protocol format
+      return {
+        key,
+        logoURI: item.logoURI || item.logo || "",
+        name,
+        symbol: item.symbol,
+        primaryValue: item.price || "-",
+        change: item.change,
+        secondaryValue: item.change ? `${fixedNumber(Math.abs(item.change))}%` : "0%",
+      };
+    });
   }, [paginatedItems]);
 
   if (invalidConfig) {
@@ -261,6 +289,7 @@ const UnifiedTable = <T extends Record<string, any>>({
                 bg-gray-30  
                 text-gray-400
                 ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
+                ${column.key === "description" ? "pl-12" : ""}
               `}
                 style={column.width ? { width: column.width } : undefined}>
                 {column.label}
@@ -271,34 +300,43 @@ const UnifiedTable = <T extends Record<string, any>>({
             emptyContent={<div className="py-6 text-center text-gray-500 w-full">No data available</div>}
             isLoading={isLoading}
             loadingContent={<TableSkeleton columns={configuration.columns.length} rows={2} />}>
-            {paginatedItems.map((item: any) => (
-              <TableRow
-                key={item.key || item.id || item.asset?.mint || item._index}
-                className="cursor-pointer transition-colors duration-150 border-none"
-                onClick={() => handleRowClick(item)}
-                onMouseEnter={() => onRowHover?.(item)}>
-                {configuration.columns.map((column) => (
-                  <TableCell
-                    key={column.key}
-                    className={`border-none h-[36px] lg:h-[60px] ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"} lg:p-auto px-0 pb-3
-                    ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
-                  `}>
-                    {(() => {
-                      try {
-                        if (column.render) {
-                          return column.render(item, get(item, String(column.key))) || null;
-                        }
+            {paginatedItems.map((item: any) => {
+              const itemKey = item.key || item.id || item.asset?.mint || item._index;
+
+              return (
+                <TableRow
+                  key={itemKey}
+                  className="cursor-pointer transition-colors duration-150 border-none"
+                  onClick={() => handleRowClick(item)}
+                  onMouseEnter={() => onRowHover?.(item)}>
+                  {configuration.columns.map((column) => {
+                    let cellContent: React.ReactNode = "-";
+
+                    try {
+                      if (column.render) {
+                        cellContent = column.render(item, get(item, String(column.key))) || null;
+                      } else {
                         const value = get(item, String(column.key));
 
-                        return value !== null && value !== undefined ? String(value) : "-";
-                      } catch {
-                        return "-";
+                        cellContent = value !== null && value !== undefined ? String(value) : "-";
                       }
-                    })()}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+                    } catch {
+                      cellContent = "-";
+                    }
+
+                    return (
+                      <TableCell
+                        key={column.key}
+                        className={`border-none h-[36px] lg:h-[60px] ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"} lg:p-auto px-0 pb-3
+                        ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
+                      `}>
+                        {cellContent}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
         {paginationElement}

@@ -155,6 +155,7 @@ function transformProtocolToStandard(protocol: DeFiLlamaProtocol, dataSource: "o
     isParentProtocol: protocol.isParentProtocol,
     parentProtocol: protocol.parentProtocol,
     parentProtocolSlug: protocol.parentProtocolSlug,
+    assetToken: protocol.assetToken,
   };
 }
 

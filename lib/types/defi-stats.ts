@@ -59,6 +59,7 @@ export interface Protocol extends BaseProtocol {
   isParentProtocol?: boolean;
   parentProtocol?: string;
   parentProtocolSlug?: string;
+  assetToken?: string;
 }
 
 export interface ProtocolAggregate extends BaseProtocol {

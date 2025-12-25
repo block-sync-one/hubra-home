@@ -2,7 +2,7 @@
 
 import type { ProtocolMetric } from "./types";
 
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 
 import { fetchKeyMetrics } from "./actions";
 import { keyMetricsTableConfig } from "./key-metrics-config";
@@ -65,3 +65,5 @@ export function KeyMetricsSection({ protocolSlug, otherProtocols }: KeyMetricsSe
     </div>
   );
 }
+
+export const MemoizedKeyMetricsSection = React.memo(KeyMetricsSection);

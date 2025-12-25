@@ -5,4 +5,5 @@ export interface ProtocolMetric {
   tvl: number;
   fees: number;
   revenue: number;
+  assetToken?: string;
 }
