@@ -53,7 +53,7 @@ export function TokenDescription({ description, twitter, website }: TokenDescrip
             <Icon
               aria-label="View Twitter profile"
               className="h-5 w-5 text-gray-400 cursor-pointer hover:text-white transition-colors"
-              icon="lucide:twitter"
+              icon="simple-icons:x"
               role="button"
               tabIndex={0}
               onClick={() => window.open(twitter, "_blank")}

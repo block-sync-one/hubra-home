@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 import { setClientCache } from "@/lib/cache/client-cache";
+import { apiQueue } from "@/lib/utils/request-queue";
 
 export interface BirdeyeOHLCVPoint {
   timestamp: number;
@@ -36,35 +37,39 @@ export function usePriceHistory(tokenId: string, days: number | "max" = 7) {
   const fetchPriceHistory = useCallback(async () => {
     if (!tokenId) return;
 
+    // Create unique key for this request
+    const requestKey = `price-history:${tokenId}:${days}`;
+
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`/api/crypto/price-history?id=${tokenId}&days=${days === "max" ? "max" : days}`);
+      // Use centralized request queue to prevent duplicate requests
+      const result = await apiQueue.dedupe(requestKey, async () => {
+        const response = await fetch(`/api/crypto/price-history?id=${tokenId}&days=${days === "max" ? "max" : days}`);
 
-      const result: BirdeyePriceHistoryData = await response.json();
+        const jsonResult: BirdeyePriceHistoryData = await response.json();
 
-      if (!response.ok) {
-        const errorMsg = (result as any).error || `HTTP ${response.status}: Failed to fetch price history`;
+        if (!response.ok) {
+          const errorMsg = (jsonResult as any).error || `HTTP ${response.status}: Failed to fetch price history`;
 
-        throw new Error(errorMsg);
-      }
+          throw new Error(errorMsg);
+        }
 
-      if (!result.success) {
-        const errorMsg = (result as any).error || "API returned success: false";
+        if (!jsonResult.success) {
+          const errorMsg = (jsonResult as any).error || "API returned success: false";
 
-        throw new Error(errorMsg);
-      }
+          throw new Error(errorMsg);
+        }
 
-      const isFallback = response.headers.get("X-Fallback-Data") === "true";
+        return { result: jsonResult, isFallback: response.headers.get("X-Fallback-Data") === "true" };
+      });
 
-      setIsFallbackData(isFallback);
+      setIsFallbackData(result.isFallback);
 
-      const transformedData = transformBirdeyeData(result.data || [], days);
+      const transformedData = transformBirdeyeData(result.result.data || [], days);
 
-      const cacheKey = `price-history:${tokenId}:${days}`;
-
-      setClientCache(cacheKey, transformedData);
+      setClientCache(requestKey, transformedData);
 
       setChartData(transformedData);
     } catch (err) {

@@ -1,3 +1,7 @@
+/* Swiper styles */
+@import "swiper/css";
+@import "swiper/css/navigation";
+
 /* ============================================
    Tailwind Directives
    ============================================ */

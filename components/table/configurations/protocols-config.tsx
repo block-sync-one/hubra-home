@@ -24,7 +24,7 @@ export const protocolsTableConfig: TableConfiguration<Protocol> = {
       label: "Name",
       sortable: false,
       align: "left",
-      width: "300px",
+      width: "200px",
       render: (item: Protocol) => <ProtocolCell columnKey="protocol" item={item} />,
     },
     {
@@ -36,12 +36,13 @@ export const protocolsTableConfig: TableConfiguration<Protocol> = {
       render: (item: Protocol) => <ProtocolCell columnKey="tvl" item={item} />,
     },
     {
-      key: "change_7d",
-      label: "7d Change",
-      sortable: true,
-      align: "right",
-      width: "150px",
-      render: (item: Protocol) => <ProtocolCell columnKey="change_7d" item={item} />,
+      key: "description",
+      label: "Description",
+      sortable: false,
+      align: "left",
+      width: "400px",
+      hiddenOnMobile: true,
+      render: (item: Protocol) => <ProtocolCell columnKey="description" item={item} />,
     },
     {
       key: "category",
