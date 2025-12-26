@@ -137,7 +137,7 @@ function transformProtocolToStandard(protocol: DeFiLlamaProtocol, dataSource: "o
     id: protocol.slug || deriveProtocolSlugFromName(protocol.name),
     name: protocol.name,
     logo: protocol.logo || "",
-    symbol: protocol.symbol || "",
+    symbol: protocol.symbol && protocol.symbol !== "-" ? protocol.symbol : "",
     tvl,
     // @ts-ignore - chainTvls exists but not in type definition
     tvlChartData: protocol.chainTvls?.["Solana"],
@@ -305,7 +305,7 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
   const missingParentProtocolSlugs: string[] = Array.from(missingParentProtocolSlugsMap.keys());
 
   if (missingParentProtocolSlugs.length > 0) {
-    const parentProtocolsData = await Promise.allSettled(missingParentProtocolSlugs.map((slug) => fetchSingleTVL(slug).catch(() => null)));
+    const parentProtocolsData = await Promise.allSettled(missingParentProtocolSlugs.map((slug) => fetchSingleTVL(slug)));
 
     for (let i = 0; i < parentProtocolsData.length; i++) {
       const result = parentProtocolsData[i];
@@ -401,20 +401,33 @@ export async function fetchProtocolDataRaw(slug: string, includeHistoricalTVL = 
 
     // Return cached data if we have full overview data
     if (cached && (cached.dataSource === "overview" || cached.dataSource === "merged")) {
-      // For minimal fetch, check if we have fees/revenue
-      if (!includeHistoricalTVL && (cached.totalFees_1d !== undefined || cached.totalRevenue_1d !== undefined)) {
-        return cached;
-      }
-      if (includeHistoricalTVL) {
+      // For minimal fetch, require fees/revenue data
+      if (!includeHistoricalTVL) {
+        if (cached.totalFees_1d !== undefined || cached.totalRevenue_1d !== undefined) {
+          return cached;
+        }
+      } else {
+        // For full fetch, any cached overview/merged data is valid
         return cached;
       }
     }
 
-    const [singleProtocol, feesData, revenueData] = await Promise.all([
+    // Build promises array - include historical TVL if needed for parallel fetching
+    const promises: Promise<any>[] = [
       fetchSingleTVL(slug),
       fetchProtocolFees(slug).catch(() => null),
       fetchProtocolRevenue(slug).catch(() => null),
-    ]);
+    ];
+
+    if (includeHistoricalTVL) {
+      promises.push(fetchProtocolHistoricalTVL(slug).catch(() => []));
+    }
+
+    const results = await Promise.all(promises);
+    const singleProtocol = results[0];
+    const feesData = results[1];
+    const revenueData = results[2];
+    const historicalTVL = includeHistoricalTVL ? results[3] : undefined;
 
     const protocol = transformProtocolToStandard(singleProtocol, "overview");
 
@@ -428,12 +441,8 @@ export async function fetchProtocolDataRaw(slug: string, includeHistoricalTVL = 
       protocol.isParentProtocol = true;
     }
 
-    if (includeHistoricalTVL) {
-      const historicalTVL = await fetchProtocolHistoricalTVL(slug).catch(() => []);
-
-      if (historicalTVL && historicalTVL.length > 0) {
-        protocol.tvlChartData = historicalTVL;
-      }
+    if (includeHistoricalTVL && historicalTVL && Array.isArray(historicalTVL) && historicalTVL.length > 0) {
+      protocol.tvlChartData = historicalTVL;
     }
 
     if (feesData && revenueData) {
@@ -535,18 +544,27 @@ export async function fetchChildProtocols(parentSlug: string, otherProtocols?: s
       return [];
     }
 
-    // 2. Derive slugs from otherProtocols array and exclude parent protocol before fetching
+    // 2. Derive slugs from otherProtocols array, exclude parent protocol, and deduplicate
     const parentSlugNormalized = parentSlug.toLowerCase();
-    const protocolSlugs = otherProtocols
-      .map((name) => deriveProtocolSlugFromName(name))
-      .filter((slug) => slug.toLowerCase() !== parentSlugNormalized);
+    const protocolSlugsSet = new Set<string>();
+
+    for (const name of otherProtocols) {
+      const slug = deriveProtocolSlugFromName(name);
+      const slugNormalized = slug.toLowerCase();
+
+      if (slugNormalized !== parentSlugNormalized) {
+        protocolSlugsSet.add(slugNormalized);
+      }
+    }
+
+    const protocolSlugs = Array.from(protocolSlugsSet);
 
     if (protocolSlugs.length === 0) {
       return [];
     }
 
-    // 3. Fetch all in parallel (fetchProtocolDataMinimal handles its own caching)
-    const protocols = await Promise.allSettled(protocolSlugs.map((slug) => fetchProtocolDataMinimal(slug).catch(() => null)));
+    // 3. Fetch all in parallel (fetchProtocolDataMinimal handles its own caching and errors)
+    const protocols = await Promise.allSettled(protocolSlugs.map((slug) => fetchProtocolDataMinimal(slug)));
 
     // 4. Normalize values - filter out null and parent protocols
     const children: Protocol[] = [];

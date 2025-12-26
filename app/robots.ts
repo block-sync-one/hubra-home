@@ -11,13 +11,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/api/",
-          "/_next/",
-          "/admin/",
-          "/*.json$",
-          "/*?*", // Disallow query parameters
-        ],
+        disallow: ["/api/", "/_next/", "/admin/", "/*.json$"],
       },
       {
         userAgent: "Googlebot",

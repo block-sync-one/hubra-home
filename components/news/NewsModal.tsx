@@ -1,3 +1,5 @@
+"use client";
+
 import type { CryptoPanicPost } from "@/lib/services/cryptopanic";
 
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";

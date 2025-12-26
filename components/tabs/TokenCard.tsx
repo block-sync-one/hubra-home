@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "@heroui/react";
-import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
+import dynamic from "next/dynamic";
 
 import {
   CHART_TIME_PERIODS,
@@ -17,6 +17,12 @@ import {
 import { seededRandom } from "@/lib/utils/random";
 import { PriceChangeChip } from "@/components/price";
 import { ImageWithSkeleton } from "@/components/ImageWithSkeleton";
+
+// Lazy load chart components
+const Area = dynamic(() => import("recharts").then((mod) => ({ default: mod.Area })), { ssr: false });
+const AreaChart = dynamic(() => import("recharts").then((mod) => ({ default: mod.AreaChart })), { ssr: false });
+const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => ({ default: mod.ResponsiveContainer })), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then((mod) => ({ default: mod.YAxis })), { ssr: false });
 
 interface TokenCardProps {
   name: string;

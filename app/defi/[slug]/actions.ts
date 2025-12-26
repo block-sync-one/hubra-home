@@ -4,6 +4,7 @@ import type { ProtocolMetric } from "./types";
 import type { Protocol } from "@/lib/types/defi-stats";
 
 import { fetchChildProtocols } from "@/lib/data/defi-data";
+import { apiQueue } from "@/lib/utils/request-queue";
 
 function extractNumericValue(value: unknown): number {
   if (typeof value === "number" && !isNaN(value) && isFinite(value)) {
@@ -33,20 +34,26 @@ function transformProtocolToMetric(protocol: Protocol): ProtocolMetric {
 }
 
 export async function fetchKeyMetrics(protocolSlug: string, otherProtocols: string[]): Promise<ProtocolMetric[]> {
-  try {
-    const childProtocols = await fetchChildProtocols(protocolSlug, otherProtocols);
-    const protocolMap = new Map<string, ProtocolMetric>();
+  // Create a unique key for this request
+  const requestKey = `key-metrics:${protocolSlug}:${otherProtocols.sort().join(",")}`;
 
-    for (const protocol of childProtocols) {
-      const id = protocol.id || protocol.slug || protocol.name;
+  // Use centralized request queue to prevent duplicate requests
+  return apiQueue.dedupe(requestKey, async () => {
+    try {
+      const childProtocols = await fetchChildProtocols(protocolSlug, otherProtocols);
+      const protocolMap = new Map<string, ProtocolMetric>();
 
-      if (!id || protocolMap.has(id)) continue;
+      for (const protocol of childProtocols) {
+        const id = protocol.id || protocol.slug || protocol.name;
 
-      protocolMap.set(id, transformProtocolToMetric(protocol));
+        if (!id || protocolMap.has(id)) continue;
+
+        protocolMap.set(id, transformProtocolToMetric(protocol));
+      }
+
+      return Array.from(protocolMap.values());
+    } catch {
+      return [];
     }
-
-    return Array.from(protocolMap.values());
-  } catch {
-    return [];
-  }
+  });
 }

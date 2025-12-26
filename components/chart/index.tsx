@@ -7,9 +7,17 @@
 
 import React from "react";
 import { Card } from "@heroui/react";
-import { Area, AreaChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
+import dynamic from "next/dynamic";
 
 import { formatCurrency } from "@/lib/utils/helper";
+
+// Lazy load chart components
+const Area = dynamic(() => import("recharts").then((mod) => ({ default: mod.Area })), { ssr: false });
+const AreaChart = dynamic(() => import("recharts").then((mod) => ({ default: mod.AreaChart })), { ssr: false });
+const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => ({ default: mod.ResponsiveContainer })), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then((mod) => ({ default: mod.XAxis })), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then((mod) => ({ default: mod.YAxis })), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then((mod) => ({ default: mod.Tooltip })), { ssr: false });
 
 // Chart Data Types
 export interface ChartData {

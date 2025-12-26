@@ -91,7 +91,9 @@ const UnifiedTable = <T extends Record<string, any>>({
     if (!columnKey) return filteredItems;
 
     // Single-column sorting only (no combined sorts)
-    return [...filteredItems].sort((a, b) => {
+    const items = filteredItems.slice();
+
+    return items.sort((a, b) => {
       if (!a || !b || typeof a !== "object" || typeof b !== "object") return 0;
 
       // Get the value directly from the item using the column key
@@ -204,6 +206,19 @@ const UnifiedTable = <T extends Record<string, any>>({
     return <TablePagination currentPage={page} totalPages={pages} onNext={onNextPage} onPageChange={setPage} onPrevious={onPreviousPage} />;
   }, [page, pages, onPreviousPage, onNextPage, sortedItems.length, rowsPerPage]);
 
+  // Create item map for O(1) lookups in click handlers
+  const itemMap = useMemo(() => {
+    const map = new Map<string, any>();
+
+    paginatedItems.forEach((item: any) => {
+      const key = item.key || item.id || String(item._index);
+
+      map.set(key, item);
+    });
+
+    return map;
+  }, [paginatedItems]);
+
   // Convert items to mobile list format
   const mobileListItems = useMemo<MobileListItem[]>(() => {
     return paginatedItems.map((item: any) => {
@@ -256,12 +271,12 @@ const UnifiedTable = <T extends Record<string, any>>({
         isLoading={isLoading}
         items={mobileListItems}
         onItemClick={(item) => {
-          const originalItem = paginatedItems.find((i: any) => (i.key || i.id || String(i._index)) === item.key);
+          const originalItem = itemMap.get(item.key);
 
           if (originalItem) handleRowClick(originalItem);
         }}
         onItemHover={(item) => {
-          const originalItem = paginatedItems.find((i: any) => (i.key || i.id || String(i._index)) === item.key);
+          const originalItem = itemMap.get(item.key);
 
           if (originalItem && onRowHover) onRowHover(originalItem);
         }}

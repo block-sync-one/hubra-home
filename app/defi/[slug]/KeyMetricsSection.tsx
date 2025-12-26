@@ -19,7 +19,12 @@ export function KeyMetricsSection({ protocolSlug, otherProtocols }: KeyMetricsSe
   const [protocols, setProtocols] = useState<ProtocolMetric[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const otherProtocolsKey = useMemo(() => (otherProtocols || []).join(","), [otherProtocols]);
+  // Create stable key for otherProtocols to prevent unnecessary re-renders
+  const otherProtocolsKey = useMemo(() => {
+    if (!otherProtocols || otherProtocols.length === 0) return "";
+
+    return otherProtocols.sort().join(",");
+  }, [otherProtocols]);
 
   useEffect(() => {
     let cancelled = false;

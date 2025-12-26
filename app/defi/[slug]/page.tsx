@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { Image } from "@heroui/image";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
-import dynamic from "next/dynamic";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -24,8 +23,6 @@ import { siteConfig } from "@/config/site";
 import { getBreadcrumbJsonLdString } from "@/lib/utils/structured-data";
 import ChartPnl, { Chart } from "@/components/chart";
 import { formatCurrency } from "@/lib/utils/helper";
-
-const CryptoPanicNews = dynamic(() => import("@/components/news/CryptoPanicNews").then((mod) => ({ default: mod.CryptoPanicNews })));
 
 type PageParams = {
   slug: string;
@@ -391,12 +388,6 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
         <Suspense fallback={<div className="mb-8">Loading child protocols...</div>}>
           <KeyMetricsSection otherProtocols={protocol.otherProtocols} protocolSlug={protocolSlug} />
         </Suspense>
-
-        {/* CryptoPanic News Section */}
-        <div className="mt-12">
-          <h3 className="text-lg font-semibold mb-4 text-white">Latest News</h3>
-          <CryptoPanicNews />
-        </div>
       </div>
     </main>
   );
