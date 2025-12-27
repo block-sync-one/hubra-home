@@ -46,6 +46,10 @@
    Component-Specific Styles
    ============================================ */
 @layer components {
+  .container {
+    @apply px-4 py-6 md:py-11;
+  }
+
   /* Chart components */
   .recharts-surface:focus,
   .recharts-wrapper:focus {

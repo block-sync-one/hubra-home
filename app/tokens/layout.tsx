@@ -49,5 +49,5 @@ export const metadata: Metadata = {
 };
 
 export default function TokensLayout({ children }: { children: React.ReactNode }) {
-  return <section className="py-6 md:py-11">{children}</section>;
+  return <section className="container">{children}</section>;
 }
