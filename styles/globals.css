@@ -47,7 +47,7 @@
    ============================================ */
 @layer components {
   .container {
-    @apply px-4 py-6 md:py-11;
+    @apply px-4 py-6 md:py-11 mx-auto;
   }
 
   /* Chart components */
@@ -163,7 +163,7 @@
 @keyframes aurora-shift {
   0%,
   100% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
   }
   50% {
     background-position: 100% 50%;

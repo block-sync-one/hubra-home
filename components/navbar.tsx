@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -23,7 +23,6 @@ import { siteConfig } from "@/config/site";
 
 export const Navbar = () => {
   const pathname = usePathname();
-  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -62,7 +61,7 @@ export const Navbar = () => {
       className="backdrop-blur-md bg-black/20 border-b border-white/10"
       classNames={{
         base: "z-[60] relative",
-        wrapper: "max-w-7xl mx-auto ",
+        wrapper: "max-w-7xl mx-auto px-4 md:px-6",
         menuItem: "text-white",
         menu: "text-white bg-black/90 backdrop-blur-md z-[60]",
         item: "text-white",
@@ -171,8 +170,9 @@ export const Navbar = () => {
         {/* Mobile menu toggle - Right side */}
         <NavbarItem className="lg:hidden">
           <Button
+            isIconOnly
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            className="text-primary bg-transparent hover:bg-white/10 p-2"
+            className="text-primary bg-transparent hover:bg-white/10"
             variant="light"
             onPress={() => setIsMenuOpen(!isMenuOpen)}>
             <div className="flex flex-col gap-1">
@@ -198,62 +198,42 @@ export const Navbar = () => {
                       </div>
                       <div className="space-y-1">
                         {item.navItems.map((child) => (
-                          <button
+                          <NextLink
                             key={child.href}
                             className={`w-full text-left flex items-center gap-3 px-6 py-3 transition-colors duration-200 ${
                               isActive(child.href)
                                 ? "text-white bg-white/20 font-semibold border-l-4 border-white"
                                 : "text-gray-300 hover:text-white hover:bg-white/10"
                             }`}
-                            onClick={() => {
-                              setIsMenuOpen(false);
-                              router.push(child.href);
-                            }}>
+                            href={child.href}
+                            onClick={() => setIsMenuOpen(false)}>
                             {child.label}
-                          </button>
+                          </NextLink>
                         ))}
                       </div>
                     </div>
                   ) : (
                     item.href && (
-                      <button
+                      <NextLink
                         className={`w-full text-left block py-3 text-lg transition-colors duration-200 ${
                           isActive(item.href)
                             ? "text-primary bg-white/20 font-semibold border-l-4 border-primary pl-4"
                             : "text-gray-300 hover:text-white hover:bg-white/10 pl-4"
                         }`}
-                        onClick={() => {
-                          if (item.href) {
-                            setIsMenuOpen(false);
-                            router.push(item.href);
-                          }
-                        }}>
+                        href={item.href}
+                        onClick={() => setIsMenuOpen(false)}>
                         {item.label}
-                      </button>
+                      </NextLink>
                     )
                   )}
                 </NavbarMenuItem>
               )
           )}
 
-          {/* Mobile Stats Button */}
-          {/*          <NavbarMenuItem>
-            <NextLink
-              className={`block py-3 text-lg transition-colors duration-200 ${
-                isActive("/stats")
-                  ? "text-white bg-white/20 font-semibold border-l-4 border-white pl-4"
-                  : "text-gray-300 hover:text-white hover:bg-white/10 pl-0"
-              }`}
-              href="/stats"
-              onClick={() => setIsMenuOpen(false)}>
-              Stats
-            </NextLink>
-          </NavbarMenuItem>*/}
-
           {/* Mobile Launch App Button */}
           <div className="pt-4">
             <Button
-              as={Link}
+              as={NextLink}
               className="w-full text-sm font-medium text-black bg-white hover:bg-gray-100 transition-colors duration-200"
               endContent={isMounted ? <ArrowRight size={14} /> : null}
               href="/link"
