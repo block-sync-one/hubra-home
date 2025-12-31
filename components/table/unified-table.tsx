@@ -16,6 +16,32 @@ const get = (obj: any, path: string) => {
   return path.split(".").reduce((current, key) => current?.[key], obj);
 };
 
+function getAlignmentClass(align?: "left" | "right" | "center"): string {
+  switch (align) {
+    case "center":
+      return "text-center";
+    case "right":
+      return "text-right";
+    case "left":
+    default:
+      return "text-left";
+  }
+}
+
+function getCellContent(item: any, column: any): React.ReactNode {
+  try {
+    if (column.render) {
+      return column.render(item, get(item, String(column.key))) || "-";
+    }
+
+    const value = get(item, String(column.key));
+
+    return value !== null && value !== undefined ? String(value) : "-";
+  } catch {
+    return "-";
+  }
+}
+
 const ROWS_PER_PAGE = 100;
 
 interface ReusableTableProps<T> extends TableProps<T> {
@@ -294,22 +320,31 @@ const UnifiedTable = <T extends Record<string, any>>({
           }}
           sortDescriptor={sortDescriptor}
           onSortChange={handleSortChange}>
-          <TableHeader className="">
-            {headerColumns?.map((column) => (
-              <TableColumn
-                key={column.key}
-                align={column.align === "left" ? "start" : column.align === "right" ? "end" : "center"}
-                allowsSorting={column.sortable}
-                className={`
-                bg-gray-30  
-                text-gray-400
-                ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
-                ${column.key === "description" ? "pl-12" : ""}
-              `}
-                style={column.width ? { width: column.width } : undefined}>
-                {column.label}
-              </TableColumn>
-            ))}
+          <TableHeader>
+            {headerColumns?.map((column, index) => {
+              const isLastColumn = index === (headerColumns?.length || 0) - 1;
+              const alignMap = {
+                left: "start" as const,
+                right: "end" as const,
+                center: "center" as const,
+              };
+
+              return (
+                <TableColumn
+                  key={column.key}
+                  align={column.align ? alignMap[column.align] : "start"}
+                  allowsSorting={column.sortable}
+                  className={`
+                    bg-gray-30 text-gray-400
+                    ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
+                    ${column.key === "description" ? "pl-12" : ""}
+                    ${isLastColumn ? "pr-6" : "pr-0"}
+                  `}
+                  style={column.width ? { width: column.width } : undefined}>
+                  {column.label}
+                </TableColumn>
+              );
+            })}
           </TableHeader>
           <TableBody
             emptyContent={<div className="py-6 text-center text-gray-500 w-full">No data available</div>}
@@ -321,30 +356,25 @@ const UnifiedTable = <T extends Record<string, any>>({
               return (
                 <TableRow
                   key={itemKey}
-                  className="cursor-pointer transition-colors duration-150 border-none"
+                  className="cursor-pointer transition-colors duration-150 border-none hover:bg-gray-30 rounded-xl"
                   onClick={() => handleRowClick(item)}
                   onMouseEnter={() => onRowHover?.(item)}>
-                  {configuration.columns.map((column) => {
-                    let cellContent: React.ReactNode = "-";
-
-                    try {
-                      if (column.render) {
-                        cellContent = column.render(item, get(item, String(column.key))) || null;
-                      } else {
-                        const value = get(item, String(column.key));
-
-                        cellContent = value !== null && value !== undefined ? String(value) : "-";
-                      }
-                    } catch {
-                      cellContent = "-";
-                    }
+                  {configuration.columns.map((column, colIndex) => {
+                    const cellContent = getCellContent(item, column);
+                    const isFirstCell = colIndex === 0;
+                    const isLastCell = colIndex === configuration.columns.length - 1;
+                    const alignClass = getAlignmentClass(column.align);
 
                     return (
                       <TableCell
                         key={column.key}
-                        className={`border-none h-[36px] lg:h-[60px] ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"} lg:p-auto px-0 pb-3
-                        ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
-                      `}>
+                        className={`
+                          border-none h-[36px] lg:h-[60px] lg:p-auto px-0 pb-3
+                          ${alignClass}
+                          ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
+                          ${isFirstCell ? "rounded-l-xl" : ""}
+                          ${isLastCell ? "rounded-r-xl" : ""}
+                        `}>
                         {cellContent}
                       </TableCell>
                     );

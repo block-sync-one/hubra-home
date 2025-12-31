@@ -58,7 +58,7 @@ export function ProtocolsTable({ protocols }: ProtocolsTableProps) {
         key: protocol.id,
         logo: protocol.logo,
         name: protocol.name,
-        subtitle: protocol.symbol || (Array.isArray(protocol.category) ? protocol.category[0] : protocol.category || "DeFi"),
+        subtitle: protocol.assetToken || protocol.symbol || "-",
         primaryValue: formatCurrency(protocol.tvl, true),
       };
     });

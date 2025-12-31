@@ -82,7 +82,7 @@ export const TokenCell = React.memo(({ item, columnKey }: { item: Token; columnK
 
     case "action":
       return (
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <button
             className="px-4 py-2 bg-primary-500/15 text-primary-500 rounded-lg text-sm font-medium cursor-pointer hover:bg-primary-500/20 transition-colors"
             type="button"

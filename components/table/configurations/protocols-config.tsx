@@ -6,7 +6,15 @@ import { Protocol } from "@/lib/types/defi-stats";
 
 /**
  * Protocols Table Configuration
- * Defines columns, sorting, and rendering for DeFi protocols table
+ *
+ * Defines columns, sorting, and rendering for DeFi protocols table.
+ *
+ * Column Structure:
+ * - Rank: Protocol ranking (center-aligned, 50px)
+ * - Name: Protocol name with logo (left-aligned, 200px)
+ * - TVL: Total Value Locked (right-aligned, 200px, sortable)
+ * - Protocol Asset: Asset token or symbol (right-aligned, 200px, hidden on mobile)
+ * - Categories: Protocol categories as chips (right-aligned, auto-width, hidden on mobile)
  */
 export const protocolsTableConfig: TableConfiguration<Protocol> = {
   columns: [
@@ -32,17 +40,17 @@ export const protocolsTableConfig: TableConfiguration<Protocol> = {
       label: "TVL",
       sortable: true,
       align: "right",
-      width: "150px",
+      width: "200px",
       render: (item: Protocol) => <ProtocolCell columnKey="tvl" item={item} />,
     },
     {
-      key: "description",
-      label: "Description",
+      key: "assetToken",
+      label: "Protocol Asset",
       sortable: false,
-      align: "left",
-      width: "400px",
+      align: "right",
       hiddenOnMobile: true,
-      render: (item: Protocol) => <ProtocolCell columnKey="description" item={item} />,
+      width: "200px",
+      render: (item: Protocol) => <ProtocolCell columnKey="assetToken" item={item} />,
     },
     {
       key: "category",
@@ -50,7 +58,6 @@ export const protocolsTableConfig: TableConfiguration<Protocol> = {
       sortable: false,
       align: "right",
       hiddenOnMobile: true,
-      width: "300px",
       render: (item: Protocol) => <ProtocolCell columnKey="category" item={item} />,
     },
   ],

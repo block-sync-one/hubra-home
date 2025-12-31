@@ -13,6 +13,18 @@ interface TopProtocolsProps {
   protocols: Protocol[];
 }
 
+/**
+ * Get display value for protocol asset token
+ * Falls back to symbol if assetToken is empty or "-"
+ */
+function getProtocolAssetDisplay(protocol: Protocol): string {
+  if (protocol.assetToken && protocol.assetToken !== "-") {
+    return protocol.assetToken;
+  }
+
+  return protocol.symbol || "-";
+}
+
 export function TopProtocols({ protocols }: TopProtocolsProps) {
   return (
     <div>
@@ -40,7 +52,7 @@ export function TopProtocols({ protocols }: TopProtocolsProps) {
                     </div>
                     <div className="space-y-1">
                       <h3 className="text-sm font-medium text-white">{protocol.name}</h3>
-                      <p className="text-xs text-gray-400">{protocol.category}</p>
+                      <p className="text-xs text-gray-400 uppercase font-medium">{getProtocolAssetDisplay(protocol)}</p>
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-1">

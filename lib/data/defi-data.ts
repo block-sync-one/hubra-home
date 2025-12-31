@@ -36,6 +36,7 @@ interface InflowsChartDataPoint {
 
 const CACHE_KEY_ALL_PROTOCOLS = "defi:protocols:all";
 const TOP_PROTOCOLS_LIMIT = 6;
+const MIN_TVL_THRESHOLD = 100000;
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function deriveProtocolSlugFromName(name: string): string {
@@ -90,6 +91,11 @@ function filterAndTransformSolanaProtocols(protocols: DeFiLlamaProtocol[]): {
     }
 
     const transformed: Protocol = transformProtocolToStandard(protocol, "list");
+
+    // Filter out protocols with TVL < MIN_TVL_THRESHOLD
+    if (transformed.tvl < MIN_TVL_THRESHOLD) {
+      continue;
+    }
 
     standardized.push(transformed);
 
@@ -320,6 +326,11 @@ async function fetchFreshProtocolsData(): Promise<DefiStatsAggregate> {
         }
 
         const transformed = transformProtocolToStandard(result.value, "overview");
+
+        // Filter out protocols with TVL < MIN_TVL_THRESHOLD
+        if (transformed.tvl < MIN_TVL_THRESHOLD) {
+          continue;
+        }
 
         transformed.isParentProtocol = true;
         successfulParents.push(transformed);

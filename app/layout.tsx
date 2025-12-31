@@ -125,7 +125,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main className="w-full flex flex-col scroll-mt-24" id="main" tabIndex={-1}>
               {children}
             </main>
-            <CryptoPanicNews />
+            <div className="sr-only">
+              <CryptoPanicNews />
+            </div>
           </div>
         </Providers>
         <Analytics />
