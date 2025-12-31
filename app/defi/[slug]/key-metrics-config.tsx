@@ -5,6 +5,8 @@ import React from "react";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 
+import { buildDefillamaUrl } from "./helpers";
+
 import { formatCurrency } from "@/lib/utils/helper";
 
 function isValidNumericValue(value: unknown): value is number {
@@ -17,6 +19,29 @@ function renderCurrencyValue(value: unknown): React.ReactNode {
   return <span className="font-medium text-white">{numericValue !== null ? formatCurrency(numericValue, true) : "-"}</span>;
 }
 
+// Memoized components for better performance
+const ProtocolNameCell = React.memo(({ name }: { name: string }) => <span className="font-semibold text-white pl-4">{name}</span>);
+
+ProtocolNameCell.displayName = "ProtocolNameCell";
+
+const ActionButtonCell = React.memo(({ slug, id }: { slug?: string; id: string }) => {
+  const defillamaUrl = buildDefillamaUrl(slug || "", id);
+
+  return (
+    <Link
+      className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-primary"
+      href={defillamaUrl}
+      rel="noopener noreferrer"
+      target="_blank"
+      title="View on DeFiLlama"
+      onClick={(e) => e.stopPropagation()}>
+      <Icon icon="lucide:external-link" width={18} />
+    </Link>
+  );
+});
+
+ActionButtonCell.displayName = "ActionButtonCell";
+
 export const keyMetricsTableConfig: TableConfiguration<ProtocolMetric> = {
   columns: [
     {
@@ -24,12 +49,7 @@ export const keyMetricsTableConfig: TableConfiguration<ProtocolMetric> = {
       label: "Protocol",
       sortable: true,
       align: "left",
-      render: (item) => (
-        <div className="flex items-center gap-2">
-          <span className="font-semibold text-white">{item.name || "-"}</span>
-          {item.assetToken && <span className="text-xs text-gray-400 font-medium uppercase">{item.assetToken}</span>}
-        </div>
-      ),
+      render: (item) => <ProtocolNameCell name={item.name} />,
     },
     {
       key: "tvl",
@@ -58,22 +78,7 @@ export const keyMetricsTableConfig: TableConfiguration<ProtocolMetric> = {
       sortable: false,
       align: "center",
       width: 60,
-      render: (item) => {
-        const slug = item.slug || item.id;
-        const defillamaUrl = `https://defillama.com/protocol/${slug}`;
-
-        return (
-          <Link
-            className="inline-flex items-center justify-center p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
-            href={defillamaUrl}
-            rel="noopener noreferrer"
-            target="_blank"
-            title="View on DeFiLlama"
-            onClick={(e) => e.stopPropagation()}>
-            <Icon icon="lucide:external-link" width={18} />
-          </Link>
-        );
-      },
+      render: (item) => <ActionButtonCell id={item.id} slug={item.slug} />,
     },
   ],
   defaultSort: {

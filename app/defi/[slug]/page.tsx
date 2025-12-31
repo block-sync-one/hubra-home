@@ -17,6 +17,7 @@ import { StatsGrid } from "../components/stats-grid";
 
 import { ProtocolBreadcrumb } from "./ProtocolBreadcrumb";
 import { KeyMetricsSection } from "./KeyMetricsSection";
+import { formatTokenAddress, getTokenSymbol, getTokenDisplayValue } from "./helpers";
 
 import { fetchProtocolWithResolution } from "@/lib/data/defi-data";
 import { siteConfig } from "@/config/site";
@@ -48,6 +49,7 @@ interface StatItem {
   changeType?: "positive" | "negative" | "neutral";
   url?: string;
   isExternal?: boolean;
+  subtitle?: string;
 }
 
 export async function generateMetadata({ params }: { params: Promise<PageParams> }): Promise<Metadata> {
@@ -203,6 +205,25 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       changeType: (protocol.change7D || 0) >= 0 ? "positive" : "negative",
     },
   ];
+
+  // Add Official Token card if symbol or address is available
+  const tokenAddress = protocol.address;
+  const tokenSymbol = getTokenSymbol(protocol);
+
+  // Show card if we have either address or symbol
+  if (tokenAddress || tokenSymbol) {
+    const addressDisplay = tokenAddress ? formatTokenAddress(tokenAddress) : undefined;
+    const displayValue = getTokenDisplayValue(tokenSymbol);
+
+    statsData.push({
+      name: "Official Token",
+      value: displayValue,
+      subtitle: addressDisplay,
+      icon: "solar:token-bold",
+      url: tokenAddress ? `/tokens/${tokenAddress}` : undefined,
+      isExternal: false,
+    });
+  }
 
   function buildSocialLinks(): StatItem[] {
     const links: StatItem[] = [];

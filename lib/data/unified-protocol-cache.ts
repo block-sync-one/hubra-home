@@ -186,6 +186,8 @@ export function mergeProtocolData(
       url: existing.url ?? newData.url,
       twitter: existing.twitter ?? newData.twitter,
       github: existing.github ?? newData.github,
+      assetToken: existing.assetToken ?? newData.assetToken,
+      address: existing.address ?? newData.address,
       dataSource: existing.dataSource === "overview" ? "merged" : "list",
       lastUpdated: Date.now(),
     };
@@ -199,6 +201,8 @@ export function mergeProtocolData(
     url: newData.url ?? existing.url,
     twitter: newData.twitter ?? existing.twitter,
     github: newData.github ?? existing.github,
+    assetToken: newData.assetToken ?? existing.assetToken,
+    address: newData.address ?? existing.address,
     tvl: existing.tvl ?? newData.currentChainTvls?.["Solana"],
     change1D: existing.change1D ?? newData.change1D,
     change7D: existing.change7D ?? newData.change7D,

@@ -139,6 +139,9 @@ function transformProtocolToStandard(protocol: DeFiLlamaProtocol, dataSource: "o
   const tvl = extractTvlFromProtocol(protocol, dataSource);
   const change1D = protocol.change_1d;
 
+  // Remove "solana:" prefix from address if present
+  const cleanAddress = protocol.address?.startsWith("solana:") ? protocol.address.replace(/^solana:/, "") : protocol.address;
+
   return {
     id: protocol.slug || deriveProtocolSlugFromName(protocol.name),
     name: protocol.name,
@@ -162,6 +165,7 @@ function transformProtocolToStandard(protocol: DeFiLlamaProtocol, dataSource: "o
     parentProtocol: protocol.parentProtocol,
     parentProtocolSlug: protocol.parentProtocolSlug,
     assetToken: protocol.assetToken,
+    address: cleanAddress,
   };
 }
 

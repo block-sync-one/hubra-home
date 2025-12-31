@@ -2,11 +2,12 @@
 
 import type { ProtocolMetric } from "./types";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 
 import { fetchKeyMetrics } from "./actions";
 import { keyMetricsTableConfig } from "./key-metrics-config";
 import { KeyMetricsSkeleton } from "./KeyMetricsSkeleton";
+import { buildDefillamaUrl } from "./helpers";
 
 import UnifiedTable from "@/components/table/unified-table";
 
@@ -23,8 +24,14 @@ export function KeyMetricsSection({ protocolSlug, otherProtocols }: KeyMetricsSe
   const otherProtocolsKey = useMemo(() => {
     if (!otherProtocols || otherProtocols.length === 0) return "";
 
-    return otherProtocols.sort().join(",");
+    return [...otherProtocols].sort().join(",");
   }, [otherProtocols]);
+
+  const handleRowClick = useCallback((item: ProtocolMetric) => {
+    const defillamaUrl = buildDefillamaUrl(item.slug || "", item.id);
+
+    window.open(defillamaUrl, "_blank", "noopener,noreferrer");
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -66,7 +73,13 @@ export function KeyMetricsSection({ protocolSlug, otherProtocols }: KeyMetricsSe
   return (
     <div className="mb-8">
       <h3 className="text-lg font-semibold mb-4 text-white">Key Metrics</h3>
-      <UnifiedTable<ProtocolMetric> configuration={keyMetricsTableConfig} data={protocols} filterValue="" isLoading={false} />
+      <UnifiedTable<ProtocolMetric>
+        configuration={keyMetricsTableConfig}
+        data={protocols}
+        filterValue=""
+        isLoading={false}
+        onRowClick={handleRowClick}
+      />
     </div>
   );
 }
