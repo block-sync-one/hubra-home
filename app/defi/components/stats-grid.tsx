@@ -24,7 +24,7 @@ interface StatsGridProps {
 
 // Memoized stat card component for better performance
 const StatCard = React.memo(({ stat }: { stat: StatItem }) => {
-  return (
+  const cardContent = (
     <Card
       className={`group bg-transparent shadow-none md:shadow-card md:bg-card md:backdrop-blur-sm h-full ${
         stat.url ? "cursor-pointer transition-colors" : ""
@@ -35,18 +35,10 @@ const StatCard = React.memo(({ stat }: { stat: StatItem }) => {
           <Icon className="text-gray-400 flex-shrink-0" icon={stat.icon} width={18} />
         </div>
         <div className="flex flex-col gap-0.5">
-          {stat.url ? (
-            <Link
-              className="text-white group-hover:text-primary hover:underline inline-flex items-center gap-1 truncate transition-colors"
-              href={stat.url}
-              rel={stat.isExternal ? "noopener noreferrer" : undefined}
-              target={stat.isExternal ? "_blank" : undefined}>
-              <span className="text-base font-semibold  group-hover:text-primary">{stat.value}</span>
-              {stat.isExternal && <Icon className="text-gray-400 flex-shrink-0" icon="solar:arrow-up-right-linear" width={12} />}
-            </Link>
-          ) : (
-            <span className="text-base font-semibold text-white truncate">{stat.value}</span>
-          )}
+          <div className="inline-flex items-center gap-1">
+            <span className="text-base font-semibold text-white group-hover:text-primary truncate transition-colors">{stat.value}</span>
+            {stat.isExternal && stat.url && <Icon className="text-gray-400 flex-shrink-0" icon="solar:arrow-up-right-linear" width={12} />}
+          </div>
 
           {stat.subtitle && <span className={`text-xs text-gray-400 ${stat.url ? "font-mono" : ""} truncate`}>{stat.subtitle}</span>}
 
@@ -81,6 +73,20 @@ const StatCard = React.memo(({ stat }: { stat: StatItem }) => {
       </CardBody>
     </Card>
   );
+
+  if (stat.url) {
+    return (
+      <Link
+        className="block h-full"
+        href={stat.url}
+        rel={stat.isExternal ? "noopener noreferrer" : undefined}
+        target={stat.isExternal ? "_blank" : undefined}>
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 });
 
 StatCard.displayName = "StatCard";
