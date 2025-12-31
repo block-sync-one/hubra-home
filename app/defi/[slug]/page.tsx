@@ -219,9 +219,9 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       name: "Official Token",
       value: displayValue,
       subtitle: addressDisplay,
-      icon: "solar:token-bold",
+      icon: "lucide:external-link",
       url: tokenAddress ? `/tokens/${tokenAddress}` : undefined,
-      isExternal: false,
+      isExternal: !!tokenAddress,
     });
   }
 
