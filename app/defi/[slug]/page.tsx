@@ -221,7 +221,7 @@ export default async function Page({ params }: { params: Promise<PageParams> }) 
       subtitle: addressDisplay,
       icon: "lucide:external-link",
       url: tokenAddress ? `/tokens/${tokenAddress}` : undefined,
-      isExternal: !!tokenAddress,
+      isExternal: false,
     });
   }
 
