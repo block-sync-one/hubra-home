@@ -10,10 +10,37 @@ import TableSkeleton from "./skeleton/table-skeleton";
 import { MobileListLayout, type MobileListItem } from "@/components/ui/mobile-list-layout";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { fixedNumber } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils/helper";
 
 const get = (obj: any, path: string) => {
   return path.split(".").reduce((current, key) => current?.[key], obj);
 };
+
+function getAlignmentClass(align?: "left" | "right" | "center"): string {
+  switch (align) {
+    case "center":
+      return "text-center";
+    case "right":
+      return "text-right";
+    case "left":
+    default:
+      return "text-left";
+  }
+}
+
+function getCellContent(item: any, column: any): React.ReactNode {
+  try {
+    if (column.render) {
+      return column.render(item, get(item, String(column.key))) || "-";
+    }
+
+    const value = get(item, String(column.key));
+
+    return value !== null && value !== undefined ? String(value) : "-";
+  } catch {
+    return "-";
+  }
+}
 
 const ROWS_PER_PAGE = 100;
 
@@ -90,7 +117,9 @@ const UnifiedTable = <T extends Record<string, any>>({
     if (!columnKey) return filteredItems;
 
     // Single-column sorting only (no combined sorts)
-    return [...filteredItems].sort((a, b) => {
+    const items = filteredItems.slice();
+
+    return items.sort((a, b) => {
       if (!a || !b || typeof a !== "object" || typeof b !== "object") return 0;
 
       // Get the value directly from the item using the column key
@@ -203,17 +232,57 @@ const UnifiedTable = <T extends Record<string, any>>({
     return <TablePagination currentPage={page} totalPages={pages} onNext={onNextPage} onPageChange={setPage} onPrevious={onPreviousPage} />;
   }, [page, pages, onPreviousPage, onNextPage, sortedItems.length, rowsPerPage]);
 
+  // Create item map for O(1) lookups in click handlers
+  const itemMap = useMemo(() => {
+    const map = new Map<string, any>();
+
+    paginatedItems.forEach((item: any) => {
+      const key = item.key || item.id || String(item._index);
+
+      map.set(key, item);
+    });
+
+    return map;
+  }, [paginatedItems]);
+
   // Convert items to mobile list format
   const mobileListItems = useMemo<MobileListItem[]>(() => {
-    return paginatedItems.map((item: any) => ({
-      key: item.key || item.id || item.asset?.mint || String(item._index),
-      logoURI: item.logoURI || "",
-      name: item.name || "Unknown",
-      symbol: item.symbol,
-      primaryValue: item.price || "-",
-      change: item.change,
-      secondaryValue: item.change ? `${fixedNumber(Math.abs(item.change))}%` : "0%",
-    }));
+    return paginatedItems.map((item: any) => {
+      const key = item.key || item.id || item.asset?.mint || String(item._index);
+      const name = item.name || "Unknown";
+
+      // Handle ProtocolMetric type (has tvl, fees, revenue)
+      if (item.tvl !== undefined && item.fees !== undefined && item.revenue !== undefined) {
+        const isTvlValid = typeof item.tvl === "number" && !isNaN(item.tvl) && isFinite(item.tvl);
+        const isFeesValid = typeof item.fees === "number" && !isNaN(item.fees) && isFinite(item.fees);
+        const isRevenueValid = typeof item.revenue === "number" && !isNaN(item.revenue) && isFinite(item.revenue);
+
+        const feesFormatted = isFeesValid ? formatCurrency(item.fees, true) : "-";
+        const revenueFormatted = isRevenueValid ? formatCurrency(item.revenue, true) : "-";
+        const subtitleParts = [item.slug, item.assetToken].filter(Boolean);
+
+        return {
+          key,
+          logoURI: "", // No image for Key Metrics
+          name,
+          symbol: item.assetToken,
+          subtitle: subtitleParts.length > 0 ? subtitleParts.join(" • ") : undefined,
+          primaryValue: isTvlValid ? formatCurrency(item.tvl, true) : "-",
+          secondaryValue: `Fees: ${feesFormatted} • Rev.: ${revenueFormatted}`,
+        };
+      }
+
+      // Handle standard token/protocol format
+      return {
+        key,
+        logoURI: item.logoURI || item.logo || "",
+        name,
+        symbol: item.symbol,
+        primaryValue: item.price || "-",
+        change: item.change,
+        secondaryValue: item.change ? `${fixedNumber(Math.abs(item.change))}%` : "0%",
+      };
+    });
   }, [paginatedItems]);
 
   if (invalidConfig) {
@@ -228,12 +297,12 @@ const UnifiedTable = <T extends Record<string, any>>({
         isLoading={isLoading}
         items={mobileListItems}
         onItemClick={(item) => {
-          const originalItem = paginatedItems.find((i: any) => (i.key || i.id || String(i._index)) === item.key);
+          const originalItem = itemMap.get(item.key);
 
           if (originalItem) handleRowClick(originalItem);
         }}
         onItemHover={(item) => {
-          const originalItem = paginatedItems.find((i: any) => (i.key || i.id || String(i._index)) === item.key);
+          const originalItem = itemMap.get(item.key);
 
           if (originalItem && onRowHover) onRowHover(originalItem);
         }}
@@ -251,54 +320,68 @@ const UnifiedTable = <T extends Record<string, any>>({
           }}
           sortDescriptor={sortDescriptor}
           onSortChange={handleSortChange}>
-          <TableHeader className="">
-            {headerColumns?.map((column) => (
-              <TableColumn
-                key={column.key}
-                align={column.align === "left" ? "start" : column.align === "right" ? "end" : "center"}
-                allowsSorting={column.sortable}
-                className={`
-                bg-gray-30  
-                text-gray-400
-                ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
-              `}
-                style={column.width ? { width: column.width } : undefined}>
-                {column.label}
-              </TableColumn>
-            ))}
+          <TableHeader>
+            {headerColumns?.map((column, index) => {
+              const isLastColumn = index === (headerColumns?.length || 0) - 1;
+              const alignMap = {
+                left: "start" as const,
+                right: "end" as const,
+                center: "center" as const,
+              };
+
+              return (
+                <TableColumn
+                  key={column.key}
+                  align={column.align ? alignMap[column.align] : "start"}
+                  allowsSorting={column.sortable}
+                  className={`
+                    bg-gray-30 text-gray-400
+                    ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
+                    ${column.key === "description" ? "pl-12" : ""}
+                    ${isLastColumn ? "pr-6" : "pr-0"}
+                  `}
+                  style={column.width ? { width: column.width } : undefined}>
+                  {column.label}
+                </TableColumn>
+              );
+            })}
           </TableHeader>
           <TableBody
             emptyContent={<div className="py-6 text-center text-gray-500 w-full">No data available</div>}
             isLoading={isLoading}
             loadingContent={<TableSkeleton columns={configuration.columns.length} rows={2} />}>
-            {paginatedItems.map((item: any) => (
-              <TableRow
-                key={item.key || item.id || item.asset?.mint || item._index}
-                className="cursor-pointer transition-colors duration-150 border-none"
-                onClick={() => handleRowClick(item)}
-                onMouseEnter={() => onRowHover?.(item)}>
-                {configuration.columns.map((column) => (
-                  <TableCell
-                    key={column.key}
-                    className={`border-none h-[36px] lg:h-[60px] ${column.align === "center" ? "text-center" : column.align === "right" ? "text-right" : "text-left"} lg:p-auto px-0 pb-3
-                    ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
-                  `}>
-                    {(() => {
-                      try {
-                        if (column.render) {
-                          return column.render(item, get(item, String(column.key))) || null;
-                        }
-                        const value = get(item, String(column.key));
+            {paginatedItems.map((item: any) => {
+              const itemKey = item.key || item.id || item.asset?.mint || item._index;
 
-                        return value !== null && value !== undefined ? String(value) : "-";
-                      } catch {
-                        return "-";
-                      }
-                    })()}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+              return (
+                <TableRow
+                  key={itemKey}
+                  className="cursor-pointer transition-colors duration-150 border-none hover:bg-gray-30 rounded-xl"
+                  onClick={() => handleRowClick(item)}
+                  onMouseEnter={() => onRowHover?.(item)}>
+                  {configuration.columns.map((column, colIndex) => {
+                    const cellContent = getCellContent(item, column);
+                    const isFirstCell = colIndex === 0;
+                    const isLastCell = colIndex === configuration.columns.length - 1;
+                    const alignClass = getAlignmentClass(column.align);
+
+                    return (
+                      <TableCell
+                        key={column.key}
+                        className={`
+                          border-none h-[36px] lg:h-[60px] lg:p-auto px-0 pb-3
+                          ${alignClass}
+                          ${column.hiddenOnMobile ? "hidden lg:table-cell" : ""}
+                          ${isFirstCell ? "rounded-l-xl" : ""}
+                          ${isLastCell ? "rounded-r-xl" : ""}
+                        `}>
+                        {cellContent}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
         {paginationElement}

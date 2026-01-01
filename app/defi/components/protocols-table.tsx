@@ -13,7 +13,7 @@ import UnifiedTable from "@/components/table/unified-table";
 import { protocolsTableConfig } from "@/components/table/configurations";
 import { TableToolbar, MobileListLayout, type MobileListItem } from "@/components/ui";
 import { Protocol } from "@/lib/types/defi-stats";
-import { prepareProtocolsForTable, filterProtocols, sortProtocols } from "@/lib/helpers/protocol";
+import { prepareProtocolsForTable, filterProtocols } from "@/lib/helpers/protocol";
 import { formatCurrency } from "@/lib/utils/helper";
 
 interface ProtocolsTableProps {
@@ -24,7 +24,6 @@ export function ProtocolsTable({ protocols }: ProtocolsTableProps) {
   const router = useRouter();
   const [filterValue, setFilterValue] = useState("");
 
-  // Filter and sort protocols
   const filteredAndSorted = useMemo(() => {
     let result = protocols;
 
@@ -33,8 +32,8 @@ export function ProtocolsTable({ protocols }: ProtocolsTableProps) {
       result = filterProtocols(result, filterValue);
     }
 
-    // Default sort by TVL descending
-    result = sortProtocols(result, "tvl", "descending");
+    // Sort by TVL descending
+    result.sort((a, b) => (b.tvl || 0) - (a.tvl || 0));
 
     return result;
   }, [protocols, filterValue]);
@@ -54,15 +53,15 @@ export function ProtocolsTable({ protocols }: ProtocolsTableProps) {
 
   // Convert protocols to mobile list format
   const mobileListItems = useMemo<MobileListItem[]>(() => {
-    return tableData.map((protocol) => ({
-      key: protocol.id,
-      logo: protocol.logo,
-      name: protocol.name,
-      subtitle: Array.isArray(protocol.category) ? protocol.category[0] : protocol.category || "DeFi",
-      primaryValue: formatCurrency(protocol.tvl, true),
-      change: protocol.change7D,
-      secondaryValue: protocol.change7D ? `${Math.abs(protocol.change7D).toFixed(2)}%` : "0.00%",
-    }));
+    return tableData.map((protocol) => {
+      return {
+        key: protocol.id,
+        logo: protocol.logo,
+        name: protocol.name,
+        subtitle: protocol.assetToken || protocol.symbol || "-",
+        primaryValue: formatCurrency(protocol.tvl, true),
+      };
+    });
   }, [tableData]);
 
   return (

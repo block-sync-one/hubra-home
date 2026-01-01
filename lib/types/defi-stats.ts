@@ -16,7 +16,7 @@ export interface DefiStatsAggregate {
       value2: number;
     }[];
   };
-  solanaProtocols: ProtocolAggregate[];
+  solanaProtocols: Protocol[];
   hotProtocols: Protocol[];
   numberOfProtocols: number;
   totalTvl: number;
@@ -35,6 +35,7 @@ export interface BaseProtocol {
   id: string;
   name: string;
   logo: string;
+  symbol?: string;
   tvl: number;
   change1D?: number;
   change7D?: number;
@@ -49,6 +50,17 @@ export interface Protocol extends BaseProtocol {
   url?: string;
   twitter?: string;
   github?: string;
+  tvlChartData?: Array<{ date: number; totalLiquidityUSD: number }>;
+  feesRevenueChartData?: Array<{ date: string; value: number; value2: number }>;
+  totalFees_1d?: number;
+  totalRevenue_1d?: number;
+  feesChange_1d?: number;
+  otherProtocols?: string[];
+  isParentProtocol?: boolean;
+  parentProtocol?: string;
+  parentProtocolSlug?: string;
+  assetToken?: string;
+  address?: string;
 }
 
 export interface ProtocolAggregate extends BaseProtocol {

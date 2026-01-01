@@ -27,19 +27,19 @@ const config = {
         background: "#0d0e21",
         foreground: "#FFFFFF",
         primary: {
-          25: "#FCFBF6",
-          50: "#FFFFE7",
-          100: "#FEFFC1",
-          200: "#FEDF89",
-          300: "#FEC84B",
-          400: "#FDB122",
-          500: "#FEAA01",
-          600: "#DB6904",
-          700: "#B64707",
-          800: "#94370C",
-          900: "#792E0E",
-          950: "#461502",
-          DEFAULT: "#FEAA01",
+          25: "#FDF9F0",
+          50: "#FFF4E0",
+          100: "#FFE9C1",
+          200: "#FFD382",
+          300: "#FFBD4F",
+          400: "#E6A520",
+          500: "#DAA520",
+          600: "#C4941C",
+          700: "#AE8318",
+          800: "#987214",
+          900: "#826110",
+          950: "#55400B",
+          DEFAULT: "#DAA520",
           foreground: "#FFFFFF",
         },
         success: {
@@ -98,6 +98,64 @@ const config = {
       backgroundImage: {
         "gradient-brand": "linear-gradient(62deg, rgb(255,255,255) 0%, #FEAA01 100%)",
         "gradient-bars": "linear-gradient(0deg,rgba(255,75,198,0) 0%, #2E2E2E 10%,rgba(255,75,198,0) 70%)",
+      },
+      keyframes: {
+        "scroll-left": {
+          "0%": {
+            transform: "translateX(0)",
+          },
+          "100%": {
+            transform: "translateX(-50%)",
+          },
+        },
+        "marquee": {
+          from: {
+            transform: "translateX(0)",
+          },
+          to: {
+            transform: "translateX(calc(-100% - var(--gap)))",
+          },
+        },
+        "marquee-vertical": {
+          from: {
+            transform: "translateY(0)",
+          },
+          to: {
+            transform: "translateY(calc(-100% - var(--gap)))",
+          },
+        },
+        "aurora": {
+          "0%": {
+            backgroundPosition: "0% 50%",
+            transform: "rotate(-5deg) scale(0.9)",
+          },
+          "25%": {
+            backgroundPosition: "50% 100%",
+            transform: "rotate(5deg) scale(1.1)",
+          },
+          "50%": {
+            backgroundPosition: "100% 50%",
+            transform: "rotate(-3deg) scale(0.95)",
+          },
+          "75%": {
+            backgroundPosition: "50% 0%",
+            transform: "rotate(3deg) scale(1.05)",
+          },
+          "100%": {
+            backgroundPosition: "0% 50%",
+            transform: "rotate(-5deg) scale(0.9)",
+          },
+        },
+      },
+      animation: {
+        "scroll-slow": "scroll-left 40s linear infinite",
+        "scroll-medium": "scroll-left 30s linear infinite",
+        "scroll-fast": "scroll-left 20s linear infinite",
+        "rainbow": "rainbow var(--speed, 2s) infinite linear",
+        "marquee": "marquee var(--duration) infinite linear",
+        "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
+        "aurora": "aurora 8s ease-in-out infinite alternate",
+        "shine": "shine var(--duration) infinite linear",
       },
     },
   },

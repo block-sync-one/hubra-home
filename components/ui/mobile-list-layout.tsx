@@ -123,21 +123,23 @@ export function MobileListLayout<T extends MobileListItem>({
           <div
             key={item.key}
             aria-label="Item details"
-            className="flex items-center justify-between py-2 px-1 transition-colors cursor-pointer"
+            className="flex items-center justify-between py-2 transition-colors cursor-pointer"
             role="button"
             onClick={() => handleItemClick(item)}
             onMouseEnter={() => handleItemHover(item)}>
             {/* Left Column: Logo, Name, Subtitle */}
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
-                <ImageWithSkeleton
-                  alt={`${item.name} logo`}
-                  className="w-full h-full object-cover"
-                  height={36}
-                  src={item.logoURI || item.logo || ""}
-                  width={36}
-                />
-              </div>
+              {(item.logoURI || item.logo) && (
+                <div className="w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden flex-shrink-0">
+                  <ImageWithSkeleton
+                    alt={`${item.name} logo`}
+                    className="w-full h-full object-cover"
+                    height={36}
+                    src={item.logoURI || item.logo || ""}
+                    width={36}
+                  />
+                </div>
+              )}
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-semibold text-white truncate">{item.name}</span>
                 {(item.symbol || item.subtitle) && (

@@ -1,3 +1,7 @@
+/* Swiper styles */
+@import "swiper/css";
+@import "swiper/css/navigation";
+
 /* ============================================
    Tailwind Directives
    ============================================ */
@@ -42,6 +46,10 @@
    Component-Specific Styles
    ============================================ */
 @layer components {
+  .container {
+    @apply px-4 py-6 md:py-11 mx-auto;
+  }
+
   /* Chart components */
   .recharts-surface:focus,
   .recharts-wrapper:focus {
@@ -155,7 +163,7 @@
 @keyframes aurora-shift {
   0%,
   100% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
   }
   50% {
     background-position: 100% 50%;

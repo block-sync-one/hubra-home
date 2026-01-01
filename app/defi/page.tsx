@@ -5,6 +5,7 @@ import { TopProtocols } from "./components/top-protocols";
 import { ProtocolsTable } from "./components/protocols-table";
 
 import { fetchProtocolsData } from "@/lib/data/defi-data";
+import { isParentProtocol } from "@/lib/data/protocol-utils";
 import ChartPnl, { Chart } from "@/components/chart";
 import { siteConfig } from "@/config/site";
 import { getWebPageJsonLd, getCollectionPageJsonLd } from "@/lib/utils/structured-data";
@@ -73,11 +74,19 @@ export const metadata: Metadata = {
   },
 };
 
+export const revalidate = 300; // 5 minutes
+
 export default async function DeFiPage() {
-  // Fetch DeFi protocols data (with Redis caching)
+  const perfStart = performance.now();
+
   const protocols = await fetchProtocolsData();
 
-  // Check if we have valid data
+  const perfDuration = performance.now() - perfStart;
+
+  if (process.env.NODE_ENV === "development") {
+    console.log(`📊 DeFi page data fetch: ${perfDuration.toFixed(0)}ms`);
+  }
+
   if (!protocols || protocols.numberOfProtocols === 0) {
     notFound();
   }
@@ -113,13 +122,13 @@ export default async function DeFiPage() {
     },
     {
       key: "inflows",
-      title: "Inflows",
+      title: "24h Inflows",
       value: protocols.totalFees_1d,
       suffix: "",
       type: "number",
       tooltipType: "number-string",
-      toolTipTitle: "fees",
-      toolTip2Title: "revenue",
+      toolTipTitle: "Fees",
+      toolTip2Title: "Revenue",
       change: `${protocols.inflows.change_1d.toFixed(2)}%`,
       changeType: protocols.inflows.change_1d >= 0 ? "positive" : "negative",
       chartData: protocols.inflows.chartData,
@@ -142,7 +151,7 @@ export default async function DeFiPage() {
         <section className="flex flex-col gap-12">
           <ChartPnl charts={chartData} title="DeFi TVL" />
           <TopProtocols protocols={protocols.hotProtocols} />
-          <ProtocolsTable protocols={protocols.solanaProtocols} />
+          <ProtocolsTable protocols={protocols.solanaProtocols.filter(isParentProtocol)} />
         </section>
       </div>
     </main>

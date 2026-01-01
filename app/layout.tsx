@@ -3,6 +3,8 @@ import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import React from "react";
+import dynamic from "next/dynamic";
 
 import { Providers } from "./providers";
 
@@ -10,6 +12,8 @@ import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
 import { ORGANIZATION_JSON_LD_STRING, WEBSITE_JSON_LD_STRING } from "@/lib/utils/structured-data";
 import { fontSans } from "@/config/fonts";
+const CryptoPanicNews = dynamic(() => import("@/components/news/CryptoPanicNews").then((mod) => ({ default: mod.CryptoPanicNews })));
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.domain),
   title: {
@@ -93,7 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Preconnect to external APIs for faster loading */}
         <link href="https://fonts.googleapis.com" rel="preconnect" />
         <link crossOrigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect" />
-        <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
+        <link crossOrigin="anonymous" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
         <link href="https://public-api.birdeye.so" rel="preconnect" />
         <link href="https://stablecoins.llama.fi" rel="preconnect" />
         <link href="https://api.llama.fi" rel="preconnect" />
@@ -118,9 +122,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col items-center">
             <Navbar />
-            <main className="w-full px-4 md:px-10 flex flex-col scroll-mt-24" id="main" tabIndex={-1}>
+            <main className="w-full flex flex-col scroll-mt-24" id="main" tabIndex={-1}>
               {children}
             </main>
+            <div className="sr-only">
+              <CryptoPanicNews />
+            </div>
           </div>
         </Providers>
         <Analytics />

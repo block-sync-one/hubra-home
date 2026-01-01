@@ -196,13 +196,11 @@ export const MainContentSection = (): JSX.Element => {
       {/* Meet Hubra Section */}
       <div className="flex flex-col w-full items-start gap-8">
         <div className="flex flex-col items-center gap-10 w-full">
-          <div className="flex flex-col max-w-[580px] items-center justify-center ">
-            <h2 className="font-geist text-white text-3xl font-semibold md:leading-[54.6px] tracking-[-1.04px] text-center">Meet Hubra</h2>
-          </div>
+          <h2 className="font-geist text-white text-3xl font-semibold md:leading-[54.6px] tracking-[-1.04px] text-center">Meet Hubra</h2>
 
           {/* Mobile Layout: Stacked sections */}
           {isMobile && (
-            <div className="flex flex-col gap-8">
+            <>
               {/* Normies Section */}
               <div className="flex flex-col gap-4">
                 <Card className="flex items-center justify-center mx-auto w-[350px] h-[518px] bg-[url('/image/hubra-m.png')] bg-cover bg-center rounded-2xl relative overflow-hidden">
@@ -234,7 +232,7 @@ export const MainContentSection = (): JSX.Element => {
                     </span>
                   </div>
                   <div className="absolute left-[32%] top-[77%] z-10">
-                    <span className="capitalize w-[98px] h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand-mobile text-center tracking-[1px]">
+                    <span className="capitalize w-full h-[27px] inline-block text-lg font-bold leading-[27px] text-gradient-brand-mobile text-center tracking-[1px]">
                       Friend.hub
                     </span>
                   </div>
@@ -265,7 +263,7 @@ export const MainContentSection = (): JSX.Element => {
                   </div>
                 </div>
               </div>
-            </div>
+            </>
           )}
 
           {/* Desktop Layout: Tab functionality */}
@@ -369,7 +367,7 @@ export const MainContentSection = (): JSX.Element => {
                   }`}>
                   Normies
                 </span>
-                <p className="font-geist text-gray-400/70 text-base">No complicated jargon. Effortless onboarding</p>
+                <p className="font-geist text-gray-400/70 text-base text-left">No complicated jargon. Effortless onboarding</p>
               </div>
             </button>
 
@@ -407,7 +405,7 @@ export const MainContentSection = (): JSX.Element => {
           </h2>
           <p className="w-[80%] break-words md:w-fit font-geist text-gray-400/70 text-xl text-center">our empowered liquid staked SOL</p>
         </div>
-        <div className="flex flex-col items-center md:flex-row-reverse md:items-start gap-4 w-full">
+        <div className="flex flex-col items-center md:flex-row-reverse md:items-start gap-4 w-full px-4 md:px-0">
           {/* Right column: Large logo card */}
           <Card className="relative w-full h-[390px] md:flex-1 bg-[url('/image/hubsol-sec.png')] bg-cover bg-center rounded-2xl overflow-hidden flex items-center justify-center">
             <FloatingOrbsAnimation />
@@ -532,7 +530,7 @@ export const MainContentSection = (): JSX.Element => {
         </div>
 
         {/* Features Section */}
-        <Card className="flex flex-col w-full items-start bg-card rounded-2xl">
+        <Card className="flex flex-col w-full items-start bg-card rounded-none md:rounded-2xl">
           <CardContent className="p-0 w-full flex flex-col">
             {features.map((feature, index) => (
               <div
