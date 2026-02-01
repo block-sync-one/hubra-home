@@ -144,12 +144,10 @@ export default async function DeFiPage() {
       <script dangerouslySetInnerHTML={{ __html: defiPageJsonLdString }} defer type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: collectionJsonLdString }} defer type="application/ld+json" />
       <div className="md:max-w-7xl mx-auto">
-        <header className="mb-8 px-4 md:px-0">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Solana DeFi Protocols
-          </h1>
-          <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-3xl">
-            Discover the most popular <strong className="text-white">DeFi protocols</strong> building on Solana. 
+        <header className="sr-only">
+          <h1>Solana DeFi Protocols</h1>
+          <p>
+            Discover the most popular DeFi protocols building on Solana. 
             From decentralized exchanges and lending platforms to liquid staking and yield aggregators, 
             Solana&apos;s DeFi ecosystem offers some of the fastest and most cost-effective protocols in crypto. 
             Track real-time Total Value Locked (TVL), compare protocol performance, and identify the best 

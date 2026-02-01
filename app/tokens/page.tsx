@@ -158,23 +158,19 @@ export default async function TokensPage() {
       <script dangerouslySetInnerHTML={{ __html: collectionJsonLdString }} defer type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: datasetJsonLdString }} defer type="application/ld+json" />
       <main className="flex flex-col gap-12">
-        <div className="md:max-w-7xl mx-auto w-full px-4 md:px-0">
-          <header className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Solana Token Prices
-            </h1>
-            <p className="text-gray-400 text-base md:text-lg leading-relaxed max-w-3xl">
-              Track live <strong className="text-white">Solana token prices</strong> and market data in real-time. 
-              Our comprehensive dashboard displays current prices, 24-hour trading volume, market capitalization, 
-              and price changes for thousands of tokens on the Solana blockchain. Discover trending tokens, 
-              track top gainers and losers, and spot newly listed projects before they take off. Solana&apos;s 
-              high-speed, low-cost network has attracted hundreds of innovative projects — from meme coins 
-              to DeFi tokens and NFT-related assets. Whether you&apos;re researching your next investment or 
-              monitoring your portfolio, Hubra provides the accurate, up-to-date token data you need to 
-              stay ahead of the market.
-            </p>
-          </header>
-        </div>
+        <header className="sr-only">
+          <h1>Solana Token Prices</h1>
+          <p>
+            Track live Solana token prices and market data in real-time. 
+            Our comprehensive dashboard displays current prices, 24-hour trading volume, market capitalization, 
+            and price changes for thousands of tokens on the Solana blockchain. Discover trending tokens, 
+            track top gainers and losers, and spot newly listed projects before they take off. Solana&apos;s 
+            high-speed, low-cost network has attracted hundreds of innovative projects — from meme coins 
+            to DeFi tokens and NFT-related assets. Whether you&apos;re researching your next investment or 
+            monitoring your portfolio, Hubra provides the accurate, up-to-date token data you need to 
+            stay ahead of the market.
+          </p>
+        </header>
         <div className="md:max-w-7xl mx-auto w-full">
           <Tokens
             fdvChange={totalFDVChange}
