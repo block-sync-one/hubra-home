@@ -2,8 +2,9 @@ import { Metadata } from "next";
 
 import { siteConfig } from "@/config/site";
 
-const title = "Solana DeFi Protocols & Analytics | Hubra";
-const description = "Find the best DeFi opportunities to earn yield, maximize returns, and grow your crypto portfolio on Solana.";
+const title = "Top Solana DeFi Protocols | TVL Rankings & Analytics | Hubra";
+const description =
+  "Explore the best DeFi protocols on Solana. Compare TVL, yields, and performance metrics across 100+ protocols. Track real-time analytics and find the highest-earning opportunities.";
 const canonical = `${siteConfig.domain}/defi`;
 
 export const metadata: Metadata = {
