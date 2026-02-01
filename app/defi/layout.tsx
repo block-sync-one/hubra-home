@@ -2,33 +2,25 @@ import { Metadata } from "next";
 
 import { siteConfig } from "@/config/site";
 
-const title = "Top Solana DeFi Protocols | TVL Rankings & Analytics | Hubra";
+const title = "Solana DeFi Protocols | Live TVL & Analytics | Hubra";
 const description =
-  "Explore the best DeFi protocols on Solana. Compare TVL, yields, and performance metrics across 100+ protocols. Track real-time analytics and find the highest-earning opportunities.";
+  "Track 100+ Solana DeFi protocols in real-time. Compare TVL, yields, and performance across liquid staking, DEXs, lending, and more.";
 const canonical = `${siteConfig.domain}/defi`;
 
 export const metadata: Metadata = {
   title,
   description,
   keywords: [
-    "Solana DeFi",
+    "solana defi",
+    "defi protocols",
+    "solana tvl",
+    "defi analytics",
+    "solana ecosystem",
     "DeFi earn",
     "DeFi yield",
-    "earn DeFi",
     "yield farming",
-    "DeFi protocols",
-    "Solana",
-    "Solana blockchain",
-    "DeFi analytics",
     "TVL tracking",
-    "Solana TVL",
-    "DeFi metrics",
     "protocol performance",
-    "DeFi statistics",
-    "blockchain analytics",
-    "crypto metrics",
-    "Solana ecosystem",
-    "DeFi opportunities",
   ],
   alternates: {
     canonical,

@@ -10,9 +10,9 @@ import ChartPnl, { Chart } from "@/components/chart";
 import { siteConfig } from "@/config/site";
 import { getWebPageJsonLd, getCollectionPageJsonLd } from "@/lib/utils/structured-data";
 
-const title = "Top Solana DeFi Protocols | TVL Rankings & Analytics | Hubra";
+const title = "Solana DeFi Protocols | Live TVL & Analytics | Hubra";
 const description =
-  "Explore the best DeFi protocols on Solana. Compare TVL, yields, and performance metrics across 100+ protocols. Track real-time analytics and find the highest-earning opportunities.";
+  "Track 100+ Solana DeFi protocols in real-time. Compare TVL, yields, and performance across liquid staking, DEXs, lending, and more.";
 const canonical = `${siteConfig.domain}/defi`;
 
 export const metadata: Metadata = {
@@ -145,16 +145,14 @@ export default async function DeFiPage() {
       <script dangerouslySetInnerHTML={{ __html: collectionJsonLdString }} defer type="application/ld+json" />
       <div className="md:max-w-7xl mx-auto">
         <header className="sr-only">
-          <h1>Solana DeFi Protocols</h1>
+          <h1>Solana DeFi Ecosystem</h1>
           <p>
-            Discover the most popular DeFi protocols building on Solana. 
-            From decentralized exchanges and lending platforms to liquid staking and yield aggregators, 
-            Solana&apos;s DeFi ecosystem offers some of the fastest and most cost-effective protocols in crypto. 
-            Track real-time Total Value Locked (TVL), compare protocol performance, and identify the best 
-            yield opportunities across the network. Whether you&apos;re looking to swap tokens, earn passive 
-            income through staking, or provide liquidity, our analytics dashboard helps you make informed 
-            decisions. Hubra aggregates data from all major Solana DeFi protocols so you can compare fees, 
-            APYs, and historical performance in one place.
+            Track 100+ Solana DeFi protocols in real-time. Compare TVL, yields, and performance 
+            across liquid staking, DEXs, lending, and yield aggregators. Solana&apos;s DeFi ecosystem 
+            offers some of the fastest and most cost-effective protocols in crypto. Whether you&apos;re 
+            looking to swap tokens, earn passive income through staking, or provide liquidity, 
+            Hubra aggregates data from all major protocols so you can compare fees, APYs, and 
+            historical performance in one place.
           </p>
         </header>
 

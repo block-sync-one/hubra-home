@@ -2,15 +2,15 @@ import { Metadata } from "next";
 
 import { siteConfig } from "@/config/site";
 
-const title = "Solana Token Prices | Live Crypto Prices & Market Data | Hubra";
+const title = "Solana Token Prices | Live Crypto Market Data | Hubra";
 const description =
-  "Track real-time Solana token prices and market data. View price charts, market cap, 24h volume, and discover trending tokens. Updated every minute.";
+  "Live Solana token prices and market data. Track SOL, JUP, RAY, BONK, memecoins, and 100+ tokens with real-time charts and market caps.";
 const canonical = `${siteConfig.domain}/tokens`;
 
 export const metadata: Metadata = {
   title,
   description,
-  keywords: ["Solana tokens", "SOL", "cryptocurrency prices", "token analytics", "crypto market data", "SPL tokens"],
+  keywords: ["solana token prices", "solana tokens", "sol price", "crypto prices", "solana market data", "SPL tokens"],
   alternates: {
     canonical,
   },

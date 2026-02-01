@@ -17,9 +17,9 @@ import { COMMON_BREADCRUMBS, getCollectionPageJsonLd, getDatasetJsonLd } from "@
 export const dynamic = "force-dynamic";
 export const revalidate = 300;
 
-const title = "Solana Token Prices | Live Crypto Prices & Market Data | Hubra";
+const title = "Solana Token Prices | Live Crypto Market Data | Hubra";
 const description =
-  "Track real-time Solana token prices and market data. View price charts, market cap, 24h volume, and discover trending tokens. Updated every minute.";
+  "Live Solana token prices and market data. Track SOL, JUP, RAY, BONK, memecoins, and 100+ tokens with real-time charts and market caps.";
 const ogTitle = "Live Solana Token Prices & Market Data";
 const canonical = `${siteConfig.domain}/tokens`;
 
@@ -161,14 +161,11 @@ export default async function TokensPage() {
         <header className="sr-only">
           <h1>Solana Token Prices</h1>
           <p>
-            Track live Solana token prices and market data in real-time. 
-            Our comprehensive dashboard displays current prices, 24-hour trading volume, market capitalization, 
-            and price changes for thousands of tokens on the Solana blockchain. Discover trending tokens, 
-            track top gainers and losers, and spot newly listed projects before they take off. Solana&apos;s 
-            high-speed, low-cost network has attracted hundreds of innovative projects — from meme coins 
-            to DeFi tokens and NFT-related assets. Whether you&apos;re researching your next investment or 
-            monitoring your portfolio, Hubra provides the accurate, up-to-date token data you need to 
-            stay ahead of the market.
+            Live Solana token prices and market data. Track SOL, JUP, RAY, BONK, memecoins, and 
+            100+ tokens with real-time charts and market caps. Discover trending tokens, track top 
+            gainers and losers, and spot newly listed projects. Hubra provides accurate, up-to-date 
+            token data including 24-hour trading volume, price changes, and market capitalization 
+            for the entire Solana ecosystem.
           </p>
         </header>
         <div className="md:max-w-7xl mx-auto w-full">
