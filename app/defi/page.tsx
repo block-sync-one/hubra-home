@@ -10,8 +10,9 @@ import ChartPnl, { Chart } from "@/components/chart";
 import { siteConfig } from "@/config/site";
 import { getWebPageJsonLd, getCollectionPageJsonLd } from "@/lib/utils/structured-data";
 
-const title = "Solana DeFi Protocols & Analytics | Hubra - TVL Tracking & Protocol Performance";
-const description = "Find the best DeFi opportunities to earn yield, maximize returns, and grow your crypto portfolio on Solana.";
+const title = "Top Solana DeFi Protocols | TVL Rankings & Analytics | Hubra";
+const description =
+  "Explore the best DeFi protocols on Solana. Compare TVL, yields, and performance metrics across 100+ protocols. Track real-time analytics and find the highest-earning opportunities.";
 const canonical = `${siteConfig.domain}/defi`;
 
 export const metadata: Metadata = {
@@ -143,9 +144,18 @@ export default async function DeFiPage() {
       <script dangerouslySetInnerHTML={{ __html: defiPageJsonLdString }} defer type="application/ld+json" />
       <script dangerouslySetInnerHTML={{ __html: collectionJsonLdString }} defer type="application/ld+json" />
       <div className="md:max-w-7xl mx-auto">
-        <header className="mb-6 sr-only">
-          <h1 className="text-2xl font-bold text-white mb-1">Solana DeFi Ecosystem</h1>
-          <p className="text-sm text-gray-400">Track real-time DeFi metrics and protocol performance on Solana</p>
+        <header className="sr-only">
+          <h1>Solana DeFi Protocols</h1>
+          <p>
+            Discover the most popular DeFi protocols building on Solana. 
+            From decentralized exchanges and lending platforms to liquid staking and yield aggregators, 
+            Solana&apos;s DeFi ecosystem offers some of the fastest and most cost-effective protocols in crypto. 
+            Track real-time Total Value Locked (TVL), compare protocol performance, and identify the best 
+            yield opportunities across the network. Whether you&apos;re looking to swap tokens, earn passive 
+            income through staking, or provide liquidity, our analytics dashboard helps you make informed 
+            decisions. Hubra aggregates data from all major Solana DeFi protocols so you can compare fees, 
+            APYs, and historical performance in one place.
+          </p>
         </header>
 
         <section className="flex flex-col gap-12">
