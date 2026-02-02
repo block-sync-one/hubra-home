@@ -85,7 +85,7 @@ const MobileCarousel = () => {
     {
       image: "/image/df-1.svg",
       title: "Eagle Eye",
-      description: "Track, manage, and optimize your entire on-chain protfoio from one dashboard",
+      description: "Track, manage, and optimize your entire on-chain portfolio from one dashboard",
       isCard: false,
     },
     {
@@ -481,7 +481,7 @@ export const MainContentSection = (): JSX.Element => {
                   <div className="w-full gap-2 flex flex-col items-start">
                     <h3 className="font-sans text-white font-semibold text-xl">Eagle Eye</h3>
                     <p className="font-geist text-gray-400/70 text-base break-words">
-                      Track, manage, and optimize your entire on-chain protfoio from one dashboard
+                      Track, manage, and optimize your entire on-chain portfolio from one dashboard
                     </p>
                   </div>
                 </div>
