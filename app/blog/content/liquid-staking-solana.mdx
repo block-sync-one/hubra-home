@@ -31,7 +31,7 @@ This guide explains how liquid staking actually works, compares the major Solana
 
 ---
 
-## How Liquid Staking Works (The Actual Mechanics)
+## How liquid staking works
 
 When you liquid stake, three things happen:
 
@@ -39,7 +39,7 @@ When you liquid stake, three things happen:
 2. **The protocol stakes it** to validators and gives you a liquid staking token (LST)
 3. **Your LST appreciates** in value as staking rewards accrue
 
-The key insight: your LST is a *receipt* for staked SOL. It&apos;s not pegged 1:1 forever - it grows relative to SOL over time.
+Your LST is a *receipt* for staked SOL. It&apos;s not pegged 1:1 forever - it grows relative to SOL over time.
 
 **Example:** If you deposit 100 SOL today and receive 100 mSOL, in a year that 100 mSOL might be redeemable for ~106 SOL (at current ~6% APY). The mSOL quantity stays the same; its SOL-value increases.
 
@@ -47,7 +47,7 @@ This is called a **reward-bearing token** - no claiming, no rebasing, just autom
 
 ---
 
-## Liquid Staking vs Native Staking: The Real Trade-offs
+## Liquid staking vs native staking
 
 | Factor | Native Staking | Liquid Staking |
 |--------|---------------|----------------|
@@ -61,7 +61,7 @@ This is called a **reward-bearing token** - no claiming, no rebasing, just autom
 
 ---
 
-## Solana Liquid Staking Tokens Compared (Real Data)
+## Solana LSTs compared
 
 Here&apos;s what the major LSTs actually look like right now:
 
@@ -76,7 +76,7 @@ Here&apos;s what the major LSTs actually look like right now:
 
 *Data from Sanctum, February 2026*
 
-### Why the APY Differences?
+### Why the APY differences?
 
 The ~0.5% spread between LSTs isn&apos;t random. It comes from:
 
@@ -94,7 +94,7 @@ How a protocol picks validators affects returns. Some optimize purely for APY; o
 
 ---
 
-## The Sanctum Layer: Why It Matters
+## The Sanctum layer
 
 Here&apos;s something most liquid staking guides miss: **Sanctum is the infrastructure layer that connects all Solana LSTs**.
 
@@ -107,7 +107,7 @@ This is why raSOL, despite being newer, has full liquidity from day one - it&apo
 
 ---
 
-## Which LST Should You Choose?
+## Which LST should you choose?
 
 This depends on what you&apos;re optimizing for:
 
@@ -126,37 +126,37 @@ This depends on what you&apos;re optimizing for:
 - You prefer a simplified experience (no hopping between apps)
 - You plan to use your LST in lending/strategies (Kamino, Loopscale integration)
 
-### The aggregator approach:
+### The aggregator approach
 If you&apos;re already using platforms like Hubra that aggregate DeFi opportunities, the specific LST matters less - you can easily swap between them. What matters more is having *a* liquid position you can deploy across protocols.
 
 ---
 
-## Risks You Should Actually Understand
+## Risks to know about
 
-### Smart Contract Risk
+### Smart contract risk
 Every LST relies on smart contracts. If there&apos;s a bug or exploit, staked funds could be at risk. Mitigation: stick to audited, high-TVL protocols.
 
-### Depeg Risk
+### Depeg risk
 In extreme market conditions, LSTs can trade below their &quot;fair&quot; SOL value. This happened briefly with stETH on Ethereum during the 2022 market crash. On Solana, Sanctum&apos;s unified liquidity layer reduces this risk significantly - but it&apos;s not zero.
 
-### Validator Slashing
+### Validator slashing
 Solana doesn&apos;t currently have slashing (validators losing stake for misbehavior), but this could change. If implemented, liquid staking protocols would need to handle slashing events.
 
-### Opportunity Cost
+### Opportunity cost
 At ~6% APY, liquid staking is solid but not spectacular. In a bull market with high DeFi yields, you might find better risk-adjusted returns elsewhere. The advantage is that with an LST, you can *also* pursue those opportunities (e.g., deposit your mSOL as collateral on Kamino).
 
 ---
 
-## How to Start Liquid Staking on Solana
+## How to start
 
-### The Manual Way (Multiple Apps)
+### The manual way (multiple apps)
 1. Go to jito.network, marinade.finance, or sanctum.so
 2. Connect wallet
 3. Deposit SOL, receive LST
 4. If you want to use it in DeFi, go to Kamino/marginfi separately
 5. Manage positions across multiple dashboards
 
-### The Aggregated Way (Hubra)
+### The aggregated way (Hubra)
 1. Open [hubra.app](https://hubra.app)
 2. Connect wallet (or sign up with email - no seed phrase needed)
 3. Stake SOL → receive raSOL
@@ -168,7 +168,7 @@ The difference: Hubra handles the complexity. You don&apos;t need to understand 
 
 ---
 
-## Liquid Staking FAQ
+## FAQ
 
 **What APY can I realistically expect?**
 Currently 6-6.5% on Solana. This fluctuates with network inflation and validator performance. Be skeptical of any protocol promising significantly higher - there&apos;s usually hidden risk.
@@ -187,9 +187,9 @@ If you never need flexibility, native staking is fine. But liquid staking lets y
 
 ---
 
-## Conclusion: Liquid Staking is Table Stakes
+## Bottom line
 
-In 2026, leaving your SOL un-staked is leaving ~6% annual yield on the table. And with liquid staking, there&apos;s no real downside to maintaining flexibility.
+In 2026, leaving your SOL un-staked means missing ~6% annual yield. With liquid staking, you get that yield without giving up flexibility.
 
 The question isn&apos;t whether to liquid stake - it&apos;s which approach fits your needs:
 
