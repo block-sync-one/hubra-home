@@ -77,6 +77,11 @@ export default function Home() {
       <section className="w-full flex flex-col items-center justify-center gap-20">
         <header className="sr-only">
           <h1>Hubra - Trade, stake, and earn with the best yields on Solana</h1>
+          <p>
+            Hubra is a non-custodial Solana DeFi platform that combines CEX simplicity with DeFi
+            freedom. Swap tokens, stake SOL, explore yield opportunities, and track your portfolio -
+            all without giving up custody of your assets.
+          </p>
         </header>
         <HeroSection />
         <MainContentSection />

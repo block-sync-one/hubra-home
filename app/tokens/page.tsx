@@ -161,11 +161,8 @@ export default async function TokensPage() {
         <header className="sr-only">
           <h1>Solana Token Prices</h1>
           <p>
-            Live Solana token prices and market data. Track SOL, JUP, RAY, BONK, memecoins, and 
-            100+ tokens with real-time charts and market caps. Discover trending tokens, track top 
-            gainers and losers, and spot newly listed projects. Hubra provides accurate, up-to-date 
-            token data including 24-hour trading volume, price changes, and market capitalization 
-            for the entire Solana ecosystem.
+            Track real-time prices for 1,000+ Solana tokens. View 24-hour price changes, market
+            caps, and live charts. Data updates every few seconds from Jupiter aggregator.
           </p>
         </header>
         <div className="md:max-w-7xl mx-auto w-full">
