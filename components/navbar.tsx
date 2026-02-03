@@ -154,6 +154,19 @@ export const Navbar = () => {
           </NextLink>
         </NavbarItem>*/}
 
+        {/* Stake SOL Button - Desktop only */}
+        <NavbarItem className="hidden lg:flex">
+          <Button
+            as={Link}
+            className="text-sm font-medium"
+            href="https://hubra.app/earn/stake"
+            radius="full"
+            color="primary"
+            variant="flat">
+            Stake SOL
+          </Button>
+        </NavbarItem>
+
         {/* Launch App Button - Desktop only */}
         <NavbarItem className="hidden lg:flex">
           <Button
@@ -230,8 +243,18 @@ export const Navbar = () => {
               )
           )}
 
-          {/* Mobile Launch App Button */}
-          <div className="pt-4">
+          {/* Mobile Stake SOL & Launch App Buttons */}
+          <div className="pt-4 space-y-2">
+            <Button
+              as={Link}
+              className="w-full text-sm font-medium"
+              href="https://hubra.app/earn/stake"
+              radius="full"
+              color="primary"
+              variant="flat"
+              onPress={() => setIsMenuOpen(false)}>
+              Stake SOL
+            </Button>
             <Button
               as={NextLink}
               className="w-full text-sm font-medium text-black bg-white hover:bg-gray-100 transition-colors duration-200"
