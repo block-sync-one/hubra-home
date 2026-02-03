@@ -10,7 +10,7 @@ import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
-import { ORGANIZATION_JSON_LD_STRING, WEBSITE_JSON_LD_STRING } from "@/lib/utils/structured-data";
+import { ORGANIZATION_JSON_LD_STRING, WEBSITE_JSON_LD_STRING, WEB_APPLICATION_JSON_LD_STRING } from "@/lib/utils/structured-data";
 import { fontSans } from "@/config/fonts";
 const CryptoPanicNews = dynamic(() => import("@/components/news/CryptoPanicNews").then((mod) => ({ default: mod.CryptoPanicNews })));
 
@@ -112,6 +112,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
         />
         <script dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD_STRING }} defer id="website-jsonld" type="application/ld+json" />
+        <script
+          dangerouslySetInnerHTML={{ __html: WEB_APPLICATION_JSON_LD_STRING }}
+          defer
+          id="webapp-jsonld"
+          type="application/ld+json"
+        />
       </head>
       <body className={clsx("min-h-screen text-foreground font-sans antialiased overflow-x-hidden")}>
         <a

@@ -89,6 +89,31 @@ export const TOKEN_ANALYTICS_JSON_LD = {
 
 export const TOKEN_ANALYTICS_JSON_LD_STRING = JSON.stringify(TOKEN_ANALYTICS_JSON_LD);
 
+export const WEB_APPLICATION_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Hubra",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "name": "SOL Staking",
+    "description": "Stake SOL and earn ~6% APY with liquid staking. Gasless transactions, instant unstake, non-custodial.",
+    "url": "https://hubra.app/earn/stake",
+    "price": "0",
+    "priceCurrency": "USD",
+  },
+  "featureList": [
+    "Liquid staking with ~6% APY",
+    "Gasless transactions",
+    "Instant unstake available",
+    "Non-custodial - your keys, always",
+    "One-click staking",
+  ],
+} as const;
+
+export const WEB_APPLICATION_JSON_LD_STRING = JSON.stringify(WEB_APPLICATION_JSON_LD);
+
 const breadcrumbCache = new Map<string, string>();
 
 export function getBreadcrumbJsonLd(items: Array<{ name: string; url: string }>): object {

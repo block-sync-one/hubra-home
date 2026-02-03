@@ -43,6 +43,12 @@ export const siteConfig = {
       href: "/",
     },
     {
+      label: "Stake SOL",
+      href: "https://hubra.app/earn/stake",
+      show: true,
+      description: "Stake SOL - Earn 6%+ APY",
+    },
+    {
       label: "Tokens",
       href: "/tokens",
       show: true,
@@ -80,6 +86,12 @@ export const siteConfig = {
     },
   ] as NavItem[],
   navMenuItems: [
+    {
+      label: "Stake SOL",
+      href: "https://hubra.app/earn/stake",
+      show: true,
+      description: "Stake SOL - Earn 6%+ APY",
+    },
     {
       label: "Resources",
       navItems: [
