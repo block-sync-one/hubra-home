@@ -21,7 +21,11 @@ import { ChevronDown, ArrowRight } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
 
-export const Navbar = () => {
+type NavbarProps = {
+  stakeButton?: React.ReactNode;
+};
+
+export const Navbar = ({ stakeButton }: NavbarProps) => {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -79,7 +83,7 @@ export const Navbar = () => {
       </NavbarBrand>
 
       {/* Desktop Navigation */}
-      <NavbarContent className="hidden lg:flex " justify="center">
+      <NavbarContent className="hidden lg:flex gap-1" justify="center">
         {navItems.map(
           (item) =>
             item.show && (
@@ -153,17 +157,19 @@ export const Navbar = () => {
             </Button>
           </NextLink>
         </NavbarItem>*/}
-        {/* Stake SOL Button - Desktop only */}
+        {/* Stake SOL Button - Desktop only (server-rendered with APY) */}
         <NavbarItem className="hidden lg:flex">
-          <Button
-            as={Link}
-            className="text-sm font-medium"
-            color="primary"
-            href="https://hubra.app/earn/stake"
-            radius="full"
-            variant="light">
-            Stake SOL
-          </Button>
+          {stakeButton ?? (
+            <Button
+              as={Link}
+              className="text-sm font-medium"
+              color="primary"
+              href="https://hubra.app/earn/stake"
+              radius="full"
+              variant="light">
+              Stake SOL
+            </Button>
+          )}
         </NavbarItem>
 
         {/* Launch App Button - Desktop only */}
@@ -243,17 +249,19 @@ export const Navbar = () => {
               )
           )}
 
-          {/* Mobile Stake SOL Button */}
+          {/* Mobile Stake SOL Button (server-rendered with APY) */}
           <div className="pt-4">
-            <Button
-              as={Link}
-              className="w-fit text-sm font-medium"
-              color="primary"
-              href="https://hubra.app/earn/stake"
-              radius="full"
-              variant="light">
-              Stake SOL
-            </Button>
+            {stakeButton ?? (
+              <Button
+                as={Link}
+                className="w-fit text-sm font-medium"
+                color="primary"
+                href="https://hubra.app/earn/stake"
+                radius="full"
+                variant="light">
+                Stake SOL
+              </Button>
+            )}
           </div>
 
           {/* Mobile Launch App Button */}

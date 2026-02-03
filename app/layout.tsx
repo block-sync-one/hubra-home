@@ -10,6 +10,7 @@ import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { Navbar } from "@/components/navbar";
+import { StakeSolButton } from "@/components/stake-sol-button";
 import { ORGANIZATION_JSON_LD_STRING, WEBSITE_JSON_LD_STRING, WEB_APPLICATION_JSON_LD_STRING } from "@/lib/utils/structured-data";
 import { fontSans } from "@/config/fonts";
 const CryptoPanicNews = dynamic(() => import("@/components/news/CryptoPanicNews").then((mod) => ({ default: mod.CryptoPanicNews })));
@@ -112,12 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
         />
         <script dangerouslySetInnerHTML={{ __html: WEBSITE_JSON_LD_STRING }} defer id="website-jsonld" type="application/ld+json" />
-        <script
-          dangerouslySetInnerHTML={{ __html: WEB_APPLICATION_JSON_LD_STRING }}
-          defer
-          id="webapp-jsonld"
-          type="application/ld+json"
-        />
+        <script dangerouslySetInnerHTML={{ __html: WEB_APPLICATION_JSON_LD_STRING }} defer id="webapp-jsonld" type="application/ld+json" />
       </head>
       <body className={clsx("min-h-screen text-foreground font-sans antialiased overflow-x-hidden")}>
         <a
@@ -127,7 +123,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         <Providers themeProps={{ attribute: "class" }}>
           <div className="relative flex flex-col items-center">
-            <Navbar />
+            <Navbar stakeButton={<StakeSolButton />} />
             <main className="w-full flex flex-col scroll-mt-24" id="main" tabIndex={-1}>
               {children}
             </main>
