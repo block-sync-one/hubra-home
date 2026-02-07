@@ -2,18 +2,17 @@ import { Metadata } from "next";
 
 import {
   HeroSection,
-  ProductsSection,
-  RasolSection,
-  TrustSection,
+  FeaturesSection,
+  HowItWorksSection,
   CtaSection,
 } from "@/components/homepage-2026";
 import { siteConfig } from "@/config/site";
 
-const title = "Hubra - The Power of CEX. The Freedom of DeFi.";
+const title = "Hubra — The easiest way to earn on Solana";
 const description =
-  "Trade, stake, and earn on Solana — all in one place. Gasless transactions, multi-wallet portfolio tracking, and the best yields from top protocols.";
+  "Connect with email or wallet. Earn yield across DeFi. No gas fees, no complexity. Social login, gasless transactions, and the best rates aggregated.";
 const ogDescription =
-  "Your Solana all-in-one portal. Trade, stake, and earn with CEX-grade experience and DeFi freedom.";
+  "DeFi without the friction. Sign in with email, earn yield on Solana, pay no gas. It's that simple.";
 const canonical = siteConfig.domain;
 
 export const metadata: Metadata = {
@@ -21,21 +20,17 @@ export const metadata: Metadata = {
   description,
   keywords: [
     "Solana",
-    "Solana staking",
-    "DeFi",
-    "DeFi earn",
+    "Solana DeFi",
     "earn yield",
-    "raSOL",
-    "liquid staking",
-    "wallet portfolio",
-    "cryptocurrency",
-    "token swap",
-    "Solana tokens",
-    "DeFi protocols",
-    "crypto trading",
-    "SOL",
-    "Solana ecosystem",
+    "DeFi yield aggregator",
     "gasless transactions",
+    "social login crypto",
+    "embedded wallet",
+    "Solana staking",
+    "crypto earn",
+    "DeFi made easy",
+    "SOL",
+    "USDC yield",
   ],
   alternates: {
     canonical,
@@ -51,7 +46,7 @@ export const metadata: Metadata = {
         url: siteConfig.ogImage || "/hubra-og-image.png",
         width: 1200,
         height: 630,
-        alt: "Hubra - The Power of CEX. The Freedom of DeFi.",
+        alt: "Hubra — The easiest way to earn on Solana",
       },
     ],
   },
@@ -78,15 +73,17 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="w-full">
+    <main 
+      className="w-full min-h-screen"
+      style={{ backgroundColor: "#0D0D0F" }}
+    >
       <header className="sr-only">
-        <h1>Hubra - The Power of CEX. The Freedom of DeFi.</h1>
+        <h1>Hubra — The easiest way to earn on Solana</h1>
       </header>
       
       <HeroSection />
-      <ProductsSection />
-      <RasolSection />
-      <TrustSection />
+      <FeaturesSection />
+      <HowItWorksSection />
       <CtaSection />
     </main>
   );

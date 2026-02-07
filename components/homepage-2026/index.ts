@@ -1,5 +1,4 @@
 export { HeroSection } from "./HeroSection";
-export { ProductsSection } from "./ProductsSection";
-export { RasolSection } from "./RasolSection";
-export { TrustSection } from "./TrustSection";
+export { FeaturesSection } from "./FeaturesSection";
+export { HowItWorksSection } from "./HowItWorksSection";
 export { CtaSection } from "./CtaSection";
