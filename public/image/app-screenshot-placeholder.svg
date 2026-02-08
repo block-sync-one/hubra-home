@@ -1,0 +1,35 @@
+<svg width="390" height="844" viewBox="0 0 390 844" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="390" height="844" fill="#0D0E21"/>
+  
+  <!-- Top bar simulation -->
+  <rect y="0" width="390" height="60" fill="#13142A"/>
+  <text x="195" y="38" font-family="system-ui, sans-serif" font-size="16" fill="#FFFFFF" text-anchor="middle">Hubra</text>
+  
+  <!-- Card 1 -->
+  <rect x="20" y="80" width="350" height="120" rx="16" fill="rgba(27, 28, 46, 0.7)"/>
+  <text x="40" y="115" font-family="system-ui, sans-serif" font-size="14" fill="#888">Total Balance</text>
+  <text x="40" y="155" font-family="system-ui, sans-serif" font-size="32" fill="#E6B800" font-weight="600">$12,450.00</text>
+  <text x="40" y="180" font-family="system-ui, sans-serif" font-size="14" fill="#2ED387">+$125.50 (1.02%)</text>
+  
+  <!-- Card 2 - Earn -->
+  <rect x="20" y="220" width="350" height="100" rx="16" fill="rgba(27, 28, 46, 0.7)"/>
+  <text x="40" y="255" font-family="system-ui, sans-serif" font-size="14" fill="#888">Earning</text>
+  <text x="40" y="290" font-family="system-ui, sans-serif" font-size="24" fill="#FFFFFF" font-weight="600">$8,200.00</text>
+  <text x="320" y="275" font-family="system-ui, sans-serif" font-size="14" fill="#E6B800" text-anchor="end">8.5% APY</text>
+  
+  <!-- Card 3 - Available -->
+  <rect x="20" y="340" width="350" height="100" rx="16" fill="rgba(27, 28, 46, 0.7)"/>
+  <text x="40" y="375" font-family="system-ui, sans-serif" font-size="14" fill="#888">Available</text>
+  <text x="40" y="410" font-family="system-ui, sans-serif" font-size="24" fill="#FFFFFF" font-weight="600">$4,250.00</text>
+  
+  <!-- Protocol logos placeholder -->
+  <rect x="20" y="460" width="350" height="80" rx="16" fill="rgba(27, 28, 46, 0.4)"/>
+  <text x="195" y="505" font-family="system-ui, sans-serif" font-size="12" fill="#666" text-anchor="middle">Powered by Kamino • Jupiter • Sanctum</text>
+  
+  <!-- Bottom nav -->
+  <rect y="764" width="390" height="80" fill="#13142A"/>
+  <circle cx="78" cy="804" r="20" fill="rgba(230, 184, 0, 0.2)"/>
+  <circle cx="195" cy="804" r="20" fill="rgba(255,255,255,0.1)"/>
+  <circle cx="312" cy="804" r="20" fill="rgba(255,255,255,0.1)"/>
+</svg>

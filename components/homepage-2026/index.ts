@@ -10,3 +10,5 @@
 export { HeroSection2026 } from "./HeroSection2026";
 export { PartnerLogoStrip } from "./PartnerLogoStrip";
 export { FeaturesGrid2026 } from "./FeaturesGrid2026";
+export { PhoneMockup } from "./PhoneMockup";
+export { StatsBar } from "./StatsBar";
