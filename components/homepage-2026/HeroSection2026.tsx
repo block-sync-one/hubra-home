@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 import { PartnerLogoStrip } from "./PartnerLogoStrip";
 
@@ -16,6 +17,13 @@ import { PartnerLogoStrip } from "./PartnerLogoStrip";
  * @see /root/bots/designer-bot/briefs/HOMEPAGE-2026-DESIGN-BRIEF.md
  */
 export const HeroSection2026 = (): JSX.Element => {
+  // Ensure animations only run after hydration
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Animation variants for staggered reveal
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -73,7 +81,7 @@ export const HeroSection2026 = (): JSX.Element => {
 
       {/* Main content */}
       <motion.div
-        animate="visible"
+        animate={isMounted ? "visible" : "hidden"}
         className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl mx-auto"
         initial="hidden"
         variants={containerVariants}>
