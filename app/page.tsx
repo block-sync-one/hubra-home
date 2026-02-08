@@ -1,36 +1,32 @@
 import { Metadata } from "next";
 
-import { HeroSection } from "@/components/HeroSection";
-import { MainContentSection } from "@/components/MainContent";
+import { HeroSection2026, FeaturesGrid2026 } from "@/components/homepage-2026";
 import { siteConfig } from "@/config/site";
 
-const title = "Hubra - Trade, stake, and earn with the best yields - never miss a trend, all in one.";
+// Updated metadata for 2026 rebrand - "Trust UX" positioning
+const title = "Hubra - Your assets. Real yields. No middlemen.";
 const description =
-  "Hubra steps directly into this gap by blending TradFi-level usability with DeFi principles. Gasless operations, curated earning opportunities from top Solana protocols like Kamino, Jupiter, and Lulo; multi-wallet visibility under a single account; and selective, quality-first integrations to reduce risk and noise";
-const ogDescription =
-  "Your Solana all-in-one portal to the decentralized world. Track tokens, Earn yields, DeFi protocols, and market analytics with CEX-grade experience.";
+  "Deposit. Earn. Withdraw anytime. That's it. Hubra makes DeFi simple — no gas fees, no seed phrases, just your money growing.";
+const ogDescription = "Your assets. Real yields. No middlemen. The simplest way to earn on your money.";
 const canonical = siteConfig.domain;
 
 export const metadata: Metadata = {
   title,
   description,
   keywords: [
-    "Solana",
-    "Solana validator",
-    "Solana staking",
+    "earn yield",
+    "passive income",
+    "high yield savings",
     "DeFi",
     "DeFi earn",
-    "earn yield",
+    "no gas fees",
+    "easy crypto",
+    "Solana",
+    "Solana staking",
     "wallet portfolio",
-    "clean wallet portfolio",
     "cryptocurrency",
-    "blockchain analytics",
-    "token prices",
-    "Solana tokens",
-    "DeFi protocols",
     "crypto trading",
     "SOL",
-    "Solana ecosystem",
   ],
   alternates: {
     canonical,
@@ -46,7 +42,7 @@ export const metadata: Metadata = {
         url: siteConfig.ogImage || "/hubra-og-image.png",
         width: 1200,
         height: 630,
-        alt: "Hubra - Solana DeFi Analytics Platform",
+        alt: "Hubra - Your assets. Real yields. No middlemen.",
       },
     ],
   },
@@ -74,13 +70,21 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <section className="w-full flex flex-col items-center justify-center gap-20">
+      <main className="w-full flex flex-col">
         <header className="sr-only">
-          <h1>Hubra - Trade, stake, and earn with the best yields on Solana</h1>
+          <h1>Hubra - Your assets. Real yields. No middlemen.</h1>
         </header>
-        <HeroSection />
-        <MainContentSection />
-      </section>
+
+        {/* Hero Section - Fintech Clean 2026 */}
+        <HeroSection2026 />
+
+        {/* Features Grid - 4-card layout */}
+        <FeaturesGrid2026 />
+
+        {/* TODO: How It Works section (pending copy from Seeker) */}
+        {/* TODO: Security section (pending copy from Seeker) */}
+        {/* TODO: Final CTA section */}
+      </main>
     </>
   );
 }

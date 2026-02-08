@@ -169,3 +169,72 @@
     background-position: 100% 50%;
   }
 }
+
+/* ============================================
+   Homepage 2026 Design Tokens
+   ============================================ */
+:root {
+  /* Surfaces */
+  --hp-hero-bg: #0d0e21;
+  --hp-section-alt: #13142a;
+  --hp-card-glass: rgba(27, 28, 46, 0.7);
+  --hp-card-border: rgba(251, 251, 252, 0.06);
+
+  /* Typography Scale */
+  --hp-hero-size: clamp(2.5rem, 5vw, 4.5rem);
+  --hp-section-title: clamp(1.75rem, 3vw, 2.5rem);
+  --hp-body-large: 1.125rem;
+  --hp-body: 1rem;
+  --hp-caption: 0.875rem;
+
+  /* Spacing */
+  --hp-section-padding: clamp(4rem, 10vh, 8rem);
+  --hp-content-max: 1200px;
+  --hp-card-radius: 16px;
+  --hp-button-radius: 8px;
+
+  /* Motion */
+  --hp-transition-fast: 150ms ease-out;
+  --hp-transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --hp-scroll-reveal: 600ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Brand Colors */
+  --hp-gold-400: #e6b800;
+  --hp-gold-500: #daa520;
+}
+
+/* Homepage 2026 Scroll Reveal Animation */
+@keyframes hp-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hp-fade-up {
+  animation: hp-fade-up var(--hp-scroll-reveal) forwards;
+}
+
+/* Stagger delays for scroll reveal */
+.hp-stagger-1 {
+  animation-delay: 0ms;
+}
+.hp-stagger-2 {
+  animation-delay: 50ms;
+}
+.hp-stagger-3 {
+  animation-delay: 100ms;
+}
+.hp-stagger-4 {
+  animation-delay: 150ms;
+}
+.hp-stagger-5 {
+  animation-delay: 200ms;
+}
+.hp-stagger-6 {
+  animation-delay: 250ms;
+}
