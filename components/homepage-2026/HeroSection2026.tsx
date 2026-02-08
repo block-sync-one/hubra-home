@@ -158,7 +158,7 @@ export const HeroSection2026 = (): JSX.Element => {
                 delay: 0.3,
                 ease: [0.16, 1, 0.3, 1],
               }}>
-              <PhoneMockup alt="Hubra Earn Dashboard" screenshot="/image/app-screenshot-placeholder.svg" />
+              <PhoneMockup alt="Hubra Portfolio Dashboard" screenshot="/image/app-screenshot-earn.png" />
             </motion.div>
           </div>
         </div>
