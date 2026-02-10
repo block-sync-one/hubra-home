@@ -147,6 +147,7 @@ export default async function TokensPage() {
       url: siteConfig.domain,
     },
     datePublished: "2024-01-01",
+    license: "https://creativecommons.org/licenses/by/4.0/",
   });
 
   const collectionJsonLdString = JSON.stringify(collectionJsonLd);
@@ -161,11 +162,10 @@ export default async function TokensPage() {
         <header className="sr-only">
           <h1>Solana Token Prices</h1>
           <p>
-            Live Solana token prices and market data. Track SOL, JUP, RAY, BONK, memecoins, and 
-            100+ tokens with real-time charts and market caps. Discover trending tokens, track top 
-            gainers and losers, and spot newly listed projects. Hubra provides accurate, up-to-date 
-            token data including 24-hour trading volume, price changes, and market capitalization 
-            for the entire Solana ecosystem.
+            Live Solana token prices and market data. Track SOL, JUP, RAY, BONK, memecoins, and 100+ tokens with real-time charts and market
+            caps. Discover trending tokens, track top gainers and losers, and spot newly listed projects. Hubra provides accurate,
+            up-to-date token data including 24-hour trading volume, price changes, and market capitalization for the entire Solana
+            ecosystem.
           </p>
         </header>
         <div className="md:max-w-7xl mx-auto w-full">
