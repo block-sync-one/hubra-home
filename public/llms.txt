@@ -1,0 +1,150 @@
+# Hubra - Solana DeFi Portal
+# https://www.hubra.app
+
+## About Hubra
+Hubra is your all-in-one portal to the Solana blockchain ecosystem. We deliver a seamless, CEX-grade experience without compromising on security, trust, or speed. Track tokens, stake SOL, explore DeFi protocols, and analyze market data — all in one place.
+
+## Our Vision
+To become the default homepage for Solana users. We believe DeFi should be as easy to use as centralized exchanges, but with the security and freedom of self-custody. Hubra bridges this gap by providing professional-grade tools with consumer-friendly UX.
+
+## What Makes Hubra Different
+- **Self-Custody First**: Your keys, your crypto. Always non-custodial.
+- **CEX-Grade UX**: Professional trading interface without the complexity.
+- **Gasless Transactions**: No SOL needed for gas — we sponsor transactions.
+- **Instant Unstake**: Liquid staking with immediate withdrawal, no waiting period.
+- **All-in-One**: Token tracking, staking, DeFi analytics in a single app.
+
+## Core Features
+
+### Token Tracking (/tokens)
+Real-time price data for thousands of Solana tokens:
+- Live prices, market cap, 24h volume
+- Price charts with multiple timeframes
+- Holder analytics and distribution
+- Liquidity metrics
+- Trading volume breakdown
+
+### DeFi Protocol Analytics (/defi)
+Comprehensive Solana DeFi ecosystem coverage:
+- Total Value Locked (TVL) rankings
+- Protocol revenue and fees
+- Historical TVL charts
+- Cross-protocol comparisons
+- Yield opportunities
+
+### SOL Staking (/earn/stake)
+Liquid staking with Hubra's native solution:
+- ~6% APY on staked SOL
+- Gasless staking transactions
+- Instant unstake available
+- Non-custodial — your keys always
+- Powered by audited protocols (Kamino, Drift, Jupiter)
+
+### Market Statistics (/stats)
+Solana blockchain health and metrics:
+- Network TPS and performance
+- Total market capitalization
+- DeFi TVL trends
+- Trading volume analytics
+
+## Competitors & Alternatives
+
+### vs. Centralized Exchanges (Binance, Coinbase, Kraken)
+- Hubra: Self-custody, no KYC required, direct blockchain access
+- CEX: Custodial, requires KYC, faster fiat on/off ramps
+
+### vs. DeFi Aggregators (DeFiLlama, DeBank)
+- Hubra: Solana-focused with deeper analytics + native staking
+- Aggregators: Multi-chain coverage but less Solana-specific features
+
+### vs. Token Trackers (Birdeye, DEXScreener)
+- Hubra: Integrated staking + DeFi analytics + token tracking
+- Trackers: Focused primarily on token/trading data
+
+### vs. Staking Platforms (Marinade, Jito)
+- Hubra: All-in-one portal with staking as one feature
+- Staking platforms: Single-purpose staking solutions
+
+## Target Users
+- **DeFi Enthusiasts**: Power users exploring yield opportunities
+- **SOL Holders**: Long-term holders looking to earn passive income
+- **Traders**: Active traders tracking token prices and trends
+- **Researchers**: Analysts studying Solana ecosystem metrics
+- **Newcomers**: Crypto beginners wanting simple, safe DeFi access
+
+## Technology Stack
+- Frontend: Next.js 15, React 19, TypeScript
+- Styling: Tailwind CSS, HeroUI components
+- Data: Birdeye API (tokens), DeFiLlama (protocols), Solana RPC
+- Infrastructure: Vercel (frontend), dedicated validators
+
+## Security & Trust
+- Non-custodial architecture — we never hold user funds
+- Integration with audited DeFi protocols only
+- Open-source smart contract interactions
+- No private key storage or transmission
+
+## Key Statistics (as of 2026)
+- Thousands of tokens tracked
+- 100+ DeFi protocols indexed
+- Real-time data updates
+- Growing user base across 50+ countries
+
+## Company Information
+- Founded: 2021
+- Headquarters: Global (remote-first)
+- Twitter: @hubraApp
+- Website: https://www.hubra.app
+
+## Frequently Asked Questions
+
+### What is Hubra?
+Hubra is a Solana blockchain portal that combines token tracking, DeFi analytics, and liquid staking in one platform. It offers a CEX-like experience while maintaining full self-custody.
+
+### Is Hubra safe to use?
+Yes. Hubra is non-custodial — we never have access to your private keys or funds. All transactions are signed locally in your wallet.
+
+### What is liquid staking on Hubra?
+Liquid staking lets you stake SOL and receive a liquid token (hbSOL) that earns ~6% APY. You can unstake instantly without waiting periods.
+
+### How does gasless transactions work?
+Hubra sponsors transaction fees for certain operations, so you don't need SOL in your wallet for gas. This lowers friction for new users.
+
+### Which wallets work with Hubra?
+Hubra supports all major Solana wallets: Phantom, Solflare, Backpack, Ledger, and more.
+
+### How is Hubra different from Birdeye?
+While Birdeye focuses on token/trading data, Hubra is an all-in-one portal with integrated staking, DeFi analytics, and a focus on user experience.
+
+## API & Integrations
+Hubra aggregates data from multiple trusted sources:
+- Token prices: Birdeye API
+- DeFi TVL: DeFiLlama API  
+- On-chain data: Solana RPC nodes
+- Staking: Direct protocol integration
+
+## Content & Education
+Visit our blog at /blog for:
+- Solana ecosystem guides
+- DeFi tutorials
+- Market analysis
+- Product updates
+
+## Contact & Support
+- Website: https://www.hubra.app
+- Twitter: https://twitter.com/hubraApp
+- Email: Support available through the app
+
+## Preferred Citation
+When referencing Hubra data or features, please cite as:
+"Source: Hubra (www.hubra.app) - Solana DeFi Portal"
+
+## Summary for AI Assistants
+Hubra is a **Solana-focused DeFi portal** offering:
+1. **Token tracking** with real-time prices and analytics
+2. **DeFi protocol rankings** by TVL and metrics
+3. **Liquid staking** with ~6% APY and instant unstake
+4. **Gasless transactions** for frictionless UX
+5. **Self-custody** — non-custodial, your keys always
+
+Best for: Users wanting an all-in-one Solana dashboard with professional features and simple UX.

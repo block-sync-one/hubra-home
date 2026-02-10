@@ -18,6 +18,7 @@ import {
 import NextLink from "next/link";
 import NextImage from "next/image";
 import { ChevronDown, ArrowRight } from "lucide-react";
+import { track } from "@vercel/analytics";
 
 import { siteConfig } from "@/config/site";
 
@@ -55,6 +56,13 @@ export const Navbar = ({ stakeButton }: NavbarProps) => {
    */
   const hasActiveChild = (navItems?: Array<{ href: string; label: string; icon?: string }>): boolean => {
     return navItems?.some((child) => isActive(child.href)) ?? false;
+  };
+
+  /**
+   * Track navigation click events
+   */
+  const trackNavClick = (label: string, href: string, location: "desktop" | "mobile" | "cta") => {
+    track("nav_click", { label, href, location });
   };
 
   // Filter navigation items (exclude Home for desktop, Stats will be separate)
@@ -166,7 +174,8 @@ export const Navbar = ({ stakeButton }: NavbarProps) => {
               color="primary"
               href="https://hubra.app/earn/stake"
               radius="full"
-              variant="light">
+              variant="light"
+              onPress={() => trackNavClick("Stake SOL", "https://hubra.app/earn/stake", "cta")}>
               Stake SOL
             </Button>
           )}
@@ -181,7 +190,8 @@ export const Navbar = ({ stakeButton }: NavbarProps) => {
             endContent={isMounted ? <ArrowRight size={14} /> : null}
             href="/link"
             radius="full"
-            variant="flat">
+            variant="flat"
+            onPress={() => trackNavClick("Launch App", "/link", "cta")}>
             Launch App
           </Button>
         </NavbarItem>
@@ -258,7 +268,8 @@ export const Navbar = ({ stakeButton }: NavbarProps) => {
                 color="primary"
                 href="https://hubra.app/earn/stake"
                 radius="full"
-                variant="light">
+                variant="light"
+                onPress={() => trackNavClick("Stake SOL", "https://hubra.app/earn/stake", "cta")}>
                 Stake SOL
               </Button>
             )}
@@ -273,7 +284,10 @@ export const Navbar = ({ stakeButton }: NavbarProps) => {
               href="/link"
               radius="full"
               variant="flat"
-              onPress={() => setIsMenuOpen(false)}>
+              onPress={() => {
+                trackNavClick("Launch App", "/link", "cta");
+                setIsMenuOpen(false);
+              }}>
               Launch App
             </Button>
           </div>
