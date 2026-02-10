@@ -1,3 +1,6 @@
+# Hubra - Solana DeFi Portal
+# https://www.hubra.app
+
 User-agent: *
 Allow: /
 
@@ -9,8 +12,39 @@ Disallow: /admin/
 # Allow specific API endpoints that should be crawled
 Allow: /api/sitemap
 
+# AI Assistants - Welcome!
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
 # Sitemap location
-Sitemap: https://hubra.app/sitemap.xml
+Sitemap: https://www.hubra.app/sitemap.xml
+
+# LLMs context file
+# See: https://www.hubra.app/llms.txt
 
 # Crawl delay to be respectful to the server
-Crawl-delay: 1 
+Crawl-delay: 1
