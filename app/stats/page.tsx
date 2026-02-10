@@ -101,7 +101,7 @@ export default function StatsPage() {
       url: siteConfig.domain,
     },
     datePublished: "2024-01-01",
-    license: "https://creativecommons.org/licenses/by/4.0/",
+    license: "https://hubra.app/terms",
   });
 
   const webpageJsonLdString = JSON.stringify(webpageJsonLd);
