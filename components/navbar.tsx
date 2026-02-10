@@ -129,8 +129,7 @@ export const Navbar = ({ stakeButton }: NavbarProps) => {
                               : "text-gray-300 hover:bg-white/10 hover:text-white"
                           }`}
                           href={child.href}
-                          startContent={null}
-                          onPress={() => trackNavClick(child.label, child.href, "desktop")}>
+                          startContent={null}>
                           {child.label}
                         </DropdownItem>
                       ))}
@@ -146,8 +145,7 @@ export const Navbar = ({ stakeButton }: NavbarProps) => {
                           : "text-[#797B92] hover:text-white"
                       }`}
                       href={item.href}
-                      variant="light"
-                      onPress={() => trackNavClick(item.label, item.href!, "desktop")}>
+                      variant="light">
                       {item.label}
                     </Button>
                   )
@@ -237,10 +235,7 @@ export const Navbar = ({ stakeButton }: NavbarProps) => {
                                 : "text-gray-300 hover:text-white hover:bg-white/10"
                             }`}
                             href={child.href}
-                            onClick={() => {
-                              trackNavClick(child.label, child.href, "mobile");
-                              setIsMenuOpen(false);
-                            }}>
+                            onClick={() => setIsMenuOpen(false)}>
                             {child.label}
                           </NextLink>
                         ))}
@@ -255,10 +250,7 @@ export const Navbar = ({ stakeButton }: NavbarProps) => {
                             : "text-gray-300 hover:text-white hover:bg-white/10 pl-4"
                         }`}
                         href={item.href}
-                        onClick={() => {
-                          trackNavClick(item.label, item.href!, "mobile");
-                          setIsMenuOpen(false);
-                        }}>
+                        onClick={() => setIsMenuOpen(false)}>
                         {item.label}
                       </NextLink>
                     )
