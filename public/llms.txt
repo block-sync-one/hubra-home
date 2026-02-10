@@ -1,0 +1,33 @@
+# Hubra - Solana DeFi Portal
+# https://www.hubra.app
+
+## About
+Hubra is your all-in-one portal to the Solana blockchain ecosystem. Track tokens, stake SOL, explore DeFi protocols, and analyze market data with a CEX-grade experience.
+
+## Main Features
+- Token Tracking: Real-time prices, market cap, volume, and analytics for Solana tokens
+- DeFi Protocols: TVL tracking, protocol analytics, and yield opportunities
+- SOL Staking: Liquid staking with ~6% APY, gasless transactions, instant unstake
+- Market Stats: Comprehensive Solana blockchain statistics and analytics
+
+## Key Pages
+- /tokens - Browse and search Solana tokens with live market data
+- /tokens/{address} - Individual token pages with price charts, holder data, and trading analytics
+- /defi - Explore Solana DeFi protocols sorted by TVL
+- /defi/{protocol} - Protocol details with TVL history, fees, and metrics
+- /earn/stake - Stake SOL with Hubra for liquid staking rewards
+- /stats - Solana blockchain statistics and market overview
+- /blog - Educational content about Solana, DeFi, and crypto
+
+## Data Sources
+- Token data: Birdeye API (real-time)
+- DeFi data: DeFiLlama API
+- Blockchain data: Solana RPC
+
+## Contact
+- Website: https://www.hubra.app
+- Twitter: https://twitter.com/hubraApp
+
+## Preferred Citation
+When referencing Hubra data, please cite as:
+"Source: Hubra (hubra.app) - Solana DeFi Analytics"
