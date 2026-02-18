@@ -1,21 +1,21 @@
 ---
-title: "What is Liquid Staking? Complete Guide for 2026"
-description: "Learn how liquid staking works, compare Solana LSTs (JitoSOL, mSOL, raSOL), and understand which one fits your strategy. Real APY data included."
-excerpt: "Liquid staking lets you earn staking rewards while keeping your assets usable. This guide explains how it works, compares major Solana LSTs, and helps you decide which approach fits your goals."
+title: "Crypto Staking Explained (on Solana)"
+description: "Learn how crypto staking works, why it matters, and how liquid staking on Solana lets you earn yield without locking up your tokens."
+excerpt: "If you hold crypto and aren't staking it, you're leaving money on the table. Here's what you need to know about earning passive income with your tokens."
 date: "2026-02-02"
-lastUpdated: "2026-02-02"
+lastUpdated: "2026-02-16"
 author: "Hubra Team"
 coverImage: "/blog/liquid-staking-solana.jpg"
 featured: true
 popular: true
 keywords:
-  - what is liquid staking
-  - liquid staking vs native staking
-  - liquid staking solana
-  - best liquid staking token
-  - JitoSOL
-  - mSOL
-  - raSOL
+  - crypto staking
+  - what is staking
+  - staking rewards
+  - liquid staking
+  - solana staking
+  - staking crypto
+  - proof of stake
 tags:
   - Staking
   - DeFi
@@ -23,187 +23,117 @@ tags:
 category: "Education"
 ---
 
-You want to stake your SOL to earn yield. But traditional staking locks your assets for days - and if an opportunity comes up, you&apos;re stuck.
-
-Liquid staking solves this. You earn staking rewards *and* keep your assets usable. But here&apos;s what most guides won&apos;t tell you: **not all liquid staking tokens are the same**, and the differences matter more than you think.
-
-This guide explains how liquid staking actually works, compares the major Solana LSTs with real data, and helps you decide which approach fits your goals.
+If you hold crypto and aren&apos;t staking it, you&apos;re leaving money on the table. Here&apos;s what you need to know.
 
 ---
 
-## How liquid staking works
+## What is crypto staking?
 
-When you liquid stake, three things happen:
+Staking is how you earn rewards for locking your crypto to help secure a blockchain. Instead of your tokens sitting idle in a wallet, you put them to work and get paid.
 
-1. **You deposit SOL** into a liquid staking protocol
-2. **The protocol stakes it** to validators and gives you a liquid staking token (LST)
-3. **Your LST appreciates** in value as staking rewards accrue
+The short version: Proof-of-Stake blockchains like Solana need validators to verify transactions. Validators lock up tokens as collateral. When you stake with a validator, you&apos;re lending your crypto to strengthen the network. In return, you get a cut of the rewards.
 
-Your LST is a *receipt* for staked SOL. It&apos;s not pegged 1:1 forever - it grows relative to SOL over time.
+**Why bother?**
 
-**Example:** If you deposit 100 SOL today and receive 100 mSOL, in a year that 100 mSOL might be redeemable for ~106 SOL (at current ~6% APY). The mSOL quantity stays the same; its SOL-value increases.
+- You earn 4-8% APY without trading
+- Your stake helps secure the network
+- If you&apos;re holding long-term anyway, might as well earn something
+- Stakers can vote on protocol decisions
 
-This is called a **reward-bearing token** - no claiming, no rebasing, just automatic appreciation.
+### How it works (on Solana)
 
----
+1. Get some SOL
+2. Pick a validator
+3. Delegate your SOL
+4. Collect rewards every epoch (2-3 days)
+5. Unstake when you want out
 
-## Liquid staking vs native staking
-
-| Factor | Native Staking | Liquid Staking |
-|--------|---------------|----------------|
-| **APY** | ~6-7% | ~6-6.5% (slightly lower due to protocol fees) |
-| **Liquidity** | Locked 2-3 days to unstake | Instant via DEX swaps |
-| **DeFi composability** | None - locked SOL can&apos;t be used | Full - use LST as collateral, in LPs, etc. |
-| **Validator choice** | You pick one validator | Protocol distributes across many |
-| **Risk** | Validator performance risk | Smart contract risk + validator risk |
-
-**The honest take:** If you&apos;re just holding SOL long-term and never need liquidity, native staking to a quality validator gives slightly better APY. But most people underestimate how often they *do* need liquidity - and liquid staking&apos;s flexibility often outweighs the ~0.5% APY difference.
+Simple enough. But there&apos;s a catch.
 
 ---
 
-## Solana LSTs compared
+## The lock-up problem
 
-Here&apos;s what the major LSTs actually look like right now:
+Traditional staking freezes your tokens. Once they&apos;re staked, you can&apos;t touch them until you unstake. On Solana, that takes 2-3 days.
 
-| Token | Protocol | APY (Current) | Key Differentiator |
-|-------|----------|---------------|-------------------|
-| **JitoSOL** | Jito | 6.09% | MEV rewards included |
-| **mSOL** | Marinade | 6.23% | Stake Auction Marketplace |
-| **INF** | Sanctum | 6.27% | LST aggregator/infrastructure |
-| **JupSOL** | Jupiter | 6.44% | Jupiter ecosystem integration |
-| **bpSOL** | Backpack | 6.65% | Backpack wallet native |
-| **raSOL** | Hubra | ~6%+ | All-in-one DeFi integration |
+While you wait, you can&apos;t sell if the market tanks, you can&apos;t use your tokens in DeFi, you can&apos;t jump on opportunities. Your money just sits there.
 
-*Data from Sanctum, February 2026*
+So you&apos;re forced to choose: earn yield or stay liquid. Not both.
 
-### Why the APY differences?
-
-The ~0.5% spread between LSTs isn&apos;t random. It comes from:
-
-**1. MEV Distribution (Jito)**
-Jito runs modified validator software that captures MEV (Maximal Extractable Value) - essentially, profits from transaction ordering. JitoSOL holders get a share of this. When on-chain activity is high, Jito&apos;s effective APY can spike above competitors.
-
-**2. Stake Auction Marketplace (Marinade)**
-Marinade&apos;s SAM lets validators *bid* for stake. Higher-performing validators pay more to receive delegations, and that premium flows to mSOL holders. It&apos;s a market mechanism that theoretically optimizes for the best validators.
-
-**3. Protocol Fees**
-Each protocol takes a cut (typically 5-10% of staking rewards). Lower fees = higher APY for you, but also less protocol revenue for development.
-
-**4. Validator Selection**
-How a protocol picks validators affects returns. Some optimize purely for APY; others balance decentralization, uptime, and commission rates.
+That&apos;s where liquid staking comes in.
 
 ---
 
-## The Sanctum layer
+## What is liquid staking?
 
-Here&apos;s something most liquid staking guides miss: **Sanctum is the infrastructure layer that connects all Solana LSTs**.
+Liquid staking lets you stake and keep access to your tokens at the same time.
 
-What this means practically:
-- You can **swap between LSTs instantly** (mSOL → JitoSOL → raSOL) with minimal slippage
-- New LSTs get **instant liquidity** by plugging into Sanctum&apos;s unified pool
-- **No fragmented liquidity** - the old problem of &quot;I have mSOL but the opportunity needs JitoSOL&quot; is solved
+When you liquid stake, you deposit SOL and get a liquid staking token back, like hSOL. This token represents your staked position plus any rewards you&apos;ve earned.
 
-This is why raSOL, despite being newer, has full liquidity from day one - it&apos;s built on Sanctum&apos;s infrastructure.
+Your original tokens go to validators and earn rewards. Your liquid token stays in your wallet, free to trade, use as collateral, or do whatever you want with.
 
----
+The liquid token tracks your staked value. It appreciates as rewards accumulate. When you&apos;re ready to exit, you swap it back for the original tokens plus everything you earned.
 
-## Which LST should you choose?
+**Why this matters:**
 
-This depends on what you&apos;re optimizing for:
-
-### Choose JitoSOL if:
-- You want exposure to MEV upside
-- You believe on-chain activity will stay high
-- You&apos;re comfortable with Jito&apos;s dominant market position
-
-### Choose mSOL if:
-- You value Marinade&apos;s track record (oldest Solana LST, SOC 2 certified)
-- You like the SAM auction mechanism
-- You want the most &quot;battle-tested&quot; option
-
-### Choose raSOL if:
-- You want liquid staking + DeFi yield in one place
-- You prefer a simplified experience (no hopping between apps)
-- You plan to use your LST in lending/strategies (Kamino, Loopscale integration)
-
-### The aggregator approach
-If you&apos;re already using platforms like Hubra that aggregate DeFi opportunities, the specific LST matters less - you can easily swap between them. What matters more is having *a* liquid position you can deploy across protocols.
+- **No waiting period.** Exit whenever you want.
+- **Use your staked tokens in DeFi.** Borrow against them, LP them, whatever.
+- **Stack yields.** Earn staking rewards AND DeFi yields on the same tokens.
+- **Stay flexible.** Markets move fast; now you can too.
 
 ---
 
-## Risks to know about
+## Liquid staking on Solana
 
-### Smart contract risk
-Every LST relies on smart contracts. If there&apos;s a bug or exploit, staked funds could be at risk. Mitigation: stick to audited, high-TVL protocols.
+Solana&apos;s fast and cheap, which makes it good for liquid staking. 400ms blocks, sub-cent fees, and a solid DeFi ecosystem.
 
-### Depeg risk
-In extreme market conditions, LSTs can trade below their &quot;fair&quot; SOL value. This happened briefly with stETH on Ethereum during the 2022 market crash. On Solana, Sanctum&apos;s unified liquidity layer reduces this risk significantly - but it&apos;s not zero.
+The base staking yield runs 6-8% APY. With liquid staking, you keep that yield but also get instant exits and DeFi composability.
 
-### Validator slashing
-Solana doesn&apos;t currently have slashing (validators losing stake for misbehavior), but this could change. If implemented, liquid staking protocols would need to handle slashing events.
+### How Hubra fits in
 
-### Opportunity cost
-At ~6% APY, liquid staking is solid but not spectacular. In a bull market with high DeFi yields, you might find better risk-adjusted returns elsewhere. The advantage is that with an LST, you can *also* pursue those opportunities (e.g., deposit your mSOL as collateral on Kamino).
+Hubra aggregates liquid staking on Solana. Instead of picking one protocol and hoping you chose right, Hubra spreads your stake across multiple providers for better risk-adjusted returns.
 
----
-
-## How to start
-
-### The manual way (multiple apps)
-1. Go to jito.network, marinade.finance, or sanctum.so
-2. Connect wallet
-3. Deposit SOL, receive LST
-4. If you want to use it in DeFi, go to Kamino/marginfi separately
-5. Manage positions across multiple dashboards
-
-### The aggregated way (Hubra)
-1. Open [hubra.app](https://hubra.app)
-2. Connect wallet (or sign up with email - no seed phrase needed)
-3. Stake SOL → receive raSOL
-4. Browse all yield opportunities in Earn tab
-5. Deposit raSOL into lending/strategies directly
-6. Track everything in one portfolio view
-
-The difference: Hubra handles the complexity. You don&apos;t need to understand which protocol to use for what - the platform shows you the best opportunities for your assets and lets you act in one click.
+What you get: liquidity from multiple protocols in one place, auto-compounding, instant swaps between staked and unstaked SOL, and one interface instead of juggling five tabs.
 
 ---
 
 ## FAQ
 
-**What APY can I realistically expect?**
-Currently 6-6.5% on Solana. This fluctuates with network inflation and validator performance. Be skeptical of any protocol promising significantly higher - there&apos;s usually hidden risk.
+### Is staking on Solana safe?
 
-**Is my SOL safe with liquid staking?**
-Your SOL is delegated to validators, not held by the protocol. The smart contract risk is the main concern. Stick to audited protocols with significant TVL and track record.
+Mostly. But risks exist.
 
-**Can I lose money?**
-You can&apos;t lose your staked SOL principal through normal operation. You *can* lose relative to holding SOL if the LST temporarily depegs, or if there&apos;s a smart contract exploit. Both are rare but not impossible.
+- **SOL price risk:** your SOL amount usually stays the same, but its dollar value can drop.
+- **Validator performance risk:** Solana does not currently have &quot;slashing&quot; like some chains, but a poorly performing or delinquent validator can reduce the rewards you earn.
+- **Withdrawal timing:** native staking isn&apos;t instant. Your stake deactivates at epoch boundaries, so getting fully unstaked typically takes about 2–3 days.
+- **Liquid staking adds smart contract risk:** if you use a liquid staking token, you also take on the protocol&apos;s smart contract and depeg risk.
 
-**How is this different from staking on Coinbase/Binance?**
-CEX staking is custodial - they hold your assets. Liquid staking is non-custodial - you hold the LST in your own wallet. CEXs can freeze withdrawals; with liquid staking, you can swap to SOL on a DEX anytime.
+Pick reputable validators and protocols, and avoid concentrating all stake in a single place.
 
-**Why not just stake natively for slightly higher APY?**
-If you never need flexibility, native staking is fine. But liquid staking lets you: exit instantly, use your position as collateral, or switch strategies without a 2-3 day wait. That flexibility often justifies the small APY difference.
+### How much can I earn?
 
----
+Solana staking pays around 6-8% APY. Liquid staking yields are similar, minus a small protocol fee (usually under 10% of rewards).
 
-## Bottom line
+### What&apos;s the difference between regular staking and liquid staking?
 
-In 2026, leaving your SOL un-staked means missing ~6% annual yield. With liquid staking, you get that yield without giving up flexibility.
+Regular staking locks your tokens. You wait 2-3 days to get them back. Liquid staking gives you a tradeable token so you can exit immediately or use your stake in DeFi while it earns rewards.
 
-The question isn&apos;t whether to liquid stake - it&apos;s which approach fits your needs:
+### Can I lose money?
 
-- **Maximizing raw yield?** Compare JitoSOL vs mSOL APYs and pick the leader
-- **Want simplicity?** Use an aggregator like Hubra that handles the complexity
-- **Building a DeFi strategy?** Pick an LST with deep integrations (Kamino, Jupiter, etc.)
+Your token count won&apos;t go down from staking (unless slashing happens, which is rare). But the dollar value drops if the price drops. Liquid staking also adds smart contract risk on top of normal staking risk.
 
-Whatever you choose, you&apos;ll be earning yield while keeping your assets productive. That&apos;s the point.
+### How do I start?
+
+Get some SOL, connect your wallet to Hubra, deposit and start earning. Takes about a minute.
 
 ---
 
-**Ready to start?** [Explore liquid staking on Hubra →](https://hubra.app)
+## Ready to try it?
+
+Earn staking rewards without locking up your SOL.
+
+**[Launch Hubra →](https://hubra.app/earn)**
 
 ---
 
-*Last updated: February 2026*  
-*APY data sourced from Sanctum. Rates fluctuate - always verify current yields before depositing.*
+*Last updated: February 2026*
