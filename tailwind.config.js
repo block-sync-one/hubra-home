@@ -116,6 +116,14 @@ const config = {
             transform: "translateX(calc(-100% - var(--gap)))",
           },
         },
+        "marquee-reverse": {
+          from: {
+            transform: "translateX(calc(-100% - var(--gap)))",
+          },
+          to: {
+            transform: "translateX(0)",
+          },
+        },
         "marquee-vertical": {
           from: {
             transform: "translateY(0)",
@@ -153,6 +161,7 @@ const config = {
         "scroll-fast": "scroll-left 20s linear infinite",
         "rainbow": "rainbow var(--speed, 2s) infinite linear",
         "marquee": "marquee var(--duration) infinite linear",
+        "marquee-reverse": "marquee-reverse var(--duration) infinite linear",
         "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
         "aurora": "aurora 8s ease-in-out infinite alternate",
         "shine": "shine var(--duration) infinite linear",

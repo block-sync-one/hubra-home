@@ -169,3 +169,84 @@
     background-position: 100% 50%;
   }
 }
+
+/* ============================================
+   Hero Entrance Animation
+   ============================================ */
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-entrance > * {
+  animation: heroFadeUp 0.7s ease-out both;
+}
+.hero-entrance > *:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.hero-entrance > *:nth-child(2) {
+  animation-delay: 0.22s;
+}
+.hero-entrance > *:nth-child(3) {
+  animation-delay: 0.34s;
+}
+.hero-entrance > *:nth-child(4) {
+  animation-delay: 0.46s;
+}
+
+/* ============================================
+   Angular-style Gradient Mesh Backgrounds
+   ============================================ */
+.bg-mesh-gold {
+  position: relative;
+  isolation: isolate;
+}
+.bg-mesh-gold::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 1;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 40%, rgba(218, 165, 32, 0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 70% at 90% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 50% at 50% 90%, rgba(218, 165, 32, 0.08) 0%, transparent 60%);
+}
+
+.bg-mesh-purple {
+  position: relative;
+  isolation: isolate;
+}
+.bg-mesh-purple::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 1;
+  background:
+    radial-gradient(ellipse 70% 60% at 85% 10%, rgba(139, 92, 246, 0.16) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 70% at 10% 80%, rgba(218, 165, 32, 0.1) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 45% 45%, rgba(59, 130, 246, 0.08) 0%, transparent 60%);
+}
+
+.bg-mesh-cta {
+  position: relative;
+  isolation: isolate;
+}
+.bg-mesh-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 1;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(218, 165, 32, 0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 50% at 10% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 90% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 60%);
+}

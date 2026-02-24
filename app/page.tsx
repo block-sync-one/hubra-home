@@ -1,36 +1,42 @@
 import { Metadata } from "next";
 
-import { HeroSection } from "@/components/HeroSection";
-import { MainContentSection } from "@/components/MainContent";
+import { Hero } from "@/components/landing/Hero";
+import { Problem } from "@/components/landing/Problem";
+import { Solution } from "@/components/landing/Solution";
+import { HowItWorks } from "@/components/landing/HowItWorks";
+import { Features } from "@/components/landing/Features";
+import { Trust } from "@/components/landing/Trust";
+import { Partners } from "@/components/landing/Partners";
+import { CTA } from "@/components/landing/CTA";
+import { Footer } from "@/components/landing/Footer";
 import { siteConfig } from "@/config/site";
 
-const title = "Hubra - Trade, stake, and earn with the best yields - never miss a trend, all in one.";
+const title = "Hubra (AI ARC) — Your Own AI DeFi Agent";
 const description =
-  "Hubra steps directly into this gap by blending TradFi-level usability with DeFi principles. Gasless operations, curated earning opportunities from top Solana protocols like Kamino, Jupiter, and Lulo; multi-wallet visibility under a single account; and selective, quality-first integrations to reduce risk and noise";
+  "Hubra is an AI agent that manages your DeFi portfolio on Solana. It finds the best yields, moves your funds, and keeps optimizing — automatically. Self-custody, transparent, open source.";
 const ogDescription =
-  "Your Solana all-in-one portal to the decentralized world. Track tokens, Earn yields, DeFi protocols, and market analytics with CEX-grade experience.";
+  "Your Own AI DeFi Agent. Hubra watches your portfolio, finds the best yields, and moves your funds — automatically. Built on Solana.";
 const canonical = siteConfig.domain;
 
 export const metadata: Metadata = {
   title,
   description,
   keywords: [
+    "AI DeFi agent",
+    "Solana AI agent",
+    "automated DeFi",
+    "yield optimization",
+    "DeFi automation",
     "Solana",
-    "Solana validator",
     "Solana staking",
     "DeFi",
-    "DeFi earn",
     "earn yield",
-    "wallet portfolio",
-    "clean wallet portfolio",
-    "cryptocurrency",
-    "blockchain analytics",
-    "token prices",
-    "Solana tokens",
-    "DeFi protocols",
-    "crypto trading",
+    "crypto portfolio",
+    "auto rebalancing",
+    "onchain agent",
     "SOL",
     "Solana ecosystem",
+    "self-custody",
   ],
   alternates: {
     canonical,
@@ -46,7 +52,7 @@ export const metadata: Metadata = {
         url: siteConfig.ogImage || "/hubra-og-image.png",
         width: 1200,
         height: 630,
-        alt: "Hubra - Solana DeFi Analytics Platform",
+        alt: "Hubra (AI ARC) — Your Own AI DeFi Agent",
       },
     ],
   },
@@ -73,14 +79,19 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <>
-      <section className="w-full flex flex-col items-center justify-center gap-20">
-        <header className="sr-only">
-          <h1>Hubra - Trade, stake, and earn with the best yields on Solana</h1>
-        </header>
-        <HeroSection />
-        <MainContentSection />
-      </section>
-    </>
+    <div className="flex flex-col">
+      <header className="sr-only">
+        <h1>Hubra (AI ARC) — Your Own AI DeFi Agent on Solana</h1>
+      </header>
+      <Hero />
+      <Problem />
+      <Solution />
+      <HowItWorks />
+      <Features />
+      <Trust />
+      <Partners />
+      <CTA />
+      <Footer />
+    </div>
   );
 }
