@@ -9,17 +9,10 @@ const config = {
   ],
   theme: {
     extend: {
-      // Font Families
       fontFamily: {
         sans: ["Geist", "Inter", "sans-serif"],
       },
-
-      // Typography Scale
-      fontSize: {},
-
-      // Color System
       colors: {
-        // Base colors
         card: "#1b1c2e",
         bgPlaceholder: "#565764",
         tableHeader: "252537",
@@ -93,83 +86,24 @@ const config = {
           foreground: "#FFFFFF",
         },
       },
-
-      // Background gradients
-      backgroundImage: {
-        "gradient-brand": "linear-gradient(62deg, rgb(255,255,255) 0%, #FEAA01 100%)",
-        "gradient-bars": "linear-gradient(0deg,rgba(255,75,198,0) 0%, #2E2E2E 10%,rgba(255,75,198,0) 70%)",
-      },
       keyframes: {
-        "scroll-left": {
-          "0%": {
-            transform: "translateX(0)",
-          },
-          "100%": {
-            transform: "translateX(-50%)",
-          },
-        },
         "marquee": {
-          from: {
-            transform: "translateX(0)",
-          },
-          to: {
-            transform: "translateX(calc(-100% - var(--gap)))",
-          },
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(calc(-100% - var(--gap)))" },
         },
         "marquee-reverse": {
-          from: {
-            transform: "translateX(calc(-100% - var(--gap)))",
-          },
-          to: {
-            transform: "translateX(0)",
-          },
-        },
-        "marquee-vertical": {
-          from: {
-            transform: "translateY(0)",
-          },
-          to: {
-            transform: "translateY(calc(-100% - var(--gap)))",
-          },
-        },
-        "aurora": {
-          "0%": {
-            backgroundPosition: "0% 50%",
-            transform: "rotate(-5deg) scale(0.9)",
-          },
-          "25%": {
-            backgroundPosition: "50% 100%",
-            transform: "rotate(5deg) scale(1.1)",
-          },
-          "50%": {
-            backgroundPosition: "100% 50%",
-            transform: "rotate(-3deg) scale(0.95)",
-          },
-          "75%": {
-            backgroundPosition: "50% 0%",
-            transform: "rotate(3deg) scale(1.05)",
-          },
-          "100%": {
-            backgroundPosition: "0% 50%",
-            transform: "rotate(-5deg) scale(0.9)",
-          },
+          from: { transform: "translateX(calc(-100% - var(--gap)))" },
+          to: { transform: "translateX(0)" },
         },
       },
       animation: {
-        "scroll-slow": "scroll-left 40s linear infinite",
-        "scroll-medium": "scroll-left 30s linear infinite",
-        "scroll-fast": "scroll-left 20s linear infinite",
-        "rainbow": "rainbow var(--speed, 2s) infinite linear",
         "marquee": "marquee var(--duration) infinite linear",
         "marquee-reverse": "marquee-reverse var(--duration) infinite linear",
-        "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
-        "aurora": "aurora 8s ease-in-out infinite alternate",
-        "shine": "shine var(--duration) infinite linear",
       },
     },
   },
 
-  darkMode: ["class", "class"],
+  darkMode: "class",
 
   plugins: [
     heroui({
@@ -179,101 +113,12 @@ const config = {
     require("tailwindcss-animate"),
     require("@tailwindcss/typography"),
 
-    // Custom utilities and components
-    function ({ addBase, addComponents, addUtilities }) {
-      // Responsive breakpoints
-      addBase({
-        "@media (min-width: 768px)": {
-          ":root": {
-            "--dynamic-margin-bottom": "28px",
-            "--hero-container-top": "28%",
-            "--hero-container-right": "-3%",
-            "--main-content-left": "10px",
-            "--main-content-top": "50px",
-          },
-        },
-        "@media (min-width: 964px)": {
-          ":root": {
-            "--hero-bars-width": "350px",
-            "--hero-bars-height": "500px",
-            "--hero-bar-width": "100px",
-            "--hero-bar-gap": "8px",
-            "--satellite-bottom": "0",
-            "--satellite-left": "0",
-            "--hero-container-top": "24%",
-            "--hero-container-right": "-3%",
-            "--main-content-left": "10px",
-            "--main-content-top": "50px",
-            "--dynamic-margin-bottom": "34px",
-          },
-        },
-        "@media (min-width: 1024px)": {
-          ":root": {
-            "--dynamic-margin-bottom": "40px",
-            "--hero-container-right": "-3%",
-            "--main-content-left": "40px",
-            "--main-content-top": "100px",
-          },
-        },
-        "@media (min-width: 1260px)": {
-          ":root": {
-            "--dynamic-margin-bottom": "40px",
-            "--hero-container-right": "10%",
-            "--main-content-left": "100px",
-            "--main-content-top": "200px",
-          },
-        },
-      });
-
-      // Component utilities
+    function ({ addComponents }) {
       addComponents({
-        // Text gradients
-        ".text-gradient-brand": {
-          "background": "linear-gradient(62deg, rgb(255,255,255) 0%, #FEAA01 100%)",
-          "-webkit-background-clip": "text",
-          "-webkit-text-fill-color": "transparent",
-          "background-clip": "text",
-        },
-        ".text-gradient-brand-mobile": {
-          "background": "linear-gradient(62deg, rgb(255,255,255) 0%, #FEAA01 100%)",
-          "-webkit-background-clip": "text",
-          "-webkit-text-fill-color": "transparent",
-          "background-clip": "text",
-        },
-
-        // Layout utilities
-        ".hero-container": {
-          width: "var(--hero-container-width)",
-          height: "var(--hero-container-height)",
-          right: "var(--hero-container-right)",
-          top: "var(--hero-container-top)",
-        },
-        ".hero-image": {
-          width: "var(--hero-image-size)",
-          height: "var(--hero-image-size)",
-        },
-        ".hero-bar": {
-          width: "var(--hero-bar-width)",
-        },
         ".satellite-position": {
           bottom: "0px",
-          left: "var(--satellite-left)",
+          left: "0",
         },
-        ".main-content-position": {
-          left: "var(--main-content-left)",
-          top: "var(--main-content-top)",
-        },
-        ".dynamic-margin-bottom": {
-          "margin-bottom": "var(--dynamic-margin-bottom)",
-        },
-
-        // Background gradients
-        // '.bg-gradient-bar': {
-        //   'background': 'linear-gradient(180deg, #FEAA0100 12%, #FEAA0110 100%)',
-        // },
-        // '.bg-gradient-bar-tab': {
-        //   'background': 'linear-gradient(180deg, #FEAA0100 0%, #FEAA0110 100%)',
-        // },
       });
     },
   ],

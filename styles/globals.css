@@ -13,7 +13,6 @@
    Base Styles
    ============================================ */
 @layer base {
-  /* Reset outlines globally */
   *,
   *::before,
   *::after,
@@ -24,7 +23,6 @@
     outline: none;
   }
 
-  /* Body configuration */
   body {
     font-family: "Geist", "Inter", sans-serif;
     font-size: 14px;
@@ -33,7 +31,6 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* SVG elements - prevent selection */
   svg {
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
@@ -50,13 +47,11 @@
     @apply px-4 py-6 md:py-11 mx-auto;
   }
 
-  /* Chart components */
   .recharts-surface:focus,
   .recharts-wrapper:focus {
     outline: none;
   }
 
-  /* Search input overrides */
   [data-slot="input-wrapper"]:focus-within,
   [data-slot="input"]:focus {
     outline: none !important;
@@ -65,7 +60,6 @@
   }
 
   /* Blog tables - responsive scrolling */
-  /* Mobile only - horizontal scroll with full-width separators */
   @media (max-width: 767px) {
     .prose table {
       display: block;
@@ -92,7 +86,6 @@
       white-space: nowrap;
     }
 
-    /* Scroll shadow indicators */
     .prose table {
       background:
         linear-gradient(90deg, #0d0e21 30%, transparent), linear-gradient(270deg, #0d0e21 30%, transparent),
@@ -112,7 +105,6 @@
     }
   }
 
-  /* Desktop - normal table display */
   @media (min-width: 768px) {
     .prose table {
       display: table;
@@ -138,7 +130,7 @@
 }
 
 /* ============================================
-   Custom Scrollbar Styles
+   Scrollbar
    ============================================ */
 ::-webkit-scrollbar {
   width: 12px;
@@ -155,19 +147,6 @@
   background-color: theme("colors.bgPlaceholder");
   border-radius: 10px;
   border: 2px solid theme("colors.card");
-}
-
-/* ============================================
-   Aurora Text Animation
-   ============================================ */
-@keyframes aurora-shift {
-  0%,
-  100% {
-    background-position: 0 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
 }
 
 /* ============================================
@@ -201,7 +180,7 @@
 }
 
 /* ============================================
-   Angular-style Gradient Mesh Backgrounds
+   Section Gradient Mesh Backgrounds
    ============================================ */
 .bg-mesh-gold {
   position: relative;
@@ -212,7 +191,6 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  opacity: 1;
   background:
     radial-gradient(ellipse 80% 60% at 10% 40%, rgba(218, 165, 32, 0.15) 0%, transparent 70%),
     radial-gradient(ellipse 60% 70% at 90% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 70%),
@@ -228,7 +206,6 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  opacity: 1;
   background:
     radial-gradient(ellipse 70% 60% at 85% 10%, rgba(139, 92, 246, 0.16) 0%, transparent 70%),
     radial-gradient(ellipse 70% 70% at 10% 80%, rgba(218, 165, 32, 0.1) 0%, transparent 70%),
@@ -244,7 +221,6 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  opacity: 1;
   background:
     radial-gradient(ellipse 60% 50% at 50% 0%, rgba(218, 165, 32, 0.18) 0%, transparent 70%),
     radial-gradient(ellipse 70% 50% at 10% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 70%),
