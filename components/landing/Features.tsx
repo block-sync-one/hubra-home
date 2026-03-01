@@ -5,34 +5,34 @@ import { Section, SectionHeader } from "./Section";
 
 const features = [
   {
-    icon: "ri:funds-fill",
-    title: "Yield optimization",
-    desc: "Scans lending, staking, and LP pools across vetted Solana protocols. Moves your funds where returns are highest — automatically.",
+    icon: "ri:seedling-fill",
+    title: "Earn Vaults",
+    desc: "Deposit SOL, USDC, or USDT. You get ra-tokens that grow in value as yield accrues. No claiming, no compounding. It just works.",
   },
   {
-    icon: "ri:shield-check-fill",
-    title: "Risk management",
-    desc: "Sets exposure limits and monitors health factors. Pulls back before things go south.",
+    icon: "ri:robot-2-fill",
+    title: "Copilot",
+    desc: "Turn it on once. Copilot puts idle tokens to work and moves them when rates improve by at least 1%. It checks continuously.",
   },
   {
-    icon: "ri:scales-fill",
-    title: "Automated rebalancing",
-    desc: "When allocations drift, your agent brings them back in line with your targets.",
+    icon: "ri:line-chart-fill",
+    title: "Token Trends",
+    desc: "Six views into Solana tokens: New, Best of Solana, Most Traded, Gainers, Newcomers, and the full list. Safety filters catch rugs before you do.",
   },
   {
     icon: "ri:flashlight-fill",
-    title: "Strategy execution",
-    desc: "Pick a strategy — conservative, balanced, aggressive. The agent handles the rest.",
+    title: "Instant Unstake",
+    desc: "Unstake SOL in seconds instead of waiting for epochs. Full or partial. Powered by Sanctum. Gasless.",
   },
   {
-    icon: "ri:radar-fill",
-    title: "Onchain monitoring",
-    desc: "Tracks opportunities across protocols and chains, and moves when it makes sense.",
+    icon: "ri:dashboard-fill",
+    title: "Portfolio",
+    desc: "All your assets and yield positions in one place. Send, convert, or withdraw in a tap. Drill into any position when you need to.",
   },
   {
-    icon: "ri:notification-3-fill",
-    title: "Smart alerts",
-    desc: "Notifications when something needs your attention. Autonomous action when it doesn't.",
+    icon: "ri:gas-station-fill",
+    title: "Zero Gas Fees",
+    desc: "Swaps, deposits, unstaking. Hubra covers all network fees. You never pay gas.",
   },
 ];
 
@@ -41,9 +41,9 @@ export function Features() {
     <Section className="bg-mesh-purple">
       <SectionHeader
         center
-        description="Not a list of technical features. These are outcomes."
-        eyebrow="Capabilities"
-        title="What your agent actually does"
+        description="These aren't roadmap items. They're live, shipped, and working."
+        eyebrow="Features"
+        title="What you can do today"
       />
 
       <div className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-14">

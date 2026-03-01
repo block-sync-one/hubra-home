@@ -31,8 +31,8 @@ export function Hero() {
           <span className="text-primary">AI DeFi Agent.</span>
         </h1>
 
-        <p className="max-w-md text-white/50 text-base md:text-lg leading-relaxed">
-          Hubra watches your portfolio, finds the best yields, and moves your funds.{" "}
+        <p className="max-w-lg text-white/50 text-base md:text-lg leading-relaxed">
+          Earn yield, discover tokens, unstake instantly. Hubra finds the best rates and moves your funds.{" "}
           <span className="text-white font-medium">Automatically.</span> <span className="text-primary font-medium">Gasless.</span>
         </p>
 

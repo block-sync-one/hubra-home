@@ -12,7 +12,7 @@ export function CTA() {
         </h2>
 
         <p className="text-white/50 text-base md:text-lg leading-relaxed max-w-lg">
-          You won&apos;t manage every transaction. You&apos;ll set goals. Your agent will handle the rest. That shift is already happening.
+          You won&apos;t manage every transaction. You&apos;ll set goals. Your agent handles the rest. That shift is already happening.
           Hubra is how you get there.
         </p>
 

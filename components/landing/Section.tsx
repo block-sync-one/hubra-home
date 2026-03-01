@@ -1,14 +1,7 @@
 "use client";
 import { useRef, useEffect, useState, type ReactNode } from "react";
 
-type SectionProps = {
-  children: ReactNode;
-  className?: string;
-  id?: string;
-  muted?: boolean;
-};
-
-export function Section({ children, className = "", id, muted }: SectionProps) {
+export function Section({ children, className = "", id }: { children: ReactNode; className?: string; id?: string }) {
   const ref = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -35,7 +28,7 @@ export function Section({ children, className = "", id, muted }: SectionProps) {
   return (
     <section
       ref={ref}
-      className={`w-full transition-[opacity,transform] duration-700 ease-out ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} ${muted ? "bg-white/[0.015]" : ""} ${className}`}
+      className={`w-full transition-[opacity,transform] duration-700 ease-out ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} ${className}`}
       id={id}>
       <div className="mx-auto max-w-[1200px] px-6 py-24 md:py-40">{children}</div>
     </section>

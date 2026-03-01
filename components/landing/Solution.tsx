@@ -4,10 +4,26 @@ import { Icon } from "@iconify/react";
 import { Section, SectionHeader } from "./Section";
 
 const capabilities = [
-  { icon: "ri:eye-fill", title: "Watches", desc: "Your portfolio and the market, around the clock." },
-  { icon: "ri:search-fill", title: "Finds", desc: "The best yield opportunities across vetted protocols." },
-  { icon: "ri:swap-fill", title: "Moves", desc: "Your funds when something meaningfully better shows up." },
-  { icon: "ri:equalizer-fill", title: "Adjusts", desc: "Continuously — re-evaluating every 30 minutes." },
+  {
+    icon: "ri:seedling-fill",
+    title: "Earn",
+    desc: "Deposit and earn yield. Your ra-tokens grow in value over time. Nothing to claim, nothing to reinvest.",
+  },
+  {
+    icon: "ri:robot-2-fill",
+    title: "Copilot",
+    desc: "Finds the best yields and moves your funds when better rates show up. Runs around the clock.",
+  },
+  {
+    icon: "ri:line-chart-fill",
+    title: "Trends",
+    desc: "Six market lenses with built-in safety filters. Updated every 10 minutes so you see what's actually moving.",
+  },
+  {
+    icon: "ri:flashlight-fill",
+    title: "Instant Unstake",
+    desc: "Get your staked SOL back in seconds. No waiting for epochs. Full or partial.",
+  },
 ];
 
 export function Solution() {
@@ -16,17 +32,17 @@ export function Solution() {
       <div className="flex flex-col lg:flex-row gap-14 lg:gap-24">
         <div className="lg:w-1/2 lg:sticky lg:top-32 lg:self-start">
           <SectionHeader
-            description="Hubra is not another dashboard. It's an agent that operates onchain — for you. Every action is gasless."
-            eyebrow="The shift"
+            description="Earn yield, discover tokens, unstake instantly. All from one place. Every action is gasless."
+            eyebrow="The platform"
             title={
               <>
-                A better way
+                Everything you need.
                 <br />
-                to do DeFi
+                Nothing you don&apos;t.
               </>
             }
           />
-          <p className="text-white/35 text-base leading-relaxed mt-4">You tell it what you want. It figures out how to get there.</p>
+          <p className="text-white/35 text-base leading-relaxed mt-4">Built on Solana. Non-custodial. Open source.</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:w-1/2">

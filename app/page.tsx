@@ -5,7 +5,6 @@ import { Problem } from "@/components/landing/Problem";
 import { Solution } from "@/components/landing/Solution";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { Features } from "@/components/landing/Features";
-import { Trust } from "@/components/landing/Trust";
 import { Partners } from "@/components/landing/Partners";
 import { CTA } from "@/components/landing/CTA";
 import { Footer } from "@/components/landing/Footer";
@@ -88,7 +87,6 @@ export default function Home() {
       <Solution />
       <HowItWorks />
       <Features />
-      <Trust />
       <Partners />
       <CTA />
       <Footer />

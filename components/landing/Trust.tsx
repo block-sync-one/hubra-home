@@ -22,7 +22,11 @@ const differentiators = [
     title: "You set the rules",
     desc: "Every action is permissioned. You define risk limits, strategies, and boundaries.",
   },
-  { icon: "ri:key-fill", title: "Non-custodial", desc: "Your keys, your wallet. Hubra never holds your funds." },
+  {
+    icon: "ri:key-fill",
+    title: "Non-custodial",
+    desc: "Your keys, your wallet. Hubra never holds your funds.",
+  },
   {
     icon: "ri:file-list-3-fill",
     title: "Transparent actions",
@@ -30,7 +34,7 @@ const differentiators = [
   },
 ];
 
-function AnimatedNumber({ suffix, target }: { target: number; suffix: string }) {
+function AnimatedNumber({ target, suffix }: { target: number; suffix: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const [triggered, setTriggered] = useState(false);
 
@@ -79,7 +83,7 @@ function AnimatedNumber({ suffix, target }: { target: number; suffix: string }) 
 export function Trust() {
   return (
     <Section>
-      <div className="relative grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 py-12 md:py-16 rounded-2xl overflow-hidden">
+      <div className="relative grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 py-14 md:py-20 rounded-2xl overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.06] via-transparent to-primary/[0.08]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/[0.04] via-transparent to-transparent" />
         {stats.map((s, i) => (
